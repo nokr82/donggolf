@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">donggolf</string>
+
+    <!-- date formatter -->
+    <string name="interval_day">%1$d일전</string>
+    <string name="interval_yesterday">어제</string>
+    <string name="interval_hour">%1$d시간전</string>
+    <string name="interval_minite">%1$d분전</string>
+    <string name="interval_spot">방금전</string>
+
+    <string name="progress_message">Processing...</string>
+    <string name="load_error_message">Failure has occurred</string>
+
+</resources>

@@ -1,0 +1,80 @@
+package donggolf.android.base;
+
+
+import android.content.Context;
+import android.hardware.Camera;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.view.SurfaceView;
+import android.view.TextureView;
+
+import com.pedro.encoder.input.video.Camera1ApiManager;
+import com.pedro.rtplibrary.rtmp.RtmpCamera1;
+import com.pedro.rtplibrary.view.LightOpenGlView;
+import com.pedro.rtplibrary.view.OpenGlView;
+
+import net.ossrs.rtmp.ConnectCheckerRtmp;
+
+import java.util.List;
+
+public class RtmpCamera1Ext extends RtmpCamera1 {
+
+    private boolean lightTurnedOn = false;
+
+    public RtmpCamera1Ext(SurfaceView surfaceView, ConnectCheckerRtmp connectChecker) {
+        super(surfaceView, connectChecker);
+    }
+
+    public RtmpCamera1Ext(TextureView textureView, ConnectCheckerRtmp connectChecker) {
+        super(textureView, connectChecker);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public RtmpCamera1Ext(OpenGlView openGlView, ConnectCheckerRtmp connectChecker) {
+        super(openGlView, connectChecker);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public RtmpCamera1Ext(LightOpenGlView lightOpenGlView, ConnectCheckerRtmp connectChecker) {
+        super(lightOpenGlView, connectChecker);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public RtmpCamera1Ext(Context context, ConnectCheckerRtmp connectChecker) {
+        super(context, connectChecker);
+    }
+
+    public void trunLightOn() {
+        lightTurnedOn = true;
+        this.cameraManager.enableLantern();
+    }
+
+    public void trunLightOff() {
+        lightTurnedOn = false;
+        this.cameraManager.disableLantern();
+    }
+
+    public boolean isLightTurnedOn() {
+        return lightTurnedOn;
+    }
+
+    public void unMute() {
+        if(!this.microphoneManager.isMuted()) {
+            this.microphoneManager.unMute();
+        }
+    }
+
+    public void mute() {
+        if(this.microphoneManager.isMuted()) {
+            this.microphoneManager.mute();
+        }
+    }
+
+    public boolean isMuted() {
+        return this.microphoneManager.isMuted();
+    }
+
+    public Camera1ApiManager getCamera1ApiManager() {
+        return cameraManager;
+    }
+}
