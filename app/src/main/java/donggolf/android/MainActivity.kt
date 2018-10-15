@@ -9,9 +9,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import donggolf.android.base.RootActivity
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : RootActivity() {
 
     companion object {
         const val TAG = "MainActivity"

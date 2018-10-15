@@ -5,19 +5,25 @@
     <application
         android:name=".base.GlobalApplication"
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".Login"/>
+        <activity
+            android:name=".Register">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Findid"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"></activity>
     </application>
 
 </manifest>
