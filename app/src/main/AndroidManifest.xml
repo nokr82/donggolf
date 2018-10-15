@@ -26,4 +26,49 @@
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"></activity>
     </application>
 
+    <!-- activity
+        android:name=".activities.IntroActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:noHistory="true"
+        android:screenOrientation="portrait" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data
+                android:host="@string/kakaolink_host"
+                android:scheme="@string/kakao_scheme" />
+
+        </intent-filter>
+    </activity -->
+
+    <!-- activity
+        android:name=".activities.MainActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/NoTitleDialog"
+        android:windowSoftInputMode="adjustPan|adjustResize">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="threemeals" />
+
+            <data android:scheme="@string/kakao_scheme"
+                android:host="@string/kakaolink_host" />
+        </intent-filter>
+    </activity -->
+
+    <!-- 로그인 -->
+    <!-- activity
+        android:name=".activities.LoginActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/NoTitleDialog"
+        android:windowSoftInputMode="adjustResize|stateHidden" / -->
+
 </manifest>
