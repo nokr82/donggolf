@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="117.33dp"
+        android:layout_height="117.33dp"
+        android:layout_margin="5dp">
+        <ImageView
+            android:id="@+id/picture_grid_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/box_picture"/>
+        <ImageView
+            android:id="@+id/picture_grid_click"
+            android:layout_width="29.33dp"
+            android:layout_height="29.33dp"
+            android:background="@drawable/btn_select_picture"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"/>
+    </RelativeLayout>
+
+</LinearLayout>
