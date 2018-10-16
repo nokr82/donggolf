@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register"
+    tools:context=".activities.RegisterActivity"
     android:orientation="vertical"
     android:background="#ffffff">
 
@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/btn_finish"
                     android:layout_width="8.33dp"
                     android:layout_height="14.67dp"
                     android:layout_margin="10dp"
@@ -70,10 +71,10 @@
                             android:background="@drawable/register"
                             android:layout_centerVertical="true"/>
                         <EditText
-                            android:layout_width="246.33dp"
-                            android:layout_height="28.33dp"
+                            android:layout_width="235.33dp"
+                            android:layout_height="25.33dp"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/register"
+                            android:background="@null"
                             android:layout_marginLeft="10dp"
                             android:hint="이메일"
                             android:textSize="9.33dp" />
@@ -81,14 +82,21 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:gravity="center"
-                android:text="*비밀번호 분실 시 이메일로 임시 비밀번호 전송"
-                android:textColor="#0EDA2F"
-                android:textSize="9.33dp" />
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"></LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="*비밀번호 분실 시 이메일로 임시 비밀번호 전송"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#0EDA2F"
+                    android:textSize="9.33dp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -112,22 +120,46 @@
                     android:layout_width="match_parent"
                     android:layout_height="90dp"
                     android:orientation="vertical">
-
-                    <EditText
-                        android:layout_width="246.33dp"
-                        android:layout_height="28.33dp"
+                    <RelativeLayout
                         android:layout_marginTop="14dp"
-                        android:background="@drawable/register"
-                        android:hint="비밀번호 입력(2~7자 이내)"
-                        android:textSize="9.33dp" />
-
-                    <EditText
                         android:layout_width="246.33dp"
-                        android:layout_height="28.33dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/register"
-                        android:hint="비밀번호 재입력"
-                        android:textSize="9.33dp" />
+                        android:layout_height="28.33dp">
+                        <ImageView
+                            android:layout_width="246.33dp"
+                            android:layout_height="28.33dp"
+                            android:background="@drawable/register"
+                            android:layout_centerVertical="true"/>
+
+                        <EditText
+                            android:layout_width="235.33dp"
+                            android:layout_height="25.33dp"
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            android:hint="비밀번호 입력(2~7자 이내)"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="9.33dp" />
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_marginTop="14dp"
+                        android:layout_width="246.33dp"
+                        android:layout_height="28.33dp">
+                        <ImageView
+                            android:layout_width="246.33dp"
+                            android:layout_height="28.33dp"
+                            android:background="@drawable/register"
+                            android:layout_centerVertical="true"/>
+
+                        <EditText
+                            android:layout_width="235.33dp"
+                            android:layout_height="25.33dp"
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            android:hint="비밀번호 재입력"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="9.33dp" />
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -153,14 +185,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp">
 
-                    <EditText
+                    <RelativeLayout
+                        android:layout_marginTop="14dp"
                         android:layout_width="246.33dp"
-                        android:layout_height="28.33dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/register"
-                        android:hint="'-'없이 번호만 입력"
-                        android:inputType="number"
-                        android:textSize="9.33dp" />
+                        android:layout_height="28.33dp">
+                        <ImageView
+                            android:layout_width="246.33dp"
+                            android:layout_height="28.33dp"
+                            android:background="@drawable/register"
+                            android:layout_centerVertical="true"/>
+
+                        <EditText
+                            android:layout_width="235.33dp"
+                            android:layout_height="25.33dp"
+                            android:background="@null"
+                            android:hint="'-'없이 번호만 입력"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="9.33dp" />
+                    </RelativeLayout>
                 </LinearLayout>
 
             </LinearLayout>
@@ -187,14 +230,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp">
 
-                    <EditText
+                    <RelativeLayout
+                        android:layout_marginTop="14dp"
                         android:layout_width="246.33dp"
-                        android:layout_height="28.33dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/register"
-                        android:hint="'-'없이 번호만 입력"
-                        android:inputType="number"
-                        android:textSize="9.33dp" />
+                        android:layout_height="28.33dp">
+                        <ImageView
+                            android:layout_width="246.33dp"
+                            android:layout_height="28.33dp"
+                            android:background="@drawable/register"
+                            android:layout_centerVertical="true"/>
+
+                        <EditText
+                            android:layout_width="235.33dp"
+                            android:layout_height="25.33dp"
+                            android:background="@null"
+                            android:hint="2~7자 이내"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="9.33dp" />
+                    </RelativeLayout>
                 </LinearLayout>
 
 
@@ -222,45 +276,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp">
 
-                    <RadioButton
+                    <RadioGroup
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="남자" />
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/radio_btn_male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="10dp"
+                            android:text="남자"
+                            android:buttonTint="#0EDA2F"/>
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="25dp"
-                        android:text="여자" />
+                        <RadioButton
+                            android:id="@+id/radio_btn_female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="25dp"
+                            android:textSize="10dp"
+                            android:text="여자"
+                            android:buttonTint="#0EDA2F" />
+                    </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="13dp"
-                    android:text="문서/앱 권한 전체동의 및 허용"
-                    android:textColor="#000000"
-                    android:textSize="10.67dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="13dp"
+                        android:text="문서/앱 권한 전체동의 및 허용"
+                        android:textColor="#000000"
+                        android:textSize="10.67dp" />
 
-                <TextView
-                    android:layout_width="156dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="전체동의"
-                    android:textColor="#000000"
-                    android:textSize="10.67dp" />
+                    <TextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="전체동의"
+                        android:layout_marginLeft="30dp"
+                        android:textColor="#000000"
+                        android:textSize="10.67dp" />
 
+
+
+                </LinearLayout>
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
+                    android:buttonTint="#0EDA2F"/>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -321,7 +397,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp" />
+                    android:layout_marginRight="30dp"
+                    android:buttonTint="#0EDA2F" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -356,10 +433,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp" />
+                    android:layout_marginRight="30dp"
+                    android:buttonTint="#0EDA2F"/>
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/btn_success_register"
                 android:layout_width="139.67dp"
                 android:layout_height="38.33dp"
                 android:text="가입하기"

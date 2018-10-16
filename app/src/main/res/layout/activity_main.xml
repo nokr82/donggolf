@@ -4,7 +4,232 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity"
+    android:orientation="vertical">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="16.67dp"
+            android:layout_height="17.33dp"
+            android:background="@drawable/icon_area"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="경기 / 인천"
+            android:textSize="8.67dp"
+            android:textColor="#000000"/>
+        <ImageView
+            android:layout_width="17.67dp"
+            android:layout_height="10.67dp"
+            android:background="@drawable/icon_golfer"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="9999명"
+            android:textSize="8.67dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="#000000"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
 
+            <ImageView
+                android:layout_width="47.33dp"
+                android:layout_height="22.67dp"
+                android:background="@drawable/btn_market"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/click_btn_main_on_relative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+                <Button
+                    android:layout_centerInParent="true"
+                    android:layout_width="30dp"
+                    android:layout_height="29dp"
+                    android:background="@drawable/btn_main_on_selector"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/line_btn_main_selector"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+                <Button
+                    android:layout_width="18.33dp"
+                    android:layout_height="29dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/btn_chatting_on_selector"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/line_btn_main_selector"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+                <Button
+                    android:layout_width="16.67dp"
+                    android:layout_height="29dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/btn_notice_on_selector"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/line_btn_main_selector"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+                <Button
+                    android:layout_width="24.67dp"
+                    android:layout_height="29dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/btn_mypage_on_selector"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/line_btn_main_selector"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="296dp"
+            android:layout_height="28.33dp"
+            android:background="@drawable/box_search"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12.33dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/icon_search"
+                    android:layout_marginLeft="10dp"/>
+                <EditText
+                    android:id="@+id/main_edit_search"
+                    android:layout_width="240dp"
+                    android:layout_height="28.33dp"
+                    android:textSize="10dp"
+                    android:background="@null"
+                    android:layout_marginLeft="10dp"
+                    android:hint="검색어를 입력하세요"/>
+                <Button
+                    android:layout_width="11.33dp"
+                    android:layout_height="11.33dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/btn_del_searchword_selector"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_go_addpost"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/btn_write"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/line_0" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ListView
+            android:id="@+id/main_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+
+        <LinearLayout
+            android:id="@+id/main_listview_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="vertical"
+            android:background="@drawable/boarder_707070_background_ffffff"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="최근 검색"
+                    android:layout_margin="5dp"
+                    android:textSize="9.33dp"
+                    android:textColor="#000000"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp">
+                    <TextView
+                        android:id="@+id/main_edit_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="닫기"
+                        android:layout_margin="5dp"
+                        android:textSize="9.33dp"
+                        android:layout_alignParentRight="true"
+                        android:textColor="#000000"/>
+                </RelativeLayout>
+            </LinearLayout>
+            <ListView
+                android:id="@+id/main_edit_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+
+        </LinearLayout>
+
+
+
+
+
+    </RelativeLayout>
 
 </LinearLayout>

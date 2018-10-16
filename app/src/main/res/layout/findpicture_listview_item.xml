@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/findpicture_item_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/box_album"
+            android:layout_margin="10dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/findpicture_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="카메라"
+                android:gravity="bottom"
+                android:textColor="#000000"
+                android:textSize="10.67dp"
+                android:layout_weight="2"/>
+            <TextView
+                android:id="@+id/findpicture_item_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9999"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:textSize="10.67dp"
+                android:layout_weight="2"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

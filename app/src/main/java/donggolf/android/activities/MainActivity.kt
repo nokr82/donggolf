@@ -1,18 +1,37 @@
-package donggolf.android
+package donggolf.android.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import donggolf.android.R
+import donggolf.android.adapters.FindPictureAdapter
+import donggolf.android.adapters.MainAdapter
+import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.RootActivity
+import kotlinx.android.synthetic.main.activity_find_picture.*
+import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
 
 
 class MainActivity : RootActivity() {
+
+    private lateinit var context: Context
+
+    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+
+    private  lateinit var  adapter : MainAdapter
+
+    private  lateinit var  editadapter : MainEditAdapter
+
+    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     companion object {
         const val TAG = "MainActivity"
@@ -25,6 +44,14 @@ class MainActivity : RootActivity() {
         setContentView(R.layout.activity_main)
 
         mAuth = FirebaseAuth.getInstance();
+
+        btn_go_addpost.setOnClickListener {
+            startActivity(Intent(this,AddPostActivity::class.java))
+        }
+
+        click_btn_main_on_relative.setOnClickListener {
+
+        }
 
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = mAuth!!.getCurrentUser()
@@ -44,13 +71,62 @@ class MainActivity : RootActivity() {
                     override fun onComplete(task: Task<QuerySnapshot>) {
                         if (task.isSuccessful) {
                             for (document in task.result!!) {
-                                Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
+                                Log.d(TAG, document.getId() + " => " + document.getData())
                             }
                         } else {
-                            Log.w(MainActivity.TAG, "Error getting documents.", task.exception)
+                            Log.w(TAG, "Error getting documents.", task.exception)
                         }
                     }
                 })
+
+
+        context = this
+
+
+        var intent = getIntent()
+
+
+        var dataList:Array<String> = arrayOf("findpicure_name","findpicure_count")
+
+
+        var dataObj : JSONObject = JSONObject();
+
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+        adapterData.add(dataObj)
+
+        adapter = MainAdapter(context,R.layout.main_listview_item,adapterData)
+
+        main_listview.adapter = adapter
+
+
+        adapter.notifyDataSetChanged()
+
+        editadapterData.add(dataObj)
+
+        editadapter = MainEditAdapter(context,R.layout.main_edit_listview_item,editadapterData)
+
+        main_edit_listview.adapter = editadapter
+
+
+        main_listview.setOnItemClickListener { parent, view, position, id ->
+
+            startActivity(Intent(this,MainDetailActivity::class.java))
+        }
+
+        main_edit_search.setOnClickListener {
+            main_listview_search.setVisibility(View.VISIBLE)
+//            main_listview.setVisibility(View.GONE)
+        }
+
+        main_edit_close.setOnClickListener {
+            main_listview_search.setVisibility(View.GONE)
+//            main_listview.setVisibility(View.VISIBLE)
+        }
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {

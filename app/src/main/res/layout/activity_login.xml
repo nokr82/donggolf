@@ -11,17 +11,39 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true">
-        <EditText
-            android:layout_width="283.67dp"
-            android:layout_height="28.33dp"
-            android:hint="이메일"
-            android:background="@drawable/box_text"/>
-        <EditText
-            android:layout_marginTop="10dp"
-            android:layout_width="283.67dp"
-            android:layout_height="28.33dp"
-            android:hint="비밀번호"
-            android:background="@drawable/box_text"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="283.67dp"
+                android:layout_height="28.33dp"
+                android:background="@drawable/box_text"/>
+            <EditText
+                android:layout_width="275.67dp"
+                android:layout_height="25.33dp"
+                android:hint="이메일"
+                android:textSize="9.33dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:background="#ffffff"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="283.67dp"
+                android:layout_height="28.33dp"
+                android:background="@drawable/box_text"/>
+            <EditText
+                android:layout_width="275.67dp"
+                android:layout_height="25.33dp"
+                android:hint="비밀번호"
+                android:textSize="9.33dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:background="#ffffff"/>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +59,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/img_check"/>
+                android:buttonTint="#0EDA2F"/>
         </LinearLayout>
 
 
@@ -51,23 +73,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/btn_login"
                     android:layout_width="139.67dp"
                     android:layout_height="38.33dp"
                     android:text="로그인"
                     android:textSize="16dp"
                     android:textColor="#ffffff"
                     android:gravity="center"
-                    android:background="@drawable/btn_login"
+                    android:background="@drawable/btn_login_selector"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"/>
                 <TextView
+                    android:id="@+id/btn_nomember_login"
                     android:layout_width="139.67dp"
                     android:layout_height="38.33dp"
                     android:text="비회원으로 접속"
                     android:textSize="16dp"
                     android:textColor="#ffffff"
                     android:gravity="center"
-                    android:background="@drawable/btn_guest"
+                    android:background="@drawable/btn_guest_selector"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"/>
             </LinearLayout>
@@ -77,8 +101,9 @@
                 android:layout_below="@id/login_linear2"
                 android:layout_width="283.67dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="45dp">
                 <LinearLayout
+                    android:id="@+id/linear_go_findid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -107,9 +132,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="10.67dp"
-                        android:text="비밀번호 재발금"/>
+                        android:text="비밀번호 재발급"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/linear_go_register"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
