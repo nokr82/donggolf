@@ -17,8 +17,11 @@ import kotlinx.android.synthetic.main.activity_register.*
 class RegisterActivity : RootActivity() {
 
     private lateinit var mAuth: FirebaseAuth
+
     private lateinit var context: Context
+
     var gender: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -30,93 +33,95 @@ class RegisterActivity : RootActivity() {
         btn_finish.setOnClickListener {
             finish()
         }
+
         btn_success_register.setOnClickListener {
             join()
         }
 
-        radioboxCheck()
+        radioboxCheck()         //라디오 버튼 디폴트 값 주기
 
         allcheck()
 
     }
     private fun allcheck(){
-        allcheckd.setOnClickListener {
+        allcheckd.setOnClickListener {                //모두동의
             if(allcheckd.isChecked){
-                checkbox1.isChecked = true
-                checkbox2.isChecked = true
+                conditionscheckbox.isChecked = true
+                collectcheckbox.isChecked = true
             }else {
-                checkbox1.isChecked = false
-                checkbox2.isChecked = false
+                conditionscheckbox.isChecked = false
+                collectcheckbox.isChecked = false
             }
         }
 
-        checkbox1.setOnClickListener {
-            allcheckd.isChecked = checkbox1.isChecked && checkbox2.isChecked
+        conditionscheckbox.setOnClickListener {         //이용약관
+            allcheckd.isChecked = conditionscheckbox.isChecked && collectcheckbox.isChecked
         }
-        checkbox2.setOnClickListener {
-            allcheckd.isChecked = checkbox1.isChecked && checkbox2.isChecked
+
+        collectcheckbox.setOnClickListener {            //개인정보
+            allcheckd.isChecked = conditionscheckbox.isChecked && collectcheckbox.isChecked
         }
     }
 
     private fun radioboxCheck(){
-        if(!radio_btn_male.isChecked && !radio_btn_female.isChecked){
+
+        if(!radio_btn_male.isChecked && !radio_btn_female.isChecked){       //라디오 버튼 디폴트 값
             radio_btn_male.isChecked = true
         }
+
     }
 
 
     private fun join() {
+
         val email = Utils.getString(registeremailET)
-        if(email.isEmpty()) {
+        if(email.isEmpty()) {                   //아이디 체크
             Utils.alert(context, "아이디는 필수입력입니다.")
             return
         }
 
         val password = Utils.getString(registerpasswordET)
-        val password2 = Utils.getString(registerpasswordET2)
+        val passwordre = Utils.getString(registerpasswordreET)
+        if(password.isEmpty()){         //비밀번호 체크
+            Utils.alert(context, "비밀번호를 입력해주세요.")
+            return
+        }else if(passwordre.isEmpty()){         //비밀번호 체크
+            Utils.alert(context, "비밀번호를 입력해주세요.")
+            return
+        }
 
-        if(password.isEmpty()){
-            Utils.alert(context, "비밀번호를 입력해주세요.")
+        if(password.length < 2 || password.length > 7){         //비밀번호 글자수 체크
+            Utils.alert(context, "글자 수를 확인해주세요.")
             return
-        }else if(password2.isEmpty()){
-            Utils.alert(context, "비밀번호를 입력해주세요.")
+        }else if(passwordre.length < 2 || passwordre.length > 7){       //비밀번호 글자수 체크
+            Utils.alert(context, "글자 수를 확인해주세요.")
             return
-        }else if(password!=password2){
+        }
+
+        if(password!=passwordre){       //비밀번호 같은지 체크
             Utils.alert(context, "비밀번호가 다릅니다.")
             return
         }
 
-        if(password.length in 2..7 && password2.length in 2..7){
-
-        }else{
-            return
-        }
-
         val phone = Utils.getString(registerphoneET)
-
-        if(phone.isEmpty()){
+        if(phone.isEmpty()){            //핸드폰 체크
             Utils.alert(context, "핸드폰 번호를 입력해주세요.")
             return
         }
 
         val nickname = Utils.getString(registernicknameET)
-
-        if(nickname.isEmpty()){
+        if(nickname.isEmpty()){         //닉네임 체크
             Utils.alert(context, "닉네임을 입력해주세요.")
             return
         }
 
-
-
-        gender = if(this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male){
+        gender = if(this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male){     //라디오 버튼 값주기
                     0          //남자
                 }else {
                     1          //여자
                 }
 
-
-
-        if(!allcheckd.isChecked) {
+        if(!allcheckd.isChecked) {      //모두 동의 체크
             Utils.alert(context, "약관 동의를 해주세요.")
             return
         }
