@@ -41,7 +41,7 @@
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustPan|adjustResize">
 
             <!--
             intent-filter>
@@ -62,7 +62,7 @@
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -74,14 +74,12 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.FindidActivity"
-            android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:screenOrientation="portrait"/>
+            android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.AddPostActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.FindPictureActivity"
             android:theme="@style/NoTitleDialog" />
@@ -91,7 +89,7 @@
         <activity
             android:name=".activities.MainDetailActivity"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity android:name=".activities.PictureDetailActivity"
 

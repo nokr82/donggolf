@@ -35,18 +35,14 @@ class LoginActivity : RootActivity() {
     }
 
     fun login(){
-        val email = Utils.getString(emailET)
-        val password = Utils.getString(passwordET)
+            var email = Utils.getString(emailET)
+            var password = Utils.getString(passwordET)
 
 
-        startActivity(Intent(this,MainActivity::class.java))
-        finish()
+            startActivity(Intent(this,MainActivity::class.java))
+            finish()
     }
     fun nomemberlogin(){
-        val email = Utils.getString(emailET)
-        val password = Utils.getString(passwordET)
-
-
         startActivity(Intent(this,MainActivity::class.java))
         finish()
     }
@@ -55,7 +51,7 @@ class LoginActivity : RootActivity() {
         startActivity(Intent(this,AddPostActivity::class.java))
     }
     fun moveregister(){
-        startActivity(Intent(this,RegisterActivity::class.java))
+        startActivity(Intent(this,AddPostActivity::class.java))
     }
 
 
