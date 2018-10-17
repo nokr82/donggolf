@@ -1,15 +1,15 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
+import donggolf.android.actions.InfoAction
+import donggolf.android.actions.JoinAction
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import donggolf.android.models.Info
 import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : RootActivity() {
@@ -18,7 +18,7 @@ class RegisterActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    var gender: Int = 0
+    private var gender: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,14 +135,14 @@ class RegisterActivity : RootActivity() {
         }
 
         // 라디오 버튼 값주기
-        if (this.radio_gender.checkedRadioButtonId == R.id.maleRB) {
+        gender = if (this.radio_gender.checkedRadioButtonId == R.id.maleRB) {
 
             // 남자
-            gender = 0
+            0
         } else {
 
             // 여자
-            gender = 1
+            1
         }
 
         // 모두 동의 체크
@@ -152,23 +152,39 @@ class RegisterActivity : RootActivity() {
         }
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, object : OnCompleteListener<AuthResult> {
-                    override fun onComplete(task: Task<AuthResult>) {
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            val user = mAuth.currentUser
+                .addOnSuccessListener {
+                    val user = mAuth.currentUser
+                    if(user != null) {
+                        val uid = user.uid
 
+                        val info = Info(phone = phone, nick = nickName, sex = (if (gender == 0) "M" else "F"), agree = true)
+                        JoinAction.join(uid, info) {
 
-                            println("user : $user")
+                            println("it : $it")
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                            if(it) {
+                                InfoAction.getInfo(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                                    if(success) {
+                                        println("data : $data")
+
+                                        LoginActivity.setInfoData(context, data)
+
+                                        startActivity(Intent(context, MainActivity::class.java))
+
+                                    } else {
+
+                                    }
+                                }
+                            } else {
+
+                            }
+
                         }
                     }
-                })
-        finish()
-
-
+                }
+                .addOnFailureListener {
+                    println("fa : $it")
+                    it.printStackTrace()
+                }
     }
 }

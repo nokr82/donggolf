@@ -92,6 +92,19 @@ class LoginActivity : RootActivity() {
             PrefUtils.setPreference(context, "email", email)
             PrefUtils.setPreference(context, "auto_login", true)
         }
+
+        fun setInfoData(context: Context, info: Map<String, Any>?) {
+
+            println(info)
+
+            val sex = Utils.getString(info, "sex")
+            val phone = Utils.getString(info, "phone")
+            val nick = Utils.getString(info, "nick")
+
+            PrefUtils.setPreference(context, "sex", sex)
+            PrefUtils.setPreference(context, "phone", phone)
+            PrefUtils.setPreference(context, "nick", nick)
+        }
     }
 
 

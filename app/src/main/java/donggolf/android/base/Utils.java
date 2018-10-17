@@ -1573,6 +1573,19 @@ public class Utils {
         return -1;
     }
 
+    public static String getString(Map<String, Object> map, String key) {
+        if(map != null && map.containsKey(key)) {
+            Object o = map.get(key);
+            if(o instanceof String) {
+                return (String) o;
+            } else if(o instanceof Integer) {
+                return String.valueOf(o);
+            }
+            return "";
+        }
+        return "";
+    }
+
     public static String getString(JSONObject json, String key) {
         if(json != null && json.has(key) && !json.isNull(key)) {
             try {
@@ -1602,6 +1615,28 @@ public class Utils {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        return defaultValue;
+    }
+
+    public static int getInt(Map<String, Object> map, String key) {
+        if(map != null && map.containsKey(key)) {
+            Object o = map.get(key);
+            if(o instanceof Integer) {
+                return (int) o;
+            }
+            return 0;
+        }
+        return 0;
+    }
+
+    public static int getInt(Map<String, Object> map, String key, int defaultValue) {
+        if(map != null && map.containsKey(key)) {
+            Object o = map.get(key);
+            if(o instanceof Integer) {
+                return (int) o;
+            }
+            return defaultValue;
         }
         return defaultValue;
     }
