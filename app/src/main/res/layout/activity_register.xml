@@ -33,6 +33,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="회원가입"
+                    android:textSize="13dp"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -57,7 +58,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="아이디"
                         android:textColor="#000000"
-                        android:textSize="10dp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -77,14 +78,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                         <EditText
-                            android:id="@+id/RegisterEmailET"
+                            android:id="@+id/registeremailET"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_vertical"
                             android:background="@null"
                             android:layout_margin="5dp"
                             android:hint="이메일"
-                            android:textSize="9.33dp" />
+                            android:textSize="12dp" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -118,7 +119,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="비밀번호"
                         android:textColor="#000000"
-                        android:textSize="10dp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -147,7 +148,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
-                                    android:id="@+id/RegisterPasswordET"
+                                    android:id="@+id/registerpasswordET"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -155,7 +156,8 @@
                                     android:background="@null"
                                     android:hint="비밀번호 입력 (2~7자 이내)"
                                     android:inputType="textPassword"
-                                    android:textSize="9.33dp" />
+                                    android:maxLength="7"
+                                    android:textSize="12dp" />
                             </LinearLayout>
                         </RelativeLayout>
                     </LinearLayout>
@@ -182,7 +184,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
-                                    android:id="@+id/RegisterPasswordET2"
+                                    android:id="@+id/registerpasswordET2"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -190,7 +192,8 @@
                                     android:background="@null"
                                     android:hint="비밀번호 재입력"
                                     android:inputType="textPassword"
-                                    android:textSize="9.33dp" />
+                                    android:maxLength="7"
+                                    android:textSize="12dp" />
                             </LinearLayout>
                         </RelativeLayout>
                     </LinearLayout>
@@ -213,7 +216,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="휴대폰번호"
                         android:textColor="#000000"
-                        android:textSize="10dp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -233,14 +236,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                             <EditText
-                                android:id="@+id/RegisterPhoneET"
+                                android:id="@+id/registerphoneET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
                                 android:background="@null"
                                 android:layout_margin="5dp"
+                                android:inputType="number"
                                 android:hint="'-'없이 번호만 입력"
-                                android:textSize="9.33dp" />
+                                android:textSize="12dp" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -262,7 +266,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="닉네임"
                         android:textColor="#000000"
-                        android:textSize="10dp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -282,7 +286,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                             <EditText
-                                android:id="@+id/RegisterNicknameET"
+                                android:id="@+id/registernicknameET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
@@ -290,7 +294,7 @@
                                 android:layout_margin="5dp"
                                 android:hint="2~7자 이내"
                                 android:maxLength="7"
-                                android:textSize="9.33dp" />
+                                android:textSize="12dp" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -313,7 +317,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="닉네임"
                         android:textColor="#000000"
-                        android:textSize="10dp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -330,9 +334,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:textSize="10dp"
+                            android:textSize="13dp"
                             android:text="남자"
-                            android:buttonTint="#0EDA2F"/>
+                            android:buttonTint="#0EDA2F"
+                            android:defaultFocusHighlightEnabled="true"/>
 
                         <RadioButton
                             android:id="@+id/radio_btn_female"
@@ -340,7 +345,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="25dp"
-                            android:textSize="10dp"
+                            android:textSize="13dp"
                             android:text="여자"
                             android:buttonTint="#0EDA2F" />
                     </RadioGroup>
@@ -361,7 +366,7 @@
                         android:layout_marginLeft="13dp"
                         android:text="문서/앱 권한 전체동의 및 허용"
                         android:textColor="#000000"
-                        android:textSize="10.67dp" />
+                        android:textSize="13dp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -371,12 +376,13 @@
                         android:layout_marginLeft="30dp"
                         android:layout_marginRight="30dp"
                         android:textColor="#000000"
-                        android:textSize="10.67dp" />
+                        android:textSize="13dp" />
 
 
 
                 </LinearLayout>
                 <CheckBox
+                    android:id="@+id/allcheckd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -400,11 +406,11 @@
                     android:layout_marginLeft="13dp"
                     android:text="이용약관 상세보기"
                     android:textColor="#000000"
-                    android:textSize="10.67dp" />
+                    android:textSize="13dp" />
 
                 <ImageView
-                    android:layout_width="7.33dp"
-                    android:layout_height="4dp"
+                    android:layout_width="10dp"
+                    android:layout_height="7dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="41dp"
@@ -428,18 +434,19 @@
                         android:layout_height="wrap_content"
                         android:text="이용약관"
                         android:textColor="#000000"
-                        android:textSize="10.67dp" />
+                        android:textSize="13dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="내용"
                         android:textColor="#3b3b3b"
-                        android:textSize="10.67dp" />
+                        android:textSize="12dp" />
 
                 </LinearLayout>
 
                 <CheckBox
+                    android:id="@+id/checkbox1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -464,18 +471,19 @@
                         android:layout_height="wrap_content"
                         android:text="개인정보 수집 및 이용"
                         android:textColor="#000000"
-                        android:textSize="10.67dp" />
+                        android:textSize="13dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="내용"
                         android:textColor="#3b3b3b"
-                        android:textSize="10.67dp" />
+                        android:textSize="12dp" />
 
                 </LinearLayout>
 
                 <CheckBox
+                    android:id="@+id/checkbox2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -491,7 +499,7 @@
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 android:gravity="center"
-                android:background="@drawable/btn_login"
+                android:background="@drawable/btn_login_selector"
                 android:layout_gravity="center"
                 android:layout_marginLeft="120dp"
                 android:layout_marginRight="120dp"
