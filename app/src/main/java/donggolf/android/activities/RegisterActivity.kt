@@ -18,15 +18,14 @@ class RegisterActivity : RootActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var context: Context
-    var gender : Int? = null
-    var checkd : Boolean ? = false
+    var gender: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance()
 
         btn_finish.setOnClickListener {
             finish()
@@ -34,54 +33,39 @@ class RegisterActivity : RootActivity() {
         btn_success_register.setOnClickListener {
             join()
         }
+
         radioboxCheck()
-        checkboxCheck()
 
+        allcheck()
 
     }
-    fun radioboxCheck(){
-        if(radio_btn_male.isChecked == false && radio_btn_female.isChecked == false){
-            radio_btn_male.setChecked(true)
-        }
-    }
-
-
-    fun checkboxCheck(){
+    private fun allcheck(){
         allcheckd.setOnClickListener {
-            if(allcheckd.isChecked == true){
-                checkbox1.setChecked(true)
-                checkbox2.setChecked(true)
-                checkd = true
-            }else if(allcheckd.isChecked == false){
-                allcheckd.setChecked(false)
-                checkbox1.setChecked(false)
-                checkbox2.setChecked(false)
-                checkd = false
+            if(allcheckd.isChecked){
+                checkbox1.isChecked = true
+                checkbox2.isChecked = true
+            }else {
+                checkbox1.isChecked = false
+                checkbox2.isChecked = false
             }
         }
 
         checkbox1.setOnClickListener {
-            if(checkbox1.isChecked == true && checkbox2.isChecked == true){
-                allcheckd.setChecked(true)
-                checkd == true
-            }else {
-                allcheckd.setChecked(false)
-                checkd == false
-            }
+            allcheckd.isChecked = checkbox1.isChecked && checkbox2.isChecked
         }
-
         checkbox2.setOnClickListener {
-            if(checkbox1.isChecked == true && checkbox2.isChecked == true){
-                allcheckd.setChecked(true)
-                checkd == true
-            }else {
-                allcheckd.setChecked(false)
-                checkd == false
-            }
+            allcheckd.isChecked = checkbox1.isChecked && checkbox2.isChecked
         }
     }
 
-    fun join() {
+    private fun radioboxCheck(){
+        if(!radio_btn_male.isChecked && !radio_btn_female.isChecked){
+            radio_btn_male.isChecked = true
+        }
+    }
+
+
+    private fun join() {
         val email = Utils.getString(registeremailET)
         if(email.isEmpty()) {
             Utils.alert(context, "아이디는 필수입력입니다.")
@@ -102,12 +86,10 @@ class RegisterActivity : RootActivity() {
             return
         }
 
-        if(password.length >= 2 && password.length <= 7){
-            checkd = true
-        }else if(password2.length >= 2 && password2.length <= 7){
-            checkd = true
-        }else {
-            checkd = false
+        if(password.length in 2..7 && password2.length in 2..7){
+
+        }else{
+            return
         }
 
         val phone = Utils.getString(registerphoneET)
@@ -126,19 +108,25 @@ class RegisterActivity : RootActivity() {
 
 
 
-        if(radio_gender.checkedRadioButtonId == R.id.radio_btn_male){
-            gender = 0          //남자
-        }else {
-            gender = 1          //여자
+        gender = if(this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male){
+                    0          //남자
+                }else {
+                    1          //여자
+                }
+
+
+
+        if(!allcheckd.isChecked) {
+            Utils.alert(context, "약관 동의를 해주세요.")
+            return
         }
 
-        if(allcheckd.isChecked == true){
-            mAuth!!.createUserWithEmailAndPassword(email, password)
+            mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, object : OnCompleteListener<AuthResult> {
                         override fun onComplete(task: Task<AuthResult>) {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                val user = mAuth.getCurrentUser()
+                                val user = mAuth.currentUser
 
 
                                 println("user : $user")
@@ -149,11 +137,7 @@ class RegisterActivity : RootActivity() {
                             }
                         }
                     })
-            finish()
-        }else {
-            Utils.alert(context, "약관 동의를 해주세요.")
-            return
-        }
+        finish()
 
 
 
