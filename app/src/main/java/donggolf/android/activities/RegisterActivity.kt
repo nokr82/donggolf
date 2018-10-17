@@ -36,7 +36,7 @@ class RegisterActivity : RootActivity() {
             join()
         }
 
-        // 라디오 버튼 디폴트 값 주기 
+        // 라디오 버튼 디폴트 값 주기
         checkRadioboxes()
 
         checkAll()
@@ -44,9 +44,9 @@ class RegisterActivity : RootActivity() {
     }
 
     private fun checkAll() {
-        allCheckCB.setOnClickListener {
 
-            // 모두동의
+        // 모두동의
+        allCheckCB.setOnClickListener {
             if (allCheckCB.isChecked) {
                 agreeCB.isChecked = true
                 privacyCB.isChecked = true
@@ -56,19 +56,23 @@ class RegisterActivity : RootActivity() {
             }
         }
 
+        // 이용약관
         agreeCB.setOnClickListener {
-            // 이용약관
             allCheckCB.isChecked = agreeCB.isChecked && privacyCB.isChecked
         }
 
+        // 개인정보
         privacyCB.setOnClickListener {
-            // 개인정보
             allCheckCB.isChecked = agreeCB.isChecked && privacyCB.isChecked
         }
+
     }
 
+
     private fun checkRadioboxes() {
-        if (!maleRB.isChecked && !femaleRB.isChecked) {       //라디오 버튼 디폴트 값
+
+        // 라디오 버튼 디폴트 값
+        if (!maleRB.isChecked && !femaleRB.isChecked) {
             maleRB.isChecked = true
         }
 
@@ -77,22 +81,22 @@ class RegisterActivity : RootActivity() {
 
     private fun join() {
 
-        val email = Utils.getString(emailET)
         // 아이디 체크
+        val email = Utils.getString(emailET)
         if (email.isEmpty()) {
             Utils.alert(context, "아이디는 필수 입력입니다.")
             return
         }
 
-        val password = Utils.getString(passwordET)
         // 비밀번호 체크
+        val password = Utils.getString(passwordET)
         if (password.isEmpty()) {
             Utils.alert(context, "비밀번호를 입력해주세요.")
             return
         }
 
-        val passwordre = Utils.getString(repasswordET)
         // 비밀번호 체크
+        val passwordre = Utils.getString(repasswordET)
         if (passwordre.isEmpty()) {
             Utils.alert(context, "비밀번호를 입력해주세요.")
             return
@@ -132,9 +136,11 @@ class RegisterActivity : RootActivity() {
 
         // 라디오 버튼 값주기
         if (this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male) {
+
             // 남자
             gender = 0
         } else {
+
             // 여자
             gender = 1
         }
