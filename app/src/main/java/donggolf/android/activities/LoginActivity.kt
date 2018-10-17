@@ -5,15 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import donggolf.android.R
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : RootActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
     private lateinit var context: Context
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +53,9 @@ class LoginActivity : RootActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         val user = mAuth.getCurrentUser()
 
+                        LoginActivity.setLoginData(context, user)
 
-                        println("user : $user")
+                        startActivity(Intent(context, MainActivity::class.java))
 
                     } else {
                         // If sign in fails, display a message to the user.
@@ -75,5 +78,20 @@ class LoginActivity : RootActivity() {
     fun moveregister() {
         startActivity(Intent(this, RegisterActivity::class.java))
     }
+
+    companion object {
+        fun setLoginData(context: Context, user: FirebaseUser?) {
+
+            println(user)
+
+            val uid = user?.uid
+            val email = user?.email
+
+            PrefUtils.setPreference(context, "uid", uid)
+            PrefUtils.setPreference(context, "email", email)
+            PrefUtils.setPreference(context, "auto_login", true)
+        }
+    }
+
 
 }
