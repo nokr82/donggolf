@@ -3,7 +3,7 @@
 
     <item
         android:state_pressed="true"
-        android:drawable="@drawable/btn_login"
+        android:drawable="@drawable/btn_logincopy"
         />
     <item
         android:state_pressed="false"

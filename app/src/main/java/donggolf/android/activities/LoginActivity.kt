@@ -16,22 +16,46 @@ class LoginActivity : RootActivity() {
 
         btn_login.setOnClickListener{
             // if()
-            startActivity(Intent(this,MainActivity::class.java))
-            finish()
+            login()
         }
 
         btn_nomember_login.setOnClickListener{
-            startActivity(Intent(this,MainActivity::class.java))
-            finish()
+            nomemberlogin()
         }
 
         linear_go_findid.setOnClickListener {
-            startActivity(Intent(this,AddPostActivity::class.java))
+            moveaddpost()
         }
 
         linear_go_register.setOnClickListener {
-            startActivity(Intent(this,RegisterActivity::class.java))
+            moveregister()
         }
 
     }
+
+    fun login(){
+            var email = emailET.text.toString()
+            var password = passwordET.text.toString()
+
+
+            startActivity(Intent(this,MainActivity::class.java))
+            finish()
+    }
+    fun nomemberlogin(){
+        var email = emailET.text.toString()
+        var password = passwordET.text.toString()
+
+
+        startActivity(Intent(this,MainActivity::class.java))
+        finish()
+    }
+
+    fun moveaddpost(){
+        startActivity(Intent(this,AddPostActivity::class.java))
+    }
+    fun moveregister(){
+        startActivity(Intent(this,AddPostActivity::class.java))
+    }
+
+
 }
