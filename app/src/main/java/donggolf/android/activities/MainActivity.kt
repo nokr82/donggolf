@@ -45,9 +45,7 @@ class MainActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance();
 
-        btn_go_addpost.setOnClickListener {
-            startActivity(Intent(this,AddPostActivity::class.java))
-        }
+
 
         click_btn_main_on_relative.setOnClickListener {
 
@@ -112,8 +110,11 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
+           MoveMainDetailActivity()
+        }
 
-            startActivity(Intent(this,MainDetailActivity::class.java))
+        btn_go_addpost.setOnClickListener {
+            MoveAddPostActivity()
         }
 
         main_edit_search.setOnClickListener {
@@ -125,6 +126,14 @@ class MainActivity : RootActivity() {
             main_listview_search.setVisibility(View.GONE)
 //            main_listview.setVisibility(View.VISIBLE)
         }
+    }
+
+    fun MoveAddPostActivity(){
+        startActivity(Intent(this,AddPostActivity::class.java))
+    }
+
+    fun MoveMainDetailActivity(){
+        startActivity(Intent(this,MainDetailActivity::class.java))
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {

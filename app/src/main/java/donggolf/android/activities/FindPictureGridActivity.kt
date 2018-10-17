@@ -50,10 +50,6 @@ class FindPictureGridActivity : RootActivity() {
         }
     }
 
-    fun setDataList(data: Cursor){
 
-        while (data.moveToNext()){
-        }
 
-    }
 }

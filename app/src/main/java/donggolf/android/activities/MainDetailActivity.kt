@@ -45,15 +45,12 @@ class MainDetailActivity : RootActivity() {
         adapter.notifyDataSetChanged()
 
         main_detail_gofindpicture.setOnClickListener {
-            startActivity(Intent(this,FindPictureActivity::class.java))
+           MoveFindPictureActivity()
         }
 
 
     }
-    fun setDataList(data: Cursor){
-
-        while (data.moveToNext()){
-        }
-
+    fun MoveFindPictureActivity(){
+        startActivity(Intent(this,FindPictureActivity::class.java))
     }
 }

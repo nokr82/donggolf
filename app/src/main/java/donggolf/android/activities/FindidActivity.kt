@@ -17,10 +17,5 @@ class FindidActivity : RootActivity() {
         }
     }
 
-    fun setDataList(data: Cursor){
 
-        while (data.moveToNext()){
-        }
-
-    }
 }

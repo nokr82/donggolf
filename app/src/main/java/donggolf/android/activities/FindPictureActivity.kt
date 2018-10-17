@@ -44,7 +44,7 @@ class FindPictureActivity : RootActivity() {
 
         findpictre_listview.setOnItemClickListener { parent, view, position, id ->
 
-            startActivity(Intent(this,FindPictureGridActivity::class.java))
+            MoveFindPictureGridActivity()
 
         }
 
@@ -58,12 +58,8 @@ class FindPictureActivity : RootActivity() {
 
     }
 
-
-    fun setDataList(data: Cursor){
-
-        while (data.moveToNext()){
-        }
-
+    fun MoveFindPictureGridActivity(){
+        startActivity(Intent(this,FindPictureGridActivity::class.java))
     }
 
 }

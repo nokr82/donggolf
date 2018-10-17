@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import donggolf.android.R
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : RootActivity() {
@@ -34,16 +35,16 @@ class LoginActivity : RootActivity() {
     }
 
     fun login(){
-            var email = emailET.text.toString()
-            var password = passwordET.text.toString()
+        val email = Utils.getString(emailET)
+        val password = Utils.getString(passwordET)
 
 
-            startActivity(Intent(this,MainActivity::class.java))
-            finish()
+        startActivity(Intent(this,MainActivity::class.java))
+        finish()
     }
     fun nomemberlogin(){
-        var email = emailET.text.toString()
-        var password = passwordET.text.toString()
+        val email = Utils.getString(emailET)
+        val password = Utils.getString(passwordET)
 
 
         startActivity(Intent(this,MainActivity::class.java))
@@ -54,7 +55,7 @@ class LoginActivity : RootActivity() {
         startActivity(Intent(this,AddPostActivity::class.java))
     }
     fun moveregister(){
-        startActivity(Intent(this,AddPostActivity::class.java))
+        startActivity(Intent(this,RegisterActivity::class.java))
     }
 
 

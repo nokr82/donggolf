@@ -17,7 +17,12 @@ class AddPostActivity : RootActivity() {
             finish()
         }
         btn_go_findpictureactivity.setOnClickListener {
-            startActivity(Intent(this,FindPictureActivity::class.java))
+            MoveFindPictureActivity()
         }
+    }
+
+
+    fun MoveFindPictureActivity(){
+        startActivity(Intent(this,FindPictureActivity::class.java))
     }
 }
