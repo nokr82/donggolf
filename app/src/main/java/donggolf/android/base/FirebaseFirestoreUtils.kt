@@ -36,14 +36,14 @@ class FirebaseFirestoreUtils {
                     }
         }
 
-        fun save(collectionName:String, params: Any, result: (success:Boolean) -> Unit) {
+        fun save(collectionName:String, params: Any, result: (success:Boolean, key:String?, exception:Exception?) -> Unit) {
             db.collection(collectionName)
                     .add(params)
                     .addOnSuccessListener {
-                        result(true)
+                        result(true, it.id, null)
                     }
                     .addOnFailureListener {
-                        result(false)
+                        result(false, null, it)
                     }
         }
 

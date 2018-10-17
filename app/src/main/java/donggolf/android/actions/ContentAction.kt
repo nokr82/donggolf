@@ -7,14 +7,14 @@ class ContentAction {
 
     companion object {
 
-        fun saveContent(params: Content, result: (success: Boolean) -> Unit) {
-            FirebaseFirestoreUtils.save("contents", params) {
-                result(it)
+        fun saveContent(params: Content, result: (success:Boolean, key:String?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.save("contents", params) { success: Boolean, key: String?, exception: Exception? ->
+                result(success, key, exception)
             }
         }
 
         fun updateContent(key: String, params: Content, result: (success: Boolean) -> Unit) {
-            FirebaseFirestoreUtils.save("contents", params) {
+            FirebaseFirestoreUtils.save("contents", key, params) {
                 result(it)
             }
         }
