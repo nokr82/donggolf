@@ -151,8 +151,8 @@ class RegisterActivity : RootActivity() {
                     })
             finish()
         }else {
-                Utils.alert(context, "약관 동의를 해주세요.")
-                return
+            Utils.alert(context, "약관 동의를 해주세요.")
+            return
         }
 
 
