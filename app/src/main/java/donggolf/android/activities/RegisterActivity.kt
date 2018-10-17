@@ -1,11 +1,9 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
 import donggolf.android.base.RootActivity
@@ -41,20 +39,21 @@ class RegisterActivity : RootActivity() {
         val password = Utils.getString(passwordET)
 
         mAuth!!.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, object : OnCompleteListener<AuthResult> {
-                    override fun onComplete(task: Task<AuthResult>) {
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            val user = mAuth.getCurrentUser()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        val user = mAuth.getCurrentUser()
 
+                        LoginActivity.setLoginData(context, user)
 
-                            println("user : $user")
+                        startActivity(Intent(context, MainActivity::class.java))
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                        }
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
                     }
-                })
+                }
+
+
     }
 }
