@@ -135,7 +135,7 @@ class RegisterActivity : RootActivity() {
         }
 
         // 라디오 버튼 값주기
-        if (this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male) {
+        if (this.radio_gender.checkedRadioButtonId == R.id.maleRB) {
 
             // 남자
             gender = 0
