@@ -86,8 +86,6 @@ class MainActivity : RootActivity() {
         var intent = getIntent()
 
 
-        var dataList:Array<String> = arrayOf("findpicure_name","findpicure_count")
-
 
         var dataObj : JSONObject = JSONObject();
 
