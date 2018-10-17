@@ -26,7 +26,8 @@ class LoginActivity : RootActivity() {
         mAuth = FirebaseAuth.getInstance();
 
         btn_login.setOnClickListener {
-            login()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
 
         btn_nomember_login.setOnClickListener {
