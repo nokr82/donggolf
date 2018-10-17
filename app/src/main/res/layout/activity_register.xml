@@ -22,9 +22,9 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/btn_finish"
-                    android:layout_width="8.33dp"
-                    android:layout_height="14.67dp"
+                    android:id="@+id/finishBT"
+                    android:layout_width="11dp"
+                    android:layout_height="17dp"
                     android:layout_margin="10dp"
                     android:background="@drawable/btn_back" />
 
@@ -78,7 +78,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                         <EditText
-                            android:id="@+id/registeremailET"
+                            android:id="@+id/emailET"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_vertical"
@@ -101,7 +101,7 @@
                     android:text="*비밀번호 분실 시 이메일로 임시 비밀번호 전송"
                     android:layout_marginLeft="85dp"
                     android:textColor="#0EDA2F"
-                    android:textSize="9.33dp" />
+                    android:textSize="11dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -148,7 +148,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
-                                    android:id="@+id/registerpasswordET"
+                                    android:id="@+id/passwordET"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -184,7 +184,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
-                                    android:id="@+id/registerpasswordreET"
+                                    android:id="@+id/repasswordET"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -236,7 +236,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                             <EditText
-                                android:id="@+id/registerphoneET"
+                                android:id="@+id/phoneET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
@@ -286,7 +286,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                             <EditText
-                                android:id="@+id/registernicknameET"
+                                android:id="@+id/nickNameET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
@@ -330,7 +330,7 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <RadioButton
-                            android:id="@+id/radio_btn_male"
+                            android:id="@+id/maleRB"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -340,7 +340,7 @@
                             android:defaultFocusHighlightEnabled="true"/>
 
                         <RadioButton
-                            android:id="@+id/radio_btn_female"
+                            android:id="@+id/femaleRB"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -382,7 +382,7 @@
 
                 </LinearLayout>
                 <CheckBox
-                    android:id="@+id/allcheckd"
+                    android:id="@+id/allCheckCB"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -409,11 +409,11 @@
                     android:textSize="13dp" />
 
                 <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="7dp"
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="41dp"
+                    android:layout_marginRight="39dp"
                     android:background="@drawable/btn_fold" />
             </RelativeLayout>
 
@@ -446,7 +446,7 @@
                 </LinearLayout>
 
                 <CheckBox
-                    android:id="@+id/conditionscheckbox"
+                    android:id="@+id/agreeCB"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -483,7 +483,7 @@
                 </LinearLayout>
 
                 <CheckBox
-                    android:id="@+id/collectcheckbox"
+                    android:id="@+id/privacyCB"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
