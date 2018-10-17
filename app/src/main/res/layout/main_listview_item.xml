@@ -14,7 +14,7 @@
         android:layout_margin="10dp"/>
     <TextView
         android:id="@+id/main_item_content"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세"
         android:textSize="10.67dp"
