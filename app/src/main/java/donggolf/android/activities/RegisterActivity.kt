@@ -88,6 +88,12 @@ class RegisterActivity : RootActivity() {
             return
         }
 
+        // 이메일 형식 체크
+        if(!Utils.isValidEmail(email)){
+            Utils.alert(context, "정확한 이메일을 입력해주세요..")
+            return
+        }
+
         // 비밀번호 체크
         val password = Utils.getString(passwordET)
         if (password.isEmpty()) {
