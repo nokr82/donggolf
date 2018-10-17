@@ -192,5 +192,7 @@ class RegisterActivity : RootActivity() {
                     println("fa : $it")
                     it.printStackTrace()
                 }
+
+
     }
 }
