@@ -2,29 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="donggolf.android">
 
-    <!--
-    activity
-        android:name=".activities.IntroActivity"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:noHistory="true"
-        android:screenOrientation="portrait" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data
-                android:host="@string/kakaolink_host"
-                android:scheme="@string/kakao_scheme" />
-
-        </intent-filter>
-    </activity
-    -->
     <application
         android:name=".base.GlobalApplication"
         android:allowBackup="false"
@@ -35,26 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- activity android:name=".MainActivity"></activity -->
+        <activity
+            android:name=".activities.IntroActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustPan|adjustResize">
-
-            <!--
-            intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="threemeals" />
-
-                <!- data android:scheme="@string/kakao_scheme"
-                    android:host="@string/kakaolink_host" />
-            </intent-filter
-            -->
-
         </activity>
 
         <!-- 로그인 -->
@@ -63,37 +38,39 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.RegisterActivity"
             android:theme="@style/NoTitleDialog" />
+
         <activity
             android:name=".activities.FindidActivity"
             android:theme="@style/NoTitleDialog" />
+
         <activity
             android:name=".activities.AddPostActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".activities.FindPictureActivity"
             android:theme="@style/NoTitleDialog" />
+
         <activity
             android:name=".activities.FindPictureGridActivity"
             android:theme="@style/NoTitleDialog" />
+
         <activity
             android:name=".activities.MainDetailActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name=".activities.PictureDetailActivity"
 
-            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.PictureDetailActivity"
+            android:theme="@style/NoTitleDialog">
+        </activity>
 
     </application>
 

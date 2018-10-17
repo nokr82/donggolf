@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:hint="제목"
                 android:layout_margin="10dp"
-                android:textSize="11.33dp"
+                android:textSize="12.73dp"
                 android:background="@null"/>
             <ImageView
                 android:layout_width="match_parent"
