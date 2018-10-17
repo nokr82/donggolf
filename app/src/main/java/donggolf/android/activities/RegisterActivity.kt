@@ -36,7 +36,7 @@ class RegisterActivity : RootActivity() {
             join()
         }
 
-        //라디오 버튼 디폴트 값 주기
+        // 라디오 버튼 디폴트 값 주기
         checkRadioboxes()
 
         checkAll()
@@ -46,7 +46,7 @@ class RegisterActivity : RootActivity() {
     private fun checkAll() {
         allCheckCB.setOnClickListener {
 
-            //모두동의
+            // 모두동의
             if (allCheckCB.isChecked) {
                 agreeCB.isChecked = true
                 privacyCB.isChecked = true
@@ -57,14 +57,13 @@ class RegisterActivity : RootActivity() {
         }
 
         agreeCB.setOnClickListener {
-            //이용약관
+            // 이용약관
             allCheckCB.isChecked = agreeCB.isChecked && privacyCB.isChecked
         }
 
         privacyCB.setOnClickListener {
-            //개인정보
+            // 개인정보
             allCheckCB.isChecked = agreeCB.isChecked && privacyCB.isChecked
-
         }
     }
 
@@ -79,64 +78,64 @@ class RegisterActivity : RootActivity() {
     private fun join() {
 
         val email = Utils.getString(emailET)
-        //아이디 체크
+        // 아이디 체크
         if (email.isEmpty()) {
             Utils.alert(context, "아이디는 필수 입력입니다.")
             return
         }
 
         val password = Utils.getString(passwordET)
-        //비밀번호 체크
+        // 비밀번호 체크
         if (password.isEmpty()) {
             Utils.alert(context, "비밀번호를 입력해주세요.")
             return
         }
 
         val passwordre = Utils.getString(repasswordET)
-        //비밀번호 체크
+        // 비밀번호 체크
         if (passwordre.isEmpty()) {
             Utils.alert(context, "비밀번호를 입력해주세요.")
             return
         }
 
-        //비밀번호 글자수 체크
+        // 비밀번호 글자수 체크
         if (password.length < 2 || password.length > 7) {
             Utils.alert(context, "글자 수가 2 ~ 7 글자 인지 확인해주세요.")
             return
         }
 
-        //비밀번호 글자수 체크
+        // 비밀번호 글자수 체크
         if (passwordre.length < 2 || passwordre.length > 7) {
             Utils.alert(context, "글자 수가 2 ~ 7 글자 인지 확인해주세요.")
             return
         }
 
-        //비밀번호 같은지 체크
+        // 비밀번호 같은지 체크
         if (password != passwordre) {
             Utils.alert(context, "비밀번호가 다릅니다.")
             return
         }
 
-        //핸드폰 체크
+        // 핸드폰 체크
         val phone = Utils.getString(phoneET)
         if (phone.isEmpty()) {
             Utils.alert(context, "핸드폰 번호를 입력해주세요.")
             return
         }
 
-        //닉네임 체크
+        // 닉네임 체크
         val nickName = Utils.getString(nickNameET)
         if (nickName.isEmpty()) {
             Utils.alert(context, "닉네임을 입력해주세요.")
             return
         }
 
-        //라디오 버튼 값주기
+        // 라디오 버튼 값주기
         if (this.radio_gender.checkedRadioButtonId == R.id.radio_btn_male) {
-            //남자
+            // 남자
             gender = 0
         } else {
-            //여자
+            // 여자
             gender = 1
         }
 
