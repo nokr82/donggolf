@@ -90,7 +90,6 @@ class LoginActivity : RootActivity() {
 
             PrefUtils.setPreference(context, "uid", uid)
             PrefUtils.setPreference(context, "email", email)
-            PrefUtils.setPreference(context, "auto_login", true)
         }
 
         fun setInfoData(context: Context, info: Map<String, Any>?) {

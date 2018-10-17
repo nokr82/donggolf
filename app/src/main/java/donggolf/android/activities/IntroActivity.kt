@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 
 
@@ -32,9 +33,19 @@ class IntroActivity : RootActivity() {
         if(user == null) {
             startActivity(Intent(this, LoginActivity::class.java))
         } else {
-            LoginActivity.setLoginData(context, user)
 
-            startActivity(Intent(this, MainActivity::class.java))
+            val autoLogin = PrefUtils.getBooleanPreference(context, "auto_login")
+            if(autoLogin) {
+                LoginActivity.setLoginData(context, user)
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+
+                FirebaseAuth.getInstance().signOut()
+
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+
+
         }
     }
 }
