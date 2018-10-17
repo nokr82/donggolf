@@ -36,7 +36,7 @@ class RegisterActivity : RootActivity() {
             join()
         }
 
-        // 라디오 버튼 디폴트 값 주기
+        // 라디오 버튼 디폴트 값 주기 
         checkRadioboxes()
 
         checkAll()
