@@ -57,14 +57,14 @@ class RegisterActivity : RootActivity() {
             gender = 1          //여자
         }
 
-        mAuth!!.createUserWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, object : OnCompleteListener<AuthResult> {
                     override fun onComplete(task: Task<AuthResult>) {
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             val user = mAuth.getCurrentUser()
 
-                            println("user : $user")
+                            LoginActivity.setLoginData(context, user)
 
                         } else {
                             // If sign in fails, display a message to the user.
