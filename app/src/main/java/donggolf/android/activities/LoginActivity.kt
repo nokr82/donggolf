@@ -37,7 +37,7 @@ class LoginActivity : RootActivity() {
         }
 
         linear_go_findid.setOnClickListener {
-            moveaddpost()
+            movefindid()
         }
 
         linear_go_register.setOnClickListener {
@@ -87,12 +87,14 @@ class LoginActivity : RootActivity() {
     fun nomemberlogin() {
         val email = emailET.text.toString()
         val password = passwordET.text.toString()
-
-
     }
 
     fun moveaddpost() {
         startActivity(Intent(this, AddPostActivity::class.java))
+    }
+
+    fun movefindid() {
+        startActivity(Intent(this, FindidActivity::class.java))
     }
 
     fun moveregister() {

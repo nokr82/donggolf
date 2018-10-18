@@ -80,7 +80,7 @@ class MainActivity : RootActivity() {
         var dataObj : JSONObject = JSONObject();
 
         var content = Content()
-        ContentAction.list(content) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+        ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
 
             if(success && data != null) {
                 data.forEach {

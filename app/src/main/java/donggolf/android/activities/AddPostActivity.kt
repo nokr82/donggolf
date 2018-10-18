@@ -29,7 +29,7 @@ class AddPostActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        btn_finish.setOnClickListener {
+        finishBT.setOnClickListener {
             finish()
         }
 

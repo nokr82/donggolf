@@ -1,12 +1,15 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.database.Cursor
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
+import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import donggolf.android.models.Info
 import kotlinx.android.synthetic.main.activity_findid.*
 
 class FindidActivity : RootActivity() {
@@ -42,33 +45,19 @@ class FindidActivity : RootActivity() {
         }
 
 
-        val params = HashMap<String, Any>()
+        val userid = Utils.getString(useridTV)
+
+        var params = HashMap<String, Any>()
         params.put("phone", phone)
 
         InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-            if (success && data != null) {
-                data.forEach {
-                    println(it)
-                }
-            }
-
-
-        }
-
-
-        /*
-        InfoAction.findId("phone", params) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
             if (success) {
                 println("data : $data")
                 useridTV.text = data.toString()
-
             } else {
 
             }
-
         }
-        */
-
     }
-
 }
+
