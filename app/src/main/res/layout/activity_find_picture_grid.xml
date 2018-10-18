@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/btn_finish"
-            android:layout_width="8.33dp"
-            android:layout_height="14.67dp"
+            android:layout_width="11dp"
+            android:layout_height="17dp"
             android:layout_margin="10dp"
             android:background="@drawable/btn_back" />
 
@@ -35,13 +35,14 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="2"
-                    android:textSize="10.67dp"
+                    android:textSize="13dp"
                     android:textColor="#0EDA2F" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="첨부"
+                    android:textSize="13dp"
                     android:layout_marginRight="13dp"
                     android:layout_marginLeft="5dp"
                     android:textColor="#000000" />

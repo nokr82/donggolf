@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="16.67dp"
-            android:layout_height="17.33dp"
+            android:layout_width="19dp"
+            android:layout_height="20dp"
             android:background="@drawable/icon_area"
             android:layout_margin="10dp"/>
         <TextView
@@ -20,11 +20,11 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="경기 / 인천"
-            android:textSize="8.67dp"
+            android:textSize="11dp"
             android:textColor="#000000"/>
         <ImageView
-            android:layout_width="17.67dp"
-            android:layout_height="10.67dp"
+            android:layout_width="20dp"
+            android:layout_height="13dp"
             android:background="@drawable/icon_golfer"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"/>
@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="9999명"
-            android:textSize="8.67dp"
+            android:textSize="11dp"
             android:layout_marginLeft="5dp"
             android:textColor="#000000"/>
         <RelativeLayout
@@ -41,12 +41,12 @@
             android:layout_height="30dp">
 
             <ImageView
-                android:layout_width="47.33dp"
-                android:layout_height="22.67dp"
-                android:background="@drawable/btn_market"
-                android:layout_alignParentBottom="true"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"/>
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/btn_market" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -64,8 +64,8 @@
                 android:layout_weight="4">
                 <Button
                     android:layout_centerInParent="true"
-                    android:layout_width="30dp"
-                    android:layout_height="29dp"
+                    android:layout_width="33dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/btn_main_on_selector"/>
                 <Button
                     android:layout_width="match_parent"
@@ -78,8 +78,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
                 <Button
-                    android:layout_width="18.33dp"
-                    android:layout_height="29dp"
+                    android:layout_width="21dp"
+                    android:layout_height="32dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/btn_chatting_on_selector"/>
                 <Button
@@ -93,8 +93,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
                 <Button
-                    android:layout_width="16.67dp"
-                    android:layout_height="29dp"
+                    android:layout_width="19dp"
+                    android:layout_height="32dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/btn_notice_on_selector"/>
                 <Button
@@ -108,8 +108,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
                 <Button
-                    android:layout_width="24.67dp"
-                    android:layout_height="29dp"
+                    android:layout_width="27dp"
+                    android:layout_height="32dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/btn_mypage_on_selector"/>
                 <Button
@@ -126,10 +126,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout
-            android:layout_width="296dp"
-            android:layout_height="28.33dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/box_search"
-            android:layout_margin="10dp">
+            android:layout_marginRight="47dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -139,8 +142,8 @@
                 android:layout_marginEnd="0dp">
 
                 <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12.33dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/icon_search" />
@@ -166,12 +169,12 @@
 
         <Button
             android:id="@+id/btn_go_addpost"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
             android:background="@drawable/btn_write"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"/>
+            android:layout_marginRight="10dp"/>
 
     </RelativeLayout>
 
