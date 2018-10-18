@@ -7,6 +7,12 @@ class ContentAction {
 
     companion object {
 
+        fun viewContent(key: String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.get("contents", key) { success:Boolean, data:Map<String, Any>?, exception:Exception? ->
+                result(success, data, exception)
+            }
+        }
+
         fun saveContent(params: Content, result: (success:Boolean, key:String?, exception:Exception?) -> Unit) {
             FirebaseFirestoreUtils.save("contents", params) { success: Boolean, key: String?, exception: Exception? ->
                 result(success, key, exception)
