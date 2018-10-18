@@ -4,9 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_marginTop="180dp">
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
     <LinearLayout
+        android:layout_gravity="center_horizontal"
         android:id="@+id/login_linear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,7 +114,7 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
                 android:layout_below="@id/login_linear2"
                 android:layout_width="283.67dp"
                 android:layout_height="wrap_content"
@@ -164,5 +174,7 @@
             </RelativeLayout>
 
 
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
