@@ -10,7 +10,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
@@ -80,19 +79,21 @@ class MainActivity : RootActivity() {
 
         var dataObj : JSONObject = JSONObject();
 
-        val p = Pair("createAt", Query.Direction.DESCENDING)
-
-        val params = HashMap<String, Any>()
-        ContentAction.list(params, Pair("contents", Query.Direction.DESCENDING), 0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+        var content = Content()
+        ContentAction.list(content) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
 
             if(success && data != null) {
                 data.forEach {
                     println(it)
+
                     if (it != null) {
                         adapterData.add(it)
                     }
+
                 }
+
                 adapter.notifyDataSetChanged()
+
             }
 
         }
@@ -112,7 +113,7 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
-            MoveMainDetailActivity()
+           MoveMainDetailActivity()
         }
 
         btn_go_addpost.setOnClickListener {

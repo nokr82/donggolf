@@ -1,12 +1,14 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.Query
 import donggolf.android.R
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -27,8 +29,7 @@ class LoginActivity : RootActivity() {
         mAuth = FirebaseAuth.getInstance();
 
         btn_login.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            login()
         }
 
         btn_nomember_login.setOnClickListener {
@@ -36,15 +37,27 @@ class LoginActivity : RootActivity() {
         }
 
         linear_go_findid.setOnClickListener {
-            movefindid()
+            moveaddpost()
         }
 
         linear_go_register.setOnClickListener {
             moveregister()
         }
 
+        autologinBT.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
 
-        val p = Pair("createAt", Query.Direction.DESCENDING)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                    })
+                    .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                    })
+            val alert = builder.create()
+            alert.show()
+
+
+        }
 
     }
 
@@ -52,19 +65,20 @@ class LoginActivity : RootActivity() {
         val email = Utils.getString(emailET)
         val password = Utils.getString(passwordET)
 
-
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         val user = mAuth.getCurrentUser()
 
-                        setLoginData(context, user)
+                        LoginActivity.setLoginData(context, user)
 
                         startActivity(Intent(context, MainActivity::class.java))
 
+                        finish()
+
                     } else {
-                        // If sign in fails, display a message to the user.
+                        // If sign in fails, display a messa to the user.
                         Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -75,10 +89,6 @@ class LoginActivity : RootActivity() {
         val password = passwordET.text.toString()
 
 
-    }
-
-    fun movefindid(){
-        startActivity(Intent(this, FindidActivity::class.java))
     }
 
     fun moveaddpost() {
