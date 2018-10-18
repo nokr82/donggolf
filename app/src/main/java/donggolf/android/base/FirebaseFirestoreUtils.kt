@@ -2,6 +2,8 @@ package donggolf.android.base
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 
 class FirebaseFirestoreUtils {
@@ -9,6 +11,7 @@ class FirebaseFirestoreUtils {
     companion object {
 
         val db = FirebaseFirestore.getInstance()
+        val storage = FirebaseStorage.getInstance();
 
         fun list(collectionName: String, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
 
@@ -167,6 +170,18 @@ class FirebaseFirestoreUtils {
                     .document(key)
                     .delete()
                     .addOnSuccessListener {
+                        result(true)
+                    }
+                    .addOnFailureListener {
+                        result(false)
+                    }
+        }
+
+        fun uploadFile(bytes:ByteArray, path:String, result: (success:Boolean) -> Unit) {
+            val ref = storage.reference.child(path)
+            ref.putBytes(bytes)
+                    .addOnSuccessListener {
+                        println(it.storage)
                         result(true)
                     }
                     .addOnFailureListener {
