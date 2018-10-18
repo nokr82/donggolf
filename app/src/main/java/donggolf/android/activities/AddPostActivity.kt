@@ -32,6 +32,7 @@ class AddPostActivity : RootActivity() {
         btn_finish.setOnClickListener {
             finish()
         }
+
         movefindpictureBT.setOnClickListener {
             MoveFindPictureActivity()
         }
@@ -64,22 +65,21 @@ class AddPostActivity : RootActivity() {
 
         val user = mAuth.currentUser
 
-        if (user == null){
-            val uid = PrefUtils.getStringPreference(context, "uid")
+
+
+        if (user != null){
+            val uid = user.uid
 
             val now = System.currentTimeMillis()
 
             val content = Content(now,0,0,"test","incheon","제목 테스트 입니다.","테스트 입니다.",0,false,
                     0,0, "고발자 닉네임 테스트",false,0,false)
 
-
-
             ContentAction.saveContent(content){success: Boolean, key: String?, exception: Exception? ->
-                Log.d("yjs","key" + key)
 
                 if (success){
 
-                    Log.d("yjs", "success")
+                    finish()
 
                 } else {
 

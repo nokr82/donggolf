@@ -8,14 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.base.Utils
+import donggolf.android.models.Content
 import org.json.JSONObject
 
 
-open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var data:ArrayList<Map<String, Any>> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,14 +36,24 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var data : Map<String, Any> = getItem(position)
 
+        var title:String = data.get("title") as String
+        item.main_item_title.text = title
 
+        var texts:String = data.get("texts") as String
+        item.main_item_content.text = texts
+
+        var charge_user:String = data.get("charge_user") as String
+        item.main_item_nickname.text = charge_user
+
+        var looker:Long = data.get("looker") as Long
+        item.main_item_view_count.text = looker.toString()
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
+    override fun getItem(position: Int): Map<String, Any> {
 
         return data.get(position)
     }
@@ -64,7 +75,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
     class ViewHolder(v: View) {
 
-
         var main_item_title : TextView
         var main_item_content : TextView
 
@@ -74,8 +84,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var main_item_comment_count : TextView
         var main_item_like_count : TextView
 
-
         init {
+
             main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
             main_item_content = v.findViewById<View>(R.id.main_item_content) as TextView
             main_item_nickname = v.findViewById<View>(R.id.main_item_nickname) as TextView
@@ -85,7 +95,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
 
 
-
         }
+
+
     }
 }
