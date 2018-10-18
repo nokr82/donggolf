@@ -36,7 +36,7 @@ class LoginActivity : RootActivity() {
         }
 
         linear_go_findid.setOnClickListener {
-            moveaddpost()
+            movefindid()
         }
 
         linear_go_register.setOnClickListener {
@@ -52,13 +52,14 @@ class LoginActivity : RootActivity() {
         val email = Utils.getString(emailET)
         val password = Utils.getString(passwordET)
 
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         val user = mAuth.getCurrentUser()
 
-                        LoginActivity.setLoginData(context, user)
+                        setLoginData(context, user)
 
                         startActivity(Intent(context, MainActivity::class.java))
 
@@ -74,6 +75,10 @@ class LoginActivity : RootActivity() {
         val password = passwordET.text.toString()
 
 
+    }
+
+    fun movefindid(){
+        startActivity(Intent(this, FindidActivity::class.java))
     }
 
     fun moveaddpost() {

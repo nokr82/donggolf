@@ -49,7 +49,7 @@ class FirebaseFirestoreUtils {
 
             val params = HashMap<String, Any>()
 
-            list(collectionName, params, null, -1, 20, result)
+            list(collectionName, params, orderBy, page, 20, result)
         }
 
         fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
@@ -109,6 +109,33 @@ class FirebaseFirestoreUtils {
 
         fun get(collectionName: String, key:String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
             db.collection(collectionName)
+                    .document(key)
+                    .get()
+                    .addOnSuccessListener {
+                        result(true, it.data, null)
+                    }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+        }
+
+        fun get(collectionName: String, params:Map<String, Any>,key:String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
+
+            val ref = db.collection(collectionName)
+
+            params.keys.forEach {
+                val key = it
+                val value = params[key]
+
+                println("key : " + key)
+                println("value : " + value)
+                println("================================================================")
+
+                ref.whereEqualTo(key.toString(), value);
+            }
+
+
+            ref
                     .document(key)
                     .get()
                     .addOnSuccessListener {

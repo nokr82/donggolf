@@ -10,12 +10,15 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
+import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.FindPictureAdapter
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.RootActivity
+import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_find_picture.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
@@ -25,7 +28,7 @@ class MainActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
 
     private  lateinit var  adapter : MainAdapter
 
@@ -44,12 +47,6 @@ class MainActivity : RootActivity() {
         setContentView(R.layout.activity_main)
 
         mAuth = FirebaseAuth.getInstance();
-
-
-
-        click_btn_main_on_relative.setOnClickListener {
-
-        }
 
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = mAuth!!.getCurrentUser()
@@ -81,24 +78,29 @@ class MainActivity : RootActivity() {
         context = this
 
 
-        var intent = getIntent()
-
-
-
         var dataObj : JSONObject = JSONObject();
 
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
-        adapterData.add(dataObj)
+        val p = Pair("createAt", Query.Direction.DESCENDING)
+
+        val params = HashMap<String, Any>()
+        ContentAction.list(params, Pair("contents", Query.Direction.DESCENDING), 0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+
+            if(success && data != null) {
+                data.forEach {
+                    println(it)
+                    if (it != null) {
+                        adapterData.add(it)
+                    }
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+        }
+
 
         adapter = MainAdapter(context,R.layout.main_listview_item,adapterData)
 
         main_listview.adapter = adapter
-
 
         adapter.notifyDataSetChanged()
 
@@ -110,7 +112,7 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
-           MoveMainDetailActivity()
+            MoveMainDetailActivity()
         }
 
         btn_go_addpost.setOnClickListener {
@@ -135,6 +137,8 @@ class MainActivity : RootActivity() {
     fun MoveMainDetailActivity(){
         startActivity(Intent(this,MainDetailActivity::class.java))
     }
+
+
 
     private fun updateUI(currentUser: FirebaseUser?) {
 
