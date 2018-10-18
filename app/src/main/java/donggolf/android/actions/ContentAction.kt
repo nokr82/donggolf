@@ -8,7 +8,7 @@ class ContentAction {
     companion object {
 
         fun list(params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-            FirebaseFirestoreUtils.list("contents", params, orderBy, page, 1) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+            FirebaseFirestoreUtils.list("contents", params, orderBy, page) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
                 result(success, data, exception)
             }
         }

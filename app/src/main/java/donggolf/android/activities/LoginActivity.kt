@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.Query
 import donggolf.android.R
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -41,6 +42,9 @@ class LoginActivity : RootActivity() {
         linear_go_register.setOnClickListener {
             moveregister()
         }
+
+
+        val p = Pair("createAt", Query.Direction.DESCENDING)
 
     }
 
