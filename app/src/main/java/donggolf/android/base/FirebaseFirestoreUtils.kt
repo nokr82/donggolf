@@ -1,7 +1,8 @@
 package donggolf.android.base
 
 import com.google.firebase.firestore.FirebaseFirestore
-import donggolf.android.models.Content
+import com.google.firebase.firestore.Query
+
 
 class FirebaseFirestoreUtils {
 
@@ -9,9 +10,88 @@ class FirebaseFirestoreUtils {
 
         val db = FirebaseFirestore.getInstance()
 
-        fun list(collectionName: String, params: Content, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-            db.collection(collectionName)
-                    .get()
+        fun list(collectionName: String, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, result)
+        }
+
+        fun list(collectionName: String, orderBy:Pair<*, *>?, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, result)
+        }
+
+        fun list(collectionName: String, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, result)
+        }
+
+        fun list(collectionName: String, params: Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, result)
+        }
+
+        fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, result)
+        }
+
+        fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            val params = HashMap<String, Any>()
+
+            list(collectionName, params, null, -1, 20, result)
+        }
+
+        fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            // Create a reference to the cities collection
+            val ref = db.collection(collectionName)
+
+            params.keys.forEach {
+                val key = it
+                val value = params[key]
+
+                ref.whereEqualTo(key.toString(), value);
+            }
+
+            // orderBy
+            if(orderBy != null) {
+                val key = orderBy.first
+                if(key != null) {
+                    var direction = orderBy.second as? Query.Direction
+                    if(direction == null) {
+                        direction = Query.Direction.ASCENDING
+                    }
+
+                    ref.orderBy(key.toString(), direction)
+
+                    /*
+                    println("key : $key, di : $direction")
+
+                    // paging
+                    if(page > 0) {
+
+                        println("(page - 1) * limit : ${(page - 1) * limit}")
+
+                        ref.startAt((page - 1) * limit)
+                        ref.limit(limit)
+                    }
+                    */
+                }
+
+            }
+
+            ref.get()
                     .addOnSuccessListener {
 
                         val data = ArrayList<Map<String, Any>?>()
