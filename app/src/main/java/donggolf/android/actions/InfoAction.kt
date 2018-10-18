@@ -18,8 +18,8 @@ class InfoAction {
             }
         }
 
-        fun list(params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-            FirebaseFirestoreUtils.list("infos", params, orderBy, page) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+        fun list(params: Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.list("infos", params) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
                 result(success, data, exception)
 
             }

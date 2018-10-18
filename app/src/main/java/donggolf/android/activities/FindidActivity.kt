@@ -1,14 +1,9 @@
 package donggolf.android.activities
 
 import android.content.Context
-import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.Query
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -38,7 +33,7 @@ class FindidActivity : RootActivity() {
 
     }
 
-    fun findid(){
+    fun findid() {
 
         val phone = Utils.getString(phoneET)
         if (phone.isEmpty()) {
@@ -48,10 +43,10 @@ class FindidActivity : RootActivity() {
 
 
         val params = HashMap<String, Any>()
-         params.put("phone", phone)
+        params.put("phone", phone)
 
-        InfoAction.list(params, Pair("phone",  Query.Direction.DESCENDING),1){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-            if(success && data != null) {
+        InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+            if (success && data != null) {
                 data.forEach {
                     println(it)
                 }
@@ -60,17 +55,19 @@ class FindidActivity : RootActivity() {
 
         }
 
-                InfoAction.findId("phone", params){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                    if(success) {
-                        println("data : $data")
-                        useridTV.text = data.toString()
 
-                    } else {
+        /*
+        InfoAction.findId("phone", params) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+            if (success) {
+                println("data : $data")
+                useridTV.text = data.toString()
 
-                    }
+            } else {
+
+            }
 
         }
-
+        */
 
     }
 

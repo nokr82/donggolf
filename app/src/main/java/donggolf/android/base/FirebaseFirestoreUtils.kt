@@ -32,23 +32,14 @@ class FirebaseFirestoreUtils {
         }
 
         fun list(collectionName: String, params: Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-
-            val params = HashMap<String, Any>()
-
             list(collectionName, params, null, -1, result)
         }
 
         fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-
-            val params = HashMap<String, Any>()
-
             list(collectionName, params, null, -1, result)
         }
 
         fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
-
-            val params = HashMap<String, Any>()
-
             list(collectionName, params, orderBy, page, 20, result)
         }
 
@@ -56,12 +47,14 @@ class FirebaseFirestoreUtils {
 
             // Create a reference to the cities collection
             val ref = db.collection(collectionName)
+            var query:Query? = null
+
 
             params.keys.forEach {
                 val key = it
                 val value = params[key]
 
-                ref.whereEqualTo(key.toString(), value);
+                query = ref.whereEqualTo(key.toString(), value);
             }
 
             // orderBy
@@ -73,7 +66,7 @@ class FirebaseFirestoreUtils {
                         direction = Query.Direction.ASCENDING
                     }
 
-                    ref.orderBy(key.toString(), direction)
+                    query = ref.orderBy(key.toString(), direction)
 
                     /*
                     println("key : $key, di : $direction")
@@ -91,7 +84,7 @@ class FirebaseFirestoreUtils {
 
             }
 
-            ref.get()
+            query!!.get()
                     .addOnSuccessListener {
 
                         val data = ArrayList<Map<String, Any>?>()
