@@ -1,8 +1,7 @@
 package donggolf.android.base
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import donggolf.android.activities.MainActivity
+import donggolf.android.models.Content
 
 class FirebaseFirestoreUtils {
 
@@ -10,17 +9,21 @@ class FirebaseFirestoreUtils {
 
         val db = FirebaseFirestore.getInstance()
 
-        fun get(collectionName: String, params: HashMap<String, Any>, result: () -> Unit) {
+        fun list(collectionName: String, params: Content, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
             db.collection(collectionName)
                     .get()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            for (document in task.result!!) {
-                                Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
-                            }
-                        } else {
-                            Log.w(MainActivity.TAG, "Error getting documents.", task.exception)
+                    .addOnSuccessListener {
+
+                        val data = ArrayList<Map<String, Any>?>()
+
+                        it.documents.forEach {
+                            data.add(it.data)
                         }
+
+                        result(true, data, null)
+                    }
+                    .addOnFailureListener {
+                        result(false, null, it)
                     }
         }
 

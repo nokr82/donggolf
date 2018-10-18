@@ -7,6 +7,12 @@ class ContentAction {
 
     companion object {
 
+        fun list(params: Content, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.list("contents", params) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+                result(success, data, exception)
+            }
+        }
+
         fun viewContent(key: String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
             FirebaseFirestoreUtils.get("contents", key) { success:Boolean, data:Map<String, Any>?, exception:Exception? ->
                 result(success, data, exception)
