@@ -8,16 +8,16 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/main_detail_listitem_comment"
-            android:layout_width="10.67dp"
-            android:layout_height="10.67dp"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/icon_comment"
             android:layout_marginLeft="10dp"
             android:visibility="gone"/>
         <ImageView
             android:id="@+id/main_detail_listitem_profileimage"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_margin="7dp"
             android:background="@drawable/icon_profile"/>
         <LinearLayout
@@ -35,12 +35,12 @@
                     android:layout_height="wrap_content"
                     android:text="닉네임일곱글자"
                     android:textColor="#EF5C34"
-                    android:textSize="10.67dp"
+                    android:textSize="13dp"
                     android:maxLength="7"/>
                 <ImageView
                     android:id="@+id/main_detail_listitem_firstimage"
-                    android:layout_width="20.33dp"
-                    android:layout_height="8.67dp"
+                    android:layout_width="23dp"
+                    android:layout_height="11dp"
                     android:background="@drawable/icon_first"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"/>
@@ -51,14 +51,14 @@
                 android:layout_height="wrap_content"
                 android:text="상태메시지 텍스트가 들어 갈 자리입니다."
                 android:textColor="#AFAFAF"
-                android:textSize="8.67dp"/>
+                android:textSize="11dp"/>
             <TextView
                 android:id="@+id/main_detail_listitem_date"
                 android:layout_gravity="left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="xxxx년 xx월 xx일 오후 xx:xx"
-                android:textSize="7.33dp"
+                android:textSize="10dp"
                 android:textColor="#CDCDCD"/>
         </LinearLayout>
     </LinearLayout>
