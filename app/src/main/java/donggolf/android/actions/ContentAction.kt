@@ -31,6 +31,13 @@ class ContentAction {
             }
         }
 
+        fun getContent(params: Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.list("contents", params) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+                result(success, data, exception)
+
+            }
+        }
+
     }
 
 }

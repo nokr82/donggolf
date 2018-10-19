@@ -113,7 +113,9 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
-           MoveMainDetailActivity()
+            val owner : String
+            owner = adapterData.get(position)!!.get("owner").toString()
+            MoveMainDetailActivity(owner)
         }
 
         btn_go_addpost.setOnClickListener {
@@ -121,13 +123,11 @@ class MainActivity : RootActivity() {
         }
 
         main_edit_search.setOnClickListener {
-            main_listview_search.setVisibility(View.VISIBLE)
-//            main_listview.setVisibility(View.GONE)
+            main_listview_search.visibility = View.VISIBLE
         }
 
         main_edit_close.setOnClickListener {
-            main_listview_search.setVisibility(View.GONE)
-//            main_listview.setVisibility(View.VISIBLE)
+            main_listview_search.visibility = View.GONE
         }
     }
 
@@ -135,8 +135,10 @@ class MainActivity : RootActivity() {
         startActivity(Intent(this,AddPostActivity::class.java))
     }
 
-    fun MoveMainDetailActivity(){
-        startActivity(Intent(this,MainDetailActivity::class.java))
+    fun MoveMainDetailActivity(owner : String){
+        var intent: Intent = Intent(this, MainDetailActivity::class.java)
+        intent.putExtra("owner",owner)
+        startActivity(intent)
     }
 
 
