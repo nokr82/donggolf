@@ -1,7 +1,9 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +19,9 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_add_post.*
+import java.net.URI
+
+
 
 class AddPostActivity : RootActivity() {
 
@@ -44,18 +49,14 @@ class AddPostActivity : RootActivity() {
 
         addcontentBT.setOnClickListener {
             addContent()
-            Log.d("yjs", "BTClick")
         }
+
+
 
     }
 
     private fun moveMyPicture(){
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = android.provider.MediaStore.Images.Media.CONTENT_TYPE
-            intent.data = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            startActivityForResult(intent, 100)
-
-
+        startActivity(Intent(this,FindPictureActivity::class.java))
     }
 
     private fun permission(){
@@ -122,4 +123,5 @@ class AddPostActivity : RootActivity() {
 
         }
     }
+
 }
