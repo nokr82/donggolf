@@ -5,7 +5,10 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.JoinAction
@@ -29,12 +32,14 @@ class AddPostActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
+        permission()
+
         finishBT.setOnClickListener {
             finish()
         }
 
         movefindpictureBT.setOnClickListener {
-            MoveFindPictureActivity()
+            moveMyPicture()
         }
 
         addcontentBT.setOnClickListener {
@@ -44,9 +49,36 @@ class AddPostActivity : RootActivity() {
 
     }
 
+    private fun moveMyPicture(){
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = android.provider.MediaStore.Images.Media.CONTENT_TYPE
+            intent.data = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            startActivityForResult(intent, 100)
 
-    private fun MoveFindPictureActivity(){
-        startActivity(Intent(this,FindPictureActivity::class.java))
+
+    }
+
+    private fun permission(){
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+
+            }
+
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+
     }
 
     private fun addContent(){
