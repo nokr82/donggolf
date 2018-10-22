@@ -8,14 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.base.Utils
+import donggolf.android.models.PictureCategory
 import org.json.JSONObject
 
 
-open class FindPictureAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class FindPictureAdapter(context: Context, view:Int, data:ArrayList<PictureCategory>) : ArrayAdapter<PictureCategory>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var data:ArrayList<PictureCategory> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,12 +36,16 @@ open class FindPictureAdapter(context: Context, view:Int, data:ArrayList<JSONObj
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var data : PictureCategory = getItem(position)
+
+        item.findpicture_item_name.text = data.title
+
+        item.findpicture_item_count.text = data.count.toString()
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
+    override fun getItem(position: Int): PictureCategory {
 
         return data.get(position)
     }

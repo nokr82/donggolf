@@ -64,12 +64,12 @@ open class FindPictureGridAdapter(context: Context, view:Int, data:ArrayList<JSO
     class ViewHolder(v: View) {
 
         var picture_grid_image : ImageView
-        var picture_grid_click : ImageView
+        var picture_grid_click : TextView
 
 
         init {
             picture_grid_image = v.findViewById<View>(R.id.picture_grid_image) as ImageView
-            picture_grid_click = v.findViewById<View>(R.id.picture_grid_click) as ImageView
+            picture_grid_click = v.findViewById<View>(R.id.picture_grid_click) as TextView
 
         }
     }

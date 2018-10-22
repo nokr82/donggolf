@@ -11,6 +11,7 @@ class FirebaseFirestoreUtils {
 
         val db = FirebaseFirestore.getInstance()
 
+
         fun list(collectionName: String, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
 
             val params = HashMap<String, Any>()

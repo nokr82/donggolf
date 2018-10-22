@@ -47,9 +47,15 @@ class AddPostActivity : RootActivity() {
             moveMyPicture()
         }
 
+        movefindvideoBT.setOnClickListener {
+            moveMyPicture()
+        }
+
         addcontentBT.setOnClickListener {
             addContent()
         }
+
+
 
 
 
