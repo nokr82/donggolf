@@ -141,6 +141,7 @@
                         android:background="@drawable/btn_add_photo" />
 
                     <ImageView
+                        android:id="@+id/movefindvideoBT"
                         android:layout_width="25dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center"

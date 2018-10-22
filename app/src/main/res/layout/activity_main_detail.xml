@@ -164,11 +164,20 @@
                 android:layout_margin="7dp"
                 android:textSize="13dp"
                 android:textColor="#000000"/>
-            <SurfaceView
+
+            <donggolf.android.base.RationalRelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
+                android:layout_height="0dp"
                 android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"/>
+                android:layout_marginRight="7dp"
+                app:ratio="360:146">
+
+                <VideoView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+
+            </donggolf.android.base.RationalRelativeLayout>
 
             <LinearLayout
                 android:layout_marginTop="20dp"
