@@ -33,6 +33,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/titleTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="영정도CC에서 오랜만의 즐라운딩"
@@ -43,6 +44,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <TextView
+                            android:id="@+id/dateTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="xxxx년 xx월 xx일 오후 xx:xx"
@@ -56,6 +58,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="7dp"/>
                         <TextView
+                            android:id="@+id/viewTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="9999"
@@ -71,7 +74,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="9999"
-                            android:textSize="7.33dp"
+                            android:textSize="10dp"
                             android:textColor="#CDCDCD"/>
                         <ImageView
                             android:layout_width="11dp"
@@ -127,18 +130,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
                             <TextView
+                                android:id="@+id/nickNameTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="닉네임일곱글자"
                                 android:textColor="#EF5C34"
                                 android:textSize="10.67dp"
                                 android:maxLength="7"/>
+
                             <ImageView
-                                android:layout_width="20.33dp"
-                                android:layout_height="8.67dp"
-                                android:background="@drawable/icon_first"
+                                android:layout_width="23dp"
+                                android:layout_height="13dp"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="5dp"/>
+                                android:layout_marginLeft="5dp"
+                                android:background="@drawable/icon_first" />
                         </LinearLayout>
                         <TextView
                             android:layout_width="wrap_content"
@@ -152,17 +157,27 @@
 
 
             <TextView
+                android:id="@+id/textTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산 대한사람 ~~"
                 android:layout_margin="7dp"
                 android:textSize="13dp"
                 android:textColor="#000000"/>
-            <SurfaceView
+
+            <donggolf.android.base.RationalRelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
+                android:layout_height="0dp"
                 android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"/>
+                android:layout_marginRight="7dp"
+                app:ratio="360:146">
+
+                <VideoView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+
+            </donggolf.android.base.RationalRelativeLayout>
 
             <LinearLayout
                 android:layout_marginTop="20dp"

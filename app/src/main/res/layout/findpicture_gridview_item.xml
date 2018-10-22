@@ -11,13 +11,17 @@
             android:id="@+id/picture_grid_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/box_picture"/>
-        <ImageView
+            android:src="@drawable/boarder_707070_background_ffffff"
+            android:scaleType="centerCrop"/>
+        <TextView
             android:id="@+id/picture_grid_click"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/btn_select_picture"
+            android:background="@drawable/griditemclick_selector"
             android:layout_alignParentRight="true"
+            android:text="1"
+            android:gravity="center"
+            android:textColor="#ffffff"
             android:layout_margin="5dp"/>
     </RelativeLayout>
 

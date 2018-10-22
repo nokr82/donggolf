@@ -50,6 +50,8 @@ class LoginActivity : RootActivity() {
                     .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+
+
                     })
                     .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
                     })

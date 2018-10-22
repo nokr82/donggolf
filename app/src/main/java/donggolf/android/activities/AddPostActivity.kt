@@ -1,11 +1,16 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.JoinAction
@@ -14,6 +19,9 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_add_post.*
+import java.net.URI
+
+
 
 class AddPostActivity : RootActivity() {
 
@@ -29,24 +37,55 @@ class AddPostActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
+        permission()
+
         finishBT.setOnClickListener {
             finish()
         }
 
         movefindpictureBT.setOnClickListener {
-            MoveFindPictureActivity()
+            moveMyPicture()
+        }
+
+        movefindvideoBT.setOnClickListener {
+            moveMyPicture()
         }
 
         addcontentBT.setOnClickListener {
             addContent()
-            Log.d("yjs", "BTClick")
         }
+
+
+
+
 
     }
 
-
-    private fun MoveFindPictureActivity(){
+    private fun moveMyPicture(){
         startActivity(Intent(this,FindPictureActivity::class.java))
+    }
+
+    private fun permission(){
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+
+            }
+
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+
     }
 
     private fun addContent(){
@@ -90,4 +129,5 @@ class AddPostActivity : RootActivity() {
 
         }
     }
+
 }

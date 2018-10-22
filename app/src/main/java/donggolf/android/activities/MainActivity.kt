@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.gun0912.tedpermission.PermissionListener
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.FindPictureAdapter
@@ -21,6 +22,15 @@ import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_find_picture.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
+import java.security.Permission
+import android.Manifest.permission.RECEIVE_SMS
+import android.Manifest.permission.READ_SMS
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import com.gun0912.tedpermission.TedPermission
+import android.widget.Toast
+
+
 
 
 class MainActivity : RootActivity() {
@@ -113,7 +123,9 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
-           MoveMainDetailActivity()
+            val owner : String
+            owner = adapterData.get(position)!!.get("owner").toString()
+            MoveMainDetailActivity(owner)
         }
 
         btn_go_addpost.setOnClickListener {
@@ -121,22 +133,25 @@ class MainActivity : RootActivity() {
         }
 
         main_edit_search.setOnClickListener {
-            main_listview_search.setVisibility(View.VISIBLE)
-//            main_listview.setVisibility(View.GONE)
+            main_listview_search.visibility = View.VISIBLE
         }
 
         main_edit_close.setOnClickListener {
-            main_listview_search.setVisibility(View.GONE)
-//            main_listview.setVisibility(View.VISIBLE)
+            main_listview_search.visibility = View.GONE
         }
+
+
+
     }
 
     fun MoveAddPostActivity(){
         startActivity(Intent(this,AddPostActivity::class.java))
     }
 
-    fun MoveMainDetailActivity(){
-        startActivity(Intent(this,MainDetailActivity::class.java))
+    fun MoveMainDetailActivity(owner : String){
+        var intent: Intent = Intent(this, MainDetailActivity::class.java)
+        intent.putExtra("owner",owner)
+        startActivity(intent)
     }
 
 

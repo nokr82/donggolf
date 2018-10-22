@@ -12,11 +12,7 @@ class InfoAction {
             }
         }
 
-        fun findId(key: String, params: Map<String, Any>, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
-            FirebaseFirestoreUtils.get("infos", params, key) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                result(success, data, exception)
-            }
-        }
+
 
         fun list(params: Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
             FirebaseFirestoreUtils.list("infos", params) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->

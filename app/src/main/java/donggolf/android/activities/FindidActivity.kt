@@ -44,16 +44,27 @@ class FindidActivity : RootActivity() {
             return
         }
 
-
-        val userid = Utils.getString(useridTV)
-
         var params = HashMap<String, Any>()
         params.put("phone", phone)
 
         InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
             if (success) {
                 println("data : $data")
-                useridTV.text = data.toString()
+                // useridTV.text = data.toString()
+
+                if (data != null) {
+                    if (data.size == 0){
+                        idhintTV.text = ""
+                        useridTV.text = ""
+                        hintTV.text = "아이디를 찾을 수 없습니다."
+                    }else {
+                        if (data.get(0)!!.get("phone") == phone){
+                            idhintTV.text = "아이디 힌트는 "
+                            useridTV.text = "K*****@naver.com"
+                            hintTV.text = "입니다"
+                        }
+                    }
+                }
             } else {
 
             }

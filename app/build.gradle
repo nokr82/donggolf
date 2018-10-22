@@ -8,7 +8,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "donggolf.android"
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0.0"
@@ -40,8 +40,14 @@ dependencies {
     //  async http
     implementation 'com.loopj.android:android-async-http:1.4.9'
     //  smart location
+
+    implementation 'gun0912.ted:tedpermission:2.2.2'
+
     implementation('io.nlopez.smartlocation:library:3.3.1') {
         transitive = false
+
+
+
     }
 }
 
