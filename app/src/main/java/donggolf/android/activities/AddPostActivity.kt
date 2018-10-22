@@ -1,7 +1,9 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
@@ -40,7 +42,18 @@ class AddPostActivity : RootActivity() {
         permission()
 
         finishBT.setOnClickListener {
-            finish()
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("글쓰기를 취소하시겠습니까 ?")
+
+                    .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+
+                    })
+                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                        finish()
+                    })
+            val alert = builder.create()
+            alert.show()
         }
 
         movefindpictureBT.setOnClickListener {
