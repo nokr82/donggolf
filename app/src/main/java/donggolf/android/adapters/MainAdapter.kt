@@ -44,7 +44,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
         var texts:String = data.get("texts") as String
         item.main_item_content.text = texts
 
-        var charge_user:String = data.get("charge_user") as String
+        var charge_user:String = data.get("charge_user").toString()
         item.main_item_nickname.text = charge_user
 
         var looker:Long = data.get("looker") as Long

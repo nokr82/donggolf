@@ -34,11 +34,14 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
 
     private var FROM_VIDEO: Int = 101
 
+    private val SELECT_VIDEO: Int = 102
+
     private  var videoPath : String? = ""
 
     private var count: Int = 0
 
     private lateinit var mAuth: FirebaseAuth
+
 
     constructor(parcel: Parcel) : this() {
         videoUri = parcel.readParcelable(Uri::class.java.classLoader)
@@ -128,7 +131,18 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
                     .setMessage("동영상을 등록하시겠습니까 ?")
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                        val result = arrayOfNulls<String>(selected.size)
 
+                        var idx = 0
+
+                        for (strPo in selected) {
+                            result[idx++] = videoList[Integer.parseInt(strPo)].videoPath
+                        }
+
+                        val returnIntent = Intent()
+                        returnIntent.putExtra("videos", result)
+                        setResult(RESULT_OK, returnIntent)
+                        finish()
 
                     })
                     .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
@@ -148,12 +162,14 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
 
 
         if (video_id == -1) {
+
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
 
             } else {
                 takeVideo()
             }
-        } else {
+
             if (selected.contains(strPo)) {
                 selected.remove(strPo)
 
@@ -166,8 +182,8 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
                 }
 
             } else {
-                if (count + selected.size > 9) {
-                    Toast.makeText(context, "동영상은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                if (count + selected.size > 1) {
+                    Toast.makeText(context, "동영상은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -231,4 +247,6 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
             return arrayOfNulls(size)
         }
     }
+
+
 }

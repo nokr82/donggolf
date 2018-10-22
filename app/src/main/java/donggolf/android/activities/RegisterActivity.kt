@@ -175,7 +175,8 @@ class RegisterActivity : RootActivity() {
 
                                         LoginActivity.setInfoData(context, data)
 
-                                        startActivity(Intent(context, MainActivity::class.java))
+
+                                        finish()
 
                                     } else {
 

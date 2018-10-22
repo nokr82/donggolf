@@ -1,11 +1,13 @@
 package donggolf.android.activities
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
@@ -20,10 +22,13 @@ import donggolf.android.R
 import donggolf.android.adapters.FindPictureGridAdapter
 import donggolf.android.adapters.ImageAdapter
 import donggolf.android.adapters.VideoAdapter
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.ImageLoader
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_find_picture_grid.*
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -40,11 +45,16 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     private var FROM_CAMERA: Int = 100
 
-    private  var imagePath : String? = ""
+    private val SELECT_PICTURE: Int = 101
+
+    private var imagePath: String? = ""
 
     private var count: Int = 0
 
     private lateinit var mAuth: FirebaseAuth
+
+    private var selectedImage: Bitmap? = null
+
 
     constructor(parcel: Parcel) : this() {
         imageUri = parcel.readParcelable(Uri::class.java.classLoader)
@@ -85,7 +95,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     val orientation = cursor.getInt(idx[3])
                     val bucketDisplayName = cursor.getString(idx[4])
                     if (displayName != null) {
-                        photo =  ImageAdapter.PhotoData()
+                        photo = ImageAdapter.PhotoData()
                         photo.photoID = photoID
                         photo.photoPath = photoPath
                         photo.orientation = orientation
@@ -113,7 +123,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
         val imageLoader: ImageLoader = ImageLoader(resolver)
 
-        val adapter = ImageAdapter(this, photoList, imageLoader,selected)
+        val adapter = ImageAdapter(this, photoList, imageLoader, selected)
 
         selectGV.setAdapter(adapter)
 
@@ -126,21 +136,64 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         }
 
         addpostBT.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder
-                    .setMessage("사진을 등록하시겠습니까 ?")
 
-                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+            if (selected != null) {
 
+//                    var bt: Bitmap = Utils.getImage(context.getContentResolver(), selected[0], 10)
 
-                    })
-                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
-                    })
-            val alert = builder.create()
-            alert.show()
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("사진을 등록하시겠습니까 ?")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            val result = arrayOfNulls<String>(selected.size)
+
+                            var idx = 0
+
+                            for (strPo in selected) {
+                                result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
+                            }
+
+                            val returnIntent = Intent()
+                            returnIntent.putExtra("images", result)
+                            setResult(RESULT_OK, returnIntent)
+                            finish()
+
+//                            for (strPo: String in selected) {
+//                                var bt: Bitmap = Utils.getImage(context.contentResolver, photoList.get(strPo.toInt()).photoPath, 100)
+//
+//                                var bytearray_ = Utils.getByteArray(bt)
+//
+//                                FirebaseFirestoreUtils.uploadFile(bytearray_, photoList.get(strPo.toInt()).photoPath!!) {
+//                                    if (it) {
+//
+//
+//                                    } else {
+//
+//                                    }
+//
+//                                }
+//
+//                            }
+//
+//                            val intent = Intent()
+//                            intent.putExtra("photo", photoList)
+////                            startActivity(intent)
+//                            setResult(Activity.RESULT_OK, intent)
+//
+//                            finish()
+
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        })
+                val alert = builder.create()
+                alert.show()
+            }
+
         }
-
-
 
 
     }
@@ -149,7 +202,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         val strPo = position.toString()
 
         val photo_id = photoList[position].photoID
-
 
         if (photo_id == -1) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -209,6 +261,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 imagePath = photo.absolutePath
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 startActivityForResult(intent, FROM_CAMERA)
+                Log.d("yjs", "intent : " + FROM_CAMERA)
 
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -237,4 +290,5 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
             return arrayOfNulls(size)
         }
     }
+
 }

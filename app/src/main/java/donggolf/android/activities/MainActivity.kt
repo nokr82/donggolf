@@ -29,8 +29,8 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import com.gun0912.tedpermission.TedPermission
 import android.widget.Toast
-
-
+import donggolf.android.actions.InfoAction
+import donggolf.android.base.PrefUtils
 
 
 class MainActivity : RootActivity() {
@@ -44,6 +44,8 @@ class MainActivity : RootActivity() {
     private  lateinit var  editadapter : MainEditAdapter
 
     private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+
+    private val SELECT_PICTURE: Int = 101
 
     companion object {
         const val TAG = "MainActivity"
@@ -64,6 +66,7 @@ class MainActivity : RootActivity() {
         val db = FirebaseFirestore.getInstance()
 
         // Create a new user with a first and last name
+
         val user = HashMap<String, Any>()
         user.put("first", "Ada")
         user.put("last", "Lovelace")
@@ -145,7 +148,9 @@ class MainActivity : RootActivity() {
     }
 
     fun MoveAddPostActivity(){
-        startActivity(Intent(this,AddPostActivity::class.java))
+
+        var intent = Intent(context, AddPostActivity::class.java);
+        startActivityForResult(intent, SELECT_PICTURE);
     }
 
     fun MoveMainDetailActivity(owner : String){

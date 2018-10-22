@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -29,6 +30,8 @@ class FindPictureActivity : RootActivity() {
         private var videoList: java.util.ArrayList<VideoAdapter.VideoData> = java.util.ArrayList<VideoAdapter.VideoData>()
 
         private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
+
+        val SELECT_PICTURE = 101
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,11 +84,15 @@ class FindPictureActivity : RootActivity() {
 
     }
     fun MoveFindVideoActivity(){
-        startActivity(Intent(this,FindVideoActivity::class.java))
+        var intent = Intent(context, FindVideoActivity::class.java);
+        startActivityForResult(intent, SELECT_PICTURE);
     }
 
     fun MoveFindPictureGridActivity(){
-        startActivity(Intent(this,FindPictureGridActivity::class.java))
+
+        var intent = Intent(context, FindPictureGridActivity::class.java);
+        startActivityForResult(intent, SELECT_PICTURE);
+//        startActivity(Intent(this,FindPictureGridActivity::class.java))
     }
 
     fun videoSize(){
@@ -188,6 +195,30 @@ class FindPictureActivity : RootActivity() {
             }
 
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == Activity.RESULT_OK) {
+
+            when(requestCode) {
+                SELECT_PICTURE -> {
+                    var result: String = data!!.getStringExtra("images")
+
+                    var intent = Intent()
+                    intent.putExtra("images", result)
+
+                    Log.d("yjs", "findpicture : " + result)
+
+                    setResult(RESULT_OK,intent);
+                    finish()
+
+                }
+            }
+
+        }
+
     }
 
 }

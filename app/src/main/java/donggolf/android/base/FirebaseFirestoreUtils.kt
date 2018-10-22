@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.*
 import com.google.firebase.storage.FirebaseStorage
+import kotlin.collections.ArrayList
 
 
 class FirebaseFirestoreUtils {
@@ -189,7 +190,6 @@ class FirebaseFirestoreUtils {
                         result(false)
                     }
         }
-
 
     }
 

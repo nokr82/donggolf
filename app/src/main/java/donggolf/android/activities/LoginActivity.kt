@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import donggolf.android.R
+import donggolf.android.actions.InfoAction
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -73,11 +75,23 @@ class LoginActivity : RootActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         val user = mAuth.getCurrentUser()
 
+
                         LoginActivity.setLoginData(context, user)
 
-                        startActivity(Intent(context, MainActivity::class.java))
+                        InfoAction.getInfo(user!!.uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                            if(success) {
+                                println("data : $data")
 
-                        finish()
+                                LoginActivity.setInfoData(context, data)
+
+                                startActivity(Intent(context, MainActivity::class.java))
+
+                                finish()
+
+                            } else {
+
+                            }
+                        }
 
                     } else {
                         // If sign in fails, display a messa to the user.
