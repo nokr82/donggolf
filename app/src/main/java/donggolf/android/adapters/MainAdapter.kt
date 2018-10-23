@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -10,6 +11,10 @@ import donggolf.android.R
 import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import org.json.JSONObject
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.Year
+import java.util.*
 
 
 open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
@@ -44,11 +49,45 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
         var texts:String = data.get("texts") as String
         item.main_item_content.text = texts
 
-        var charge_user:String = data.get("charge_user").toString()
-        item.main_item_nickname.text = charge_user
+        var owner:String = data.get("owner").toString()
+        item.main_item_nickname.text = owner
 
         var looker:Long = data.get("looker") as Long
         item.main_item_view_count.text = looker.toString()
+
+        val time: Long = data.get("createAt")as Long
+
+        val now: Long = System.currentTimeMillis()
+
+        val t1: Timestamp = Timestamp(time)
+
+        val t2: Timestamp = Timestamp(now)
+
+        val gap = now-time
+
+        val min: Long = (gap / 1000) / 60
+
+        val sec: Long = (gap / 1000) % 60
+
+        val hour: Long = (gap / 1000) / 60 / 60
+
+        val day: Long = hour / 24
+
+
+
+        if(min >= 60){
+            if(hour > 24){
+                item.main_item_lately.text = day.toString() + " 일 전"
+            }else {
+                item.main_item_lately.text = hour.toString() + " 시간 전"
+            }
+        }else {
+            item.main_item_lately.text = min.toString() + " 분 전"
+        }
+
+
+
+
 
         return retView
     }
@@ -99,4 +138,9 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
 
 
     }
+
+
+
+
+
 }

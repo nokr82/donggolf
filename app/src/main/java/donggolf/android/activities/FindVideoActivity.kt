@@ -93,6 +93,7 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
                         video =  VideoAdapter.VideoData()
                         video.videoID = videoID
                         video.videoPath = videoPath
+                        video.displayName = displayName
                         video.bucketVideoName = bucketDisplayName
                         videoList!!.add(video)
                     }
@@ -132,15 +133,19 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
                         val result = arrayOfNulls<String>(selected.size)
+                        val name  = arrayOfNulls<String>(selected.size)
 
                         var idx = 0
+                        var idxv = 0
 
                         for (strPo in selected) {
                             result[idx++] = videoList[Integer.parseInt(strPo)].videoPath
+                            name[idxv++] = videoList[Integer.parseInt(strPo)].displayName
                         }
 
                         val returnIntent = Intent()
                         returnIntent.putExtra("videos", result)
+                        returnIntent.putExtra("displayname", name)
                         setResult(RESULT_OK, returnIntent)
                         finish()
 

@@ -10,7 +10,56 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
+        <RelativeLayout
+            android:id="@+id/goneRL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/relativ_RL"
+                android:layout_marginTop="70dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="30dp"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:background="@drawable/boarder_707070_background_ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="글 보관하기"
+                        android:gravity="center"/>
+                    <TextView
+                        android:background="@drawable/boarder_707070_background_ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="신고하기"
+                        android:gravity="center"/>
+                    <TextView
+                        android:background="@drawable/boarder_707070_background_ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="친구신청"
+                        android:gravity="center"/>
+                    <TextView
+                        android:background="@drawable/boarder_707070_background_ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="수정"
+                        android:gravity="center"/>
+                    <TextView
+                        android:background="@drawable/boarder_707070_background_ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="삭제"
+                        android:gravity="center"/>
+                </LinearLayout>
 
+
+            </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -106,6 +155,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/plusBT"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:layout_alignParentRight="true"
@@ -156,6 +206,8 @@
             </RelativeLayout>
 
 
+
+
             <TextView
                 android:id="@+id/textTV"
                 android:layout_width="wrap_content"
@@ -172,9 +224,16 @@
                 android:layout_marginRight="7dp"
                 app:ratio="360:146">
 
-                <VideoView
+                <ImageView
+                    android:id="@+id/detailIV"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
+
+                <VideoView
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
 
 
             </donggolf.android.base.RationalRelativeLayout>
@@ -293,6 +352,7 @@
 
 
         </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 
 

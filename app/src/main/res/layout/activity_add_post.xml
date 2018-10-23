@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/finishBT"
+            android:id="@+id/finishaBT"
             android:layout_width="11dp"
             android:layout_height="17dp"
             android:layout_margin="10dp"
@@ -51,11 +51,12 @@
 
                 <EditText
                     android:id="@+id/titleET"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:background="@null"
                     android:hint="제목"
+                    android:singleLine="true"
                     android:textSize="15dp" />
 
                 <ImageView
@@ -135,8 +136,8 @@
 
                     <ImageView
                         android:id="@+id/movefindpictureBT"
-                        android:layout_width="26dp"
-                        android:layout_height="23dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:background="@drawable/btn_add_photo" />
 

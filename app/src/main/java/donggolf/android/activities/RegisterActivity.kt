@@ -20,6 +20,8 @@ class RegisterActivity : RootActivity() {
 
     private var gender: Int = 0
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)

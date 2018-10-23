@@ -26,6 +26,7 @@ open class ImageAdapter(context: Context, data:ArrayList<PhotoData>, imageLoader
     class PhotoData {
         var photoID: Int = 0
         var photoPath: String? = null
+        var displayName: String? = null
         var bucketPhotoName: String? = null
         var orientation: Int = 0
     }

@@ -49,6 +49,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     private var imagePath: String? = ""
 
+    private var displayName: String? = ""
+
     private var count: Int = 0
 
     private lateinit var mAuth: FirebaseAuth
@@ -75,7 +77,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         val resolver = contentResolver
         var cursor: Cursor? = null
         try {
-            val proj = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.ORIENTATION, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            val proj = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA, MediaStore.Images.Media.ORIENTATION, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
             val idx = IntArray(proj.size)
 
             cursor = MediaStore.Images.Media.query(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC")
@@ -85,6 +87,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 idx[2] = cursor.getColumnIndex(proj[2])
                 idx[3] = cursor.getColumnIndex(proj[3])
                 idx[4] = cursor.getColumnIndex(proj[4])
+
+
 
                 var photo = ImageAdapter.PhotoData()
 
@@ -98,6 +102,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                         photo = ImageAdapter.PhotoData()
                         photo.photoID = photoID
                         photo.photoPath = photoPath
+                        photo.displayName = displayName
+                        Log.d("yjs", "name : " + displayName)
                         photo.orientation = orientation
                         photo.bucketPhotoName = bucketDisplayName
                         photoList!!.add(photo)
@@ -149,42 +155,23 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             dialog.cancel()
 
                             val result = arrayOfNulls<String>(selected.size)
+                            val name = arrayOfNulls<String>(selected.size)
 
                             var idx = 0
+                            var idxn = 0
 
                             for (strPo in selected) {
                                 result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
+                                name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
+
+                                Log.d("yjs", "Path : " + photoList[0].photoPath + photoList[0].displayName)
                             }
 
                             val returnIntent = Intent()
                             returnIntent.putExtra("images", result)
+                            returnIntent.putExtra("displayname",name)
                             setResult(RESULT_OK, returnIntent)
                             finish()
-
-//                            for (strPo: String in selected) {
-//                                var bt: Bitmap = Utils.getImage(context.contentResolver, photoList.get(strPo.toInt()).photoPath, 100)
-//
-//                                var bytearray_ = Utils.getByteArray(bt)
-//
-//                                FirebaseFirestoreUtils.uploadFile(bytearray_, photoList.get(strPo.toInt()).photoPath!!) {
-//                                    if (it) {
-//
-//
-//                                    } else {
-//
-//                                    }
-//
-//                                }
-//
-//                            }
-//
-//                            val intent = Intent()
-//                            intent.putExtra("photo", photoList)
-////                            startActivity(intent)
-//                            setResult(Activity.RESULT_OK, intent)
-//
-//                            finish()
-
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
@@ -222,8 +209,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 }
 
             } else {
-                if (count + selected.size > 9) {
-                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                if (count + selected.size > 1) {
+                    Toast.makeText(context, "사진은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -258,10 +245,10 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                 //                imageUri = Uri.fromFile(photo);
                 imageUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", photo)
+                Log.d("yjs", "Uri : " + imageUri)
                 imagePath = photo.absolutePath
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 startActivityForResult(intent, FROM_CAMERA)
-                Log.d("yjs", "intent : " + FROM_CAMERA)
 
             } catch (e: IOException) {
                 e.printStackTrace()

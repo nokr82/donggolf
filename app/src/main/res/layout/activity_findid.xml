@@ -63,6 +63,7 @@
                     android:layout_marginRight="90dp"
                     android:hint="휴대폰 번호"
                     android:inputType="number"
+                    android:singleLine="true"
                     android:textSize="12dp" />
             </LinearLayout>
             <TextView

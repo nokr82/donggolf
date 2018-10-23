@@ -23,6 +23,7 @@ import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
 import donggolf.android.actions.JoinAction
 import donggolf.android.adapters.ImageAdapter
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -45,19 +46,23 @@ class AddPostActivity : RootActivity() {
 
     private val SELECT_PICTURE: Int = 101
 
+
     private val SELECT_VIDEO: Int = 102
 
     var photoList: ArrayList<PhotoData> = ArrayList<PhotoData>()
 
     var result: ArrayList<String> = ArrayList<String>()
 
-    private var imagesPaths: MutableList<String>? = null
+    private var imagesPaths: ArrayList<String> = ArrayList<String>()
 
-    private var images: MutableList<Bitmap>? = null
+    private var displaynamePaths: ArrayList<String> = ArrayList<String>()
 
-    private var videoPaths: MutableList<String>? = null
 
-    private var videos: MutableList<Bitmap>? = null
+    private var images: ArrayList<Bitmap> = ArrayList()
+
+    private var videoPaths: ArrayList<String> = ArrayList<String>()
+
+    private var videos: ArrayList<Bitmap>? = ArrayList()
 
     private var LoginMember: Info? = null
 
@@ -166,31 +171,38 @@ class AddPostActivity : RootActivity() {
             val email: String = PrefUtils.getStringPreference(context,"email")
             val nick: String = PrefUtils.getStringPreference(context,"nick")
 
-            Log.d("yjs", "nick : " + nick)
-
             var params = HashMap<String, Any>()
             params.put("uid", uid)
 
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
 
-            val item = Content(now,0,0,uid,"이미지 경로 test : " + "성공" + "비디오 경로 test : ",title,content,0,false,
-                    0,0,  nick.toString(),false,0,false)
+            var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 100)
 
-            movefindpictureBT.setImageBitmap(images!!.get(0))
+            var bytearray_ = Utils.getByteArray(bt)
 
-            ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
+            FirebaseFirestoreUtils.uploadFile(bytearray_, "imags/"+imagesPaths.get(0)) {
+                if (it) {
+                    val item = Content(now,0,0,nick.toString(),"",title,content,0,false,
+                                                0,0,  "imags/"+imagesPaths.get(0),false,0,false)
 
-                if (success){
+                    ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
+                        if(success){
+                            finish()
+                        }else{
 
-                    finish()
+                        }
+                    }
+
+
 
                 } else {
 
-                    Log.d("yjs", "excption")
-
                 }
+
             }
+
+
 
         }
     }
@@ -201,18 +213,22 @@ class AddPostActivity : RootActivity() {
             when(requestCode) {
                 SELECT_PICTURE -> {
                     var item = data?.getStringArrayExtra("images")
+                    var name =  data?.getStringArrayExtra("displayname")
 
                     for (i in 0 .. (item!!.size - 1)) {
                         val str = item[i]
 
-                        imagesPaths?.add(str)
+                        imagesPaths.add(str)
 
-                        println("str : " + str)
+                        Log.d("yjs", "Pathi : " + imagesPaths.get(0))
+
 
                         val add_file = Utils.getImage(context.contentResolver, str, 10)
 
                         if (images?.size == 0) {
+
                             images?.add(add_file)
+
                         } else {
                             try {
                                 images?.set(images!!.size, add_file)
@@ -222,7 +238,19 @@ class AddPostActivity : RootActivity() {
 
                         }
 
+                    }
+                    for (i in 0 .. (name!!.size - 1)) {
+                        val str = name[i]
 
+                        if(displaynamePaths != null){
+                            displaynamePaths.clear()
+                            displaynamePaths.add(str)
+
+                            Log.d("yjs", "display " + displaynamePaths.get(0))
+                        }else {
+                            displaynamePaths.add(str)
+                            Log.d("yjs", "display " + displaynamePaths.get(0))
+                        }
 
                     }
 
@@ -235,6 +263,7 @@ class AddPostActivity : RootActivity() {
                 }
                 SELECT_VIDEO->{
                     var item = data?.getStringArrayExtra("videos")
+                    var name =  data?.getStringArrayExtra("displayname")
 
                     for (i in item!!.indices) {
                         val str = item[i]
@@ -258,9 +287,21 @@ class AddPostActivity : RootActivity() {
 
                     }
 
+                    for (i in 0 .. (name!!.size - 1)) {
+                        val str = name[i]
+
+                        if(displaynamePaths != null){
+                            displaynamePaths.clear()
+                            displaynamePaths.add(str)
+                        }else {
+                            displaynamePaths.add(str)
+                        }
+
+                    }
+
                     var intent = Intent();
 
-                    Log.d("yjs", "PostResult : " + item?.size.toString())
+                    Log.d("yjs", "PostResult : " + item?.size.toString() + "name : " + displaynamePaths.toString())
 
                     setResult(RESULT_OK,intent);
                 }

@@ -84,6 +84,7 @@
                             android:layout_gravity="center_vertical"
                             android:background="@null"
                             android:layout_margin="5dp"
+                            android:singleLine="true"
                             android:inputType="textEmailAddress"
                             android:hint="이메일"
                             android:textSize="12dp" />
@@ -155,6 +156,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_margin="5dp"
                                     android:background="@null"
+                                    android:singleLine="true"
                                     android:hint="비밀번호 입력 (2~7자 이내)"
                                     android:inputType="textPassword"
                                     android:maxLength="7"
@@ -192,6 +194,7 @@
                                     android:layout_margin="5dp"
                                     android:background="@null"
                                     android:hint="비밀번호 재입력"
+                                    android:singleLine="true"
                                     android:inputType="textPassword"
                                     android:maxLength="7"
                                     android:textSize="12dp" />
@@ -244,6 +247,7 @@
                                 android:background="@null"
                                 android:layout_margin="5dp"
                                 android:inputType="number"
+                                android:singleLine="true"
                                 android:hint="'-'없이 번호만 입력"
                                 android:textSize="12dp" />
                         </LinearLayout>
@@ -294,6 +298,7 @@
                                 android:background="@null"
                                 android:layout_margin="5dp"
                                 android:hint="2~7자 이내"
+                                android:singleLine="true"
                                 android:maxLength="7"
                                 android:textSize="12dp" />
                         </LinearLayout>

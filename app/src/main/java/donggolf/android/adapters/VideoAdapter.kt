@@ -9,6 +9,11 @@ import donggolf.android.R
 import donggolf.android.base.ImageLoader
 import java.util.*
 import kotlin.collections.ArrayList
+import android.media.ThumbnailUtils
+import android.graphics.Bitmap
+import android.provider.MediaStore
+
+
 
 
 open class VideoAdapter(context: Context, data:ArrayList<VideoData>, imageLoader: ImageLoader, selected : LinkedList<String>) : BaseAdapter() {
@@ -26,6 +31,7 @@ open class VideoAdapter(context: Context, data:ArrayList<VideoData>, imageLoader
     class VideoData {
         var videoID: Int = 0
         var videoPath: String? = null
+        var displayName: String? = null
         var bucketVideoName: String? = null
         var orientation: Int = 0
     }
@@ -50,7 +56,12 @@ open class VideoAdapter(context: Context, data:ArrayList<VideoData>, imageLoader
 
         var photo = photoList.get(position);
 
-        holder.picture_grid_image.setImageBitmap(imageLoader.getImage(photo.videoID, photo.videoPath, photo.orientation))
+        val bitmap = ThumbnailUtils.createVideoThumbnail(photo.videoPath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND)
+        val thumbnail = ThumbnailUtils.extractThumbnail(bitmap, 360, 480)
+
+        holder.picture_grid_image.setImageBitmap(thumbnail)
+
+//        holder.picture_grid_image.setImageBitmap(imageLoader.getImage(photo.videoID, photo.videoPath, photo.orientation))
 
         if (selected.contains(position.toString())) {
             val idx = selected.indexOf(position.toString())
