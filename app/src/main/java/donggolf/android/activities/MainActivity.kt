@@ -11,26 +11,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.gun0912.tedpermission.PermissionListener
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
-import donggolf.android.adapters.FindPictureAdapter
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.RootActivity
 import donggolf.android.models.Content
-import kotlinx.android.synthetic.main.activity_find_picture.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
-import java.security.Permission
-import android.Manifest.permission.RECEIVE_SMS
-import android.Manifest.permission.READ_SMS
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import com.gun0912.tedpermission.TedPermission
-import android.widget.Toast
-import donggolf.android.actions.InfoAction
-import donggolf.android.base.PrefUtils
 
 
 class MainActivity : RootActivity() {

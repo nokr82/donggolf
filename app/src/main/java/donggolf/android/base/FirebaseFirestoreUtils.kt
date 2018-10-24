@@ -2,8 +2,8 @@ package donggolf.android.base
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.util.*
 import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -189,6 +189,18 @@ class FirebaseFirestoreUtils {
                     .addOnFailureListener {
                         result(false)
                     }
+        }
+
+        fun getFileUri(path:String, result: (success:Boolean, uri: String?, exception:Exception?) -> Unit) {
+            val ref = storage.reference.child(path)
+            ref.downloadUrl
+                    .addOnSuccessListener {
+                        result(true, it.toString(), null)
+                    }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+
         }
 
     }
