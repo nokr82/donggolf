@@ -95,7 +95,11 @@ class FirebaseFirestoreUtils {
                         val data = ArrayList<Map<String, Any>?>()
 
                         it.documents.forEach {
-                            data.add(it.data)
+                            val item = it.data
+                            if (item != null) {
+                                item!!.put("id", it.id)
+                                data.add(item)
+                            }
                         }
 
                         result(true, data, null)
