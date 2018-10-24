@@ -126,10 +126,12 @@ class MainActivity : RootActivity() {
 
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
-            val createAt : String
-            createAt = adapterData.get(position)!!.get("createAt").toString()
-            Log.d("yjs","createAt : " + createAt)
-            MoveMainDetailActivity(createAt)
+            val id : String
+            id = adapterData.get(position)!!.get("id").toString()
+
+            println("adapterData : " + adapterData)
+            Log.d("yjs","id : " + id)
+            MoveMainDetailActivity(id)
         }
 
         btn_go_addpost.setOnClickListener {
@@ -154,9 +156,9 @@ class MainActivity : RootActivity() {
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
-    fun MoveMainDetailActivity(createAt : String){
+    fun MoveMainDetailActivity(id : String){
         var intent: Intent = Intent(this, MainDetailActivity::class.java)
-        intent.putExtra("createAt",createAt)
+        intent.putExtra("id",id)
         startActivity(intent)
     }
 

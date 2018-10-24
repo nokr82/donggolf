@@ -30,6 +30,7 @@ import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import donggolf.android.models.Info
 import donggolf.android.models.PhotoData
+import donggolf.android.models.Region
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
 import java.net.URI
@@ -177,30 +178,55 @@ class AddPostActivity : RootActivity() {
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
 
-            var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 100)
+            if(displaynamePaths != null){
+                var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 500)
 
-            var bytearray_ = Utils.getByteArray(bt)
+                val bytearray_ = Utils.getByteArray(bt)
 
-            FirebaseFirestoreUtils.uploadFile(bytearray_, "imags/"+imagesPaths.get(0)) {
-                if (it) {
-                    val item = Content(now,0,0,nick.toString(),"",title,content,0,false,
-                                                0,0,  "imags/"+imagesPaths.get(0),false,0,false)
+                val nowTime = System.currentTimeMillis()
 
-                    ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
-                        if(success){
-                            finish()
-                        }else{
+                val cutImage = Utils.resize(bt,100)
 
+                val cutBytearray_ = Utils.getByteArray(cutImage)
+
+                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+nowTime+".png") {
+                    if (it) {
+                        val regionItem = Region(nowTime,"","")
+
+                        val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                        val texts: ArrayList<String> = ArrayList<String>()
+
+                        texts.add(content)
+                        texts.add("imgl/"+nowTime+"png")
+
+
+                        val item = Content(now,0,0,nick.toString(),regionItem,title,texts,"imgl/"+nowTime+".png",false,
+                                0,0,  "",false,0,false,sharpTag)
+
+                        FirebaseFirestoreUtils.uploadFile(cutBytearray_,"imgs/"+nowTime+".png"){
+                            if(it){
+                                ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
+                                    if(success){
+                                        finish()
+                                    }else{
+
+                                    }
+                                }
+                            }
                         }
+
+                    } else {
+
                     }
-
-
-
-                } else {
 
                 }
 
+            }else {
+
             }
+
+
 
 
 
@@ -245,6 +271,7 @@ class AddPostActivity : RootActivity() {
                         if(displaynamePaths != null){
                             displaynamePaths.clear()
                             displaynamePaths.add(str)
+
 
                             Log.d("yjs", "display " + displaynamePaths.get(0))
                         }else {

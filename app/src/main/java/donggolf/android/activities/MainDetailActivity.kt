@@ -26,15 +26,6 @@ class MainDetailActivity : RootActivity() {
 
     private  lateinit var  adapter : MainDeatilAdapter
 
-
-    private val ONE_SECOND : Long = 1000L
-
-    private val ONE_MINUTE : Long = ONE_SECOND * 60L
-
-    private val ONE_HOUR : Long= ONE_MINUTE*60L
-
-    private val GMT_OFFSET_HOUR = (TimeZone.getDefault().rawOffset / ONE_HOUR)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
@@ -68,10 +59,10 @@ class MainDetailActivity : RootActivity() {
         }
 
 
-        if (intent.hasExtra("createAt")){
-            val createAt = intent.getStringExtra("createAt")
+        if (intent.hasExtra("id")){
+            val id = intent.getStringExtra("id")
             val params = HashMap<String, Any>()
-            params.put("createAt",createAt.toLong())
+            params.put("id",id)
 
             ContentAction.getContent(params){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
                 if (success){
@@ -79,23 +70,18 @@ class MainDetailActivity : RootActivity() {
                         if(data.size != 0){
                             val time: Long = data[0]!!["createAt"] as Long
 
-                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
 
                             val currentTime: String = dateFormat.format(Date(time))
-
-                            val second = time / ONE_SECOND % 60L
-                            val minute = time / ONE_MINUTE % 60L
-                            val hour = ((time / ONE_HOUR % 24L) + GMT_OFFSET_HOUR) % 24
 
                             titleTV.text = data[0]!!["title"].toString()
                             dateTV.text = currentTime.toString()
                             viewTV.text = data[0]!!["looker"].toString()
                             nickNameTV.text = data[0]!!["owner"].toString()
 
-
-//                            println("data : " + data)
+                            println("data : " + data)
 //
-//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["charge_user"].toString(), 100)
+//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
 //
 //                            detailIV.setImageBitmap(bt)
 

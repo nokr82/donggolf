@@ -113,6 +113,10 @@ class LoginActivity : RootActivity() {
         startActivity(Intent(this, FindidActivity::class.java))
     }
 
+    fun movefinPassword(){
+
+    }
+
     fun moveregister() {
         startActivity(Intent(this, RegisterActivity::class.java))
     }
