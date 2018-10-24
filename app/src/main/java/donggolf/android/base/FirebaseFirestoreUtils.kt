@@ -196,16 +196,29 @@ class FirebaseFirestoreUtils {
         }
 
         fun getFileUri(path:String, result: (success:Boolean, uri: String?, exception:Exception?) -> Unit) {
-                        val ref = storage.reference.child(path)
-                        ref.downloadUrl
-                                .addOnSuccessListener {
-                                        result(true, it.toString(), null)
-                                    }
-                                .addOnFailureListener {
-                                        result(false, null, it)
-                                    }
-
+            val ref = storage.reference.child(path)
+            ref.downloadUrl
+                    .addOnSuccessListener {
+                        result(true, it.toString(), null)
                     }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+
+        }
+
+
+        fun deleteFile(path:String, result: (success:Boolean) -> Unit) {
+            val ref = storage.reference.child(path)
+            ref.delete()
+                    .addOnSuccessListener {
+                        result(true)
+                    }
+                    .addOnFailureListener {
+                        result(false)
+                    }
+
+        }
 
 
 
