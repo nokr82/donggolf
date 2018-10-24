@@ -2,8 +2,8 @@ package donggolf.android.base
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.util.*
 import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -95,11 +95,9 @@ class FirebaseFirestoreUtils {
                         val data = ArrayList<Map<String, Any>?>()
 
                         it.documents.forEach {
-                            data.add(it.data)
                             val item = it.data
                             if (item != null) {
                                 item!!.put("id", it.id)
-                                println("id : $(it.id)" )
                                 data.add(item)
                             }
                         }
