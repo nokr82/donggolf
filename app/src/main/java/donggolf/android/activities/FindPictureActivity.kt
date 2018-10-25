@@ -77,7 +77,7 @@ class FindPictureActivity : RootActivity() {
 
 
 
-        btn_finish.setOnClickListener {
+        finishLL.setOnClickListener {
             finish()
         }
 

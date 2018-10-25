@@ -29,13 +29,13 @@ class AreaRangeActivity : RootActivity() {
             finish()
         }
 
-        var dataObj : JSONObject = JSONObject();
+        var dataObj: JSONObject = JSONObject();
 
         adapterData.add(dataObj)
         adapterData.add(dataObj)
         adapterData.add(dataObj)
 
-        adapter = AreaRangeAdapter(context,R.layout.item_area_range,adapterData)
+        adapter = AreaRangeAdapter(context, R.layout.item_area_range, adapterData)
 
         listLV.adapter = adapter
 

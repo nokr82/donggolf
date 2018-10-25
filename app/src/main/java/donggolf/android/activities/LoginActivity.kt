@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import donggolf.android.R
+import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
@@ -74,7 +75,18 @@ class LoginActivity : RootActivity() {
 
     private fun login() {
         val email = Utils.getString(emailET)
+        if (email.isEmpty()) {
+            Utils.alert(context, "아이디는 필수 입력입니다.")
+            return
+        }
+
         val password = Utils.getString(passwordET)
+        if (email.isEmpty()) {
+            Utils.alert(context, "비밀번호는 필수 입력입니다.")
+            return
+        }
+
+
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->

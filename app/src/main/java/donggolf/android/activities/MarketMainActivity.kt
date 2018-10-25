@@ -39,9 +39,9 @@ class MarketMainActivity : RootActivity() {
 
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
 
-        gridGV.adapter = adapter
+        maingridGV.adapter = adapter
 
-        gridGV.setOnItemClickListener { parent, view, position, id ->
+        maingridGV.setOnItemClickListener { parent, view, position, id ->
             MoveGoodsDetailActivity()
         }
 

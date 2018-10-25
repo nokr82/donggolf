@@ -509,13 +509,15 @@
                        android:layout_height="match_parent"
                        android:orientation="horizontal">
                        <RadioButton
+                           android:buttonTint="#0EDA2F"
                            android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
+                           android:layout_height="match_parent"
                            android:text="판매자 부담"
                            android:textSize="13dp" />
                        <RadioButton
+                           android:buttonTint="#0EDA2F"
                            android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
+                           android:layout_height="match_parent"
                            android:text="구매자 부담"
                            android:layout_marginLeft="10dp"
                            android:textSize="13dp" />
@@ -548,7 +550,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="13dp"
                         android:gravity="center_vertical"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginLeft="20dp"
                         android:text="010-2534-5553"/>
                 </LinearLayout>
             </LinearLayout>

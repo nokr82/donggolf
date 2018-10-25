@@ -21,15 +21,20 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/btn_finish"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/btn_close"
+                android:layout_height="50dp">
+                <LinearLayout
+                    android:id="@+id/finishLL"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp" />
+                    android:layout_marginRight="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_close" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -39,7 +44,6 @@
                         android:id="@+id/titleTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="영정도CC에서 오랜만의 즐라운딩"
                         android:layout_margin="7dp"
                         android:textColor="#000000"
                         android:textSize="14dp"/>
@@ -152,14 +156,14 @@
                                 android:id="@+id/nickNameTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="닉네임일곱글자"
                                 android:textColor="#EF5C34"
                                 android:textSize="10.67dp"
                                 android:maxLength="7"/>
 
                             <ImageView
-                                android:layout_width="23dp"
-                                android:layout_height="13dp"
+                                android:layout_marginTop="1dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="5dp"
                                 android:background="@drawable/icon_first" />
@@ -167,7 +171,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="상태메시지 텍스트가 들어 갈 자리입니다."
                             android:textColor="#AFAFAF"
                             android:textSize="8.67dp"/>
                     </LinearLayout>
@@ -181,7 +184,6 @@
                 android:id="@+id/textTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산 대한사람 ~~"
                 android:layout_margin="7dp"
                 android:textSize="13dp"
                 android:textColor="#000000"/>
@@ -336,6 +338,7 @@
                         android:background="@drawable/line_0" />
 
                     <RelativeLayout
+                        android:background="#ffffff"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -354,6 +357,7 @@
                                 android:background="@null"
                                 android:hint="댓글을 남겨주세요"
                                 android:gravity="center"
+                                android:singleLine="true"
                                 android:layout_marginRight="30dp"
                                 android:layout_gravity="center_vertical"
                                 android:textSize="13dp"/>

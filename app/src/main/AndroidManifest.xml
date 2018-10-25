@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="donggolf.android">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!--
     activity
@@ -83,7 +83,7 @@
             android:name=".activities.AddPostActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="luminous.ACTION_PICK" />
                 <action android:name="luminous.ACTION_MULTIPLE_PICK" />
@@ -98,14 +98,46 @@
             android:name=".activities.FindPictureGridActivity"
             android:theme="@style/NoTitleDialog" />
         <activity
+            android:name=".activities.FindVideoActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
             android:name=".activities.MainDetailActivity"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-        </activity>
-        <activity android:name=".activities.PictureDetailActivity"
-
-            android:theme="@style/NoTitleDialog"/>
-
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.PictureDetailActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.AreaRangeActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.FriendSearchActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.MarketMainActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.MarketManageActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.GoodsDetailActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.ReportActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.SellerActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.AddGoodsActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".activities.NoticeActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
     </application>
 
 </manifest>

@@ -51,6 +51,10 @@ class MainDetailActivity : RootActivity() {
 
         adapter.notifyDataSetChanged()
 
+        finishLL.setOnClickListener {
+            finish()
+        }
+
         main_detail_gofindpicture.setOnClickListener {
             MoveFindPictureActivity()
         }
