@@ -21,12 +21,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <LinearLayout
                     android:id="@+id/finishBT"
-                    android:layout_width="14dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_back" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/btn_back" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.NoticeActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/finishaBT"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="11dp"
+                android:layout_height="17dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/btn_back" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/addpostTV"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="새글 알림 설정"
+            android:textColor="#000000"
+            android:textSize="13dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/line_0" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/box_search"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+
+
+                <EditText
+                    android:id="@+id/main_edit_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:background="@null"
+                    android:singleLine="true"
+                    android:hint="키워드 입력(최대15자)"
+                    android:maxLength="15"
+                    android:textSize="10dp" />
+            </LinearLayout>
+            <Button
+                android:layout_width="11.33dp"
+                android:layout_height="11.33dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/btn_del_searchword_selector" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/btn_go_addpost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_ok"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="등록"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:layout_marginRight="10dp"/>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:text="설정 가능한 키워드 15/15"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+</LinearLayout>

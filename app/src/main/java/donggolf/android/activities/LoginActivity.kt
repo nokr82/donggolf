@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import donggolf.android.R
 import donggolf.android.actions.InfoAction
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -46,12 +47,18 @@ class LoginActivity : RootActivity() {
             moveregister()
         }
 
+        findpasswordLL.setOnClickListener {
+            movefinPassword()
+        }
+
         autologinBT.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder
                     .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+
+
 
 
                     })
@@ -110,11 +117,15 @@ class LoginActivity : RootActivity() {
     }
 
     fun movefindid() {
-        startActivity(Intent(this, FindidActivity::class.java))
+        val intent = Intent(this, FindidActivity::class.java)
+        intent.putExtra("find",1)
+        startActivity(intent)
     }
 
     fun movefinPassword(){
-
+        val intent = Intent(this, FindidActivity::class.java)
+        intent.putExtra("find",2)
+        startActivity(intent)
     }
 
     fun moveregister() {

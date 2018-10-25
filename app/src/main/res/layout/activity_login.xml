@@ -139,6 +139,7 @@
                         android:text="아이디 찾기"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/findpasswordLL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

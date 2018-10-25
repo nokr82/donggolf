@@ -10,12 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/btn_finish"
             android:layout_width="wrap_content"
-            android:layout_height="17dp"
-            android:layout_margin="13dp"
-            android:background="@drawable/btn_back" />
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_margin="13dp"
+                android:background="@drawable/btn_back" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"

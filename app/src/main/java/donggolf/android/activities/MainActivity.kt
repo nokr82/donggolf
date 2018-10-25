@@ -35,6 +35,8 @@ class MainActivity : RootActivity() {
 
     private val SELECT_PICTURE: Int = 101
 
+    val user = HashMap<String, Any>()
+
     companion object {
         const val TAG = "MainActivity"
     }
@@ -55,7 +57,6 @@ class MainActivity : RootActivity() {
 
         // Create a new user with a first and last name
 
-        val user = HashMap<String, Any>()
         user.put("first", "Ada")
         user.put("last", "Lovelace")
         user.put("born", 1815)
@@ -81,6 +82,7 @@ class MainActivity : RootActivity() {
         var dataObj : JSONObject = JSONObject();
 
         var content = Content()
+
         ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
 
             if(success && data != null) {
@@ -116,13 +118,10 @@ class MainActivity : RootActivity() {
         main_listview.setOnItemClickListener { parent, view, position, id ->
             val id : String
             id = adapterData.get(position)!!.get("id").toString()
-
-            println("adapterData : " + adapterData)
-            Log.d("yjs","id : " + id)
             MoveMainDetailActivity(id)
         }
 
-        btn_go_addpost.setOnClickListener {
+        addpostLL.setOnClickListener {
             MoveAddPostActivity()
         }
 
@@ -134,13 +133,22 @@ class MainActivity : RootActivity() {
             main_listview_search.visibility = View.GONE
         }
 
+        areaLL.setOnClickListener {
+            MoveAreaRangeActivity()
+        }
 
+        marketIV.setOnClickListener {
+            MoveMarketMainActivity()
+        }
 
     }
+
+
 
     fun MoveAddPostActivity(){
 
         var intent = Intent(context, AddPostActivity::class.java);
+        intent.putExtra("category",1)
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
@@ -150,6 +158,15 @@ class MainActivity : RootActivity() {
         startActivity(intent)
     }
 
+    fun MoveAreaRangeActivity(){
+        var intent: Intent = Intent(this, AreaRangeActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun MoveMarketMainActivity(){
+        var intent: Intent = Intent(this, MarketMainActivity::class.java)
+        startActivity(intent)
+    }
 
 
     private fun updateUI(currentUser: FirebaseUser?) {
@@ -175,5 +192,6 @@ class MainActivity : RootActivity() {
     fun logout() {
         FirebaseAuth.getInstance().signOut()
     }
+
 
 }

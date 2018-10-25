@@ -14,52 +14,6 @@
             android:id="@+id/goneRL"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <RelativeLayout
-                android:id="@+id/relativ_RL"
-                android:layout_marginTop="70dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="70dp"
-                android:layout_marginRight="30dp"
-                android:visibility="gone">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:background="@drawable/boarder_707070_background_ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:text="글 보관하기"
-                        android:gravity="center"/>
-                    <TextView
-                        android:background="@drawable/boarder_707070_background_ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:text="신고하기"
-                        android:gravity="center"/>
-                    <TextView
-                        android:background="@drawable/boarder_707070_background_ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:text="친구신청"
-                        android:gravity="center"/>
-                    <TextView
-                        android:background="@drawable/boarder_707070_background_ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:text="수정"
-                        android:gravity="center"/>
-                    <TextView
-                        android:background="@drawable/boarder_707070_background_ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:text="삭제"
-                        android:gravity="center"/>
-                </LinearLayout>
-
-
-            </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -154,14 +108,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
                     android:id="@+id/plusBT"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="12dp"
-                    android:background="@drawable/btn_menu" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_menu" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -238,6 +207,57 @@
 
             </donggolf.android.base.RationalRelativeLayout>
 
+            </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/relativ_RL"
+                    android:layout_marginTop="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="70dp"
+                    android:layout_marginRight="30dp"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="글 보관하기"
+                            android:gravity="center"/>
+                        <TextView
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="신고하기"
+                            android:gravity="center"/>
+                        <TextView
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="친구신청"
+                            android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/modifyTV"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="수정"
+                            android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/deleteTV"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="삭제"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
@@ -256,42 +276,46 @@
                     android:gravity="center"
                     android:textSize="13dp"/>
                 <ImageView
-                    android:layout_width="33.3dp"
-                    android:layout_height="33.3dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/icon_profile"
                     android:layout_marginLeft="5dp"/>
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/icon_profile"
                     android:layout_marginLeft="3dp"/>
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/icon_profile"
                     android:layout_marginLeft="3dp"/>
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/icon_profile"
                     android:layout_marginLeft="3dp"/>
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/icon_profile"
                     android:layout_marginLeft="3dp"/>
 
 
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
-                    android:background="@drawable/btn_show_more" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/btn_show_more" />
+                </LinearLayout>
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="wrap_content"

@@ -12,14 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/finishaBT"
-            android:layout_width="11dp"
-            android:layout_height="17dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/btn_back" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="11dp"
+                android:layout_height="17dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/btn_back" />
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/addpostTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -134,40 +139,58 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
+                    <LinearLayout
                         android:id="@+id/movefindpictureBT"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/btn_add_photo" />
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/btn_add_photo" />
+                    </LinearLayout>
 
-                    <ImageView
+                    <LinearLayout
                         android:id="@+id/movefindvideoBT"
-                        android:layout_width="25dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/btn_add_video" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/btn_add_video" />
+                    </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/btn_tag" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="19dp"
+                            android:layout_height="19dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/btn_tag" />
+                    </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <ImageView
-                            android:id="@+id/addcontentBT"
-                            android:layout_width="27dp"
-                            android:layout_height="18dp"
+                        <LinearLayout
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="20dp"
-                            android:background="@drawable/btn_keyboard" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp">
+                            <ImageView
+                                android:id="@+id/addcontentBT"
+                                android:layout_width="27dp"
+                                android:layout_height="18dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/btn_keyboard" />
+                        </LinearLayout>
                     </RelativeLayout>
 
                 </LinearLayout>

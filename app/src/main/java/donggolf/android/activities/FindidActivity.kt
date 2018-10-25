@@ -26,6 +26,13 @@ class FindidActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
+        val category = intent.getIntExtra("find",0)
+        if(category == 1){
+            hintTV.text = "아이디 찾기"
+        }else {
+            hintTV.text = "비밀번호 재발급"
+        }
+
         finishBT.setOnClickListener {
             finish()
         }
@@ -34,9 +41,13 @@ class FindidActivity : RootActivity() {
             findid()
         }
 
+
+
     }
 
     fun findid() {
+
+        val category = intent.getIntExtra("find",0)
 
         val phone = Utils.getString(phoneET)
         if (phone.isEmpty()) {
@@ -44,31 +55,62 @@ class FindidActivity : RootActivity() {
             return
         }
 
-        var params = HashMap<String, Any>()
-        params.put("phone", phone)
+        if(category == 1){
+            var params = HashMap<String, Any>()
+            params.put("phone", phone)
 
-        InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-            if (success) {
-                println("data : $data")
-                // useridTV.text = data.toString()
+            InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+                if (success) {
+                    println("data : $data")
+                    // useridTV.text = data.toString()
 
-                if (data != null) {
-                    if (data.size == 0){
-                        idhintTV.text = ""
-                        useridTV.text = ""
-                        hintTV.text = "아이디를 찾을 수 없습니다."
-                    }else {
-                        if (data.get(0)!!.get("phone") == phone){
-                            idhintTV.text = "아이디 힌트는 "
-                            useridTV.text = "K*****@naver.com"
-                            hintTV.text = "입니다"
+                    if (data != null) {
+                        if (data.size == 0){
+                            idhintTV.text = ""
+                            useridTV.text = ""
+                            hintTV.text = "아이디를 찾을 수 없습니다."
+                        }else {
+                            if (data.get(0)!!.get("phone") == phone){
+                                idhintTV.text = "아이디 힌트는 "
+                                useridTV.text = "K*****@naver.com"
+                                hintTV.text = "입니다"
+                            }
                         }
                     }
-                }
-            } else {
+                } else {
 
+                }
+            }
+        }else {
+            var params = HashMap<String, Any>()
+            params.put("phone", phone)
+
+            InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+                if (success) {
+                    println("data : $data")
+                    // useridTV.text = data.toString()
+
+                    if (data != null) {
+                        if (data.size == 0){
+                            idhintTV.text = ""
+                            useridTV.text = ""
+                            hintTV.text = "아이디를 찾을 수 없습니다."
+                        }else {
+                            if (data.get(0)!!.get("phone") == phone){
+                                idhintTV.text = "비밀번호 힌트는 "
+                                useridTV.text = "K*****@naver.com"
+                                hintTV.text = "입니다"
+                            }
+                        }
+                    }
+                } else {
+
+                }
             }
         }
+
+
+
     }
 }
 

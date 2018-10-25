@@ -47,7 +47,6 @@ class AddPostActivity : RootActivity() {
 
     private val SELECT_PICTURE: Int = 101
 
-
     private val SELECT_VIDEO: Int = 102
 
     var photoList: ArrayList<PhotoData> = ArrayList<PhotoData>()
@@ -57,7 +56,6 @@ class AddPostActivity : RootActivity() {
     private var imagesPaths: ArrayList<String> = ArrayList<String>()
 
     private var displaynamePaths: ArrayList<String> = ArrayList<String>()
-
 
     private var images: ArrayList<Bitmap> = ArrayList()
 
@@ -79,9 +77,26 @@ class AddPostActivity : RootActivity() {
 
         // Create a new user with a first and last name
 
-
-
         permission()
+
+        println("displayname " + displaynamePaths.size.toString())
+
+        val category = intent.getIntExtra("category",0)
+        if(category == 2){
+            addpostTV.text = "수정하기"
+            val id = intent.getStringExtra("id")
+            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                if(success){
+                    if(data != null){
+                        if(data.size != 0){
+                            titleET.setText(data["title"].toString())
+                            contentET.setText(data["texts"].toString())
+                        }
+                    }
+                }
+            }
+        }
+
 
         finishaBT.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -107,13 +122,15 @@ class AddPostActivity : RootActivity() {
         }
 
         addcontentBT.setOnClickListener {
-            addContent()
+            if(category == 1){
+                addContent()
+            }else {
+                val id = intent.getStringExtra("id")
+                modify(id)
+            }
         }
 
         val email: String = PrefUtils.getStringPreference(context,"email")
-
-        Log.d("yjs", "email : " + email)
-
 
     }
 
@@ -147,6 +164,114 @@ class AddPostActivity : RootActivity() {
                 .check();
 
     }
+
+    private fun modify( id: String){
+        val title = Utils.getString(titleET)
+        if (title.isEmpty()){
+            Utils.alert(context, "제목을 입력해주세요.")
+            return
+        }
+
+        var content = Utils.getString(contentET)
+        if (content.isEmpty()){
+            Utils.alert(context, "내용을 입력해주세요.")
+            return
+        }
+
+        val user = mAuth.currentUser
+
+        if(user != null){
+            val title = Utils.getString(titleET)
+            val content = Utils.getString(contentET)
+
+            val nick: String = PrefUtils.getStringPreference(context,"nick")
+
+
+            if(displaynamePaths != null){
+                if(displaynamePaths.size != 0){
+                var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 500)
+
+                    println("displayName ${displaynamePaths}")
+
+                val bytearray_ = Utils.getByteArray(bt)
+
+                val nowTime = System.currentTimeMillis()
+
+                val cutImage = Utils.resize(bt,100)
+
+                val cutBytearray_ = Utils.getByteArray(cutImage)
+
+
+
+                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+nowTime+".png") {
+                    if (it) {
+                        val regionItem = Region(nowTime,"","")
+
+                        val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                        ContentAction.viewContent(id){success, data, exception ->
+                            if(success){
+                                if(data != null) {
+                                    if (data.size != 0) {
+                                        val time: Long = data["createAt"] as Long
+                                        val item = Content(time,0,0,nick.toString(),regionItem,title,content,"imgl/"+nowTime+".png",false,
+                                                0,0,  "",false,0,false,sharpTag)
+
+                                        FirebaseFirestoreUtils.uploadFile(cutBytearray_,"imgs/"+nowTime+".png"){
+                                            if(it){
+                                                FirebaseFirestoreUtils.save("contents",id,item){
+                                                    if(it){
+                                                        finish()
+                                                    }else{
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+
+                    }
+
+                }
+            }
+            }
+
+            if(displaynamePaths.size == 0){
+                val nowTime = System.currentTimeMillis()
+
+                val regionItem = Region(nowTime,"","")
+
+                val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                ContentAction.viewContent(id){success, data, exception ->
+                    if(success){
+                        if(data != null) {
+                            if (data.size != 0) {
+                                val time: Long = data["createAt"] as Long
+                                val item = Content(time,0,0,nick.toString(),regionItem,title,content,"",false,
+                                        0,0,  "",false,0,false,sharpTag)
+                                FirebaseFirestoreUtils.save("contents",id,item){
+                                    if(it){
+                                        finish()
+                                    }else{
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
+
 
     private fun addContent(){
 
@@ -195,13 +320,7 @@ class AddPostActivity : RootActivity() {
 
                         val sharpTag: ArrayList<String> = ArrayList<String>()
 
-                        val texts: ArrayList<String> = ArrayList<String>()
-
-                        texts.add(content)
-                        texts.add("imgl/"+nowTime+"png")
-
-
-                        val item = Content(now,0,0,nick.toString(),regionItem,title,texts,"imgl/"+nowTime+".png",false,
+                        val item = Content(now,0,0,nick.toString(),regionItem,title,content,"imgl/"+nowTime+".png",false,
                                 0,0,  "",false,0,false,sharpTag)
 
                         FirebaseFirestoreUtils.uploadFile(cutBytearray_,"imgs/"+nowTime+".png"){
@@ -222,8 +341,23 @@ class AddPostActivity : RootActivity() {
 
                 }
 
-            }else {
+            }
+            if(displaynamePaths.size == 0) {
+                val nowTime = System.currentTimeMillis()
 
+                val regionItem = Region(nowTime,"","")
+
+                val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                val item = Content(now,0,0,nick.toString(),regionItem,title,content,"",false,
+                        0,0,  "",false,0,false,sharpTag)
+                ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
+                    if(success){
+                        finish()
+                    }else{
+
+                    }
+                }
             }
 
 
@@ -309,8 +443,6 @@ class AddPostActivity : RootActivity() {
                             }
 
                         }
-
-
 
                     }
 

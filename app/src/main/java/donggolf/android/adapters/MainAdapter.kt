@@ -43,6 +43,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
 
         var data : Map<String, Any> = getItem(position)
 
+        println("data : $data")
+
         var title:String = data.get("title") as String
         item.main_item_title.text = title
 

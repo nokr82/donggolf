@@ -95,11 +95,9 @@ class FirebaseFirestoreUtils {
                         val data = ArrayList<Map<String, Any>?>()
 
                         it.documents.forEach {
-                            data.add(it.data)
                             val item = it.data
                             if (item != null) {
                                 item!!.put("id", it.id)
-                                println("id : $(it.id)" )
                                 data.add(item)
                             }
                         }
@@ -198,16 +196,27 @@ class FirebaseFirestoreUtils {
         }
 
         fun getFileUri(path:String, result: (success:Boolean, uri: String?, exception:Exception?) -> Unit) {
-                        val ref = storage.reference.child(path)
-                        ref.downloadUrl
-                                .addOnSuccessListener {
-                                        result(true, it.toString(), null)
-                                    }
-                                .addOnFailureListener {
-                                        result(false, null, it)
-                                    }
-
+            val ref = storage.reference.child(path)
+            ref.downloadUrl
+                    .addOnSuccessListener {
+                        result(true, it.toString(), null)
                     }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+        }
+
+        fun deleteFile(path:String, result: (success:Boolean) -> Unit) {
+            val ref = storage.reference.child(path)
+            ref.delete()
+                    .addOnSuccessListener {
+                        result(true)
+                    }
+                    .addOnFailureListener {
+                        result(false)
+            }
+
+        }
 
 
 
