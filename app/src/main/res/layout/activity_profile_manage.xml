@@ -99,7 +99,7 @@
             android:gravity="center"
             android:text="사용자이름"
             android:id="@+id/txUserName"
-            android:textSize="23dp"
+            android:textSize="24dp"
             android:layout_margin="10dp"/>
         <ImageView
             android:layout_width="wrap_content"
