@@ -135,9 +135,22 @@
             android:name=".activities.AddGoodsActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".activities.NoticeActivity"
+        <activity
+            android:name=".activities.NoticeActivity"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".Test1Activity"
+            android:label="@string/title_activity_test1" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileManageActivity" />
+        <activity android:name=".OtherManageActivity" />
+        <activity android:name=".ProfileNameModifActivity" />
+        <activity android:name=".ProfileTagChangeActivity" />
+        <activity android:name=".ProfilePhoneChangeActivity" />
+        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".WithdrawalActivity" />
+        <activity android:name=".ViewDocumentActivity"></activity>
     </application>
 
 </manifest>

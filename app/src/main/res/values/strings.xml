@@ -10,5 +10,6 @@
 
     <string name="progress_message">Processing...</string>
     <string name="load_error_message">Failure has occurred</string>
+    <string name="title_activity_test1">Test1Activity</string>
 
 </resources>
