@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context=".WithdrawalActivity">
+    tools:context=".activities.WithdrawalActivity">
 
     <!-- 맨 위 -->
     <LinearLayout
@@ -128,7 +128,7 @@
             android:textStyle="bold"
             android:layout_margin="5dp"
             android:text="위 내용을 모두 확인했습니다."/>
-        <ImageView
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/box_check"

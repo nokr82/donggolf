@@ -3,6 +3,8 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.view.View
 import com.google.android.gms.tasks.OnCompleteListener
@@ -21,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 
 
-class MainActivity : RootActivity() {
+class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivity()를 extends
 
     private lateinit var context: Context
 

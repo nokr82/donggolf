@@ -56,7 +56,7 @@
         </RelativeLayout>
 
     </LinearLayout>
-
+<!---->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">
@@ -72,12 +72,13 @@
                     android:layout_centerInParent="true"
                     android:layout_width="33dp"
                     android:layout_height="32dp"
-                    android:background="@drawable/btn_main_on_selector"/>
+                    android:background="@drawable/btn_main_on_selector" />
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@drawable/line_btn_main_selector"
-                    android:layout_alignParentBottom="true"/>
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/btnMyTown"/>
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"

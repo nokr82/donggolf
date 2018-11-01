@@ -139,18 +139,28 @@
             android:name=".activities.NoticeActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".Test1Activity"
-            android:label="@string/title_activity_test1" />
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".ProfileManageActivity" />
-        <activity android:name=".OtherManageActivity" />
-        <activity android:name=".ProfileNameModifActivity" />
-        <activity android:name=".ProfileTagChangeActivity" />
-        <activity android:name=".ProfilePhoneChangeActivity" />
-        <activity android:name=".ChangePasswordActivity" />
-        <activity android:name=".WithdrawalActivity" />
-        <activity android:name=".ViewDocumentActivity"></activity>
+        <activity android:name=".activities.ProfileActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ProfileManageActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.OtherManageActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ProfileNameModifActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ProfileTagChangeActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ProfilePhoneChangeActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ChangePasswordActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.WithdrawalActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.ViewDocumentActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.InquireActivity"
+            android:theme="@style/NoTitleDialog"/>
+        <activity android:name=".activities.MutualActivity"
+            android:theme="@style/NoTitleDialog"></activity>
     </application>
 
 </manifest>

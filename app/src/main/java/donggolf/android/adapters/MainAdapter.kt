@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat
 import java.time.Year
 import java.util.*
 
-
 open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
 
     private lateinit var item: ViewHolder
