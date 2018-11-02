@@ -8,6 +8,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +41,8 @@ open class MainFragment : Fragment() {
     lateinit var tabNotice: RelativeLayout
     lateinit var tabMyPage: RelativeLayout
 
+    lateinit var pagerAdapter: PagerAdapter
+
     lateinit var vpPage: ViewPager
 
     lateinit var main_listview:ListView
@@ -56,6 +60,7 @@ open class MainFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
+    //여기서 뷰 연결
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -212,6 +217,99 @@ open class MainFragment : Fragment() {
         })
     }*/
 
+    // 뷰페이저
+    pagerAdapter = PagerAdapter(getChildFragmentManager())//
+    pagerVP.adapter = pagerAdapter
+    pagerAdapter.notifyDataSetChanged()//내용 새로고침
+    pagerVP.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+        }
+        override fun onPageSelected(position: Int) {
+
+            when (position) {
+                0 -> {
+                    tabType = 1;
+
+                    setMenuTabView()
+                }
+                1 -> {
+                    tabType = 2;
+
+                    setMenuTabView()
+                }
+                2 -> {
+                    tabType = 3;
+
+                    setMenuTabView()
+                }
+                3 -> {
+                    tabType = 4;
+
+                    setMenuTabView()
+                }
+                4 -> {
+                    tabType = 5;
+
+                    setMenuTabView()
+                }
+                5 -> {
+                    tabType = 6;
+
+                    setMenuTabView()
+                }
+            }
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+        }
+    })
+
+
+    fun setMenuTabView() {
+        /*freeTV.setTextColor(Color.parseColor("#A19F9B"))
+        infoTV.setTextColor(Color.parseColor("#A19F9B"))
+        studyTV.setTextColor(Color.parseColor("#A19F9B"))
+        classTV.setTextColor(Color.parseColor("#A19F9B"))
+        meetingTV.setTextColor(Color.parseColor("#A19F9B"))
+        couponTV.setTextColor(Color.parseColor("#A19F9B"))*/
+
+        freeV.visibility = View.INVISIBLE
+        infoV.visibility = View.INVISIBLE
+        studyV.visibility = View.INVISIBLE
+        classV.visibility = View.INVISIBLE
+        meetingV.visibility = View.INVISIBLE
+        couponV.visibility = View.INVISIBLE
+
+        mainLL.visibility = View.GONE
+        pagerVP.visibility = View.VISIBLE
+
+        if(tabType == 1) {
+            //freeTV.setTextColor(Color.parseColor("#01b4ec"))
+            freeV.visibility = View.VISIBLE
+        } else if (tabType == 2) {
+            infoV.visibility = View.VISIBLE
+            //infoTV.setTextColor(Color.parseColor("#01b4ec"))
+        } else if (tabType == 3) {
+            studyV.visibility = View.VISIBLE
+            //studyTV.setTextColor(Color.parseColor("#01b4ec"))
+        } else if (tabType == 4) {
+            classV.visibility = View.VISIBLE
+            //classTV.setTextColor(Color.parseColor("#01b4ec"))
+        } else if (tabType == 5) {
+            meetingV.visibility = View.VISIBLE
+            //meetingTV.setTextColor(Color.parseColor("#01b4ec"))
+        } else if (tabType == 6) {
+            couponV.visibility = View.VISIBLE
+            //couponTV.setTextColor(Color.parseColor("#01b4ec"))
+        }
+
+    }
+
+
+
+
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -258,6 +356,68 @@ open class MainFragment : Fragment() {
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
 
+    }
+
+
+    class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        override fun getItem(i: Int): Fragment {
+
+            var fragment: Fragment
+
+            val args = Bundle()
+            when (i) {
+                0 -> {
+                    fragment = FreeFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                1 -> {
+                    fragment = InfoFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                2 -> {
+                    fragment = StudyFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                3 -> {
+                    fragment = ClassFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                4 -> {
+                    fragment = MeetingFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                5 -> {
+                    fragment = CouponFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                else -> {
+                    fragment = FreeFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+            }
+        }
+
+        override fun getCount(): Int {
+            return 6
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return ""
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
     }
 
 }

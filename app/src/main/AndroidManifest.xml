@@ -139,28 +139,46 @@
             android:name=".activities.NoticeActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".activities.ProfileActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ProfileManageActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.OtherManageActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ProfileNameModifActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ProfileTagChangeActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ProfilePhoneChangeActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ChangePasswordActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.WithdrawalActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ViewDocumentActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.InquireActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.MutualActivity"
-            android:theme="@style/NoTitleDialog"></activity>
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ProfileManageActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.OtherManageActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ProfileNameModifActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ProfileTagChangeActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ProfilePhoneChangeActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.WithdrawalActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ViewDocumentActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.InquireActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.MutualActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity android:name=".activities.TermSpecifActivity" />
+        <activity android:name=".PersonalInfoTernsActivity" />
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2" />
+        <activity android:name=".SetAlarmActivity" />
+        <activity android:name=".ChatDetailActivity"></activity>
     </application>
 
 </manifest>

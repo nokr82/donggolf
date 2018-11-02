@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:gravity="center_vertical"
+    android:padding="20dp"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/profPhoto"
+            android:src="@drawable/icon_profile"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:id="@+id/isOnLine"
+            android:src="@drawable/icon_user_online"/>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--대화상대, 미리보기-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="닉네임일곱글자"
+                android:textSize="11dp"
+                android:textColor="#EF5C34"
+                android:textStyle="bold"
+                android:layout_marginRight="3dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_first"
+                android:layout_marginRight="3dp"/>
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icon_off_alarm"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="9dp"
+                android:textColor="#CDCDCD"
+                android:gravity="right"
+                android:text="오후 12:12"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:textSize="10dp"
+                android:textColor="#cdcdcd"
+                android:lines="2"
+                android:text="1:1 채팅방 형태입니다. 채팅에 대한 내용은 2줄까지 표시되어 나옵니다"/>
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/icon_norice_L"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
