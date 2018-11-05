@@ -77,7 +77,7 @@
                 android:layout_height="10dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/icon_norice_L"/>
+                android:src="@drawable/icon_norice_l"/>
         </RelativeLayout>
 
     </LinearLayout>

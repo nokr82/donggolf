@@ -7,14 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import donggolf.android.R
 
-class Fragment2 : Fragment() {
+class InfoFragment : Fragment(){
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        var view = super.onCreateView(inflater, container, savedInstanceState)
 
-        return LayoutInflater.from(inflater.context).inflate(R.layout.fragment2,container, false)
 
+
+        return inflater.inflate(R.layout.activity_profile_manage, container, false)
     }
 
 }

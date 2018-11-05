@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.MainFragment">
+    tools:context=".fragment.MainFragment">
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <LinearLayout
@@ -77,21 +77,11 @@
                     android:layout_alignParentBottom="true"/>
             </RelativeLayout>
         </LinearLayout>
+    </LinearLayout>-->
 
-    </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-    <android.support.v4.view.ViewPager
+    <!--<android.support.v4.view.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent">-->
 
         <RelativeLayout
         android:layout_width="match_parent"
@@ -164,7 +154,7 @@
             <ListView
                 android:id="@+id/main_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
+                android:layout_height="match_parent" />
 
             <LinearLayout
                 android:id="@+id/main_listview_search"
@@ -212,15 +202,6 @@
 
         </RelativeLayout>
 
-    </android.support.v4.view.ViewPager>
-
-
-
-
-
-
-
-
-
+    <!--</android.support.v4.view.ViewPager>-->
 
 </LinearLayout>
