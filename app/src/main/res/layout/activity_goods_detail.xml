@@ -166,7 +166,7 @@
                             android:text="0"
                             android:textColor="#C9C9C9"
                             android:textSize="10dp"
-                            android:layout2gravity="center_vertical"/>
+                            android:layout_gravity="center_vertical"/>
                     </LinearLayout>
                 </LinearLayout>
                 <RelativeLayout
