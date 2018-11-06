@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.ViewPager
 import android.util.Log
-import android.view.View
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -17,7 +19,10 @@ import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
-import donggolf.android.base.RootActivity
+import donggolf.android.fragment.ChatFragment
+import donggolf.android.fragment.FreeFragment
+import donggolf.android.fragment.FushFragment
+import donggolf.android.fragment.InfoFragment
 import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
@@ -39,6 +44,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     val user = HashMap<String, Any>()
 
+    internal lateinit var pagerAdapter: PagerAdapter
+
     companion object {
         const val TAG = "MainActivity"
     }
@@ -49,33 +56,58 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mAuth = FirebaseAuth.getInstance();
 
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth!!.getCurrentUser()
-        updateUI(currentUser)
+//        mAuth = FirebaseAuth.getInstance();
+//
+//        // Check if user is signed in (non-null) and update UI accordingly.
+//        val currentUser = mAuth!!.getCurrentUser()
+//        updateUI(currentUser)
+//
+//        val db = FirebaseFirestore.getInstance()
+//
+        pagerAdapter = PagerAdapter(getSupportFragmentManager())
+        frags.adapter = pagerAdapter
+        pagerAdapter.notifyDataSetChanged()
+        frags.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
-        val db = FirebaseFirestore.getInstance()
+            }
 
-        // Create a new user with a first and last name
+            override fun onPageSelected(position: Int) {
 
-        user.put("first", "Ada")
-        user.put("last", "Lovelace")
-        user.put("born", 1815)
-
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
-                    override fun onComplete(task: Task<QuerySnapshot>) {
-                        if (task.isSuccessful) {
-                            for (document in task.result!!) {
-                                Log.d(TAG, document.getId() + " => " + document.getData())
-                            }
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.exception)
-                        }
+                when (position) {
+                    0 -> {
                     }
-                })
+                    1 -> {
+                    }
+                    2 -> {
+                    }
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+        })
+//
+//        // Create a new user with a first and last name
+//
+//        user.put("first", "Ada")
+//        user.put("last", "Lovelace")
+//        user.put("born", 1815)
+//
+//        db.collection("users")
+//                .get()
+//                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+//                    override fun onComplete(task: Task<QuerySnapshot>) {
+//                        if (task.isSuccessful) {
+//                            for (document in task.result!!) {
+//                                Log.d(TAG, document.getId() + " => " + document.getData())
+//                            }
+//                        } else {
+//                            Log.w(TAG, "Error getting documents.", task.exception)
+//                        }
+//                    }
+//                })
 
 
         context = this
@@ -106,7 +138,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         adapter = MainAdapter(context,R.layout.main_listview_item,adapterData)
 
-        main_listview.adapter = adapter
+//        main_listview.adapter = adapter
 
         adapter.notifyDataSetChanged()
 
@@ -114,26 +146,26 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         editadapter = MainEditAdapter(context,R.layout.main_edit_listview_item,editadapterData)
 
-        main_edit_listview.adapter = editadapter
-
-
-        main_listview.setOnItemClickListener { parent, view, position, id ->
-            val id : String
-            id = adapterData.get(position)!!.get("id").toString()
-            MoveMainDetailActivity(id)
-        }
-
-        addpostLL.setOnClickListener {
-            MoveAddPostActivity()
-        }
-
-        main_edit_search.setOnClickListener {
-            main_listview_search.visibility = View.VISIBLE
-        }
-
-        main_edit_close.setOnClickListener {
-            main_listview_search.visibility = View.GONE
-        }
+//        main_edit_listview.adapter = editadapter
+//
+//
+//        main_listview.setOnItemClickListener { parent, view, position, id ->
+//            val id : String
+//            id = adapterData.get(position)!!.get("id").toString()
+//            MoveMainDetailActivity(id)
+//        }
+//
+//        addpostLL.setOnClickListener {
+//            MoveAddPostActivity()
+//        }
+//
+//        main_edit_search.setOnClickListener {
+//            main_listview_search.visibility = View.VISIBLE
+//        }
+//
+//        main_edit_close.setOnClickListener {
+//            main_listview_search.visibility = View.GONE
+//        }
 
         areaLL.setOnClickListener {
             MoveAreaRangeActivity()
@@ -171,28 +203,73 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     }
 
 
-    private fun updateUI(currentUser: FirebaseUser?) {
-
-        /*
-        mAuth!!.signInWithCustomToken(mCustomToken)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCustomToken:success")
-                        val user = mAuth!!.getCurrentUser()
-                        updateUI(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCustomToken:failure", task.exception)
-                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                        updateUI(null)
-                    }
-                }
-        */
-    }
-
     fun logout() {
         FirebaseAuth.getInstance().signOut()
+    }
+
+    private fun updateUI(currentUser: FirebaseUser?) {
+
+
+//        mAuth!!.signInWithCustomToken(mCustomToken)
+//                .addOnCompleteListener(this) { task ->
+//                    if (task.isSuccessful) {
+//                        // Sign in success, update UI with the signed-in user's information
+//                        Log.d(TAG, "signInWithCustomToken:success")
+//                        val user = mAuth!!.getCurrentUser()
+//                        updateUI(user)
+//                    } else {
+//                        // If sign in fails, display a message to the user.
+//                        Log.w(TAG, "signInWithCustomToken:failure", task.exception)
+//                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+//                        updateUI(null)
+//                    }
+//                }
+    }
+
+    class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        override fun getItem(i: Int): Fragment {
+
+            var fragment: Fragment
+
+            val args = Bundle()
+            when (i) {
+                0 -> {
+                    fragment = FreeFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                1 -> {
+                    fragment = ChatFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                2 -> {
+                    fragment = FushFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                else -> {
+                    fragment = InfoFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+            }
+        }
+
+        override fun getCount(): Int {
+            return 4
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return ""
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
     }
 
 

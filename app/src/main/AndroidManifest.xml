@@ -174,11 +174,15 @@
             android:theme="@style/NoTitleDialog" />
         <activity android:name=".activities.TermSpecifActivity" />
         <activity android:name=".PersonalInfoTernsActivity" />
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2" />
+        <!--<activity-->
+            <!--android:name=".Main2Activity"-->
+            <!--android:label="@string/title_activity_main2" />-->
         <activity android:name=".SetAlarmActivity" />
-        <activity android:name=".ChatDetailActivity"></activity>
+        <activity android:name=".ChatDetailActivity" />
+        <activity android:name=".NoticeActivity" />
+        <activity android:name=".SetNoticeActivity" />
+        <activity android:name=".ChatMemberActivity" />
+        <activity android:name=".SelectMemberActivity"></activity>
     </application>
 
 </manifest>
