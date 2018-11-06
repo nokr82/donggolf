@@ -133,6 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/box_check"
+            android:buttonTint="#0EDA2F"
             android:id="@+id/withdrawalCheck"/>
     </LinearLayout>
 
@@ -141,7 +142,7 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:background="@drawable/btn_withdrawal"
+        android:background="@drawable/btn_login_selector"
         android:textStyle="bold"
         android:textSize="15dp"
         android:textColor="#ffffff"

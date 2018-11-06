@@ -1,6 +1,7 @@
 package donggolf.android.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
+import donggolf.android.activities.ChatDetailActivity
+import donggolf.android.activities.SetNoticeActivity
 import donggolf.android.adapters.ChatFragAdapter
 import donggolf.android.adapters.FushFragAdapter
 import org.json.JSONObject
@@ -27,7 +30,7 @@ class FushFragment : Fragment(){
     private  lateinit var  adapter : FushFragAdapter
 
     lateinit var finishLL : LinearLayout
-    lateinit var settingIV : ImageView
+    lateinit var settingLV : LinearLayout
     lateinit var noticeLV : ListView
 
 
@@ -54,7 +57,7 @@ class FushFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         finishLL = view.findViewById(R.id.finishLL)
-        settingIV = view.findViewById(R.id.settingIV)
+        settingLV = view.findViewById(R.id.settingLV)
         noticeLV = view.findViewById(R.id.noticeLV)
 
         var dataObj : JSONObject = JSONObject();
@@ -66,6 +69,11 @@ class FushFragment : Fragment(){
         adapter = FushFragAdapter(ctx!!,R.layout.item_fushfrag,adapterData)
 
         noticeLV.adapter = adapter
+
+        settingLV.setOnClickListener {
+            var intent: Intent = Intent(activity, SetNoticeActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
