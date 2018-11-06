@@ -34,12 +34,12 @@
                 <EditText
                     android:id="@+id/main_edit_search"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:background="@null"
                     android:singleLine="true"
                     android:hint="검색어를 입력하세요"
-                    android:textSize="10dp" />
+                    android:textSize="15dp" />
             </LinearLayout>
             <Button
                 android:layout_width="11.33dp"

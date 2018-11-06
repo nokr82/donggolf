@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:textStyle="bold"
-            android:textSize="11dp"
+            android:textSize="14dp"
             android:textColor="#EF5C34"
             android:text="닉네임일곱글자"/>
 
@@ -32,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:padding="8dp"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/item_chat_box_oppo"
@@ -45,7 +45,7 @@
                 android:gravity="bottom"
                 android:layout_weight="5"
 
-                android:textSize="9dp"
+                android:textSize="12dp"
                 android:textColor="#CDCDCD"
                 android:text="0월00일"/>
         </LinearLayout>

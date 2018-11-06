@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="120dp"
     android:gravity="center_vertical"
     android:padding="20dp"
     android:orientation="horizontal">
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="닉네임일곱글자"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:textColor="#EF5C34"
                 android:textStyle="bold"
                 android:layout_marginRight="3dp"/>
@@ -58,7 +58,7 @@
                 android:id="@+id/timeTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="9dp"
+                android:textSize="11dp"
                 android:textColor="#CDCDCD"
                 android:gravity="right"
                 android:text="오후 12:12"/>
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp"
-                android:textSize="10dp"
+                android:textSize="12dp"
                 android:textColor="#cdcdcd"
                 android:lines="2"
                 android:text="1:1 채팅방 형태입니다. 채팅에 대한 내용은 2줄까지 표시되어 나옵니다"/>
