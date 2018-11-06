@@ -2,9 +2,7 @@ package donggolf.android.activities
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import donggolf.android.PersonalInfoTernsActivity
 import donggolf.android.R
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_view_document.*

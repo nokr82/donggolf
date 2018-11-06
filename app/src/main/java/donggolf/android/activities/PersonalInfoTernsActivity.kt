@@ -1,8 +1,7 @@
-package donggolf.android
+package donggolf.android.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
+import donggolf.android.R
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_personal_info_terns.*
 

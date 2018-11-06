@@ -1,11 +1,8 @@
 package donggolf.android.fragment
 
 import android.os.Bundle
-import android.app.Fragment
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +12,8 @@ import android.widget.ListView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import donggolf.android.ChatDetailActivity
+import donggolf.android.activities.ChatDetailActivity
 import donggolf.android.R
-import donggolf.android.activities.AreaRangeActivity
 import donggolf.android.adapters.ChatFragAdapter
 import org.json.JSONObject
 

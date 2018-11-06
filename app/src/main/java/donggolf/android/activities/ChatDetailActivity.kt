@@ -1,8 +1,8 @@
-package donggolf.android
+package donggolf.android.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import donggolf.android.R
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 

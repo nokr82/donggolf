@@ -1,7 +1,7 @@
-package donggolf.android
+package donggolf.android.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import donggolf.android.R
 import donggolf.android.base.RootActivity
 
 class SetNoticeActivity : RootActivity() {
