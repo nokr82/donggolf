@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="부천/경기/인천"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
 
         <TextView
@@ -36,7 +36,7 @@
             android:gravity="center"
             android:textColor="#AFAFAF"
             android:layout_marginLeft="5dp"
-            android:textSize="12dp"/>
+            android:textSize="14dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="골퍼 초대"
-                    android:textSize="10dp"/>
+                    android:textSize="12dp"/>
 
             </LinearLayout>
         </RelativeLayout>
@@ -101,7 +101,7 @@
                     android:background="@null"
                     android:singleLine="true"
                     android:hint="아이디 또는 '#' 태그"
-                    android:textSize="10dp" />
+                    android:textSize="12dp" />
             </LinearLayout>
             <Button
                 android:layout_width="11.33dp"

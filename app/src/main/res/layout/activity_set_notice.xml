@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="알림 설정"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
     </LinearLayout>
     <ImageView
@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:padding="15dp"
             android:text="전체 알림"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
         <ImageView
             android:layout_width="50dp"
@@ -69,7 +69,7 @@
             android:layout_weight="1"
             android:padding="15dp"
             android:text="댓글, 답글"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
         <ImageView
             android:layout_width="50dp"
@@ -95,7 +95,7 @@
             android:layout_weight="1"
             android:padding="15dp"
             android:text="채팅대화"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
         <ImageView
             android:layout_width="50dp"
@@ -119,7 +119,7 @@
             android:layout_weight="1"
             android:padding="15dp"
             android:text="친구요청"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
         <ImageView
             android:layout_width="50dp"

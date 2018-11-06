@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="지역 범위 설정 (0/3)"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
     </LinearLayout>
 
@@ -52,7 +52,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="서울특별시"
-                    android:textSize="12dp"/>
+                    android:textSize="14dp"/>
                 <ImageView
                     android:layout_marginLeft="3dp"
                     android:layout_width="15dp"

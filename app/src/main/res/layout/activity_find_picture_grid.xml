@@ -25,6 +25,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="사진선택"
+            android:textSize="15dp"
             android:textColor="#000000" />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="0"
-                    android:textSize="13dp"
+                    android:textSize="15dp"
                     android:textColor="#0EDA2F" />
                 <TextView
                     android:id="@+id/addpostBT"
@@ -47,7 +48,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="첨부"
-                    android:textSize="13dp"
+                    android:textSize="15dp"
                     android:layout_marginRight="13dp"
                     android:layout_marginLeft="5dp"
                     android:textColor="#000000" />

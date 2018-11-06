@@ -24,7 +24,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="경기 / 인천"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:textColor="#000000"/>
         </LinearLayout>
         <ImageView
@@ -38,7 +38,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="9999명"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:layout_marginLeft="5dp"
             android:textColor="#000000"/>
         <RelativeLayout

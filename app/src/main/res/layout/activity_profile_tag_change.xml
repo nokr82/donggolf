@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:textStyle="bold"
                 android:text="나의 #"/>
         </LinearLayout>
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textColor="#c9c9c9"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
@@ -72,13 +72,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="20"
                 android:background="@android:color/transparent"
-                android:textSize="12dp"
+                android:textSize="14dp"
                 android:hint="나를 표현하는 단어나 문장을 넣어주세요"/>
             <ImageView
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_weight="1"
                 android:layout_margin="2dp"
+                android:layout_gravity="center"
                 android:src="@drawable/btn_del_text"/>
         </LinearLayout><!-- Edit Text and remove button -->
     </LinearLayout><!-- TextView & editText -->
@@ -99,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/leftLetters"
-            android:textSize="11dp"
+            android:textSize="12dp"
             android:textColor="#0ED92F"
             android:textStyle="bold"
             android:text="10"/>
@@ -108,7 +109,7 @@
             android:layout_height="wrap_content"
             android:text="/10"
             android:textStyle="bold"
-            android:textSize="11dp"
+            android:textSize="12dp"
             android:textColor="#c9c9c9"/>
     </LinearLayout>
 
@@ -120,7 +121,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold"
             android:text="현재 #"/>
 

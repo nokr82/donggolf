@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textSize="11dp"
+                android:textSize="15dp"
                 android:textStyle="bold"
                 android:text="멤버선택"/>
         </LinearLayout>
@@ -39,14 +39,14 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:textColor="#0ED92F"
                 android:text="3"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:layout_gravity="center_vertical"
                 android:text="초대"
                 android:textStyle="bold"/>
@@ -112,6 +112,7 @@
                 android:layout_marginLeft="35dp"
                 android:hint="검색어를 입력하세요"
                 android:textSize="15dp"
+                android:singleLine="true"
                 android:background="@null"/>
             <ImageView
                 android:layout_width="wrap_content"
