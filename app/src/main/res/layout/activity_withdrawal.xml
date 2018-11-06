@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="회원탈퇴"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
     </LinearLayout>
 
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#f4f4f4"
-                android:textSize="9dp"
+                android:textSize="11dp"
                 android:text="개인정보, 프로필 등 일부 정보가 삭제되며 복구가 불가능합니다."/>
         </LinearLayout>
 
@@ -73,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#f4f4f4"
-                android:textSize="9dp"
+                android:textSize="11dp"
                 android:text="작성한 컨텐츠 일부가 남아있더라도 삭제 또는 수정할 수 없습니다."/>
         </LinearLayout>
 
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#f4f4f4"
-                android:textSize="9dp"
+                android:textSize="11dp"
                 android:text="모든 컨텐츠가 유지되고 일정기간 동네골프를 사용하고 싶지 않다면 탈퇴하지 마시고, 앱을 삭제하셨다가 필요한 경우 재설치하시길 바랍니다."/>
         </LinearLayout>
 
@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#f4f4f4"
-                android:textSize="9dp"
+                android:textSize="11dp"
                 android:text="위 경우를 다 인지하고 탈퇴를 원하시면 아래 동의를 체크해주시기 바랍니다."/>
         </LinearLayout>
     </LinearLayout>
@@ -132,7 +132,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_check"
+            android:background="@null"
             android:buttonTint="#0EDA2F"
             android:id="@+id/withdrawalCheck"/>
     </LinearLayout>

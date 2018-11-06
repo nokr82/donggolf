@@ -88,9 +88,6 @@
         <!--여기부터 오른쪽 메뉴-->
 
 
-        min_scale
-        max_scale
-
 
         <LinearLayout
             android:layout_width="wrap_content"

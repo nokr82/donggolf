@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="휴대폰번호 변경"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
 
         <LinearLayout
@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textColor="#c9c9c9"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
@@ -71,13 +71,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="20"
                 android:background="@android:color/transparent"
-                android:textSize="12dp"
+                android:textSize="14dp"
                 android:hint="'-' 제외하고 숫자만 입력"/>
             <ImageView
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_weight="1"
                 android:layout_margin="2dp"
+                android:layout_gravity="center"
                 android:src="@drawable/btn_del_text"/>
         </LinearLayout><!-- Edit Text and remove button -->
     </LinearLayout><!-- TextView & editText -->

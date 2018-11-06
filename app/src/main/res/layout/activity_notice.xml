@@ -29,7 +29,7 @@
             android:gravity="center"
             android:text="새글 알림 설정"
             android:textColor="#000000"
-            android:textSize="13dp" />
+            android:textSize="15dp" />
     </LinearLayout>
 
     <ImageView
@@ -65,7 +65,7 @@
                     android:singleLine="true"
                     android:hint="키워드 입력(최대15자)"
                     android:maxLength="15"
-                    android:textSize="10dp" />
+                    android:textSize="12dp" />
             </LinearLayout>
             <Button
                 android:layout_width="11.33dp"
@@ -95,7 +95,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13dp"
+        android:textSize="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:text="설정 가능한 키워드 15/15"/>

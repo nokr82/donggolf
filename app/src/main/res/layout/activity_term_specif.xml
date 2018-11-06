@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="이용약관"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="#000000" />
     </LinearLayout>
     <ImageView
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:textSize="11dp"
+        android:textSize="13dp"
         android:text="이용 약관에 대한 텍스트를 이곳에 입력해주세요.\n\n\n\n\n\n\n\n\n\n\n\n\n\n"/>
 
 </LinearLayout>

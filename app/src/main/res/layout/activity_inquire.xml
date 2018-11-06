@@ -37,7 +37,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="문의하기"
-                    android:textSize="13dp"
+                    android:textSize="15dp"
                     android:textColor="#000000" />
             </LinearLayout>
             <ImageView
@@ -58,7 +58,7 @@
                     android:layout_weight="2"
                     android:layout_marginRight="15dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="13dp"
                     android:text="답변받을 이메일"/>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,12 +70,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:textStyle="bold"
-                        android:textSize="11dp"
+                        android:textSize="13dp"
                         android:text="kido92@naver.com"
                         android:id="@+id/ans_user_email"/>
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:src="@drawable/btn_change_name"/>
                 </LinearLayout>
 
@@ -92,14 +93,14 @@
                     android:layout_weight="2"
                     android:layout_marginRight="15dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="13dp"
                     android:text="휴대폰 번호"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="13dp"
                     android:text="010-2534-5553"
                     android:id="@+id/mobNum"/>
             </LinearLayout>

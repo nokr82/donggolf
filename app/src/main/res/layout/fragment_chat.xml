@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_centerVertical="true"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:textStyle="bold"
                 android:textColor="#ffffff"
                 android:id="@+id/txMyChat"
@@ -61,7 +61,7 @@
                 android:layout_marginRight="80dp"
                 android:textColor="#ffffff"
                 android:textStyle="bold"
-                android:textSize="11dp"
+                android:textSize="13dp"
                 android:id="@+id/txTownChat"
                 android:text="동네 채팅"/>
         </RelativeLayout>
