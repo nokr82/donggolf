@@ -66,6 +66,8 @@
                 android:text="동네 채팅"/>
         </RelativeLayout>
 
+
+
         <!--Town Chatting-->
 
     </LinearLayout>

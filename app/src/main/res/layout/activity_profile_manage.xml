@@ -21,12 +21,12 @@
                 android:background="@drawable/btn_back" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/tv_CONSEQUENCES"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
             <TextView
-                android:id="@+id/tv_CONSEQUENCES"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
@@ -59,8 +59,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="151dp"
+        android:gravity="bottom|center">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -70,12 +70,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
                 android:background="@drawable/icon_profile_l"
                 android:id="@+id/imgProfile"/>
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="15dp"
                 android:layout_gravity="bottom|right"
                 android:background="@drawable/btn_add_photo" />
 
@@ -86,7 +85,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:text="15"
-            android:textColor="#C9C9C9" />
+            android:textColor="#C9C9C9"
+            android:textSize="10dp"
+            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -173,6 +174,7 @@
             android:text="상태메시지"
             android:textSize="11dp"/>
         <TextView
+            android:id="@+id/messageTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#c9c9c9"
@@ -199,6 +201,7 @@
             android:text="나의 #"
             android:textSize="11dp"/>
         <TextView
+            android:id="@+id/hashtagTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#c9c9c9"
@@ -240,6 +243,7 @@
                     android:background="@drawable/on" />
 
                 <TextView
+                    android:id="@+id/chatcountTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -280,6 +284,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/postcountTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -320,6 +325,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/friendcountTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"

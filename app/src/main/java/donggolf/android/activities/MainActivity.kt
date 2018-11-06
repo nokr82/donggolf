@@ -32,13 +32,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     private lateinit var context: Context
 
-    private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
-
-    private  lateinit var  adapter : MainAdapter
-
-    private  lateinit var  editadapter : MainEditAdapter
-
-    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     private val SELECT_PICTURE: Int = 101
 
@@ -56,14 +49,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-//        mAuth = FirebaseAuth.getInstance();
-//
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        val currentUser = mAuth!!.getCurrentUser()
-//        updateUI(currentUser)
-//
-//        val db = FirebaseFirestore.getInstance()
 //
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
         frags.adapter = pagerAdapter
@@ -88,84 +73,28 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             override fun onPageScrollStateChanged(state: Int) {
             }
         })
-//
-//        // Create a new user with a first and last name
-//
-//        user.put("first", "Ada")
-//        user.put("last", "Lovelace")
-//        user.put("born", 1815)
-//
-//        db.collection("users")
-//                .get()
-//                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
-//                    override fun onComplete(task: Task<QuerySnapshot>) {
-//                        if (task.isSuccessful) {
-//                            for (document in task.result!!) {
-//                                Log.d(TAG, document.getId() + " => " + document.getData())
-//                            }
-//                        } else {
-//                            Log.w(TAG, "Error getting documents.", task.exception)
-//                        }
-//                    }
-//                })
+
 
 
         context = this
 
 
-        var dataObj : JSONObject = JSONObject();
 
-        var content = Content()
-
-        ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
-
-            if(success && data != null) {
-                data.forEach {
-                    println(it)
-
-                    if (it != null) {
-                        adapterData.add(it)
-                    }
-
-                }
-
-                adapter.notifyDataSetChanged()
-
-            }
-
+        homeRL.setOnClickListener {
+            frags.currentItem = 0
         }
 
+        chatRL.setOnClickListener {
+            frags.currentItem = 1
+        }
 
-        adapter = MainAdapter(context,R.layout.main_listview_item,adapterData)
+        noticeRV.setOnClickListener {
+            frags.currentItem = 2
+        }
 
-//        main_listview.adapter = adapter
-
-        adapter.notifyDataSetChanged()
-
-        editadapterData.add(dataObj)
-
-        editadapter = MainEditAdapter(context,R.layout.main_edit_listview_item,editadapterData)
-
-//        main_edit_listview.adapter = editadapter
-//
-//
-//        main_listview.setOnItemClickListener { parent, view, position, id ->
-//            val id : String
-//            id = adapterData.get(position)!!.get("id").toString()
-//            MoveMainDetailActivity(id)
-//        }
-//
-//        addpostLL.setOnClickListener {
-//            MoveAddPostActivity()
-//        }
-//
-//        main_edit_search.setOnClickListener {
-//            main_listview_search.visibility = View.VISIBLE
-//        }
-//
-//        main_edit_close.setOnClickListener {
-//            main_listview_search.visibility = View.GONE
-//        }
+        infoRL.setOnClickListener {
+            frags.currentItem = 3
+        }
 
         areaLL.setOnClickListener {
             MoveAreaRangeActivity()

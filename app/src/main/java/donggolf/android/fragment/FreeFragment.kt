@@ -143,17 +143,18 @@ open class FreeFragment : Fragment() {
 
         // 뷰페이저
 
-
         adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
 
         main_listview.adapter = adapter
-
-        adapter.notifyDataSetChanged()
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
             val id : String
             id = adapterData.get(position)!!.get("id").toString()
             MoveMainDetailActivity(id)
+        }
+
+        addpostLL.setOnClickListener {
+            MoveAddPostActivity()
         }
 
         member_id = PrefUtils.getIntPreference(context, "member_id")

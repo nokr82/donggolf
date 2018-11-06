@@ -12,63 +12,86 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
-                android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
-                android:layout_weight="10"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="11dp"
-                    android:layout_height="17dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_back" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="11dp"
-                    android:textStyle="bold"
-                    android:text="홍길동"/>
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/finishaLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="11dp"
+                            android:layout_height="17dp"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/btn_back" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/nicknameTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="홍길동"
+                        android:textColor="#000000"
+                        android:textSize="13dp" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:id="@+id/btn_opMenu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true">
+                            <ImageView
+                                android:layout_width="6dp"
+                                android:layout_height="15dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/btn_chat_option"
+                                android:layout_marginRight="20dp"/>
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/line_0"/>
+
+
+
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="right|center_vertical"
-                android:id="@+id/btn_opMenu">
-                <ImageView
-                    android:layout_width="6dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/btn_chat_option"
-                    android:layout_marginRight="20dp"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/line_0"/>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ListView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/chatCont"/>
-            </ScrollView>
+                android:layout_height="wrap_content">
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/chatCont"/>
+            </LinearLayout>
+
         </LinearLayout>
         <!--여기까지 채팅창-->
 
         <!--여기부터 오른쪽 메뉴-->
+
+
+        min_scale
+        max_scale
+
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -76,6 +99,7 @@
             android:orientation="vertical"
             android:gravity="right">
             <LinearLayout
+                android:background="#ffffff"
                 android:layout_width="280dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"><!--여기가 전체-->

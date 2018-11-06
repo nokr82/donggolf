@@ -79,8 +79,6 @@ open class MainFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.getCurrentUser()
 
-        println("currentUser======$currentUser")
-
         updateUI(currentUser)
 
         val db = FirebaseFirestore.getInstance()
@@ -111,7 +109,6 @@ open class MainFragment : Fragment() {
 
                     if (it != null) {
                         adapterData.add(it)
-                        println("adapterData ====== $adapterData")
                     }
 
                 }
@@ -122,17 +119,6 @@ open class MainFragment : Fragment() {
 
         }
 
-        adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
-
-        main_listview.adapter = adapter
-
-        adapter.notifyDataSetChanged()
-
-        main_listview.setOnItemClickListener { parent, view, position, id ->
-            val id : String
-            id = adapterData.get(position)!!.get("id").toString()
-            MoveMainDetailActivity(id)
-        }
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -148,6 +134,24 @@ open class MainFragment : Fragment() {
         main_edit_close = view.findViewById(R.id.main_edit_close)
         main_edit_listview = view.findViewById(R.id.main_edit_listview)
         main_listview = view.findViewById(R.id.main_listview)
+
+        adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
+
+        main_listview.adapter = adapter
+
+        adapter.notifyDataSetChanged()
+
+        main_listview.setOnItemClickListener { parent, view, position, id ->
+            val id : String
+            id = adapterData.get(position)!!.get("id").toString()
+            MoveMainDetailActivity(id)
+        }
+
+
+        addpostLL.setOnClickListener {
+            MoveAddPostActivity()
+        }
+
     }
 
 

@@ -2,8 +2,9 @@ package donggolf.android
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import donggolf.android.base.RootActivity
 
-class SetNoticeActivity : AppCompatActivity() {
+class SetNoticeActivity : RootActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

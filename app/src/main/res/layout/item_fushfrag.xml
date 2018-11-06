@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/main_detail_listitem_comment"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/icon_comment"
+            android:layout_marginLeft="10dp"
+            android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/main_detail_listitem_profileimage"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="7dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/icon_profile"/>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </LinearLayout>
+            <TextView
+                android:layout_gravity="left"
+                android:id="@+id/titleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[중고장터] 뉴포터 2 블랙 34인치..."
+                android:textColor="#000000"
+                android:textSize="11dp"/>
+            <TextView
+                android:id="@+id/contentTV"
+                android:layout_gravity="left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="닉네임여자 님이 새 댓글을 작성하였습니다."
+                android:textSize="11dp"
+                android:textColor="#CDCDCD"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/timeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 12:12"
+                        android:textSize="11dp"
+                        android:textColor="#cdcdcd"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

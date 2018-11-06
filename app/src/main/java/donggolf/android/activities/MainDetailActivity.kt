@@ -67,6 +67,22 @@ class MainDetailActivity : RootActivity() {
             relativ_RL.visibility = View.GONE
         }
 
+        reportTV.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+
+                        finish()
+
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+        }
+
+
+
         deleteTV.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder
