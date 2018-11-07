@@ -107,7 +107,6 @@ open class FreeFragment : Fragment() {
 
                     if (it != null) {
                         adapterData.add(it)
-                        println("adapterData ====== $adapterData")
                     }
 
                 }

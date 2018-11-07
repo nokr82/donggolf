@@ -23,14 +23,8 @@ import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
 import donggolf.android.actions.JoinAction
 import donggolf.android.adapters.ImageAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
-import donggolf.android.models.Content
-import donggolf.android.models.Info
-import donggolf.android.models.PhotoData
-import donggolf.android.models.Region
+import donggolf.android.base.*
+import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
 import java.net.URI
@@ -49,6 +43,8 @@ class AddPostActivity : RootActivity() {
 
     private val SELECT_VIDEO: Int = 102
 
+    private val SELECT_HASHTAG: Int = 103
+
     var photoList: ArrayList<PhotoData> = ArrayList<PhotoData>()
 
     var result: ArrayList<String> = ArrayList<String>()
@@ -65,6 +61,12 @@ class AddPostActivity : RootActivity() {
 
     private var LoginMember: Info? = null
 
+    var hashtag:ArrayList<String> = ArrayList<String>()
+
+    val user = HashMap<String, Any>()
+
+    var userid:String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_post)
@@ -75,11 +77,45 @@ class AddPostActivity : RootActivity() {
 
         val db = FirebaseFirestore.getInstance()
 
+        val dbManager: DataBaseHelper = DataBaseHelper(this)
+
+        val sqldb = dbManager.createDataBase();
+
+        val dataList: Array<String> = arrayOf("*");
+
+        val one = 1
+
+        val setContent = TmpContent()
+
+
+        dbManager.gettmpcontent(setContent,1)
+
+        if(setContent != null){
+            titleET.setText(setContent.title)
+            contentET.setText(setContent.texts)
+
+        }
+
         // Create a new user with a first and last name
 
         permission()
 
         println("displayname " + displaynamePaths.size.toString())
+
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+                    override fun onComplete(task: Task<QuerySnapshot>) {
+                        if (task.isSuccessful) {
+                            for (document in task.result!!) {
+                                Log.d("yjs", document.getId() + " => " + document.getData())
+                                userid = document.getId()
+                            }
+                        } else {
+                            Log.w("yjs", "Error getting documents.", task.exception)
+                        }
+                    }
+                })
 
         val category = intent.getIntExtra("category",0)
         if(category == 2){
@@ -105,6 +141,46 @@ class AddPostActivity : RootActivity() {
 
                     .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
 
+                        if(displaynamePaths != null) {
+                            if (displaynamePaths.size != 0) {
+
+                                val title = Utils.getString(titleET)
+                                val content = Utils.getString(contentET)
+
+                                val nick: String = PrefUtils.getStringPreference(context, "nick")
+
+
+                                if(hashtag != null){
+                                    if(hashtag.size != 0){
+                                        var tmphashtag = hashtag[0].toString()
+
+                                        for(i in 0..hashtag.size-1){
+                                            tmphashtag += "," + hashtag[i].toString()
+                                        }
+
+                                        val tmpContent = TmpContent(0,userid!!,title,content,tmphashtag,1)
+
+                                        dbManager.inserttmpcontent(tmpContent)
+                                    }
+                                }
+
+
+
+                            }
+                        }
+
+                        if(displaynamePaths.size == 0 ){
+
+                            val title = Utils.getString(titleET)
+                            val content = Utils.getString(contentET)
+
+                            val nick: String = PrefUtils.getStringPreference(context,"nick")
+
+
+                        }
+
+
+
                     })
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
                         finish()
@@ -127,7 +203,15 @@ class AddPostActivity : RootActivity() {
             }else {
                 val id = intent.getStringExtra("id")
                 modify(id)
+
+                println("id : ======== $id")
+
             }
+        }
+
+        hashtagLL.setOnClickListener {
+            var intent = Intent(context, ProfileTagChangeActivity::class.java);
+            startActivityForResult(intent, SELECT_HASHTAG);
         }
 
         val email: String = PrefUtils.getStringPreference(context,"email")
@@ -464,8 +548,18 @@ class AddPostActivity : RootActivity() {
 
                     setResult(RESULT_OK,intent);
                 }
+
+                SELECT_HASHTAG -> {
+
+                    hashtag = data?.getSerializableExtra("data") as ArrayList<String>
+
+                    println("tmpcontent : $hashtag")
+
+                }
             }
         }
     }
 
 }
+
+

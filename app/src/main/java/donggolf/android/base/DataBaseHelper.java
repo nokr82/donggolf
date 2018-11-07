@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import donggolf.android.models.TmpContent;
+
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private final Context myContext;
@@ -146,6 +148,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         query += ", created STRING";
         query += ");";
         db.execSQL(query);
+
+        String tmppostquery = "create table if not exists ";
+        tmppostquery += "tmpcontent ( _id INTEGER PRIMARY KEY AUTOINCREMENT";
+        tmppostquery += ", owner STRING";
+        tmppostquery += ", title STRING";
+        tmppostquery += ", texts STRING";
+        tmppostquery += ", sharp_tag STRING";
+        tmppostquery += ", division INTEGER";
+        tmppostquery += ");";
+        db.execSQL(tmppostquery);
     }
 
     @Override
@@ -160,7 +172,55 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         query += ", created STRING";
         query += ");";
         db.execSQL(query);
+
+
+
     }
+
+    public void inserttmpcontent(TmpContent TmpContent){
+        String query = "INSERT INTO tmpcontent";
+        query += "(id,GROP_ID,PRJ_NAME,INV_REGION,INV_DT,INV_PERSON,WEATHER,WIND,WIND_DIRE";
+        query += ",TEMPERATUR,ETC,NUM,INV_TM,SPEC_NM,FAMI_NM,SCIEN_NM,INDI_CNT,OBS_STAT,OBS_ST_ETC";
+        query += ",USE_TAR,USE_TAR_SP,USE_LAYER,MJ_ACT,MJ_ACT_PR,GPS_LAT,GPS_LON)";
+
+        query += " values (";
+        query += ", '" + TmpContent.getOwner() + "'";
+        query += ", '" + TmpContent.getTitle() + "'";
+        query += ", '" + TmpContent.getTexts() + "'";
+        query += ", '" + TmpContent.getSharp_tag() + "'";
+        query += ", '" + TmpContent.getDivision() + "'";
+        query += " ); ";
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+    }
+
+
+    public void updatetmpcontent(TmpContent tmpContent,Integer num) {
+
+        String query = "UPDATE cmpcontent SET  " +
+                "division='" + 0 + "'"+
+                "where division = '" + num + "'";
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+
+    }
+
+
+    public void gettmpcontent(TmpContent tmpContent,Integer num) {
+        String query = "SELECT * FROM tmpcontent WHERE division ='" + num + "'";
+
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+    }
+
+
+
+
 
     // Add your public helper methods to access and get content from the database.
     // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
