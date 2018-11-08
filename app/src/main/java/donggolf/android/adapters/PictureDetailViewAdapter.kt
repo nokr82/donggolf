@@ -1,4 +1,4 @@
-package kr.co.hamel.android.adapter
+package donggolf.android.adapters
 
 
 import android.support.v4.view.PagerAdapter
@@ -89,8 +89,11 @@ class PictureDetailViewAdapter : PagerAdapter() {
         return view === `object`
     }
 
-    @JvmOverloads
-    fun addView(v: View, position: Int = views.size): Int {
+    fun addView(v: View): Int {
+        return addView(v, views.size)
+    }
+
+    fun addView(v: View, position: Int): Int {
         views.add(position, v)
         return position
     }

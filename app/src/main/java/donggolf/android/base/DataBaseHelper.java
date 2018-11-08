@@ -1,6 +1,7 @@
 package donggolf.android.base;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -150,12 +151,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
 
         String tmppostquery = "create table if not exists ";
-        tmppostquery += "tmpcontent ( _id INTEGER PRIMARY KEY AUTOINCREMENT";
+        tmppostquery += "tmpcontent ( id INTEGER PRIMARY KEY AUTOINCREMENT";
         tmppostquery += ", owner STRING";
         tmppostquery += ", title STRING";
         tmppostquery += ", texts STRING";
         tmppostquery += ", sharp_tag STRING";
-        tmppostquery += ", division INTEGER";
         tmppostquery += ");";
         db.execSQL(tmppostquery);
     }
@@ -178,17 +178,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void inserttmpcontent(TmpContent TmpContent){
-        String query = "INSERT INTO tmpcontent";
-        query += "(id,GROP_ID,PRJ_NAME,INV_REGION,INV_DT,INV_PERSON,WEATHER,WIND,WIND_DIRE";
-        query += ",TEMPERATUR,ETC,NUM,INV_TM,SPEC_NM,FAMI_NM,SCIEN_NM,INDI_CNT,OBS_STAT,OBS_ST_ETC";
-        query += ",USE_TAR,USE_TAR_SP,USE_LAYER,MJ_ACT,MJ_ACT_PR,GPS_LAT,GPS_LON)";
+        String query = "INSERT INTO tmpcontent (owner, title, texts, sharp_tag)";
 
         query += " values (";
-        query += ", '" + TmpContent.getOwner() + "'";
+        query += " '" + TmpContent.getOwner() + "'";
         query += ", '" + TmpContent.getTitle() + "'";
         query += ", '" + TmpContent.getTexts() + "'";
         query += ", '" + TmpContent.getSharp_tag() + "'";
-        query += ", '" + TmpContent.getDivision() + "'";
         query += " ); ";
 
         SQLiteDatabase db = getWritableDatabase();
@@ -196,27 +192,53 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public TmpContent selectTmpContent(String query) {
 
-    public void updatetmpcontent(TmpContent tmpContent,Integer num) {
+        SQLiteDatabase db = getReadableDatabase();
 
-        String query = "UPDATE cmpcontent SET  " +
-                "division='" + 0 + "'"+
-                "where division = '" + num + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        TmpContent tmpContent = new TmpContent();
+        if (cursor != null) {
+            if(cursor.moveToFirst()){
+                tmpContent.setId(cursor.getInt(0));
+                tmpContent.setOwner(cursor.getString(1));
+                tmpContent.setTitle(cursor.getString(2));
+                tmpContent.setTexts(cursor.getString(3));
+                tmpContent.setSharp_tag(cursor.getString(4));
+            }
+        }
+        cursor.close();
+
+        return tmpContent;
+    }
+
+    public int deleteTmpContent(int id){
+
+        String query = "DELETE FROM tmpcontent where _id = " + id;
+
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
         db.close();
 
+        query = "SELECT count(*) FROM tmpcontent WHERE _id = " + id;
+
+        db = getReadableDatabase();
+        int count = 0;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        cursor.close();
+        return count;
     }
 
 
-    public void gettmpcontent(TmpContent tmpContent,Integer num) {
-        String query = "SELECT * FROM tmpcontent WHERE division ='" + num + "'";
 
 
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL(query);
-        db.close();
-    }
+
 
 
 

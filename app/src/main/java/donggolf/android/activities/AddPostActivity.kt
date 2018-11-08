@@ -67,6 +67,8 @@ class AddPostActivity : RootActivity() {
 
     var userid: String? = null
 
+    var tmpContent: TmpContent = TmpContent()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_post)
@@ -74,6 +76,8 @@ class AddPostActivity : RootActivity() {
         context = this
 
         mAuth = FirebaseAuth.getInstance()
+
+        val dbManager = DataBaseHelper(context)
 
         val db = FirebaseFirestore.getInstance()
 
@@ -83,6 +87,7 @@ class AddPostActivity : RootActivity() {
         val one = 1
 
         val setContent = TmpContent()
+
 
 
         if (setContent != null) {
@@ -105,6 +110,8 @@ class AddPostActivity : RootActivity() {
                             for (document in task.result!!) {
                                 Log.d("yjs", document.getId() + " => " + document.getData())
                                 userid = document.getId()
+                                println("userid ======= $userid")
+                                loadData(dbManager,userid!!)
                             }
                         } else {
                             Log.w("yjs", "Error getting documents.", task.exception)
@@ -136,49 +143,83 @@ class AddPostActivity : RootActivity() {
 
                     .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
+                        val title = Utils.getString(titleET)
+                        val content = Utils.getString(contentET)
+
+                        val nick: String = PrefUtils.getStringPreference(context, "nick")
+
 
                         if (displaynamePaths != null) {
                             if (displaynamePaths.size != 0) {
 
-                                val title = Utils.getString(titleET)
-                                val content = Utils.getString(contentET)
-
-                                val nick: String = PrefUtils.getStringPreference(context, "nick")
-
-
-                                if (hashtag != null) {
-                                    if (hashtag.size != 0) {
-                                        var tmphashtag = hashtag[0].toString()
-
-                                        for (i in 0..hashtag.size - 1) {
-                                            tmphashtag += "," + hashtag[i].toString()
-                                        }
-
-                                        val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag, 1)
-
-//                                        dbManager.inserttmpcontent(tmpContent)
-                                    }
-                                }
-
-
                             }
                         }
 
-                        if (displaynamePaths.size == 0) {
+                        if (hashtag != null) {
+                            if (hashtag.size != 0) {
+                                var tmphashtag = hashtag[0].toString()
 
-                            val title = Utils.getString(titleET)
-                            val content = Utils.getString(contentET)
+                                for (i in 0..hashtag.size - 1) {
+                                    tmphashtag += "," + hashtag[i].toString()
+                                }
 
-                            val nick: String = PrefUtils.getStringPreference(context, "nick")
+                                val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag)
 
+                                println("userid ======= $userid")
 
+                                dbManager.inserttmpcontent(tmpContent)
+
+                                finish()
+                            }
+                        }
+
+                        if (hashtag != null){
+                            if(hashtag.size == 0){
+                                var tmphashtag = ""
+
+                                val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag)
+
+                                println("userid ======= $userid")
+
+                                dbManager.inserttmpcontent(tmpContent)
+
+                                finish()
+                            }
                         }
 
 
                     })
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-                        finish()
+
+                        db.collection("users")
+                                .get()
+                                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+                                    override fun onComplete(task: Task<QuerySnapshot>) {
+                                        if (task.isSuccessful) {
+                                            for (document in task.result!!) {
+                                                Log.d("yjs", document.getId() + " => " + document.getData())
+                                                userid = document.getId()
+
+                                                loadData(dbManager,userid!!)
+
+                                                if(tmpContent.id == null){
+                                                    finish()
+                                                }
+
+                                                if(tmpContent.id != null) {
+                                                    dbManager.deleteTmpContent(tmpContent.id!!)
+                                                    finish()
+                                                }
+
+                                            }
+                                        } else {
+                                            Log.w("yjs", "Error getting documents.", task.exception)
+                                        }
+                                    }
+                                })
+
+
                     })
             val alert = builder.create()
             alert.show()
@@ -236,6 +277,19 @@ class AddPostActivity : RootActivity() {
         }
 
         val email: String = PrefUtils.getStringPreference(context, "email")
+
+
+    }
+
+    private fun loadData(dbManager: DataBaseHelper , userid: String) {
+        val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
+
+        val tmpcontent = dbManager.selectTmpContent(query)
+
+        tmpContent = tmpcontent
+
+        titleET.setText(tmpcontent.title)
+        contentET.setText(tmpcontent.texts)
 
     }
 
@@ -347,7 +401,7 @@ class AddPostActivity : RootActivity() {
                                             if (displaynamePaths.size != 0) {
 
                                                 val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
-                                                for (i in 0..displaynamePaths.size - 1) {
+                                                for (i in 0..displaynamePaths.size-1) {
 
                                                     val image_path = photo.file[i]
 
@@ -359,7 +413,7 @@ class AddPostActivity : RootActivity() {
 
                                                     val cutBytearray_ = Utils.getByteArray(cutImage)
 
-                                                    FirebaseFirestoreUtils.uploadFile(bytearray_, image_path) {
+                                                    FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/" + image_path) {
                                                         if (it) {
                                                             FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i)) {
                                                                 if (it) {
@@ -482,12 +536,12 @@ class AddPostActivity : RootActivity() {
 
                     for (i in 0..(displaynamePaths.size - 1)) {
 
-                        var image_path = "imgl/" + nowTime + ".png"
-                        var images_path = "imgs/" + nowTime + ".png"
+                        var image_path = "imgl/" + i + nowTime + ".png"
+                        var images_path = "imgs/" + i +nowTime + ".png"
 
                         imagesPaths.add(image_path)
                         imgPaths.add(images_path)
-                        imgpath.add(nowTime.toString() + ".png")
+                        imgpath.add(i.toString() + nowTime.toString() + ".png")
                     }
 
                     photo.type = "photo"
@@ -506,8 +560,12 @@ class AddPostActivity : RootActivity() {
                         if (success) {
                             if (displaynamePaths.size != 0) {
 
-                                val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+
                                 for (i in 0..displaynamePaths.size - 1) {
+
+                                    println("display------------$displaynamePaths")
+
+                                    println("photo---------$photo")
 
                                     val image_path = photo.file[i]
 
@@ -519,9 +577,9 @@ class AddPostActivity : RootActivity() {
 
                                     val cutBytearray_ = Utils.getByteArray(cutImage)
 
-                                    FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+image_path) {
+                                    FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/" + image_path) {
                                         if (it) {
-                                            FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i)) {
+                                            FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i) ) {
                                                 if (it) {
 
                                                 }
@@ -604,11 +662,12 @@ class AddPostActivity : RootActivity() {
                         }
 
                     }
+
+                    displaynamePaths.clear()
                     for (i in 0..(name!!.size - 1)) {
                         val str = name[i]
 
                         if (displaynamePaths != null) {
-                            displaynamePaths.clear()
                             displaynamePaths.add(str)
 
 
@@ -621,6 +680,8 @@ class AddPostActivity : RootActivity() {
                     }
 
                     var intent = Intent();
+
+                    println("display : ======== $displaynamePaths")
 
                     Log.d("yjs", "PostResult : " + item?.size.toString() + " : " + item?.get(0).toString())
 
@@ -651,11 +712,12 @@ class AddPostActivity : RootActivity() {
 
                     }
 
+
+                    displaynamePaths.clear()
                     for (i in 0..(name!!.size - 1)) {
                         val str = name[i]
 
                         if (displaynamePaths != null) {
-                            displaynamePaths.clear()
                             displaynamePaths.add(str)
                         } else {
                             displaynamePaths.add(str)

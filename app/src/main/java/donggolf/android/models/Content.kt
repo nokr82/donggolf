@@ -17,6 +17,7 @@ data class Content (
         var heart_user:Boolean? = false,
         var looker:Int? = 0,
         var exclude_looker:Boolean? = false,
+
         var sharp_tag:ArrayList<String> = ArrayList<String>()
 
 ){

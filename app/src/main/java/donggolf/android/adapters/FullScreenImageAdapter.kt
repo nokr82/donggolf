@@ -1,4 +1,4 @@
-package kr.co.threemeals.store.android.adapter
+package donggolf.android.adapters
 
 import android.app.Activity
 import android.content.Context
@@ -9,20 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
-
 import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
 import donggolf.android.base.Utils
 
-import java.util.ArrayList
+class FullScreenImageAdapter(activity:Activity, imagePaths: ArrayList<String>) : PagerAdapter() {
 
-/**
- * Created by dev1 on 2018-03-15.
- */
-
-class FullScreenImageAdapter// constructor
-(private val _activity: Activity, private val _imagePaths: ArrayList<String>) : PagerAdapter() {
-    private var inflater: LayoutInflater? = null
+    private val _activity: Activity = activity
+    private val _imagePaths: ArrayList<String> = imagePaths
+    private lateinit var inflater: LayoutInflater
 
     override fun getCount(): Int {
         return this._imagePaths.size
@@ -36,12 +31,12 @@ class FullScreenImageAdapter// constructor
         val imgDisplay: ImageView
 
         inflater = _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val viewLayout = inflater!!.inflate(R.layout.layout_fullscreen_image, container, false)
+        val viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false)
 
         imgDisplay = viewLayout.findViewById(R.id.imgDisplay)
         imgDisplay.scaleType = ImageView.ScaleType.CENTER_CROP
 
-        ImageLoader.getInstance().displayImage(_imagePaths[position], imgDisplay, Utils.UILoptionsProfile)
+        ImageLoader.getInstance().displayImage(_imagePaths.get(position), imgDisplay, Utils.UILoptionsProfile)
 
         (container as ViewPager).addView(viewLayout)
 
@@ -56,4 +51,5 @@ class FullScreenImageAdapter// constructor
     override fun getItemPosition(`object`: Any): Int {
         return PagerAdapter.POSITION_NONE
     }
+
 }

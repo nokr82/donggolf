@@ -4,36 +4,33 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.ViewPager
+import android.view.MotionEvent
 import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import donggolf.android.actions.ContentAction
+import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import donggolf.android.fragment.DetailFragment1
-import donggolf.android.fragment.DetailFragment2
-import donggolf.android.fragment.DetailFragment3
-import donggolf.android.models.Content
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainDetailActivity : FragmentActivity() {
+class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
 
@@ -41,7 +38,17 @@ class MainDetailActivity : FragmentActivity() {
 
     private  lateinit var  adapter : MainDeatilAdapter
 
-    internal lateinit var pagerAdapter: PagerAdapter
+    private lateinit var adverAdapter: FullScreenImageAdapter
+    var adverImagePaths:ArrayList<String> = ArrayList<String>()
+
+
+    var adPosition = 0;
+
+    var PICTURE_DETAIL = 1
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +70,129 @@ class MainDetailActivity : FragmentActivity() {
 
         adapter.notifyDataSetChanged()
 
-        pagerAdapter = PagerAdapter(getSupportFragmentManager())
-        pagerVP.adapter = pagerAdapter
-        pagerAdapter.notifyDataSetChanged()
+        if (intent.hasExtra("id")){
+            val id = intent.getStringExtra("id")
+
+
+            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                if (success){
+                    if(data != null){
+                        if(data.size != 0){
+
+                            println("data : $data")
+                            val time: Long = data["createAt"] as Long
+
+                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
+
+                            val currentTime: String = dateFormat.format(Date(time))
+
+                            titleTV.text = data["title"].toString()
+                            dateTV.text = currentTime.toString()
+                            viewTV.text = data["looker"].toString()
+                            nickNameTV.text = data["owner"].toString()
+
+                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
+
+                            for(i in 0.. (texts.size-1)){
+//            var text = texts.get(i)
+                                val text_ = JSONObject(texts.get(i))
+                                println(text_)
+                                print( " ============================= ")
+
+                                val type = Utils.getString(text_, "type")
+
+                                if(type == "text") {
+                                    val text = text_.get("text")as String
+                                    textTV.text = text
+                                } else if (type == "photo") {
+                                    val photo = text_.get("file") as JSONArray
+                                    println("photo : ========== $photo")
+
+
+                                    for(i in 0.. (photo.length() - 1)) {
+
+                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
+                                            if (s != null) {
+                                                adverImagePaths.add(s)
+
+                                                adverAdapter.notifyDataSetChanged()
+                                            }
+                                            println("Paths ====================== $s")
+                                        }
+                                    }
+
+                                } else if (type == "video"){
+                                    val video = text_.get("file") as JSONArray
+                                    println("video : ========= $video")
+                                }
+
+                            }
+
+                            println("data : " + data)
+//
+//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
+//
+//                            detailIV.setImageBitmap(bt)
+
+                            //상태메시지
+
+
+                        }
+                    }
+
+                } else {
+
+                }
+            }
+        }
+
+        adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
+        pagerVP.adapter = adverAdapter
+        pagerVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                adPosition = position
+            }
+
+            override fun onPageSelected(position: Int) {}
+
+            override fun onPageScrollStateChanged(state: Int) {
+                circleLL.removeAllViews()
+                for (i in adverImagePaths.indices) {
+                    if (i == adPosition) {
+//                        addDot(circleLL, true)
+                    } else {
+//                        addDot(circleLL, false)
+                    }
+                }
+            }
+        })
+
+        pagerVP.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+
+                    MotionEvent.ACTION_DOWN ->{
+
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+
+                        if (intent.hasExtra("id")) {
+                            val id = intent.getStringExtra("id")
+                            var intent = Intent(context, PictureDetailActivity::class.java);
+                            intent.putExtra("id", id)
+                            startActivityForResult(intent, PICTURE_DETAIL);
+                        }
+
+                    }
+                }
+
+
+
+
+                return v?.onTouchEvent(event) ?: true
+            }
+        })
 
         finishLL.setOnClickListener {
             finish()
@@ -118,76 +245,9 @@ class MainDetailActivity : FragmentActivity() {
         }
 
 
-        if (intent.hasExtra("id")){
-            val id = intent.getStringExtra("id")
 
 
-            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                if (success){
-                    if(data != null){
-                        if(data.size != 0){
 
-                            println("data : $data")
-                            val time: Long = data["createAt"] as Long
-
-                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
-
-                            val currentTime: String = dateFormat.format(Date(time))
-
-                            titleTV.text = data["title"].toString()
-                            dateTV.text = currentTime.toString()
-                            viewTV.text = data["looker"].toString()
-                            nickNameTV.text = data["owner"].toString()
-
-                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
-
-                            for(i in 0.. (texts.size-1)){
-//            var text = texts.get(i)
-                                val text_ = JSONObject(texts.get(i))
-                                println(text_)
-                                print( " ============================= ")
-
-                                val type = Utils.getString(text_, "type")
-
-                                if(type == "text") {
-                                    val text = text_.get("text")as String
-                                    textTV.text = text
-                                } else if (type == "photo") {
-                                    val photo = text_.get("file") as JSONArray
-                                    println("photo : ========== $photo")
-
-
-                                    for(i in 0.. photo.length() - 1) {
-                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
-                                            println(" b: Boolean, s: String?, exception: Exception? $b , $s , $exception")
-
-                                        }
-                                    }
-
-                                } else if (type == "video"){
-                                    val video = text_.get("file") as JSONArray
-                                    println("video : ========= $video")
-                                }
-
-                            }
-
-                            println("data : " + data)
-//
-//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
-//
-//                            detailIV.setImageBitmap(bt)
-
-                            //상태메시지
-
-
-                        }
-                    }
-
-                } else {
-
-                }
-            }
-        }
 
     }
 
@@ -235,47 +295,8 @@ class MainDetailActivity : FragmentActivity() {
 
     }
 
-    class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-        override fun getItem(i: Int): Fragment {
-            val fragment: Fragment
-            val args = Bundle()
-            when (i) {
-                0 -> {
-                    fragment = DetailFragment1()
-                    fragment.arguments = args
-                    return fragment
-                }
-                1 -> {
-                    fragment = DetailFragment2()
-                    fragment.arguments = args
-                    return fragment
-                }
-                else -> {
-                    fragment = DetailFragment3()
-                    fragment.arguments = args
-                    return fragment
-                }
-            }
-        }
 
-        override fun getCount(): Int {
-            return 3
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            return ""
-        }
-
-        override fun destroyItem(viewPager: ViewGroup, position: Int, `object`: Any) {
-            //
-        }
-
-        override fun getItemPosition(`object`: Any): Int {
-            return POSITION_NONE
-        }
-
-    }
 
 
 }
