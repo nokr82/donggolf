@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".fragment.MainFragment">
 
-        <RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
@@ -42,6 +42,7 @@
                     android:textSize="15dp" />
             </LinearLayout>
             <Button
+                android:id="@+id/btn_del_searchWord"
                 android:layout_width="11.33dp"
                 android:layout_height="11.33dp"
                 android:layout_alignParentRight="true"
@@ -64,66 +65,66 @@
                 android:background="@drawable/btn_write"/>
         </LinearLayout>
     </RelativeLayout>
-        <ImageView
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/line_0" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ListView
+            android:id="@+id/main_listview"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/line_0" />
+            android:layout_height="match_parent" />
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/main_listview_search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <ListView
-                android:id="@+id/main_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="vertical"
+            android:background="@drawable/boarder_707070_background_ffffff"
+            android:visibility="gone">
 
             <LinearLayout
-                android:id="@+id/main_listview_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:orientation="vertical"
-                android:background="@drawable/boarder_707070_background_ffffff"
-                android:visibility="gone">
+                android:layout_height="wrap_content">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="최근 검색"
+                    android:layout_margin="5dp"
+                    android:textSize="9.33dp"
+                    android:textColor="#000000"/>
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp">
                     <TextView
+                        android:id="@+id/main_edit_close"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="최근 검색"
+                        android:text="닫기"
                         android:layout_margin="5dp"
                         android:textSize="9.33dp"
+                        android:layout_alignParentRight="true"
                         android:textColor="#000000"/>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp">
-                        <TextView
-                            android:id="@+id/main_edit_close"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="닫기"
-                            android:layout_margin="5dp"
-                            android:textSize="9.33dp"
-                            android:layout_alignParentRight="true"
-                            android:textColor="#000000"/>
-                    </RelativeLayout>
-                </LinearLayout>
-                <ListView
-                    android:id="@+id/main_edit_listview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
-
+                </RelativeLayout>
             </LinearLayout>
+            <ListView
+                android:id="@+id/main_edit_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
 
-        </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <!--</android.support.v4.view.ViewPager>-->
 

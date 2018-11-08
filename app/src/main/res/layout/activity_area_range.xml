@@ -23,6 +23,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/areaCnt"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -46,14 +47,54 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="7dp">
+                android:layout_marginLeft="14dp">
                 <TextView
+                    android:id="@+id/area1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="서울특별시"
                     android:textSize="14dp"/>
                 <ImageView
+                    android:id="@+id/area_deal1"
+                    android:layout_marginLeft="3dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/btn_del_region"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="14dp">
+                <TextView
+                    android:id="@+id/area2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="서울특별시"
+                    android:textSize="14dp"/>
+                <ImageView
+                    android:id="@+id/area_deal2"
+                    android:layout_marginLeft="3dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/btn_del_region"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="14dp">
+                <TextView
+                    android:id="@+id/area3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="서울특별시"
+                    android:textSize="14dp"/>
+                <ImageView
+                    android:id="@+id/area_deal3"
                     android:layout_marginLeft="3dp"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
@@ -84,6 +125,5 @@
         android:visibility="gone">
 
     </GridView>
-
 
 </LinearLayout>
