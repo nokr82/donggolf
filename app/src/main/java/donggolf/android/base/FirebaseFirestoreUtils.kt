@@ -48,6 +48,72 @@ class FirebaseFirestoreUtils {
             list(collectionName, params, orderBy, page, 20, result)
         }
 
+        fun list(collectionName: String, documentsName:String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+            list(collectionName, documentsName, params, orderBy, page, 20, result)
+        }
+
+        fun list(collectionName: String, documentsName:String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            // Create a reference to the cities collection
+            val ref = db.collection(collectionName)
+            ref.document(documentsName)
+
+            var query:Query? = null
+
+            params.keys.forEach {
+                val key = it
+                val value = params[key]
+
+                query = ref.whereEqualTo(key.toString(), value)
+            }
+
+            // orderBy
+            if(orderBy != null) {
+                val key = orderBy.first
+                if(key != null) {
+                    var direction = orderBy.second as? Query.Direction
+                    if(direction == null) {
+                        direction = Query.Direction.ASCENDING
+                    }
+
+                    query = ref.orderBy(key.toString(), direction)
+
+                    /*
+                    println("key : $key, di : $direction")
+
+                    // paging
+                    if(page > 0) {
+
+                        println("(page - 1) * limit : ${(page - 1) * limit}")
+
+                        ref.startAt((page - 1) * limit)
+                        ref.limit(limit)
+                    }
+                    */
+                }
+
+            }
+
+            query!!.get()
+                    .addOnSuccessListener {
+
+                        val data = ArrayList<Map<String, Any>?>()
+
+                        it.documents.forEach {
+                            val item = it.data
+                            if (item != null) {
+                                item!!.put("id", it.id)
+                                data.add(item)
+                            }
+                        }
+
+                        result(true, data, null)
+                    }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+        }
+
         fun list(collectionName: String, params: Map<String, Any>, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
 
             // Create a reference to the cities collection
@@ -214,7 +280,7 @@ class FirebaseFirestoreUtils {
                     }
                     .addOnFailureListener {
                         result(false)
-            }
+                    }
 
         }
 

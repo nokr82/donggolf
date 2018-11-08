@@ -14,7 +14,8 @@ class ChatDetailActivity : RootActivity() {
 
         btn_opMenu.setOnClickListener {
 
-            chat_right_menu.visibility = View.VISIBLE
+            drawerMenu.openDrawer(chat_right_menu)
+
         }
 
         finishaLL.setOnClickListener {

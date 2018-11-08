@@ -5,18 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
-import donggolf.android.base.Utils
 import org.json.JSONObject
 
 
-open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var data:ArrayList<Map<String, Any>> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -36,14 +34,14 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<JSONObjec
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var data : Map<String, Any> = getItem(position)
 
 
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
+    override fun getItem(position: Int): Map<String, Any> {
 
         return data.get(position)
     }
