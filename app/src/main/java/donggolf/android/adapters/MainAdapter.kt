@@ -10,17 +10,28 @@ import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.base.Utils
 import donggolf.android.models.Content
+import donggolf.android.models.Photo
+import donggolf.android.models.Text
+import donggolf.android.models.Video
+import org.json.JSONArray
 import org.json.JSONObject
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.time.Year
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<Map<String, Any>> = data
+
+
+    var text:Text = Text()
+    var photo:JSONArray = JSONArray()
+    var video:ArrayList<String> = ArrayList<String>()
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -42,13 +53,35 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
 
         var data : Map<String, Any> = getItem(position)
 
-        println("data : $data")
+        println("data : ======$data")
 
         var title:String = data.get("title") as String
         item.main_item_title.text = title
 
-        var texts:String = data.get("texts") as String
-        item.main_item_content.text = texts
+        var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
+        println("texts ======= $texts")
+
+        for(i in 0.. (texts.size-1)){
+//            var text = texts.get(i)
+            val text_ = JSONObject(texts.get(i))
+            println(text_)
+            print( " ============================= ")
+
+            val type = Utils.getString(text_, "type")
+
+            if(type == "text") {
+                val text = text_.get("text")as String
+                item.main_item_content.text = text
+            } else if (type == "photo") {
+                photo = text_.get("file") as JSONArray
+
+            } else if (type == "video"){
+                video.add(text_.get("file") as String)
+                println("video : ========= $video")
+            }
+
+        }
+
 
         var owner:String = data.get("owner").toString()
         item.main_item_nickname.text = owner

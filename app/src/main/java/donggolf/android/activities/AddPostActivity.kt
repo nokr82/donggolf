@@ -61,11 +61,11 @@ class AddPostActivity : RootActivity() {
 
     private var LoginMember: Info? = null
 
-    var hashtag:ArrayList<String> = ArrayList<String>()
+    var hashtag: ArrayList<String> = ArrayList<String>()
 
     val user = HashMap<String, Any>()
 
-    var userid:String? = null
+    var userid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,9 +77,6 @@ class AddPostActivity : RootActivity() {
 
         val db = FirebaseFirestore.getInstance()
 
-        val dbManager: DataBaseHelper = DataBaseHelper(this)
-
-        val sqldb = dbManager.createDataBase();
 
         val dataList: Array<String> = arrayOf("*");
 
@@ -88,9 +85,7 @@ class AddPostActivity : RootActivity() {
         val setContent = TmpContent()
 
 
-        dbManager.gettmpcontent(setContent,1)
-
-        if(setContent != null){
+        if (setContent != null) {
             titleET.setText(setContent.title)
             contentET.setText(setContent.texts)
 
@@ -117,14 +112,14 @@ class AddPostActivity : RootActivity() {
                     }
                 })
 
-        val category = intent.getIntExtra("category",0)
-        if(category == 2){
+        val category = intent.getIntExtra("category", 0)
+        if (category == 2) {
             addpostTV.text = "수정하기"
             val id = intent.getStringExtra("id")
-            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                if(success){
-                    if(data != null){
-                        if(data.size != 0){
+            ContentAction.viewContent(id) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                if (success) {
+                    if (data != null) {
+                        if (data.size != 0) {
                             titleET.setText(data["title"].toString())
                             contentET.setText(data["texts"].toString())
                         }
@@ -139,9 +134,10 @@ class AddPostActivity : RootActivity() {
             builder
                     .setMessage("글쓰기를 취소하시겠습니까 ?")
 
-                    .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                    .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
 
-                        if(displaynamePaths != null) {
+                        if (displaynamePaths != null) {
                             if (displaynamePaths.size != 0) {
 
                                 val title = Utils.getString(titleET)
@@ -150,39 +146,38 @@ class AddPostActivity : RootActivity() {
                                 val nick: String = PrefUtils.getStringPreference(context, "nick")
 
 
-                                if(hashtag != null){
-                                    if(hashtag.size != 0){
+                                if (hashtag != null) {
+                                    if (hashtag.size != 0) {
                                         var tmphashtag = hashtag[0].toString()
 
-                                        for(i in 0..hashtag.size-1){
+                                        for (i in 0..hashtag.size - 1) {
                                             tmphashtag += "," + hashtag[i].toString()
                                         }
 
-                                        val tmpContent = TmpContent(0,userid!!,title,content,tmphashtag,1)
+                                        val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag, 1)
 
-                                        dbManager.inserttmpcontent(tmpContent)
+//                                        dbManager.inserttmpcontent(tmpContent)
                                     }
                                 }
-
 
 
                             }
                         }
 
-                        if(displaynamePaths.size == 0 ){
+                        if (displaynamePaths.size == 0) {
 
                             val title = Utils.getString(titleET)
                             val content = Utils.getString(contentET)
 
-                            val nick: String = PrefUtils.getStringPreference(context,"nick")
+                            val nick: String = PrefUtils.getStringPreference(context, "nick")
 
 
                         }
 
 
-
                     })
-                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
                         finish()
                     })
             val alert = builder.create()
@@ -198,15 +193,41 @@ class AddPostActivity : RootActivity() {
         }
 
         addcontentBT.setOnClickListener {
-            if(category == 1){
-                addContent()
-            }else {
-                val id = intent.getStringExtra("id")
-                modify(id)
 
-                println("id : ======== $id")
 
-            }
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("등록하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+
+
+                        if (category == 1) {
+                            addContent()
+
+                            finish()
+                        } else {
+                            val id = intent.getStringExtra("id")
+                            modify(id)
+
+                            println("id : ======== $id")
+
+                            finish()
+
+                        }
+
+
+
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        finish()
+                    })
+
+            val alert = builder.create()
+            alert.show()
+
         }
 
         hashtagLL.setOnClickListener {
@@ -214,21 +235,21 @@ class AddPostActivity : RootActivity() {
             startActivityForResult(intent, SELECT_HASHTAG);
         }
 
-        val email: String = PrefUtils.getStringPreference(context,"email")
+        val email: String = PrefUtils.getStringPreference(context, "email")
 
     }
 
-    private fun moveMyPicture(){
+    private fun moveMyPicture() {
         var intent = Intent(context, FindPictureGridActivity::class.java);
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
-    private fun moveMyVideo(){
+    private fun moveMyVideo() {
         var intent = Intent(context, FindVideoActivity::class.java);
         startActivityForResult(intent, SELECT_VIDEO);
     }
 
-    private fun permission(){
+    private fun permission() {
 
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
@@ -244,142 +265,189 @@ class AddPostActivity : RootActivity() {
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
-                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 .check();
 
     }
 
-    private fun modify( id: String){
+    private fun modify(id: String) {
         val title = Utils.getString(titleET)
-        if (title.isEmpty()){
+        if (title.isEmpty()) {
             Utils.alert(context, "제목을 입력해주세요.")
             return
         }
 
         var content = Utils.getString(contentET)
-        if (content.isEmpty()){
+        if (content.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
 
         val user = mAuth.currentUser
 
-        if(user != null){
+        if (user != null) {
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
 
-            val nick: String = PrefUtils.getStringPreference(context,"nick")
+            val text = Text("text", content)
+
+            val texts: ArrayList<Any> = ArrayList<Any>()
+
+            texts.add(text)
+
+            val nick: String = PrefUtils.getStringPreference(context, "nick")
 
 
-            if(displaynamePaths != null){
-                if(displaynamePaths.size != 0){
-                var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 500)
+            if (displaynamePaths != null) {
+                if (displaynamePaths.size != 0) {
 
-                    println("displayName ${displaynamePaths}")
+                    val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+                    for (i in 0..displaynamePaths.size - 1) {
+                        var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 500)
 
-                val bytearray_ = Utils.getByteArray(bt)
+                        var bytearray_ = Utils.getByteArray(bt)
 
-                val nowTime = System.currentTimeMillis()
+                        bytearray__.add(bytearray_)
+                    }
 
-                val cutImage = Utils.resize(bt,100)
-
-                val cutBytearray_ = Utils.getByteArray(cutImage)
-
+                    val nowTime = System.currentTimeMillis()
 
 
-                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+nowTime+".png") {
-                    if (it) {
-                        val regionItem = Region(nowTime,"","")
+                    var imgPaths = ArrayList<String>()
+                    var imagsPaths = ArrayList<String>()
+                    var photo = Photo()
+
+                    for (i in 0..(displaynamePaths.size - 1)) {
+
+                        var image_path = "imgl/" + nowTime + ".png"
+                        var images_path = "imgs/" + nowTime + ".png"
+
+                        imgPaths.add(images_path)
+                        imagesPaths.add(image_path)
+                    }
+
+                    photo.type = "photo"
+                    photo.file = imagesPaths
+
+                    texts.add(photo)
+
+                    val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                    val item = Content(nowTime, 0, 0, nick.toString(), null, title, texts, "", false,
+                            0, 0, "", false, 0, false, sharpTag)
+
+
+                    ContentAction.viewContent(id) { success, data, exception ->
+                        if (success) {
+                            if (data != null) {
+                                if (data.size != 0) {
+                                    FirebaseFirestoreUtils.save("contents", id, item) {
+                                        if (it) {
+                                            if (displaynamePaths.size != 0) {
+
+                                                val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+                                                for (i in 0..displaynamePaths.size - 1) {
+
+                                                    val image_path = photo.file[i]
+
+                                                    var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 500)
+
+                                                    var bytearray_ = Utils.getByteArray(bt)
+
+                                                    val cutImage = Utils.resize(bt, 100)
+
+                                                    val cutBytearray_ = Utils.getByteArray(cutImage)
+
+                                                    FirebaseFirestoreUtils.uploadFile(bytearray_, image_path) {
+                                                        if (it) {
+                                                            FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i)) {
+                                                                if (it) {
+
+                                                                }
+                                                            }
+
+
+                                                        }
+                                                    }
+
+
+                                                }
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                    if (displaynamePaths.size == 0) {
+
+                        val regionItem = Region(nowTime, "", "")
 
                         val sharpTag: ArrayList<String> = ArrayList<String>()
 
-                        ContentAction.viewContent(id){success, data, exception ->
-                            if(success){
-                                if(data != null) {
+
+                        val content = Utils.getString(contentET)
+
+                        val text = Text("text", content)
+
+                        val texts: ArrayList<Any> = ArrayList<Any>()
+
+                        texts.add(text)
+
+                        ContentAction.viewContent(id) { success, data, exception ->
+                            if (success) {
+                                if (data != null) {
                                     if (data.size != 0) {
                                         val time: Long = data["createAt"] as Long
-                                        val item = Content(time,0,0,nick.toString(),regionItem,title,content,"imgl/"+nowTime+".png",false,
-                                                0,0,  "",false,0,false,sharpTag)
+                                        val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
+                                                0, 0, "", false, 0, false, sharpTag)
+                                        FirebaseFirestoreUtils.save("contents", id, item) {
+                                            if (it) {
+                                                finish()
+                                            } else {
 
-                                        FirebaseFirestoreUtils.uploadFile(cutBytearray_,"imgs/"+nowTime+".png"){
-                                            if(it){
-                                                FirebaseFirestoreUtils.save("contents",id,item){
-                                                    if(it){
-                                                        finish()
-                                                    }else{
-
-                                                    }
-                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    } else {
+
 
                     }
-
                 }
-            }
-            }
-
-            if(displaynamePaths.size == 0){
-                val nowTime = System.currentTimeMillis()
-
-                val regionItem = Region(nowTime,"","")
-
-                val sharpTag: ArrayList<String> = ArrayList<String>()
-
-                ContentAction.viewContent(id){success, data, exception ->
-                    if(success){
-                        if(data != null) {
-                            if (data.size != 0) {
-                                val time: Long = data["createAt"] as Long
-                                val item = Content(time,0,0,nick.toString(),regionItem,title,content,"",false,
-                                        0,0,  "",false,0,false,sharpTag)
-                                FirebaseFirestoreUtils.save("contents",id,item){
-                                    if(it){
-                                        finish()
-                                    }else{
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
 
             }
         }
     }
 
-
-
-    private fun addContent(){
+    private fun addContent() {
 
         val title = Utils.getString(titleET)
-        if (title.isEmpty()){
+        if (title.isEmpty()) {
             Utils.alert(context, "제목을 입력해주세요.")
             return
         }
 
         var content = Utils.getString(contentET)
-        if (content.isEmpty()){
+        if (content.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
 
         val user = mAuth.currentUser
 
-        if (user != null){
+        if (user != null) {
             val uid = user.uid
 
-            val now = System.currentTimeMillis()
+            val nowTime = System.currentTimeMillis()
 
-            val email: String = PrefUtils.getStringPreference(context,"email")
-            val nick: String = PrefUtils.getStringPreference(context,"nick")
+            val email: String = PrefUtils.getStringPreference(context, "email")
+            val nick: String = PrefUtils.getStringPreference(context, "nick")
 
             var params = HashMap<String, Any>()
             params.put("uid", uid)
@@ -387,79 +455,129 @@ class AddPostActivity : RootActivity() {
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
 
-            if(displaynamePaths != null){
-                var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(0), 500)
+            val text = Text("text", content)
 
-                val bytearray_ = Utils.getByteArray(bt)
+            val texts: ArrayList<Any> = ArrayList<Any>()
 
-                val nowTime = System.currentTimeMillis()
+            texts.add(text)
 
-                val cutImage = Utils.resize(bt,100)
+            if (displaynamePaths != null) {
+                if (displaynamePaths.size != 0) {
 
-                val cutBytearray_ = Utils.getByteArray(cutImage)
+                    val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+                    for (i in 0..displaynamePaths.size - 1) {
+                        var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 500)
 
-                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+nowTime+".png") {
-                    if (it) {
-                        val regionItem = Region(nowTime,"","")
+                        var bytearray_ = Utils.getByteArray(bt)
 
-                        val sharpTag: ArrayList<String> = ArrayList<String>()
-
-                        val item = Content(now,0,0,nick.toString(),regionItem,title,content,"imgl/"+nowTime+".png",false,
-                                0,0,  "",false,0,false,sharpTag)
-
-                        FirebaseFirestoreUtils.uploadFile(cutBytearray_,"imgs/"+nowTime+".png"){
-                            if(it){
-                                ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
-                                    if(success){
-                                        finish()
-                                    }else{
-
-                                    }
-                                }
-                            }
-                        }
-
-                    } else {
-
+                        bytearray__.add(bytearray_)
                     }
 
+
+                    var imgPaths = ArrayList<String>()
+                    var imagsPaths = ArrayList<String>()
+                    var photo = Photo()
+
+                    for (i in 0..(displaynamePaths.size - 1)) {
+
+                        var image_path = "imgl/" + nowTime + ".png"
+                        var images_path = "imgs/" + nowTime + ".png"
+
+                        imagesPaths.add(image_path)
+                        imgPaths.add(images_path)
+                    }
+
+                    photo.type = "photo"
+                    photo.file = imagesPaths
+
+                    texts.add(photo)
+
+                    val regionItem = Region(nowTime, "", "")
+
+                    val sharpTag: ArrayList<String> = ArrayList<String>()
+
+                    val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
+                            0, 0, "", false, 0, false, sharpTag)
+
+                    ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
+                        if (success) {
+                            if (displaynamePaths.size != 0) {
+
+                                val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+                                for (i in 0..displaynamePaths.size - 1) {
+
+                                    val image_path = photo.file[i]
+
+                                    var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 500)
+
+                                    var bytearray_ = Utils.getByteArray(bt)
+
+                                    val cutImage = Utils.resize(bt, 100)
+
+                                    val cutBytearray_ = Utils.getByteArray(cutImage)
+
+                                    FirebaseFirestoreUtils.uploadFile(bytearray_, image_path) {
+                                        if (it) {
+                                            FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i)) {
+                                                if (it) {
+
+                                                }
+                                            }
+
+
+                                        }
+                                    }
+
+
+                                }
+                            }
+                        } else {
+
+                        }
+                    }
+
+
                 }
-
             }
-            if(displaynamePaths.size == 0) {
-                val nowTime = System.currentTimeMillis()
-
-                val regionItem = Region(nowTime,"","")
+            if (displaynamePaths.size == 0) {
+                val regionItem = Region(nowTime, "", "")
 
                 val sharpTag: ArrayList<String> = ArrayList<String>()
 
-                val item = Content(now,0,0,nick.toString(),regionItem,title,content,"",false,
-                        0,0,  "",false,0,false,sharpTag)
-                ContentAction.saveContent(item){success: Boolean, key: String?, exception: Exception? ->
-                    if(success){
+                val content = Utils.getString(contentET)
+
+                val text = Text("text", content)
+
+                val texts: ArrayList<Any> = ArrayList<Any>()
+
+                texts.add(text)
+
+                val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
+                        0, 0, "", false, 0, false, sharpTag)
+                ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
+                    if (success) {
                         finish()
-                    }else{
+                    } else {
 
                     }
                 }
             }
 
-
-
-
-
         }
+
+
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            when(requestCode) {
+            when (requestCode) {
                 SELECT_PICTURE -> {
                     var item = data?.getStringArrayExtra("images")
-                    var name =  data?.getStringArrayExtra("displayname")
+                    var name = data?.getStringArrayExtra("displayname")
 
-                    for (i in 0 .. (item!!.size - 1)) {
+                    for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
                         imagesPaths.add(str)
@@ -483,16 +601,16 @@ class AddPostActivity : RootActivity() {
                         }
 
                     }
-                    for (i in 0 .. (name!!.size - 1)) {
+                    for (i in 0..(name!!.size - 1)) {
                         val str = name[i]
 
-                        if(displaynamePaths != null){
+                        if (displaynamePaths != null) {
                             displaynamePaths.clear()
                             displaynamePaths.add(str)
 
 
                             Log.d("yjs", "display " + displaynamePaths.get(0))
-                        }else {
+                        } else {
                             displaynamePaths.add(str)
                             Log.d("yjs", "display " + displaynamePaths.get(0))
                         }
@@ -501,14 +619,14 @@ class AddPostActivity : RootActivity() {
 
                     var intent = Intent();
 
-                    Log.d("yjs", "PostResult : " + item?.size.toString()+" : " + item?.get(0).toString())
+                    Log.d("yjs", "PostResult : " + item?.size.toString() + " : " + item?.get(0).toString())
 
-                    setResult(RESULT_OK,intent);
+                    setResult(RESULT_OK, intent);
 
                 }
-                SELECT_VIDEO->{
+                SELECT_VIDEO -> {
                     var item = data?.getStringArrayExtra("videos")
-                    var name =  data?.getStringArrayExtra("displayname")
+                    var name = data?.getStringArrayExtra("displayname")
 
                     for (i in item!!.indices) {
                         val str = item[i]
@@ -530,13 +648,13 @@ class AddPostActivity : RootActivity() {
 
                     }
 
-                    for (i in 0 .. (name!!.size - 1)) {
+                    for (i in 0..(name!!.size - 1)) {
                         val str = name[i]
 
-                        if(displaynamePaths != null){
+                        if (displaynamePaths != null) {
                             displaynamePaths.clear()
                             displaynamePaths.add(str)
-                        }else {
+                        } else {
                             displaynamePaths.add(str)
                         }
 
@@ -546,7 +664,7 @@ class AddPostActivity : RootActivity() {
 
                     Log.d("yjs", "PostResult : " + item?.size.toString() + "name : " + displaynamePaths.toString())
 
-                    setResult(RESULT_OK,intent);
+                    setResult(RESULT_OK, intent);
                 }
 
                 SELECT_HASHTAG -> {
@@ -559,7 +677,7 @@ class AddPostActivity : RootActivity() {
             }
         }
     }
-
 }
+
 
 

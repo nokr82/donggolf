@@ -8,7 +8,7 @@ data class Content (
         var owner:String? = null,
         var region:Region? = null,
         var title:String? = null,
-        var texts:String? = null,
+        var texts:ArrayList<Any> = ArrayList<Any>(),
         var door_image:String? = null,
         var deleted:Boolean? = false,
         var deletedAt:Long? = null,
