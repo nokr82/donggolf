@@ -156,7 +156,7 @@ open class MainFragment : Fragment() {
 
         main_edit_search.setOnTouchListener { v, event ->
             main_listview_search.visibility = View.VISIBLE
-            true
+            false
         }
 
     }
