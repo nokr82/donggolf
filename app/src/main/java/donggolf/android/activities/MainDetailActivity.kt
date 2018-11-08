@@ -7,29 +7,41 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import donggolf.android.fragment.DetailFragment1
+import donggolf.android.fragment.DetailFragment2
+import donggolf.android.fragment.DetailFragment3
 import donggolf.android.models.Content
+import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainDetailActivity : RootActivity() {
+class MainDetailActivity : FragmentActivity() {
 
     private lateinit var context: Context
 
     private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     private  lateinit var  adapter : MainDeatilAdapter
+
+    internal lateinit var pagerAdapter: PagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +62,10 @@ class MainDetailActivity : RootActivity() {
         main_detail_listview.adapter = adapter
 
         adapter.notifyDataSetChanged()
+
+        pagerAdapter = PagerAdapter(getSupportFragmentManager())
+        pagerVP.adapter = pagerAdapter
+        pagerAdapter.notifyDataSetChanged()
 
         finishLL.setOnClickListener {
             finish()
@@ -123,6 +139,38 @@ class MainDetailActivity : RootActivity() {
                             viewTV.text = data["looker"].toString()
                             nickNameTV.text = data["owner"].toString()
 
+                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
+
+                            for(i in 0.. (texts.size-1)){
+//            var text = texts.get(i)
+                                val text_ = JSONObject(texts.get(i))
+                                println(text_)
+                                print( " ============================= ")
+
+                                val type = Utils.getString(text_, "type")
+
+                                if(type == "text") {
+                                    val text = text_.get("text")as String
+                                    textTV.text = text
+                                } else if (type == "photo") {
+                                    val photo = text_.get("file") as JSONArray
+                                    println("photo : ========== $photo")
+
+
+                                    for(i in 0.. photo.length() - 1) {
+                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
+                                            println(" b: Boolean, s: String?, exception: Exception? $b , $s , $exception")
+
+                                        }
+                                    }
+
+                                } else if (type == "video"){
+                                    val video = text_.get("file") as JSONArray
+                                    println("video : ========= $video")
+                                }
+
+                            }
+
                             println("data : " + data)
 //
 //                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
@@ -130,7 +178,6 @@ class MainDetailActivity : RootActivity() {
 //                            detailIV.setImageBitmap(bt)
 
                             //상태메시지
-                            textTV.text = data["texts"].toString()
 
 
                         }
@@ -185,6 +232,48 @@ class MainDetailActivity : RootActivity() {
                 })
         val alert = builder.create()
         alert.show()
+
+    }
+
+    class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        override fun getItem(i: Int): Fragment {
+            val fragment: Fragment
+            val args = Bundle()
+            when (i) {
+                0 -> {
+                    fragment = DetailFragment1()
+                    fragment.arguments = args
+                    return fragment
+                }
+                1 -> {
+                    fragment = DetailFragment2()
+                    fragment.arguments = args
+                    return fragment
+                }
+                else -> {
+                    fragment = DetailFragment3()
+                    fragment.arguments = args
+                    return fragment
+                }
+            }
+        }
+
+        override fun getCount(): Int {
+            return 3
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return ""
+        }
+
+        override fun destroyItem(viewPager: ViewGroup, position: Int, `object`: Any) {
+            //
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
 
     }
 

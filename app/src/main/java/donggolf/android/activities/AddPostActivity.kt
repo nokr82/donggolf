@@ -312,9 +312,9 @@ class AddPostActivity : RootActivity() {
 
                     val nowTime = System.currentTimeMillis()
 
-
                     var imgPaths = ArrayList<String>()
                     var imagsPaths = ArrayList<String>()
+                    var imgpath = ArrayList<String>()
                     var photo = Photo()
 
                     for (i in 0..(displaynamePaths.size - 1)) {
@@ -322,12 +322,13 @@ class AddPostActivity : RootActivity() {
                         var image_path = "imgl/" + nowTime + ".png"
                         var images_path = "imgs/" + nowTime + ".png"
 
-                        imgPaths.add(images_path)
                         imagesPaths.add(image_path)
+                        imgPaths.add(images_path)
+                        imgpath.add(nowTime.toString() + ".png")
                     }
 
                     photo.type = "photo"
-                    photo.file = imagesPaths
+                    photo.file = imgpath
 
                     texts.add(photo)
 
@@ -476,6 +477,7 @@ class AddPostActivity : RootActivity() {
 
                     var imgPaths = ArrayList<String>()
                     var imagsPaths = ArrayList<String>()
+                    var imgpath = ArrayList<String>()
                     var photo = Photo()
 
                     for (i in 0..(displaynamePaths.size - 1)) {
@@ -485,10 +487,11 @@ class AddPostActivity : RootActivity() {
 
                         imagesPaths.add(image_path)
                         imgPaths.add(images_path)
+                        imgpath.add(nowTime.toString() + ".png")
                     }
 
                     photo.type = "photo"
-                    photo.file = imagesPaths
+                    photo.file = imgpath
 
                     texts.add(photo)
 
@@ -516,7 +519,7 @@ class AddPostActivity : RootActivity() {
 
                                     val cutBytearray_ = Utils.getByteArray(cutImage)
 
-                                    FirebaseFirestoreUtils.uploadFile(bytearray_, image_path) {
+                                    FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/"+image_path) {
                                         if (it) {
                                             FirebaseFirestoreUtils.uploadFile(cutBytearray_, imgPaths.get(i)) {
                                                 if (it) {

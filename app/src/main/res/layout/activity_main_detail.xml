@@ -195,8 +195,8 @@
                 android:layout_marginRight="7dp"
                 app:ratio="360:146">
 
-                <ImageView
-                    android:id="@+id/detailIV"
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pagerVP"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 

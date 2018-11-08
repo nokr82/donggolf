@@ -219,4 +219,25 @@ open class FreeFragment : Fragment() {
         */
     }
 
+    override fun onResume() {
+        super.onResume()
+        ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+
+            if(success && data != null) {
+                data.forEach {
+                    println(it)
+
+                    if (it != null) {
+                        adapterData.add(it)
+                    }
+
+                }
+
+                adapter.notifyDataSetChanged()
+
+            }
+
+        }
+    }
+
 }
