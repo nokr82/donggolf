@@ -1,7 +1,5 @@
 package donggolf.android.activities
 
-import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -19,16 +17,10 @@ import android.widget.BaseAdapter
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
-import donggolf.android.adapters.FindPictureGridAdapter
 import donggolf.android.adapters.ImageAdapter
-import donggolf.android.adapters.VideoAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.ImageLoader
 import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_find_picture_grid.*
-import org.json.JSONObject
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -57,7 +49,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     private var selectedImage: Bitmap? = null
 
-
     constructor(parcel: Parcel) : this() {
         imageUri = parcel.readParcelable(Uri::class.java.classLoader)
         FROM_CAMERA = parcel.readInt()
@@ -72,7 +63,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         context = this
 
         mAuth = FirebaseAuth.getInstance();
-
 
         val resolver = contentResolver
         var cursor: Cursor? = null
@@ -209,8 +199,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 }
 
             } else {
-                if (count + selected.size > 1) {
-                    Toast.makeText(context, "사진은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                if (count + selected.size > 9) {
+                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -255,17 +245,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
             }
 
         }
-    }
-
-    fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeParcelable(imageUri, flags)
-        parcel.writeInt(FROM_CAMERA)
-        parcel.writeString(imagePath)
-        parcel.writeInt(count)
-    }
-
-    fun describeContents(): Int {
-        return 0
     }
 
     companion object CREATOR : Parcelable.Creator<FindPictureGridActivity> {
