@@ -125,7 +125,7 @@ class FirebaseFirestoreUtils {
                 val key = it
                 val value = params[key]
 
-                query = ref.whereEqualTo(key.toString(), value);
+                query = ref.whereEqualTo(key.toString(), value)
             }
 
             // orderBy

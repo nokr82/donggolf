@@ -28,7 +28,7 @@
             android:layout_marginRight="10dp"
             />
         <ImageView
-            android:id="@+id/main_edit_listitem_close"
+            android:id="@+id/main_edit_listitem_delete"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:background="@drawable/btn_del_history_1"
