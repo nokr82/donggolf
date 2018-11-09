@@ -27,6 +27,9 @@ import donggolf.android.base.*
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
+import kotlinx.android.synthetic.main.activity_main_detail.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.net.URI
 import java.util.*
 import kotlin.collections.ArrayList
@@ -105,6 +108,8 @@ class AddPostActivity : RootActivity() {
 
         println("displayname " + displaynamePaths.size.toString())
 
+        val category = intent.getIntExtra("category", 0)
+
         db.collection("users")
                 .get()
                 .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
@@ -114,7 +119,10 @@ class AddPostActivity : RootActivity() {
                                 Log.d("yjs", document.getId() + " => " + document.getData())
                                 userid = document.getId()
                                 println("userid ======= $userid")
-                                loadData(dbManager,userid!!)
+
+                                if(category != 2) {
+                                    loadData(dbManager, userid!!)
+                                }
                             }
                         } else {
                             Log.w("yjs", "Error getting documents.", task.exception)
@@ -122,18 +130,35 @@ class AddPostActivity : RootActivity() {
                     }
                 })
 
-        val category = intent.getIntExtra("category", 0)
+
+
+        println("category +====== $category")
+
         if (category == 2) {
             addpostTV.text = "수정하기"
             val id = intent.getStringExtra("id")
+            println("id +====== $id")
             ContentAction.viewContent(id) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                 if (success) {
-                    if (data != null) {
-                        if (data.size != 0) {
-                            titleET.setText(data["title"].toString())
-                            contentET.setText(data["texts"].toString())
-                        }
-                    }
+                            titleET.setText(data!!["title"].toString())
+
+                            var texts: java.util.ArrayList<HashMap<Objects, Objects>> = data.get("texts") as java.util.ArrayList<HashMap<Objects, Objects>>
+
+                            println("texts +====== $texts")
+
+                            for(i in 0.. (texts.size-1)){
+
+                                val text_ = JSONObject(texts.get(i))
+
+                                val type = Utils.getString(text_, "type")
+
+                                if(type == "text") {
+                                    val text = text_.get("text")as String
+                                    contentET.setText(text)
+                                } else if (type == "photo") {
+                                } else if (type == "video"){
+                                }
+                            }
                 }
             }
         }
@@ -288,9 +313,13 @@ class AddPostActivity : RootActivity() {
                                                     finish()
                                                 }
 
-                                                if(tmpContent.id != null) {
-                                                    dbManager.deleteTmpContent(tmpContent.id!!)
-                                                    finish()
+                                                if(category != 2) {
+                                                    if (tmpContent.id != null) {
+                                                        dbManager.deleteTmpContent(tmpContent.id!!)
+
+
+                                                        finish()
+                                                    }
                                                 }
 
                                             }
@@ -386,21 +415,27 @@ class AddPostActivity : RootActivity() {
 
         val user = mAuth.currentUser
 
+
+
         if (user != null) {
+
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
-
-            val text = Text("text", content)
-
-            val texts: ArrayList<Any> = ArrayList<Any>()
-
-            texts.add(text)
 
             val nick: String = PrefUtils.getStringPreference(context, "nick")
 
 
             if (displaynamePaths != null) {
                 if (displaynamePaths.size != 0) {
+
+                    val title = Utils.getString(titleET)
+                    val content = Utils.getString(contentET)
+
+                    val text = Text("text", content)
+
+                    val texts: ArrayList<Any> = ArrayList<Any>()
+
+                    texts.add(text)
 
                     val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
                     for (i in 0..displaynamePaths.size - 1) {
@@ -433,13 +468,6 @@ class AddPostActivity : RootActivity() {
 
                     texts.add(photo)
 
-                    val sharpTag: ArrayList<String> = ArrayList<String>()
-
-                    val charge_ser : ArrayList<String> = ArrayList<String>()
-
-
-
-
                     ContentAction.viewContent(id) { success, data, exception ->
                         if (success) {
                             if (data != null) {
@@ -458,11 +486,11 @@ class AddPostActivity : RootActivity() {
                                     var region: java.util.ArrayList<String> = data.get("region") as java.util.ArrayList<String>
                                     var sharpTag: java.util.ArrayList<String> = data.get("sharp_tag") as java.util.ArrayList<String>
                                     var texts: java.util.ArrayList<Any> = data.get("texts") as java.util.ArrayList<Any>
-                                    val title = data["title"].toString()
+                                    val title = Utils.getString(titleET)
                                     val updateAt = data["updatedAt"] as Long
                                     val updatedCnt = data["updatedAt"] as Long
 
-                                    val item = Content(nowTime, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
                                             deletedAt, chargecnt, charge_user, heart_user, looker, exclude_looker, sharpTag)
 
                                     FirebaseFirestoreUtils.save("contents", id, item) {
@@ -507,62 +535,82 @@ class AddPostActivity : RootActivity() {
                         }
                     }
 
-                    if (displaynamePaths.size == 0) {
+                }
 
-                        val regionItem = Region(nowTime, "", "")
+            }
 
-                        val sharpTag: ArrayList<String> = ArrayList<String>()
+            if (displaynamePaths.size == 0) {
 
+                ContentAction.viewContent(id) { success, data, exception ->
+                    if (success) {
+                        if (data != null) {
+                            if (data.size != 0) {
+                                println("data ===== $data")
 
-                        val content = Utils.getString(contentET)
+                                var charge_user: java.util.ArrayList<String> = data.get("charge_user") as java.util.ArrayList<String>
+                                val chargecnt = data["chargecnt"]as Long
+                                val createdAt = data["createAt"] as Long
+                                val deleted = data["deleted"] as Boolean
+                                val deletedAt = data["deletedAt"]as Long
+                                val door_image = data["door_image"].toString()
+                                var exclude_looker: java.util.ArrayList<String> = data.get("exclude_looker") as java.util.ArrayList<String>
+                                val heart_user = data["heart_user"] as Boolean
+                                val looker = data["looker"]as Long
+                                val owner = data["owner"].toString()
+                                var region: java.util.ArrayList<String> = data.get("region") as java.util.ArrayList<String>
+                                var sharpTag: java.util.ArrayList<String> = data.get("sharp_tag") as java.util.ArrayList<String>
+                                var texts: ArrayList<Any> = ArrayList<Any>()
 
-                        val text = Text("text", content)
+                                val updateAt = data["updatedAt"] as Long
+                                val updatedCnt = data["updatedCnt"] as Long
 
-                        val texts: ArrayList<Any> = ArrayList<Any>()
+                                val text = Text("text", content)
 
-                        texts.add(text)
+                                texts.add(text)
 
-                        val charge_ser : ArrayList<String> = ArrayList<String>()
+                                var ttexts: java.util.ArrayList<HashMap<Objects, Objects>> = data.get("texts") as java.util.ArrayList<HashMap<Objects, Objects>>
 
-                        ContentAction.viewContent(id) { success, data, exception ->
-                            if (success) {
-                                if (data != null) {
-                                    if (data.size != 0) {
-                                        var charge_user: java.util.ArrayList<String> = data.get("charge_user") as java.util.ArrayList<String>
-                                        val chargecnt = data["chargecnt"]as Long
-                                        val createdAt = data["createAt"] as Long
-                                        val deleted = data["deleted"] as Boolean
-                                        val deletedAt = data["deletedAt"]as Long
-                                        val door_image = data["door_image"].toString()
-                                        var exclude_looker: java.util.ArrayList<String> = data.get("exclude_looker") as java.util.ArrayList<String>
-                                        val heart_user = data["heart_user"] as Boolean
-                                        val looker = data["looker"]as Long
-                                        val owner = data["owner"].toString()
-                                        var region: java.util.ArrayList<String> = data.get("region") as java.util.ArrayList<String>
-                                        var sharpTag: java.util.ArrayList<String> = data.get("sharp_tag") as java.util.ArrayList<String>
-                                        var texts: java.util.ArrayList<Any> = data.get("texts") as java.util.ArrayList<Any>
-                                        val title = data["title"].toString()
-                                        val updateAt = data["updatedAt"] as Long
-                                        val updatedCnt = data["updatedAt"] as Long
+                                for(i in 0.. (ttexts.size-1)){
 
-                                        val item = Content(nowTime, updateAt, updatedCnt,owner, region, title, texts, door_image, deleted,
-                                                deletedAt, chargecnt, charge_user, heart_user, looker, exclude_looker, sharpTag)
+                                    val text_ = JSONObject(ttexts.get(i))
+                                    val type = Utils.getString(text_, "type")
 
-                                        FirebaseFirestoreUtils.save("contents", id, item) {
-                                            if (it) {
-                                                finish()
-                                            } else {
+                                    if(type == "photo") {
 
-                                            }
+                                        val sphoto = text_.get("file") as JSONArray
+
+                                        println("photooooooooooooooo ===== $sphoto")
+                                        val photo = Photo()
+
+                                        for(i in 0.. (sphoto.length() - 1)) {
+
+                                            val photodata:JSONObject = sphoto.get(i) as JSONObject
+
+                                            photo.type = "photo"
+                                            photo.file.add(sphoto.get(i).toString())
+
                                         }
+
+                                        texts.add(photo)
+
+                                    }
+                                }
+
+                                val item = Content(createdAt, updateAt, updatedCnt,owner, region, title, texts, door_image, deleted,
+                                        deletedAt, chargecnt, charge_user, heart_user, looker, exclude_looker, sharpTag)
+
+                                FirebaseFirestoreUtils.save("contents", id, item) {
+                                    if (it) {
+                                        finish()
+                                    } else {
+
                                     }
                                 }
                             }
                         }
-
-
                     }
                 }
+
 
             }
         }
@@ -594,6 +642,8 @@ class AddPostActivity : RootActivity() {
 
             var params = HashMap<String, Any>()
             params.put("uid", uid)
+
+
 
             val title = Utils.getString(titleET)
             val content = Utils.getString(contentET)
@@ -644,8 +694,8 @@ class AddPostActivity : RootActivity() {
 
                     val charge_user : ArrayList<String> = ArrayList<String>()
 
-                    val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
-                            0, 0, charge_user, false, 0 , exclude_looker, sharpTag)
+                    val item = Content(nowTime, 0 as Long, 0 as Long, nick.toString(), regionItem, title, texts, "", false,
+                            0 as Long, 0 as Long, charge_user, false, 0 as Long, exclude_looker, sharpTag)
 
                     ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                         if (success) {
@@ -709,8 +759,8 @@ class AddPostActivity : RootActivity() {
 
                 val charge_user : ArrayList<String> = ArrayList<String>()
 
-                val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
-                        0, 0, charge_user, false, 0, exclude_looker, sharpTag)
+                val item = Content(nowTime, 0 as Long, 0 as Long, nick.toString(), regionItem, title, texts, "", false,
+                        0 as Long, 0 as Long, charge_user, false, 0 as Long, exclude_looker, sharpTag)
                 ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                     if (success) {
                         finish()

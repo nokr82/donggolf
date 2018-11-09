@@ -45,6 +45,10 @@ class PictureDetailActivity : RootActivity() {
 
         viewpagerVP.setAdapter(pagerAdapter)
 
+        ifinishLL.setOnClickListener {
+            finish()
+        }
+
         if (intent.hasExtra("id")) {
             val id = intent.getStringExtra("id")
 

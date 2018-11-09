@@ -12,10 +12,12 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
+import android.view.GestureDetector
 import android.view.MotionEvent
 import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -56,6 +58,17 @@ class MainDetailActivity : RootActivity() {
     var detailowner: String? = ""
 
 
+    var pressStartTime: Long?  = 0
+    var pressedX: Float? = 0F
+    var pressedY: Float? = 0F
+    var stayedWithinClickDistance: Boolean? = false
+
+    val MAX_CLICK_DURATION = 1000;
+    val MAX_CLICK_DISTANCE = 15;
+
+
+
+
 
 
 
@@ -81,16 +94,16 @@ class MainDetailActivity : RootActivity() {
 
         adapter.notifyDataSetChanged()
 
+
         if (intent.hasExtra("id")){
             val id = intent.getStringExtra("id")
-
 
             ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                 if (success){
                     if(data != null){
                         if(data.size != 0){
 
-                            println("data : $data")
+                            println("data : detail $data")
                             val time: Long = data["createAt"] as Long
 
                             val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
@@ -103,10 +116,68 @@ class MainDetailActivity : RootActivity() {
                             nickNameTV.text = data["owner"].toString()
                             detailowner = data["owner"].toString()
 
+                            val nick: String = PrefUtils.getStringPreference(context, "nick")
+
+                            if(!detailowner.equals(nick)){
+
+                                var charge_user: ArrayList<String> = data.get("charge_user") as ArrayList<String>
+                                val chargecnt = data["chargecnt"]as Long
+                                val createdAt = data["createAt"] as Long
+                                val deleted = data["deleted"] as Boolean
+                                val deletedAt = data["deletedAt"]as Long
+                                val door_image = data["door_image"].toString()
+                                var exclude_looker: ArrayList<String> = data.get("exclude_looker") as ArrayList<String>
+                                val heart_user = data["heart_user"] as Boolean
+                                val looker = data["looker"]as Long
+                                val owner = data["owner"].toString()
+                                var region: ArrayList<String> = data.get("region") as ArrayList<String>
+                                var sharpTag: ArrayList<String> = data.get("sharp_tag") as ArrayList<String>
+                                var texts:ArrayList<Any> = data.get("texts") as ArrayList<Any>
+                                val title = data["title"].toString()
+                                val updateAt = data["updatedAt"] as Long
+                                val updatedCnt = data["updatedAt"] as Long
+
+                                for(i in 0.. exclude_looker.size -1){
+
+                                    if(exclude_looker.size == 0){
+                                        exclude_looker.add(nick)
+
+                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                                deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+
+                                        FirebaseFirestoreUtils.save("contents", id, item) {
+                                            if (it) {
+                                                finish()
+                                            } else {
+
+                                            }
+                                        }
+                                    }
+
+                                    if(!exclude_looker[i].equals(nick)){
+                                        exclude_looker.add(nick)
+
+                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                                deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+
+                                        FirebaseFirestoreUtils.save("contents", id, item) {
+                                            if (it) {
+                                                finish()
+                                            } else {
+
+                                            }
+                                        }
+                                    }
+                                    if (exclude_looker[i].equals(nick)){
+
+                                    }
+                                }
+                            }
+
                             var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
 
                             for(i in 0.. (texts.size-1)){
-//            var text = texts.get(i)
+
                                 val text_ = JSONObject(texts.get(i))
                                 println(text_)
                                 print( " ============================= ")
@@ -179,24 +250,54 @@ class MainDetailActivity : RootActivity() {
             }
         })
 
-        pagerVP.setOnTouchListener(object : View.OnTouchListener {
+        pagerVP.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
 
+
+
                     MotionEvent.ACTION_DOWN ->{
+
+                        pressStartTime = System.currentTimeMillis();
+                        pressedX = event.getX();
+                        pressedY = event.getY();
+                        stayedWithinClickDistance = true;
+
+                        println("OnTouch : ACTION_DOWN")
+
+                        return true
+                    }
+
+                    MotionEvent.ACTION_CANCEL->{
+
+                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
+                            stayedWithinClickDistance = false;
+                        }
+                        return true
 
                     }
 
                     MotionEvent.ACTION_UP -> {
 
-                        if (intent.hasExtra("id")) {
-                            val id = intent.getStringExtra("id")
-                            var intent = Intent(context, PictureDetailActivity::class.java);
-                            intent.putExtra("id", id)
-                            startActivityForResult(intent, PICTURE_DETAIL);
+                        val pressDuration = System.currentTimeMillis() - pressStartTime!!
+                        if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
                         }
 
-                    }
+
+                            if (intent.hasExtra("id")) {
+                                val id = intent.getStringExtra("id")
+                                var intent = Intent(context, PictureDetailActivity::class.java);
+                                intent.putExtra("id", id)
+                                startActivityForResult(intent, PICTURE_DETAIL);
+
+
+                                return true
+                            }
+
+                        }
+
+
+
                 }
 
 
@@ -265,11 +366,14 @@ class MainDetailActivity : RootActivity() {
                                                 for(i in 0.. charge_user.size -1){
                                                     if(charge_user[i].equals(nick)){
                                                         Toast.makeText(context, "이미 신고를 하셨습니다.", Toast.LENGTH_LONG).show()
+
+                                                        finish()
+
+                                                        return@viewContent
                                                     }
 
-                                                    if(charge_user[i].equals(nick)){
+                                                    if(!charge_user[i].equals(nick)){
                                                         charge_user.add(nick)
-
 
                                                         val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
                                                                 deletedAt, chargecnt + 1, charge_user, heart_user, looker, exclude_looker, sharpTag)
@@ -284,8 +388,6 @@ class MainDetailActivity : RootActivity() {
                                                     }
                                                 }
 
-
-
                                             }
                                         }
 
@@ -294,16 +396,8 @@ class MainDetailActivity : RootActivity() {
 
                             }
 
-
-
-
-
-
-
                         }
 
-
-                        finish()
 
                     })
                     .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
@@ -350,7 +444,6 @@ class MainDetailActivity : RootActivity() {
             intent.putExtra("id",id)
             startActivity(intent)
         }
-
     }
 
     fun delete(){
@@ -382,6 +475,16 @@ class MainDetailActivity : RootActivity() {
 
     }
 
+    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        val dx = x1 - x2
+        val dy = y1 - y2
+        val distanceInPx = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+        return pxToDp(distanceInPx)
+    }
+
+    private fun pxToDp(px: Float): Float {
+        return px / resources.displayMetrics.density
+    }
 
 
 

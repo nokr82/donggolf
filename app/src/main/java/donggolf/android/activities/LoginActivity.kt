@@ -105,7 +105,6 @@ class LoginActivity : RootActivity() {
 
                                 LoginActivity.setInfoData(context, data)
 
-                                PrefUtils.setPreference(context, "autoLogin", autoLogin)
 
                                 println("autoLogion ==== $autoLogin")
 
@@ -169,6 +168,7 @@ class LoginActivity : RootActivity() {
             val sex = Utils.getString(info, "sex")
             val phone = Utils.getString(info, "phone")
             val nick = Utils.getString(info, "nick")
+
 
             PrefUtils.setPreference(context, "sex", sex)
             PrefUtils.setPreference(context, "phone", phone)

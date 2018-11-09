@@ -36,9 +36,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var viewpagerChat : ViewPager
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -95,16 +92,5 @@ class ChatFragment : android.support.v4.app.Fragment() {
         // TODO: Actually do something with the context
         this.ctx = context
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

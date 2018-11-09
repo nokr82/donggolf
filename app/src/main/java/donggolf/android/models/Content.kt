@@ -17,9 +17,8 @@ data class Content (
         var heart_user:Boolean? = false,
         var looker:Long? = null,
         var exclude_looker:ArrayList<String> = ArrayList<String>(),
-
         var sharp_tag:ArrayList<String> = ArrayList<String>()
 
 ){
-    constructor() : this(createAt = 0)
+    constructor() : this(title = "")
 }
