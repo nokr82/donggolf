@@ -28,7 +28,8 @@ import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
 import java.net.URI
-
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddPostActivity : RootActivity() {
@@ -68,6 +69,8 @@ class AddPostActivity : RootActivity() {
     var userid: String? = null
 
     var tmpContent: TmpContent = TmpContent()
+
+    var tmpImagesPath: ArrayList<ImagesPath> = ArrayList<ImagesPath>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,7 +166,7 @@ class AddPostActivity : RootActivity() {
                                     tmphashtag += "," + hashtag[i].toString()
                                 }
 
-                                val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag)
+                                val tmpContent = TmpContent(0, userid!!, title, content)
 
                                 println("userid ======= $userid")
 
@@ -177,7 +180,7 @@ class AddPostActivity : RootActivity() {
                             if(hashtag.size == 0){
                                 var tmphashtag = ""
 
-                                val tmpContent = TmpContent(0, userid!!, title, content, tmphashtag)
+                                val tmpContent = TmpContent(0, userid!!, title, content)
 
                                 println("userid ======= $userid")
 
@@ -186,6 +189,18 @@ class AddPostActivity : RootActivity() {
                                 finish()
                             }
                         }
+
+//                        if (displaynamePaths != null) {
+//                            if (displaynamePaths.size != 0) {
+//
+//                                val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
+//                                for (i in 0..displaynamePaths.size - 1) {
+//                                    var ImagesPath = ImagesPath(null,userid,displaynamePaths.get(i))
+//
+//                                    dbManager.insertimagespath(ImagesPath)
+//                                }
+//                            }
+//                        }
 
 
                     })
@@ -258,6 +273,33 @@ class AddPostActivity : RootActivity() {
 
                         }
 
+                        db.collection("users")
+                                .get()
+                                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+                                    override fun onComplete(task: Task<QuerySnapshot>) {
+                                        if (task.isSuccessful) {
+                                            for (document in task.result!!) {
+                                                Log.d("yjs", document.getId() + " => " + document.getData())
+                                                userid = document.getId()
+
+                                                loadData(dbManager,userid!!)
+
+                                                if(tmpContent.id == null){
+                                                    finish()
+                                                }
+
+                                                if(tmpContent.id != null) {
+                                                    dbManager.deleteTmpContent(tmpContent.id!!)
+                                                    finish()
+                                                }
+
+                                            }
+                                        } else {
+                                            Log.w("yjs", "Error getting documents.", task.exception)
+                                        }
+                                    }
+                                })
+
 
 
                     })
@@ -278,13 +320,18 @@ class AddPostActivity : RootActivity() {
 
         val email: String = PrefUtils.getStringPreference(context, "email")
 
-
     }
 
     private fun loadData(dbManager: DataBaseHelper , userid: String) {
         val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
 
+        val imagespathquery = "SELECT * FROM imagespath WHERE owner ='" + userid + "'"
+
         val tmpcontent = dbManager.selectTmpContent(query)
+
+//        tmpImagesPath = dbManager.selectImagesPath(imagespathquery)
+
+        println("tmpImagesPath ======== $tmpImagesPath")
 
         tmpContent = tmpcontent
 
@@ -388,14 +435,36 @@ class AddPostActivity : RootActivity() {
 
                     val sharpTag: ArrayList<String> = ArrayList<String>()
 
-                    val item = Content(nowTime, 0, 0, nick.toString(), null, title, texts, "", false,
-                            0, 0, "", false, 0, false, sharpTag)
+                    val charge_ser : ArrayList<String> = ArrayList<String>()
+
+
 
 
                     ContentAction.viewContent(id) { success, data, exception ->
                         if (success) {
                             if (data != null) {
                                 if (data.size != 0) {
+
+                                    var charge_user: java.util.ArrayList<String> = data.get("charge_user") as java.util.ArrayList<String>
+                                    val chargecnt = data["chargecnt"]as Long
+                                    val createdAt = data["createAt"] as Long
+                                    val deleted = data["deleted"] as Boolean
+                                    val deletedAt = data["deletedAt"]as Long
+                                    val door_image = data["door_image"].toString()
+                                    var exclude_looker: java.util.ArrayList<String> = data.get("exclude_looker") as java.util.ArrayList<String>
+                                    val heart_user = data["heart_user"] as Boolean
+                                    val looker = data["looker"]as Long
+                                    val owner = data["owner"].toString()
+                                    var region: java.util.ArrayList<String> = data.get("region") as java.util.ArrayList<String>
+                                    var sharpTag: java.util.ArrayList<String> = data.get("sharp_tag") as java.util.ArrayList<String>
+                                    var texts: java.util.ArrayList<Any> = data.get("texts") as java.util.ArrayList<Any>
+                                    val title = data["title"].toString()
+                                    val updateAt = data["updatedAt"] as Long
+                                    val updatedCnt = data["updatedAt"] as Long
+
+                                    val item = Content(nowTime, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                            deletedAt, chargecnt, charge_user, heart_user, looker, exclude_looker, sharpTag)
+
                                     FirebaseFirestoreUtils.save("contents", id, item) {
                                         if (it) {
                                             if (displaynamePaths.size != 0) {
@@ -453,13 +522,32 @@ class AddPostActivity : RootActivity() {
 
                         texts.add(text)
 
+                        val charge_ser : ArrayList<String> = ArrayList<String>()
+
                         ContentAction.viewContent(id) { success, data, exception ->
                             if (success) {
                                 if (data != null) {
                                     if (data.size != 0) {
-                                        val time: Long = data["createAt"] as Long
-                                        val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
-                                                0, 0, "", false, 0, false, sharpTag)
+                                        var charge_user: java.util.ArrayList<String> = data.get("charge_user") as java.util.ArrayList<String>
+                                        val chargecnt = data["chargecnt"]as Long
+                                        val createdAt = data["createAt"] as Long
+                                        val deleted = data["deleted"] as Boolean
+                                        val deletedAt = data["deletedAt"]as Long
+                                        val door_image = data["door_image"].toString()
+                                        var exclude_looker: java.util.ArrayList<String> = data.get("exclude_looker") as java.util.ArrayList<String>
+                                        val heart_user = data["heart_user"] as Boolean
+                                        val looker = data["looker"]as Long
+                                        val owner = data["owner"].toString()
+                                        var region: java.util.ArrayList<String> = data.get("region") as java.util.ArrayList<String>
+                                        var sharpTag: java.util.ArrayList<String> = data.get("sharp_tag") as java.util.ArrayList<String>
+                                        var texts: java.util.ArrayList<Any> = data.get("texts") as java.util.ArrayList<Any>
+                                        val title = data["title"].toString()
+                                        val updateAt = data["updatedAt"] as Long
+                                        val updatedCnt = data["updatedAt"] as Long
+
+                                        val item = Content(nowTime, updateAt, updatedCnt,owner, region, title, texts, door_image, deleted,
+                                                deletedAt, chargecnt, charge_user, heart_user, looker, exclude_looker, sharpTag)
+
                                         FirebaseFirestoreUtils.save("contents", id, item) {
                                             if (it) {
                                                 finish()
@@ -549,12 +637,15 @@ class AddPostActivity : RootActivity() {
 
                     texts.add(photo)
 
-                    val regionItem = Region(nowTime, "", "")
+                    val regionItem: ArrayList<String> = ArrayList<String>()
+                    val exclude_looker: ArrayList<String> = ArrayList<String>()
 
                     val sharpTag: ArrayList<String> = ArrayList<String>()
 
+                    val charge_user : ArrayList<String> = ArrayList<String>()
+
                     val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
-                            0, 0, "", false, 0, false, sharpTag)
+                            0, 0, charge_user, false, 0 , exclude_looker, sharpTag)
 
                     ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                         if (success) {
@@ -601,7 +692,7 @@ class AddPostActivity : RootActivity() {
                 }
             }
             if (displaynamePaths.size == 0) {
-                val regionItem = Region(nowTime, "", "")
+                val regionItem: ArrayList<String> = ArrayList<String>()
 
                 val sharpTag: ArrayList<String> = ArrayList<String>()
 
@@ -613,8 +704,13 @@ class AddPostActivity : RootActivity() {
 
                 texts.add(text)
 
+
+                val exclude_looker: ArrayList<String> = ArrayList<String>()
+
+                val charge_user : ArrayList<String> = ArrayList<String>()
+
                 val item = Content(nowTime, 0, 0, nick.toString(), regionItem, title, texts, "", false,
-                        0, 0, "", false, 0, false, sharpTag)
+                        0, 0, charge_user, false, 0, exclude_looker, sharpTag)
                 ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                     if (success) {
                         finish()
@@ -671,6 +767,7 @@ class AddPostActivity : RootActivity() {
                             displaynamePaths.add(str)
 
 
+                            Log.d("yjs", "display " + displaynamePaths.get(0))
                             Log.d("yjs", "display " + displaynamePaths.get(0))
                         } else {
                             displaynamePaths.add(str)

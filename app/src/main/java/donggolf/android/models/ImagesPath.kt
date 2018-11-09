@@ -1,10 +1,12 @@
 package donggolf.android.models
 
-data class TmpContent (
+data class ImagesPath (
+
         var id:Int? = null,
         var owner:String? = null,
-        var title:String? = null,
-        var texts:String? = null
-){
+        var path:String? = null
+
+) {
+
     constructor() : this(owner = "")
 }

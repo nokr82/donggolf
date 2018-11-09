@@ -11,7 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
+import donggolf.android.models.ImagesPath;
 import donggolf.android.models.TmpContent;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -155,9 +157,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         tmppostquery += ", owner STRING";
         tmppostquery += ", title STRING";
         tmppostquery += ", texts STRING";
-        tmppostquery += ", sharp_tag STRING";
         tmppostquery += ");";
         db.execSQL(tmppostquery);
+
+        String imagespathquery = "create table if not exists ";
+        imagespathquery += "imagespath ( id INTEGER PRIMARY KEY AUTOINCREMENT";
+        imagespathquery += ", owner STRING";
+        imagespathquery += ", path STRING";
+        imagespathquery += ");";
+        db.execSQL(imagespathquery);
     }
 
     @Override
@@ -178,13 +186,25 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void inserttmpcontent(TmpContent TmpContent){
-        String query = "INSERT INTO tmpcontent (owner, title, texts, sharp_tag)";
+        String query = "INSERT INTO tmpcontent (owner, title, texts)";
 
         query += " values (";
         query += " '" + TmpContent.getOwner() + "'";
         query += ", '" + TmpContent.getTitle() + "'";
         query += ", '" + TmpContent.getTexts() + "'";
-        query += ", '" + TmpContent.getSharp_tag() + "'";
+        query += " ); ";
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+    }
+
+    public void insertimagespath(ImagesPath imagespath){
+        String query = "INSERT INTO imagespath (owner, path)";
+
+        query += " values (";
+        query += " '" + imagespath.getOwner() + "'";
+        query += ", '" + imagespath.getPath() + "'";
         query += " ); ";
 
         SQLiteDatabase db = getWritableDatabase();
@@ -205,7 +225,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 tmpContent.setOwner(cursor.getString(1));
                 tmpContent.setTitle(cursor.getString(2));
                 tmpContent.setTexts(cursor.getString(3));
-                tmpContent.setSharp_tag(cursor.getString(4));
             }
         }
         cursor.close();
@@ -213,15 +232,61 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return tmpContent;
     }
 
+    public ArrayList<ImagesPath> selectImagesPath(String query) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        ArrayList<ImagesPath> Imagespath = new ArrayList<ImagesPath>();
+
+        if (cursor != null) {
+            while(cursor.moveToFirst()){
+                ImagesPath imagespath = new ImagesPath();
+
+                imagespath.setId(cursor.getInt(0));
+                imagespath.setOwner(cursor.getString(1));
+                imagespath.setPath(cursor.getString(2));
+
+                Imagespath.add(imagespath);
+            }
+        }
+        cursor.close();
+
+        return Imagespath;
+    }
+
     public int deleteTmpContent(int id){
 
-        String query = "DELETE FROM tmpcontent where _id = " + id;
+        String query = "DELETE FROM tmpcontent where id = " + id;
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
         db.close();
 
-        query = "SELECT count(*) FROM tmpcontent WHERE _id = " + id;
+        query = "SELECT count(*) FROM tmpcontent WHERE id = " + id;
+
+        db = getReadableDatabase();
+        int count = 0;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        cursor.close();
+        return count;
+    }
+
+    public int deleteImagePaths(int id){
+
+        String query = "DELETE FROM imagespath where id = " + id;
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+
+        query = "SELECT count(*) FROM imagespath WHERE id = " + id;
 
         db = getReadableDatabase();
         int count = 0;

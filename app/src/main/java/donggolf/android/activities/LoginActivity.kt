@@ -23,6 +23,7 @@ class LoginActivity : RootActivity() {
 
     private lateinit var context: Context
     private lateinit var mAuth: FirebaseAuth
+    var autoLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +32,8 @@ class LoginActivity : RootActivity() {
         context = this
 
         mAuth = FirebaseAuth.getInstance();
+
+
 
         btn_login.setOnClickListener {
             login()
@@ -52,15 +55,14 @@ class LoginActivity : RootActivity() {
             movefinPassword()
         }
 
-        autologinBT.setOnClickListener {
+        autologinCB.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder
                     .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
 
-
-
+                        autoLogin = autologinCB.isChecked
 
                     })
                     .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
@@ -102,6 +104,10 @@ class LoginActivity : RootActivity() {
                                 println("data : $data")
 
                                 LoginActivity.setInfoData(context, data)
+
+                                PrefUtils.setPreference(context, "autoLogin", autoLogin)
+
+                                println("autoLogion ==== $autoLogin")
 
                                 startActivity(Intent(context, MainActivity::class.java))
 
