@@ -151,8 +151,7 @@ class LoginActivity : RootActivity() {
 
     companion object {
         fun setLoginData(context: Context, user: FirebaseUser?) {
-
-            println(user)
+            println("loginActivity user : $user")
 
             val uid = user?.uid
             val email = user?.email
@@ -163,7 +162,7 @@ class LoginActivity : RootActivity() {
 
         fun setInfoData(context: Context, info: Map<String, Any>?) {
 
-            println(info)
+            println("loginActivity info : $info")
 
             val sex = Utils.getString(info, "sex")
             val phone = Utils.getString(info, "phone")
@@ -173,6 +172,7 @@ class LoginActivity : RootActivity() {
             PrefUtils.setPreference(context, "sex", sex)
             PrefUtils.setPreference(context, "phone", phone)
             PrefUtils.setPreference(context, "nick", nick)
+
         }
     }
 

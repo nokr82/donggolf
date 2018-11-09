@@ -1,26 +1,15 @@
 package donggolf.android.activities
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.Bitmap
+import android.content.*
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
-import android.view.GestureDetector
 import android.view.MotionEvent
 import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.actions.ContentAction
@@ -66,11 +55,7 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DURATION = 1000;
     val MAX_CLICK_DISTANCE = 15;
 
-
-
-
-
-
+    lateinit var activity: MainDetailActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +79,7 @@ class MainDetailActivity : RootActivity() {
 
         adapter.notifyDataSetChanged()
 
+        activity = this as MainDetailActivity
 
         if (intent.hasExtra("id")){
             val id = intent.getStringExtra("id")
@@ -118,6 +104,11 @@ class MainDetailActivity : RootActivity() {
 
                             val nick: String = PrefUtils.getStringPreference(context, "nick")
 
+                            if(!nick.equals(detailowner)){
+                                modifyTV.setVisibility(View.GONE)
+                                deleteTV.setVisibility(View.GONE)
+                            }
+
                             if(!detailowner.equals(nick)){
 
                                 var charge_user: ArrayList<String> = data.get("charge_user") as ArrayList<String>
@@ -137,22 +128,22 @@ class MainDetailActivity : RootActivity() {
                                 val updateAt = data["updatedAt"] as Long
                                 val updatedCnt = data["updatedAt"] as Long
 
-                                for(i in 0.. exclude_looker.size -1){
+                                if(exclude_looker.size == 0){
+                                    exclude_looker.add(nick)
 
-                                    if(exclude_looker.size == 0){
-                                        exclude_looker.add(nick)
+                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
 
-                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-                                                deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+                                    FirebaseFirestoreUtils.save("contents", id, item) {
+                                        if (it) {
 
-                                        FirebaseFirestoreUtils.save("contents", id, item) {
-                                            if (it) {
-                                                finish()
-                                            } else {
+                                        } else {
 
-                                            }
                                         }
                                     }
+                                }
+
+                                for(i in 0.. exclude_looker.size -1){
 
                                     if(!exclude_looker[i].equals(nick)){
                                         exclude_looker.add(nick)
@@ -162,7 +153,7 @@ class MainDetailActivity : RootActivity() {
 
                                         FirebaseFirestoreUtils.save("contents", id, item) {
                                             if (it) {
-                                                finish()
+
                                             } else {
 
                                             }
@@ -179,8 +170,6 @@ class MainDetailActivity : RootActivity() {
                             for(i in 0.. (texts.size-1)){
 
                                 val text_ = JSONObject(texts.get(i))
-                                println(text_)
-                                print( " ============================= ")
 
                                 val type = Utils.getString(text_, "type")
 
@@ -189,7 +178,6 @@ class MainDetailActivity : RootActivity() {
                                     textTV.text = text
                                 } else if (type == "photo") {
                                     val photo = text_.get("file") as JSONArray
-                                    println("photo : ========== $photo")
 
 
                                     for(i in 0.. (photo.length() - 1)) {
@@ -200,7 +188,6 @@ class MainDetailActivity : RootActivity() {
 
                                                 adverAdapter.notifyDataSetChanged()
                                             }
-                                            println("Paths ====================== $s")
                                         }
                                     }
 
@@ -210,8 +197,6 @@ class MainDetailActivity : RootActivity() {
                                 }
 
                             }
-
-                            println("data : " + data)
 //
 //                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
 //
@@ -317,6 +302,7 @@ class MainDetailActivity : RootActivity() {
 
         plusBT.setOnClickListener {
             relativ_RL.visibility = View.VISIBLE
+
         }
 
         goneRL.setOnClickListener {
@@ -408,17 +394,7 @@ class MainDetailActivity : RootActivity() {
 
 
         deleteTV.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder
-                    .setMessage("정말로 삭제하시겠습니까 ?")
-
-                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
-                        delete()
-                    })
-                    .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
-                    })
-            val alert = builder.create()
-            alert.show()
+                delete()
         }
 
         modifyTV.setOnClickListener {
@@ -448,6 +424,7 @@ class MainDetailActivity : RootActivity() {
 
     fun delete(){
 
+
         val builder = AlertDialog.Builder(context)
         builder
                 .setMessage("정말 삭제하시겠습니까 ?")
@@ -456,9 +433,16 @@ class MainDetailActivity : RootActivity() {
                     if (intent.hasExtra("id")) {
                         val id = intent.getStringExtra("id")
 
+                        println("deleteid +++++++ $id")
+
                         ContentAction.deleteContent(id){
                             if(it){
-                                println("suc")
+
+                                intent = Intent()
+                                intent.action = "DELETE_POST"
+                                sendBroadcast(intent)
+
+                                finish()
 
                             }else {
 
@@ -472,6 +456,9 @@ class MainDetailActivity : RootActivity() {
                 })
         val alert = builder.create()
         alert.show()
+
+
+
 
     }
 

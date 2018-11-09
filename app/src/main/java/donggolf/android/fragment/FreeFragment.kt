@@ -2,8 +2,10 @@ package donggolf.android.fragment
 
 import android.os.Bundle
 import android.app.ProgressDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -68,6 +70,61 @@ open class FreeFragment : Fragment() {
 
 
     lateinit var vpPage: ViewPager
+
+    internal var ResetPostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                adapterData.clear()
+
+                ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+
+                    if(success && data != null) {
+                        data.forEach {
+                            println(it)
+
+                            if (it != null) {
+                                adapterData.add(it)
+                            }
+
+                        }
+
+                        adapter.notifyDataSetChanged()
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    internal var DeletePostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                adapterData.clear()
+
+                ContentAction.list(user, Pair("createAt", null), 0) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+
+                    if (success && data != null) {
+                        data.forEach {
+                            println(it)
+
+                            if (it != null) {
+                                adapterData.add(it)
+                            }
+
+                        }
+
+                        adapter.notifyDataSetChanged()
+
+                    }
+
+                }
+            }
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         progressDialog = ProgressDialog(context)
@@ -252,6 +309,12 @@ open class FreeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity = getActivity() as MainActivity
+
+        val filter1 = IntentFilter("SAVE_POST")
+        activity.registerReceiver(ResetPostReceiver, filter1)
+
+        val filter2 = IntentFilter("DELETE_POST")
+        activity.registerReceiver(DeletePostReceiver, filter2)
 
         //기본화면설정
 

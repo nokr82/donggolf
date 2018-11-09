@@ -287,6 +287,10 @@ class AddPostActivity : RootActivity() {
                         if (category == 1) {
                             addContent()
 
+                            intent = Intent()
+                            intent.action = "SAVE_POST"
+                            sendBroadcast(intent)
+
                             finish()
                         } else {
                             val id = intent.getStringExtra("id")
@@ -694,8 +698,8 @@ class AddPostActivity : RootActivity() {
 
                     val charge_user : ArrayList<String> = ArrayList<String>()
 
-                    val item = Content(nowTime, 0 as Long, 0 as Long, nick.toString(), regionItem, title, texts, "", false,
-                            0 as Long, 0 as Long, charge_user, false, 0 as Long, exclude_looker, sharpTag)
+                    val item = Content(nowTime, 0 , 0 , nick.toString(), regionItem, title, texts, "", false,
+                            0 , 0 , charge_user, false, 0 , exclude_looker, sharpTag)
 
                     ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                         if (success) {
@@ -759,8 +763,8 @@ class AddPostActivity : RootActivity() {
 
                 val charge_user : ArrayList<String> = ArrayList<String>()
 
-                val item = Content(nowTime, 0 as Long, 0 as Long, nick.toString(), regionItem, title, texts, "", false,
-                        0 as Long, 0 as Long, charge_user, false, 0 as Long, exclude_looker, sharpTag)
+                val item = Content(nowTime, 0 , 0 , nick.toString(), regionItem, title, texts, "", false,
+                        0 , 0 , charge_user, false, 0, exclude_looker, sharpTag)
                 ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
                     if (success) {
                         finish()
