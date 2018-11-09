@@ -81,6 +81,8 @@ class MainDetailActivity : RootActivity() {
 
         activity = this as MainDetailActivity
 
+        var check = false
+
         if (intent.hasExtra("id")){
             val id = intent.getStringExtra("id")
 
@@ -128,6 +130,8 @@ class MainDetailActivity : RootActivity() {
                                 val updateAt = data["updatedAt"] as Long
                                 val updatedCnt = data["updatedAt"] as Long
 
+                                println("exclude_looker == ${exclude_looker.size}")
+
                                 if(exclude_looker.size == 0){
                                     exclude_looker.add(nick)
 
@@ -146,21 +150,25 @@ class MainDetailActivity : RootActivity() {
                                 for(i in 0.. exclude_looker.size -1){
 
                                     if(!exclude_looker[i].equals(nick)){
-                                        exclude_looker.add(nick)
-
-                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-                                                deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
-
-                                        FirebaseFirestoreUtils.save("contents", id, item) {
-                                            if (it) {
-
-                                            } else {
-
-                                            }
-                                        }
+                                        check = true
                                     }
                                     if (exclude_looker[i].equals(nick)){
+                                        check = false
+                                    }
+                                }
 
+                                if(check == true){
+                                    exclude_looker.add(nick)
+
+                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+
+                                    FirebaseFirestoreUtils.save("contents", id, item) {
+                                        if (it) {
+
+                                        } else {
+
+                                        }
                                     }
                                 }
                             }
@@ -268,25 +276,18 @@ class MainDetailActivity : RootActivity() {
                         if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
                         }
 
-
                             if (intent.hasExtra("id")) {
                                 val id = intent.getStringExtra("id")
                                 var intent = Intent(context, PictureDetailActivity::class.java);
                                 intent.putExtra("id", id)
                                 startActivityForResult(intent, PICTURE_DETAIL);
 
-
                                 return true
                             }
 
                         }
 
-
-
                 }
-
-
-
 
                 return v?.onTouchEvent(event) ?: true
             }
@@ -432,8 +433,6 @@ class MainDetailActivity : RootActivity() {
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
                     if (intent.hasExtra("id")) {
                         val id = intent.getStringExtra("id")
-
-                        println("deleteid +++++++ $id")
 
                         ContentAction.deleteContent(id){
                             if(it){
