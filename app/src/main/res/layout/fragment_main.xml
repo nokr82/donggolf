@@ -59,6 +59,7 @@
             android:layout_width="35dp"
             android:layout_height="match_parent">
             <Button
+                android:id="@+id/btn_search"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
@@ -97,9 +98,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="최근 검색"
+                    android:text="   최근 검색"
                     android:layout_margin="5dp"
-                    android:textSize="9.33dp"
+                    android:textSize="13dp"
                     android:textColor="#000000"/>
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -110,8 +111,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="닫기"
-                        android:layout_margin="5dp"
-                        android:textSize="9.33dp"
+                        android:layout_margin="10dp"
+                        android:textSize="11dp"
                         android:layout_alignParentRight="true"
                         android:textColor="#000000"/>
                 </RelativeLayout>

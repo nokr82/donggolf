@@ -7,15 +7,18 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.actions.SearchAction
 import donggolf.android.base.Utils
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var data:ArrayList<Map<String, Any>> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,14 +38,30 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var data : Map<String, Any> = getItem(position)
 
+        var title:String = data.get("content") as String
+        item.main_edit_listitem_title.text = title
 
+        var date:Long = data.get("date") as Long
+        val dateFormat: SimpleDateFormat = SimpleDateFormat("MM-dd", Locale.KOREA)
+        val currentTime: String = dateFormat.format(Date(date))
+        item.main_edit_listitem_date.text = currentTime
+
+        item.main_edit_listitem_delete.setOnClickListener {
+
+            var id:String = data.get("id") as String
+            SearchAction.deleteContent(id){
+                if(it){
+                    removeItem(position)
+                }
+            }
+        }
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
+    override fun getItem(position: Int): Map<String, Any> {
 
         return data.get(position)
     }
@@ -67,14 +86,12 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var main_edit_listitem_title : TextView
         var main_edit_listitem_date : TextView
-        var main_edit_listitem_close : ImageView
+        var main_edit_listitem_delete : ImageView
 
         init {
             main_edit_listitem_title = v.findViewById<View>(R.id.main_edit_listitem_title) as TextView
             main_edit_listitem_date = v.findViewById<View>(R.id.main_edit_listitem_date) as TextView
-            main_edit_listitem_close = v.findViewById<View>(R.id.main_edit_listitem_close) as ImageView
-
-
+            main_edit_listitem_delete = v.findViewById<View>(R.id.main_edit_listitem_delete) as ImageView
         }
     }
 }

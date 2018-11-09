@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.opengl.Visibility
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -22,18 +23,24 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
+import donggolf.android.R.drawable.btn_write
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.SearchAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
+import donggolf.android.models.Content
+import donggolf.android.models.Photo
 import donggolf.android.models.Search
+import donggolf.android.models.Text
+import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.json.JSONObject
 
-open class FreeFragment : Fragment() {
+open class MainFragment : Fragment() {
 
 
     var ctx: Context? = null
@@ -43,7 +50,7 @@ open class FreeFragment : Fragment() {
     private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
     private  lateinit var  adapter : MainAdapter
     private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     val user = HashMap<String, Any>()
 
@@ -67,6 +74,8 @@ open class FreeFragment : Fragment() {
     private val SELECT_PICTURE: Int = 101
 
 
+    lateinit var pagerAdapter: PagerAdapter
+
     lateinit var vpPage: ViewPager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -80,8 +89,6 @@ open class FreeFragment : Fragment() {
         //여기서 데이터를 불러와야 함
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.getCurrentUser()
-
-        println("currentUser======$currentUser")
 
         updateUI(currentUser)
 
@@ -123,42 +130,15 @@ open class FreeFragment : Fragment() {
 
         }
 
+
         return inflater.inflate(R.layout.fragment_main, container, false)
-    }
-
-    private fun addSearchWord(content:String) {
-
-        if (content.isEmpty()) {
-            Utils.alert(context, "검색어를 입력해주세요.")
-            return
-        }
-
-        //val user = mAuth.currentUser
-
-        if (user != null) {
-            val uid = user
-
-            val nowTime = System.currentTimeMillis()
-
-            val item = Search(content, nowTime)
-            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
-                if (success) {
-                    println("검색어 입력 성공")
-                } else {
-
-                }
-            }
-
-
-        }
-
-
     }
 
     //여기서 뷰 연결
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //탭 호스트 글자색 변경같이 눌렀을 때 변경되는 것
         main_edit_search = view.findViewById(R.id.main_edit_search)
         addpostLL = view.findViewById(R.id.addpostLL)
         main_listview_search = view.findViewById(R.id.main_listview_search)
@@ -166,86 +146,26 @@ open class FreeFragment : Fragment() {
         main_edit_listview = view.findViewById(R.id.main_edit_listview)
         main_listview = view.findViewById(R.id.main_listview)
 
-        main_edit_search.setOnClickListener {
+        adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
 
-            SearchAction.list(user, Pair("date",null), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+        main_listview.adapter = adapter
 
-                if(success && data != null) {
-                    data.forEach {
-                        println(it)
-                        editadapterData.clear()
-                        if (it != null) {
-                            editadapterData.add(it)
-                        }
+        adapter.notifyDataSetChanged()
 
-                    }
-
-                    editadapter.notifyDataSetChanged()
-
-                }
-
-
-            }
-            main_listview_search.visibility = View.VISIBLE
-            main_edit_close.setOnClickListener {
-                main_listview_search.visibility = View.GONE
-            }
+        main_listview.setOnItemClickListener { parent, view, position, id ->
+            val id : String
+            id = adapterData.get(position)!!.get("id").toString()
+            MoveMainDetailActivity(id)
         }
 
-        main_edit_search.setOnEditorActionListener() { v, actionId, event ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                val srchWd = main_edit_search.text.toString()
-                addSearchWords(srchWd)
 
-                //searchPosts(srchWd)
-                main_listview_search.visibility = View.GONE
-                true
-            } else {
-                false
-            }
+        addpostLL.setOnClickListener {
+            MoveAddPostActivity()
         }
-
-        btn_del_searchWord.setOnClickListener {
-            main_edit_search.setText("")
-        }
-    }//onViewCreated end
-
-    fun searchPosts(keyWord : String){
-        //MainAdapter
-//        if (keyWord != null){
-//
-//        }//if end
-        adapterData.clear()
-
-
-
 
     }
 
-    fun addSearchWords(content: String) {
 
-        if (content.isEmpty()) {
-            Utils.alert(context, "검색어를 입력해주세요.")
-            return
-        }
-
-        //val user = mAuth.currentUser
-
-        if (user != null) {
-            val uid = user
-
-            val nowTime = System.currentTimeMillis()
-
-            val item = Search(content, nowTime)
-            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
-                if (success) {
-                    println("검색어 입력 성공")
-                } else {
-
-                }
-            }
-        }
-    }//addSearchWords end
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -256,27 +176,7 @@ open class FreeFragment : Fragment() {
         //기본화면설정
 
         // 뷰페이저
-
-        adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
-
-        main_listview.adapter = adapter
-
-        //////adapter 사용전에 해줘야 하는 부분
-
-        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData)
-
-        main_edit_listview.adapter = editadapter
-        //---------------------------------------------------------------------------------------
-
-        main_listview.setOnItemClickListener { parent, view, position, id ->
-            val id : String
-            id = adapterData.get(position)!!.get("id").toString()
-            MoveMainDetailActivity(id)
-        }
-
-        addpostLL.setOnClickListener {
-            MoveAddPostActivity()
-        }
+        pagerAdapter = PagerAdapter(getChildFragmentManager())//
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
 
@@ -290,6 +190,51 @@ open class FreeFragment : Fragment() {
 
 
     //pageAdapter class
+    class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        override fun getItem(i: Int): Fragment {
+
+            var fragment: Fragment
+
+            val args = Bundle()
+            when (i) {
+                0 -> {
+                    fragment = FreeFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                1 -> {
+                    fragment = ChatFragment()
+                    fragment.arguments = args
+
+                    return fragment
+                }
+                2 -> {
+                    fragment = FushFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+                else -> {
+                    fragment = InfoFragment()
+                    fragment.arguments = args
+                    return fragment
+                }
+            }
+        }
+
+        override fun getCount(): Int {
+            return 4
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return ""
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
+    }
 
 
     //여기서부터는 MainActivity에 있던 코드들
@@ -340,7 +285,5 @@ open class FreeFragment : Fragment() {
                 }
         */
     }
-
-
 
 }
