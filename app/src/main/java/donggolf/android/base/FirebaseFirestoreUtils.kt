@@ -175,6 +175,50 @@ class FirebaseFirestoreUtils {
                     }
         }
 
+        //test. later,
+        fun slist(collectionName: String, params: String, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+            // Create a reference to the cities collection
+            val ref = db.collection(collectionName)
+            var query:Query? = null
+
+            query = ref.whereEqualTo("title", params)
+
+            // orderBy
+            if(orderBy != null) {
+                val key = orderBy.first
+                if(key != null) {
+                    var direction = orderBy.second as? Query.Direction
+                    if(direction == null) {
+                        direction = Query.Direction.ASCENDING
+                    }
+
+                    query = ref.orderBy(key.toString(), direction)
+
+                }
+
+            }
+
+            query!!.get()
+                    .addOnSuccessListener {
+
+                        val data = ArrayList<Map<String, Any>?>()
+
+                        it.documents.forEach {
+                            val item = it.data
+                            if (item != null) {
+                                item!!.put("id", it.id)
+                                data.add(item)
+                            }
+                        }
+
+                        result(true, data, null)
+                    }
+                    .addOnFailureListener {
+                        result(false, null, it)
+                    }
+        }//sList end
+
         fun get(collectionName: String, key:String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
             db.collection(collectionName)
                     .document(key)
