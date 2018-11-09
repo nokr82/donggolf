@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -18,12 +19,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import donggolf.android.models.Content
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -31,6 +36,8 @@ import java.util.*
 
 
 class MainDetailActivity : RootActivity() {
+
+    private lateinit var mAuth: FirebaseAuth
 
     private lateinit var context: Context
 
@@ -45,6 +52,8 @@ class MainDetailActivity : RootActivity() {
     var adPosition = 0;
 
     var PICTURE_DETAIL = 1
+
+    var detailowner: String? = ""
 
 
 
@@ -62,6 +71,8 @@ class MainDetailActivity : RootActivity() {
         var dataObj : JSONObject = JSONObject();
 
         adapterData.add(dataObj)
+
+        mAuth = FirebaseAuth.getInstance()
 
 
         adapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,adapterData)
@@ -90,6 +101,7 @@ class MainDetailActivity : RootActivity() {
                             dateTV.text = currentTime.toString()
                             viewTV.text = data["looker"].toString()
                             nickNameTV.text = data["owner"].toString()
+                            detailowner = data["owner"].toString()
 
                             var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
 
@@ -214,6 +226,81 @@ class MainDetailActivity : RootActivity() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                        val nick: String = PrefUtils.getStringPreference(context, "nick")
+
+                        if(nick.equals(detailowner)){
+                            Toast.makeText(context, "자신의 게시물은 신고하실수 없습니다.", Toast.LENGTH_LONG).show()
+                        }
+
+                        if(!nick.equals(detailowner)){
+
+
+                            if (intent.hasExtra("id")) {
+                                val id = intent.getStringExtra("id")
+
+                                ContentAction.viewContent(id) { success, data, exception ->
+                                    if (success) {
+                                        if (data != null) {
+                                            if (data.size != 0) {
+
+                                                var charge_user: ArrayList<String> = data.get("charge_user") as ArrayList<String>
+                                                val chargecnt = data["chargecnt"]as Long
+                                                val createdAt = data["createAt"] as Long
+                                                val deleted = data["deleted"] as Boolean
+                                                val deletedAt = data["deletedAt"]as Long
+                                                val door_image = data["door_image"].toString()
+                                                var exclude_looker: ArrayList<String> = data.get("exclude_looker") as ArrayList<String>
+                                                val heart_user = data["heart_user"] as Boolean
+                                                val looker = data["looker"]as Long
+                                                val owner = data["owner"].toString()
+                                                var region: ArrayList<String> = data.get("region") as ArrayList<String>
+                                                var sharpTag: ArrayList<String> = data.get("sharp_tag") as ArrayList<String>
+                                                var texts:ArrayList<Any> = data.get("texts") as ArrayList<Any>
+                                                val title = data["title"].toString()
+                                                val updateAt = data["updatedAt"] as Long
+                                                val updatedCnt = data["updatedAt"] as Long
+
+
+                                                for(i in 0.. charge_user.size -1){
+                                                    if(charge_user[i].equals(nick)){
+                                                        Toast.makeText(context, "이미 신고를 하셨습니다.", Toast.LENGTH_LONG).show()
+                                                    }
+
+                                                    if(charge_user[i].equals(nick)){
+                                                        charge_user.add(nick)
+
+
+                                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+                                                                deletedAt, chargecnt + 1, charge_user, heart_user, looker, exclude_looker, sharpTag)
+
+                                                        FirebaseFirestoreUtils.save("contents", id, item) {
+                                                            if (it) {
+                                                                finish()
+                                                            } else {
+
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+
+
+
+
+
+
+                        }
 
 
                         finish()
