@@ -104,6 +104,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             MoveMarketMainActivity()
         }
 
+        friendsLL.setOnClickListener {
+            var intent = Intent(context, FriendSearchActivity::class.java)
+            intent.putExtra("tUser", user)
+            startActivity(intent)
+        }
+
     }
 
 

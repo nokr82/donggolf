@@ -25,13 +25,13 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="13dp"
                 android:textStyle="bold"
-                android:text="문의하기"/>
+                android:text="함께 아는 1촌"/>
         </LinearLayout>
     </LinearLayout>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_0"/>
+        android:background="@drawable/line_0"/>
 
     <ListView
         android:layout_width="match_parent"
