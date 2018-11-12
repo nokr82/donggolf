@@ -8,14 +8,15 @@ import android.widget.CheckBox
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.models.National
+import donggolf.android.models.NationalGrid
 import org.json.JSONObject
 
 
-open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>) : ArrayAdapter<National>(context,view, data){
+open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<NationalGrid>) : ArrayAdapter<NationalGrid>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<National> = data
+    var data:ArrayList<NationalGrid> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,21 +36,18 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>
             }
         }
 
-        var data : National = getItem(position)
+        var data : NationalGrid = getItem(position)
 
         item.titleTV.setText(data.title)
 
-        item.checkCB.setOnClickListener {
-            var checkBox:CheckBox = it as CheckBox
+        item.checkCB.isChecked = true
 
-            data.is_checked = checkBox.isChecked
-        }
 
 
         return retView
     }
 
-    override fun getItem(position: Int): National {
+    override fun getItem(position: Int): NationalGrid {
 
         return data.get(position)
     }

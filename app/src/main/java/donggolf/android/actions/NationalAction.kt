@@ -12,5 +12,11 @@ class NationalAction {
             }
         }
 
+        fun nationallist(key: String, result: (success:Boolean, data:Map<String, Any>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.get("settings", key) { success:Boolean, data:Map<String, Any>?, exception:Exception? ->
+                result(success, data, exception)
+            }
+        }
+
     }
 }
