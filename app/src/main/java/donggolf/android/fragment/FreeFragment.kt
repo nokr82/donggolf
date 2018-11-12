@@ -183,34 +183,6 @@ open class FreeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    private fun addSearchWord(content:String) {
-
-        if (content.isEmpty()) {
-            Utils.alert(context, "검색어를 입력해주세요.")
-            return
-        }
-
-        //val user = mAuth.currentUser
-
-        if (user != null) {
-            val uid = user
-
-            val nowTime = System.currentTimeMillis()
-
-            val item = Search(content, nowTime)
-            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
-                if (success) {
-                    println("검색어 입력 성공")
-                } else {
-
-                }
-            }
-
-
-        }
-
-
-    }
 
     //여기서 뷰 연결
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -249,12 +221,13 @@ open class FreeFragment : Fragment() {
             }
         }
 
+        //enter key pressed
         main_edit_search.setOnEditorActionListener() { v, actionId, event ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 val srchWd = main_edit_search.text.toString()
+                println("srchWd===+$srchWd")
                 addSearchWords(srchWd)
-
-                //searchPosts(srchWd)
+                searchPosts(srchWd)
                 main_listview_search.visibility = View.GONE
                 true
             } else {
@@ -268,20 +241,46 @@ open class FreeFragment : Fragment() {
     }//onViewCreated end
 
     fun searchPosts(keyWord : String){
-        //MainAdapter
-//        if (keyWord != null){
-//
-//        }//if end
+        SearchAction.searchList(keyWord, Pair("createAt",null), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+
+            if(success && data != null) {
+                data.forEach {
+                    println(it)
+                    adapterData.clear()
+                    if (it != null) {
+                        adapter.add(it)
+                    }
+
+                }
+
+                adapter.notifyDataSetChanged()
+
+            }else{
+                ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+
+                    if(success && data != null) {
+                        data.forEach {
+                            println(it)
+
+                            if (it != null) {
+                                adapterData.add(it)
+                            }
+
+                        }
+
+                        adapter.notifyDataSetChanged()
+
+                    }
+                }
+            }
+        }
         adapterData.clear()
-
-
-
 
     }
 
     fun addSearchWords(content: String) {
 
-        if (content.isEmpty()) {
+        /*if (content.isEmpty()) {
             Utils.alert(context, "검색어를 입력해주세요.")
             return
         }
@@ -299,6 +298,41 @@ open class FreeFragment : Fragment() {
                     println("검색어 입력 성공")
                 } else {
 
+                }
+            }
+        }*/
+        if (content.isEmpty()) {
+            Utils.alert(context, "검색어를 입력해주세요.")
+            return
+        }
+
+        //val user = mAuth.currentUser
+
+        if (user != null) {
+            val uid = user
+
+            val nowTime = System.currentTimeMillis()
+
+            val item = Search(content, nowTime)
+            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
+                if (success) {
+                    println("검색어 입력 성공")
+                } else {
+                    ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+
+                        if(success && data != null) {
+                            data.forEach {
+                                println(it)
+
+                                if (it != null) {
+                                    adapterData.add(it)
+                                }
+                            }
+
+                            adapter.notifyDataSetChanged()
+
+                        }
+                    }
                 }
             }
         }

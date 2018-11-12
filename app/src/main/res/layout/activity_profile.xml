@@ -60,11 +60,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="151dp"
-        android:gravity="bottom|center">
+        android:layout_width="150dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -73,23 +74,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_profile_l"
-                android:id="@+id/imgProfile"/>
+                android:id="@+id/profileCnt"/>
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="15dp"
-                android:layout_gravity="bottom|right"
+                android:id="@+id/showProfImg"
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:background="@drawable/btn_add_photo" />
+            <TextView
+                android:id="@+id/txPhotoCnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="15"
+                android:textColor="#C9C9C9"
+                android:textSize="12dp" />
+        </RelativeLayout>
 
-        </FrameLayout>
-        <TextView
-            android:id="@+id/txPhotoCnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="15"
-            android:textColor="#C9C9C9"
-            android:textSize="10dp"
-            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
     <TextView
@@ -126,11 +130,12 @@
             android:background="@drawable/box_relation_info"
             android:paddingRight="15dp"
             android:paddingLeft="15dp"
-            android:id="@+id/knowTogether"
+            android:id="@+id/mutualTV"
             android:text="내 1촌 5명과 아는 사람" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/statusMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -138,128 +143,151 @@
         android:textSize="14dp"
         android:text="상태메시지가 들어갈 자리입니다"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:layout_marginBottom="30dp"
+        android:gravity="bottom">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:paddingLeft="50dp"
-            android:paddingRight="50dp">
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:id="@+id/btnChat">
-
+            android:layout_weight="1"
+            android:gravity="center">
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
 
-                <ImageView
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/on" />
+                    android:layout_height="55dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentTop="true">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="18dp"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/btn_chat_on" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:text="채팅"
+                        android:textSize="13dp" />
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
                     android:background="@drawable/box_notice"
                     android:gravity="center"
                     android:text="999"
                     android:id="@+id/txChatCnt"
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
-            </FrameLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-
+                    android:layout_height="55dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentTop="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@drawable/btn_post" />
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
 
+                        android:background="@drawable/btn_post" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
                         android:text="작성글"
-                        android:textSize="15dp" />
-                </LinearLayout>
+                        android:textSize="13dp" />
+                </RelativeLayout>
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
                     android:background="@drawable/box_notice"
                     android:gravity="center"
                     android:text="999"
+                    android:id="@+id/txPostCnt"
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
-            </FrameLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
                     android:layout_gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
                         android:background="@drawable/btn_show_friendlist_on" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
                         android:text="친구"
-                        android:textSize="15dp" />
-                </LinearLayout>
+                        android:textSize="13dp" />
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
                     android:background="@drawable/box_notice"
                     android:gravity="center"
                     android:text="999"
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
-            </FrameLayout>
-
+            </RelativeLayout>
         </LinearLayout>
-    </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

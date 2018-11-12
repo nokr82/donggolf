@@ -78,8 +78,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 idx[3] = cursor.getColumnIndex(proj[3])
                 idx[4] = cursor.getColumnIndex(proj[4])
 
-
-
                 var photo = ImageAdapter.PhotoData()
 
                 do {

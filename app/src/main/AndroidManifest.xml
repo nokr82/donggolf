@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-feature
+        android:name="android.hardware.Camera"
+        android:required="true" />
 
     <application
         android:name=".base.GlobalApplication"
@@ -24,15 +27,13 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:noHistory="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
@@ -59,11 +60,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
@@ -163,29 +166,38 @@
             android:name=".activities.InquireActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.MutualActivity"
             android:theme="@style/NoTitleDialog" />
-        <activity android:name=".activities.TermSpecifActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.PersonalInfoTernsActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <!--<activity-->
-            <!--android:name=".Main2Activity"-->
-            <!--android:label="@string/title_activity_main2" />-->
-        <activity android:name=".activities.SetAlarmActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ChatDetailActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.Notice2Activity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.SetNoticeActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.ChatMemberActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.SelectMemberActivity"
-            android:theme="@style/NoTitleDialog"></activity>
+        <activity
+            android:name=".activities.TermSpecifActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.PersonalInfoTernsActivity"
+            android:theme="@style/NoTitleDialog" />
+        <!-- <activity -->
+        <!-- android:name=".Main2Activity" -->
+        <!-- android:label="@string/title_activity_main2" /> -->
+        <activity
+            android:name=".activities.SetAlarmActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ChatDetailActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.Notice2Activity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.SetNoticeActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ChatMemberActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.SelectMemberActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity android:name=".activities.ModStatusMsgActivity"></activity>
     </application>
 
 </manifest>

@@ -73,6 +73,7 @@
                 android:background="@drawable/icon_profile_l"
                 android:id="@+id/imgProfile"/>
             <ImageView
+                android:id="@+id/addProfImg"
                 android:layout_width="18dp"
                 android:layout_height="15dp"
                 android:layout_gravity="bottom|right"
@@ -80,7 +81,7 @@
 
         </FrameLayout>
         <TextView
-            android:id="@+id/txPhotoCnt"
+            android:id="@+id/mngTXPhotoCnt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -145,6 +146,7 @@
             android:background="@drawable/icon_first"
             android:layout_marginRight="5dp"/>
         <TextView
+            android:id="@+id/myNeighbor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -158,8 +160,9 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
     <LinearLayout
+        android:id="@+id/messageTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -174,7 +177,6 @@
             android:text="상태메시지"
             android:textSize="13dp"/>
         <TextView
-            android:id="@+id/messageTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#c9c9c9"
@@ -185,7 +187,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -211,7 +213,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
 
 
     <RelativeLayout
