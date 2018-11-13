@@ -34,7 +34,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/img_line_1"/>
+        android:background="@drawable/line_0"/>
 
     <!--Menu -->
     <LinearLayout
@@ -68,11 +68,11 @@
                     android:src="@drawable/icon_depth_menu"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:id="@+id/setphoneLL"
@@ -105,11 +105,11 @@
                     android:src="@drawable/icon_depth_menu"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:id="@+id/viewdocumentLL"
@@ -142,11 +142,11 @@
                     android:src="@drawable/icon_depth_menu"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:id="@+id/deletememberLL"
@@ -179,11 +179,11 @@
                     android:src="@drawable/icon_depth_menu"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:id="@+id/mutualLL"
@@ -216,11 +216,11 @@
                     android:src="@drawable/icon_depth_menu"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -240,23 +240,13 @@
                 android:padding="10dp"
                 android:textSize="13dp"
                 android:text="로그인상태"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="8">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:layout_gravity="center_vertical|right"
-                    android:src="@drawable/icon_depth_menu"/>
-            </LinearLayout>
+
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -276,24 +266,12 @@
                 android:padding="10dp"
                 android:textSize="13dp"
                 android:text="계정상태"/>
-            <LinearLayout
-                android:id="@+id/accountsitLL"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="8">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:layout_gravity="center_vertical|right"
-                    android:src="@drawable/icon_depth_menu"/>
-            </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/line_1"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
 
 
 </LinearLayout>

@@ -16,8 +16,15 @@ import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import donggolf.android.actions.ProfileAction
 import donggolf.android.adapters.ProfileTagAdapter
+import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
+import donggolf.android.models.Users
+import kotlinx.android.synthetic.main.activity_profile_name_modif.*
 
 
 class ProfileTagChangeActivity : RootActivity() {
@@ -29,6 +36,18 @@ class ProfileTagChangeActivity : RootActivity() {
     internal lateinit var adapter: ProfileTagAdapter
 
     private  var adapterData : ArrayList<String> = ArrayList<String>()
+
+    private var mAuth: FirebaseAuth? = null
+
+    lateinit var imgl : String
+    lateinit var imgs : String
+    var lastN : Long = 0
+    lateinit var nick : String
+    lateinit var sex : String
+    lateinit var sTag : ArrayList<String>
+    lateinit var statusMessage : String
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +63,53 @@ class ProfileTagChangeActivity : RootActivity() {
 
         tagList.adapter = adapter
 
+        mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth!!.getCurrentUser()
+        val db = FirebaseFirestore.getInstance()
 
+        var uid = PrefUtils.getStringPreference(context, "uid")
+        //println("uid====$uid")
+        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+            statusMessage = data!!.get("state_msg") as String
+            imgl = data!!.get("imgl") as String
+            imgs = data!!.get("imgs") as String
+            lastN = data!!.get("last") as Long
+            nick = data!!.get("nick") as String
+            sex = data!!.get("sex") as String
+            adapterData = data!!.get("sharpTag") as ArrayList<String>
+
+
+            /*if(success && data != null) {
+                data.forEach {
+                    println(it)
+                    adapterData.clear()
+                    if (it != null) {
+                        adapter.add(it)
+                    }
+
+                }
+
+                adapter.notifyDataSetChanged()
+
+            }*/
+
+        }
+
+        confirmRL.setOnClickListener {
+            nick = nameET.text.toString()
+            val item = Users(imgl, imgs, lastN, nick, sex, adapterData, statusMessage)
+
+            FirebaseFirestoreUtils.save("users", uid, item) {
+                if (it) {
+                    var itt = Intent()
+                    itt.putExtra("newNick", nick)
+                    setResult(RESULT_OK, itt)
+                    finish()
+                } else {
+
+                }
+            }
+        }
 
         hashtagET.addTextChangedListener(object : TextWatcher {
 
@@ -87,9 +152,6 @@ class ProfileTagChangeActivity : RootActivity() {
 
             }
 
-
-
-
             return@setOnEditorActionListener true
         }
 
@@ -101,7 +163,7 @@ class ProfileTagChangeActivity : RootActivity() {
             var intent = Intent();
             intent.putExtra("data",adapterData)
             if(adapterData.size > 0 && !adapterData.get(0).equals("")){
-                setResult(Activity.RESULT_OK, intent);
+                setResult(Activity.RESULT_OK, intent)
                 finish()
             }else {
                 Toast.makeText(context, "태그를 입력해 주세요.", Toast.LENGTH_LONG).show()

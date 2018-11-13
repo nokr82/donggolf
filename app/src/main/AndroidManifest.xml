@@ -197,7 +197,9 @@
         <activity
             android:name=".activities.SelectMemberActivity"
             android:theme="@style/NoTitleDialog" />
-        <activity android:name=".activities.ModStatusMsgActivity"></activity>
+        <activity android:name=".activities.ModStatusMsgActivity" />
+        <activity android:name=".activities.SelectProfileImgActivity" />
+        <activity android:name=".activities.ViewProfileListActivity"></activity>
     </application>
 
 </manifest>

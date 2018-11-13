@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
@@ -19,16 +20,10 @@ class MutualActivity : RootActivity() {
 
     private  lateinit var  adapter : MainAdapter
 
-    private  lateinit var  editadapter : MainEditAdapter
-
-    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-
-    private val SELECT_PICTURE: Int = 101
-
     val user = HashMap<String, Any>()
 
     companion object {
-        const val TAG = "MainActivity"
+        const val TAG = "MutualActivity"
     }
 
     private var mAuth: FirebaseAuth? = null
@@ -37,12 +32,11 @@ class MutualActivity : RootActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mutual)
 
-
+        mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth!!.getCurrentUser()
+        val db = FirebaseFirestore.getInstance()
 
 
     }
 }
 
-open class MutFriendAdapter(context: Context, view: Int, data: ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context, view, data){
-
-}

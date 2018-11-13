@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -92,6 +93,9 @@ class ModStatusMsgActivity : RootActivity() {
 
             FirebaseFirestoreUtils.save("users", uid, item) {
                 if (it) {
+                    var itt = Intent()
+                    itt.putExtra("status_message", statusMessage)
+                    setResult(RESULT_OK, itt)
                     finish()
                 } else {
 
