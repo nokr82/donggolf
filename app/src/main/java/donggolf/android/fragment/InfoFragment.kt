@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.ShapeDrawable
@@ -31,6 +32,7 @@ import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.ProfileAction
 import donggolf.android.activities.*
+import donggolf.android.adapters.ImageAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
 import donggolf.android.base.PrefUtils
@@ -66,19 +68,21 @@ class InfoFragment : Fragment(){
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
     val REGION_CHANGE = 108
-    private var pimgPaths: ArrayList<String> = ArrayList<String>()
+    private var pimgPaths: ArrayList<String> = ArrayList<String>()//이미지 경로
     private var images: ArrayList<ByteArray> = ArrayList()
     private var smimages: ArrayList<ByteArray> = ArrayList()
     private var strPaths: ArrayList<String> = ArrayList<String>()
+    private var strPathsL : ArrayList<String> = ArrayList<String>()
+    private var strPathsS : ArrayList<String> = ArrayList<String>()
 
     lateinit var db : FirebaseFirestore
 
-    lateinit var imgl : ArrayList<ByteArray>
-    lateinit var imgs : ArrayList<ByteArray>
+    lateinit var imgl : String //경로
+    lateinit var imgs : String //경로
     var lastN : Long = 0
     lateinit var nick : String
     lateinit var sex : String
-    lateinit var sTag : ArrayList<String>
+    private var sTag : ArrayList<String> = ArrayList<String>()
     lateinit var statusMessage : String
 
 
@@ -113,9 +117,32 @@ class InfoFragment : Fragment(){
         tv_CONSEQUENCES = view.findViewById(R.id.tv_CONSEQUENCES)
         addProfImg = view.findViewById(R.id.addProfImg)
 
-        val nick: String = PrefUtils.getStringPreference(context,"nick")
+        /*val nick: String = PrefUtils.getStringPreference(context,"nick")
 
-        txUserName.setText(nick)
+        txUserName.setText(nick)*/
+
+        //프로필 세팅
+        var uid = PrefUtils.getStringPreference(context, "uid")
+        //println("uid====$uid")
+        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+
+            statusMessage = data!!.get("state_msg") as String
+            imgl = data!!.get("imgl") as String
+            imgs = data!!.get("imgs") as String
+            lastN = data!!.get("last") as Long
+            nick = data!!.get("nick") as String
+            sex = data!!.get("sex") as String
+            sTag = data!!.get("sharpTag") as ArrayList<String>
+
+            txUserName.setText(nick)
+            infoStatusMsg.setText(statusMessage)
+            var tmpmsg = ""
+            for (i in 0..(sTag.size-1)){
+                tmpmsg += "#" + sTag.get(i) + " "
+            }
+            hashtagTV.setText(tmpmsg)
+        }
+
 
         tv_CONSEQUENCES.setOnClickListener {
             var intent: Intent = Intent(activity, OtherManageActivity::class.java)
@@ -179,57 +206,17 @@ class InfoFragment : Fragment(){
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 SELECT_PROFILE -> {
-                    /*var item = data?.getStringArrayExtra("images")
-                    var name = data?.getStringArrayExtra("displayname")
 
-                    for (i in 0..(item!!.size - 1)) {
-                        val str = item[i]
+                    var cursor: Cursor? = null
+                    val texts: ArrayList<Any> = ArrayList<Any>()
 
-                        pimgPaths.add(str)
-
-
-                        val add_file = Utils.getImage(context?.contentResolver, str, 15)
-
-                        if (images?.size == 0) {
-
-                            images?.add(add_file)
-
-                        } else {
-                            try {
-                                images?.set(images!!.size, add_file)
-                            } catch (e: IndexOutOfBoundsException) {
-                                images?.add(add_file)
-                            }
-
-                        }
-
-                    }
-
-                    strPaths.clear()
-                    for (i in 0..(name!!.size - 1)) {
-                        val str = name[i]
-
-                        if (strPaths != null) {
-                            strPaths.add(str)
-
-                            Log.d("yjs", "display " + strPaths.get(0))
-                            Log.d("yjs", "display " + strPaths.get(0))
-                        } else {
-                            strPaths.add(str)
-                            Log.d("yjs", "display " + strPaths.get(0))
-                        }
-
-                    }
-
-                    var intent = Intent()
-
-                    activity?.setResult(Activity.RESULT_OK, intent)
-
-                    mngTXPhotoCnt.text = images.size.toString()*/
                     var uri = data?.data
                     try {
+                        strPaths.add(MediaStore.Images.Media.DISPLAY_NAME)
+                        println("image path ========= $strPaths")
 
                         var bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, uri)
+//                        var bt: Bitmap = Utils.getImage(context!!.contentResolver, MediaStore.Images.Media.DISPLAY_NAME, 500)
 
                         var bo = BitmapFactory.Options()
                         bo.inSampleSize = 4
@@ -237,7 +224,7 @@ class InfoFragment : Fragment(){
 
                         var smallBmImg = Bitmap.createScaledBitmap(tmpImg, 50, 50, true)
                         var resizedimg = Utils.getByteArray(smallBmImg)
-//                        images.add(bitmap)
+
                         //bitmap image to byteArray image
                         var bytearray_ = Utils.getByteArray(bitmap)
 
@@ -246,32 +233,41 @@ class InfoFragment : Fragment(){
 
                         val nowTime = System.currentTimeMillis()
 
-                        var imgPaths : String
-                        var imagsPaths : String
-                        var imgpath : String
+                        var imgPaths = ArrayList<String>()
+                        var imagsPaths = ArrayList<String>()
+                        var imgpath = ArrayList<String>()
                         var photo = Photo()
 
-                        var image_path = "imgl/" + nowTime + ".png"
-                        var images_path = "imgs/" + nowTime + ".png"
+                        for (i in 0..(strPaths.size - 1)) {
+
+                            var image_path = "imgl/" + i + nowTime + ".png"
+                            var images_path = "imgs/" + i +nowTime + ".png"
+
+                            strPathsL.add(image_path)
+                            strPathsS.add(images_path)
+                            imgpath.add(i.toString() + nowTime.toString() + ".png")
+                        }
 
                         photo.type = "photo"
-//                        photo.file = imgpath
+                        photo.file = imgpath
+
+                        texts.add(photo)
 
                         var uid = PrefUtils.getStringPreference(context, "uid")
 
-                        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                        /*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                             statusMessage = data!!.get("state_msg") as String
 
-                            imgl = data!!.get("imgl") as ArrayList<ByteArray>
-                            imgs = data!!.get("imgs") as ArrayList<ByteArray>
+                            imgl = data!!.get("imgl") as ArrayList<String>
+                            imgs = data!!.get("imgs") as ArrayList<String>
                             lastN = data!!.get("last") as Long
                             nick = data!!.get("nick") as String
                             sex = data!!.get("sex") as String
                             sTag = data!!.get("sharpTag") as ArrayList<String>
 
-                        }
-                        imgl = images
-                        imgs = smimages
+                        }*/
+                        /*imgl = strPathsL
+                        imgs = strPathsS*/
 
                         //이미지 firebase로 전송
                         //사실 그냥 uri를 putFile해도 됨
@@ -279,25 +275,42 @@ class InfoFragment : Fragment(){
                             UploadTask uploadTask;
                             uploadTask = storageRef.putFile(file);
                         */
-                        //근데 여러 사진 보내야되니까
-//                        val item = Users(images, smimages, lastN, nick, sex, sTag, statusMessage)
+                        //여러 사진이 담긴 array list 를 전송해야하므로
+                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
-//                        FirebaseFirestoreUtils.save("users", uid, item) {
-//                            if (it) {
-//
-//                            } else {
-//
-//                            }
-//                        }
+                        FirebaseFirestoreUtils.save("users", uid, item) {
+                            if (it) {
+                                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/" + imgl) {
+                                    if (it) {
+                                        FirebaseFirestoreUtils.uploadFile(resizedimg, "imgs/" + imgs) {
+                                            if (it) {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+
+                            }
+                        }
 
 
-                        //imgProfile.setImageBitmap(bitmap)
+
+                        //이미지 동그랗게
                         imgProfile.background = ShapeDrawable(OvalShape())
                         imgProfile.clipToOutline = true
 
 
-                    }catch (e:Exception){
+                    } catch (e:Exception) {
                         e.printStackTrace()
+                    } finally {
+                        try {
+                            if (cursor != null && !cursor.isClosed) {
+                                cursor.close()
+                            }
+                        } catch (ex: Exception) {
+                        }
+
                     }
 
                     mngTXPhotoCnt.setText(images.size.toString())

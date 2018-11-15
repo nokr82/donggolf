@@ -40,5 +40,5 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:textSize="13dp"
-        android:text="개인정보 수집 및 이용에 대한 텍스트를 이곳에 입력해주시면 되겠습니다.\n\n\n\n\n\n\n\n\n\n\n\n\n\n"/>
+        android:text="개인정보 수집 및 이용에 대한 텍스트를 이곳에 입력해주시면 되겠습니다."/>
 </LinearLayout>

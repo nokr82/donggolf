@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.squareup.okhttp.internal.Util
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
@@ -23,7 +26,10 @@ class LoginActivity : RootActivity() {
 
     private lateinit var context: Context
     private lateinit var mAuth: FirebaseAuth
+
     var autoLogin = false
+    var atEmail : String = ""
+    var atPassword : String =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +37,26 @@ class LoginActivity : RootActivity() {
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance()
 
+        autoLogin = PrefUtils.getBooleanPreference(context, "auto", false)
+        atEmail = PrefUtils.getStringPreference(context, "email")
+        atPassword = PrefUtils.getStringPreference(context, "pass")
+        /*atEmail = "devstories@devstories.com"
+        atPassword = "123456"*/
+        if (atEmail.isEmpty() || atPassword.isEmpty())
+            return
 
+        println("autoLogin========$autoLogin")
+        if (autoLogin){
+            autologinCB.isChecked = true
+        } else {
+            autologinCB.isChecked = false
+        }
+
+        if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
+            loginHandler.sendEmptyMessage(0)
+        }
 
         btn_login.setOnClickListener {
             login()
@@ -75,19 +98,40 @@ class LoginActivity : RootActivity() {
 
     }
 
+    //login_hdr
+    internal var loginHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            login()
+        }
+    }
+
     private fun login() {
-        val email = Utils.getString(emailET)
+
+        var email = Utils.getString(emailET)
+        if (autoLogin){
+            email = atEmail
+        }
         if (email.isEmpty()) {
             Utils.alert(context, "아이디는 필수 입력입니다.")
             return
         }
 
-        val password = Utils.getString(passwordET)
-        if (email.isEmpty()) {
+        var password = Utils.getString(passwordET)
+        if (autoLogin){
+            password = atPassword
+        }
+        if (password.isEmpty()) {
             Utils.alert(context, "비밀번호는 필수 입력입니다.")
             return
         }
 
+        /*if (autoLogin){
+            email = atEmail
+            password = atPassword
+        } else {
+            email = Utils.getString(emailET)
+            password = Utils.getString(passwordET)
+        }*/
 
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -106,7 +150,20 @@ class LoginActivity : RootActivity() {
                                 LoginActivity.setInfoData(context, data)
 
 
-                                println("autoLogion ==== $autoLogin")
+                                println("autoLogin ==== $autoLogin")
+
+                                if (autoLogin){
+
+                                    PrefUtils.setPreference(context, "email", email)
+                                    PrefUtils.setPreference(context, "pass", password)
+                                    PrefUtils.setPreference(context, "auto", autoLogin)
+
+                                } else {
+
+                                    PrefUtils.setPreference(context, "email", null)
+                                    PrefUtils.setPreference(context, "pass", null)
+                                    PrefUtils.setPreference(context, "auto", autoLogin)
+                                }
 
                                 startActivity(Intent(context, MainActivity::class.java))
 

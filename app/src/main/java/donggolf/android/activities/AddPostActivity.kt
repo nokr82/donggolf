@@ -717,8 +717,6 @@ class AddPostActivity : RootActivity() {
 
                                                 }
                                             }
-
-
                                         }
                                     }
 
