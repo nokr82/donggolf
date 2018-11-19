@@ -51,9 +51,15 @@ class LoginActivity : RootActivity() {
 
             val standby = data!!["standby"] as HashMap<String, Any>
 
+            println("111111")
+
+            Thread.sleep(5000)
+
+            println("222222")
+
             val newData = HashMap<String, Any>()
-            newData["block"] = true
-            standby["www"] = newData
+            newData["block"] = false
+            standby["qqqqq"] = newData
 
 
 
