@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
 import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.Utils
 import org.json.JSONObject
 
 
@@ -51,25 +52,34 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             //유저 조회
             /*var condition:HashMap<String, String> = HashMap<String,String>()
             condition.put("nick", item.main_detail_listitem_nickname.text.toString())*/
-            var nick= item.main_detail_listitem_nickname.text.toString()
-            val db = FirebaseFirestore.getInstance()
-            var writer : String = ""
+//            var nick= item.main_detail_listitem_nickname.text.toString()
 
-            db.collection("users")
-                    .whereEqualTo("nick",nick)
-                    .get()
-                    .addOnCompleteListener{
-                        if (it.isSuccessful) {
-                            for (document in it.getResult()) {
-                                Log.d("getUserData", "getId : "+document.getId() + " => " + " getData : " +document.getData())
-                                writer = document.getId()
+            val type = Utils.getString(data, "nick")
+
+            if(type == "nick") {
+                val nick = data.get("nick")as String
+
+                println("nick ========$nick")
+
+                val db = FirebaseFirestore.getInstance()
+                var writer : String = ""
+
+                db.collection("users")
+                        .whereEqualTo("nick",nick)
+                        .get()
+                        .addOnCompleteListener{
+                            if (it.isSuccessful) {
+                                for (document in it.getResult()) {
+                                    Log.d("getUserData", "getId : "+document.getId() + " => " + " getData : " +document.getData())
+                                    writer = document.getId()
+                                }
                             }
                         }
-                    }
 
-            var goit = Intent(context, ProfileActivity::class.java)
-            goit.putExtra("writerID", writer)
-            it.context.startActivity(goit)
+                var goit = Intent(context, ProfileActivity::class.java)
+                goit.putExtra("writerID", writer)
+                it.context.startActivity(goit)
+            }
 //            println(data.getJSONObject("id"))
         }
 

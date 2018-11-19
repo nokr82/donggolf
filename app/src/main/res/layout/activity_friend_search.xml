@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -95,7 +94,7 @@
                     android:background="@drawable/icon_search" />
 
                 <EditText
-                    android:id="@+id/main_edit_search"
+                    android:id="@+id/frdSearchET"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
@@ -115,7 +114,7 @@
 
 
         <TextView
-            android:id="@+id/btn_go_addpost"
+            android:id="@+id/btn_search_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_ok"
@@ -133,6 +132,7 @@
         android:layout_height="match_parent">
 
         <ListView
+            android:id="@+id/frdResultLV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

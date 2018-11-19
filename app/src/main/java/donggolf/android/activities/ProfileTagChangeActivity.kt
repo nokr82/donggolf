@@ -70,14 +70,21 @@ class ProfileTagChangeActivity : RootActivity() {
         var uid = PrefUtils.getStringPreference(context, "uid")
         //println("uid====$uid")
         ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-            statusMessage = data!!.get("state_msg") as String
-            imgl = data!!.get("imgl") as String
-            imgs = data!!.get("imgs") as String
-            lastN = data!!.get("last") as Long
-            nick = data!!.get("nick") as String
-            sex = data!!.get("sex") as String
-            adapterData = data!!.get("sharpTag") as ArrayList<String>
 
+            if (success){
+                if (data != null) {
+                    statusMessage = data!!.get("state_msg") as String
+                    imgl = data!!.get("imgl") as String
+                    imgs = data!!.get("imgs") as String
+                    lastN = data!!.get("last") as Long
+                    nick = data!!.get("nick") as String
+                    sex = data!!.get("sex") as String
+                    sTag = data!!.get("sharpTag") as ArrayList<String>
+                    adapterData = sTag
+                }
+
+
+            }
 
             /*if(success && data != null) {
                 data.forEach {
@@ -134,7 +141,7 @@ class ProfileTagChangeActivity : RootActivity() {
 
                 tag = Utils.getString(hashtagET)
 
-                if("".equals(tag) || null == tag || tag!!.length < 1){
+                if("".equals(tag) || null == tag || tag!!.length < 1) {
 
                     Toast.makeText(context, "검색어를 입력해주세요.", Toast.LENGTH_LONG).show()
 
@@ -145,6 +152,8 @@ class ProfileTagChangeActivity : RootActivity() {
                 Utils.hideKeyboard(context!!)
 
                 adapterData.add("#" + tag!!)
+
+                sTag.add(tag!!)
 
                 adapter.notifyDataSetChanged()
 
@@ -172,7 +181,7 @@ class ProfileTagChangeActivity : RootActivity() {
 
 
             intent.putExtra("data",adapterData)
-            setResult(Activity.RESULT_OK, intent);
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
 

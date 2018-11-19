@@ -6,18 +6,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+//import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
-import donggolf.android.R.id.main_edit_listitem_title
-import donggolf.android.actions.SearchAction
-import donggolf.android.base.Utils
-import donggolf.android.fragment.FreeFragment
-import org.json.JSONObject
-import java.text.SimpleDateFormat
 import java.util.*
 
-
-open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
-
+class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<Map<String, Any>> = data
@@ -40,7 +33,15 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
             }
         }
 
-        var data : Map<String, Any> = getItem(position)
+        item.main_detail_listitem_nickname.setText(data.get(position).get("nick").toString())
+        item.main_detail_listitem_condition.setText(data.get(position).get("state_msg").toString())
+        /*if (data.get(position).get("relation").toString().equals("mate1")){
+            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_first)
+        }else{
+            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_second)
+        }*/
+
+        /*var data : Map<String, Any> = getItem(position)
 
         var title:String = data.get("content") as String
         item.main_edit_listitem_title.text = title
@@ -50,10 +51,6 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
         val currentTime: String = dateFormat.format(Date(date))
         item.main_edit_listitem_date.text = currentTime
 
-        /*item.main_edit_listitem_title.setOnClickListener {
-
-        }*/
-
         item.main_edit_listitem_delete.setOnClickListener {
 
             var id:String = data.get("id") as String
@@ -62,7 +59,7 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
                     removeItem(position)
                 }
             }
-        }
+        }*/
 
         return retView
     }
@@ -90,14 +87,18 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
     class ViewHolder(v: View) {
 
 
-        var main_edit_listitem_title : TextView
-        var main_edit_listitem_date : TextView
-        var main_edit_listitem_delete : ImageView
+        var main_detail_listitem_profileimage : ImageView //프사
+        var isOnlineIV : ImageView //프사에 붙은 초록불
+        var main_detail_listitem_nickname : TextView //닉네임
+        var main_detail_listitem_firstimage : ImageView //일촌인지 이촌인지
+        var main_detail_listitem_condition : TextView //상메
 
         init {
-            main_edit_listitem_title = v.findViewById<View>(R.id.main_edit_listitem_title) as TextView
-            main_edit_listitem_date = v.findViewById<View>(R.id.main_edit_listitem_date) as TextView
-            main_edit_listitem_delete = v.findViewById<View>(R.id.main_edit_listitem_delete) as ImageView
+            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as ImageView
+            isOnlineIV = v.findViewById<View>(R.id.isOnlineIV) as ImageView
+            main_detail_listitem_nickname = v.findViewById<View>(R.id.main_detail_listitem_nickname) as TextView
+            main_detail_listitem_firstimage = v.findViewById<View>(R.id.main_detail_listitem_firstimage) as ImageView
+            main_detail_listitem_condition = v.findViewById<View>(R.id.main_detail_listitem_condition) as TextView
         }
     }
 }

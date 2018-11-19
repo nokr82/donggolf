@@ -64,7 +64,10 @@ class FirebaseFirestoreUtils {
                 val key = it
                 val value = params[key]
 
-                query = ref.whereEqualTo(key.toString(), value)
+                println("key in FireBaseFireStoreUtils===================================================================$key")
+                println("value in FireBaseFireStoreUtils=================================================================$value")
+
+                query = ref.whereEqualTo(key, value)
             }
 
             // orderBy
@@ -327,8 +330,6 @@ class FirebaseFirestoreUtils {
                     }
 
         }
-
-
 
     }
 

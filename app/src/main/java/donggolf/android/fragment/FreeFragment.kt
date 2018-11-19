@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
@@ -37,9 +38,7 @@ import org.json.JSONObject
 
 open class FreeFragment : Fragment() {
 
-
     var ctx: Context? = null
-
 
     //원본 데이터 정의 부분
     private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
@@ -77,7 +76,7 @@ open class FreeFragment : Fragment() {
 
                 adapterData.clear()
 
-                ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+                ContentAction.list(user,Pair("createAt", Query.Direction.DESCENDING),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
 
                     if(success && data != null) {
                         data.forEach {
@@ -197,12 +196,12 @@ open class FreeFragment : Fragment() {
 
         main_edit_search.setOnClickListener {
 
-            SearchAction.list(user, Pair("date",null), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+            SearchAction.list(user, Pair("date",Query.Direction.DESCENDING), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
                 if(success && data != null) {
+                    editadapterData.clear()
                     data.forEach {
-                        println(it)
-                        editadapterData.clear()
+
                         if (it != null) {
                             editadapterData.add(it)
                         }
@@ -213,7 +212,6 @@ open class FreeFragment : Fragment() {
 
                 }
 
-
             }
             main_listview_search.visibility = View.VISIBLE
             main_edit_close.setOnClickListener {
@@ -222,13 +220,14 @@ open class FreeFragment : Fragment() {
         }
 
         //enter key pressed
-        main_edit_search.setOnEditorActionListener() { v, actionId, event ->
+        main_edit_search.setOnEditorActionListener { v, actionId, event ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 val srchWd = main_edit_search.text.toString()
                 println("srchWd===+$srchWd")
                 addSearchWords(srchWd)
                 searchPosts(srchWd)
                 main_listview_search.visibility = View.GONE
+                main_edit_search.setText("")
                 true
             } else {
                 false
@@ -241,14 +240,16 @@ open class FreeFragment : Fragment() {
     }//onViewCreated end
 
     fun searchPosts(keyWord : String){
-        SearchAction.searchList(keyWord, Pair("createAt",null), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+        SearchAction.searchList(keyWord, Pair("createAt",Query.Direction.DESCENDING), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
             if(success && data != null) {
+
+                adapterData.clear()
+
                 data.forEach {
                     println(it)
-                    adapterData.clear()
                     if (it != null) {
-                        adapter.add(it)
+                        adapterData.add(it)
                     }
 
                 }
@@ -259,8 +260,9 @@ open class FreeFragment : Fragment() {
                 ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
 
                     if(success && data != null) {
+                        adapterData.clear()
                         data.forEach {
-                            println(it)
+                            //println(it)
 
                             if (it != null) {
                                 adapterData.add(it)
@@ -278,29 +280,9 @@ open class FreeFragment : Fragment() {
 
     }
 
+    //검색어를 검색기록에 추가
     fun addSearchWords(content: String) {
 
-        /*if (content.isEmpty()) {
-            Utils.alert(context, "검색어를 입력해주세요.")
-            return
-        }
-
-        //val user = mAuth.currentUser
-
-        if (user != null) {
-            val uid = user
-
-            val nowTime = System.currentTimeMillis()
-
-            val item = Search(content, nowTime)
-            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
-                if (success) {
-                    println("검색어 입력 성공")
-                } else {
-
-                }
-            }
-        }*/
         if (content.isEmpty()) {
             Utils.alert(context, "검색어를 입력해주세요.")
             return
@@ -309,8 +291,7 @@ open class FreeFragment : Fragment() {
         //val user = mAuth.currentUser
 
         if (user != null) {
-            val uid = user
-
+            //val uid = user
             val nowTime = System.currentTimeMillis()
 
             val item = Search(content, nowTime)

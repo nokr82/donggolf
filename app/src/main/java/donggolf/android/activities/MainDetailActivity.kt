@@ -52,8 +52,8 @@ class MainDetailActivity : RootActivity() {
     var pressedY: Float? = 0F
     var stayedWithinClickDistance: Boolean? = false
 
-    val MAX_CLICK_DURATION = 1000;
-    val MAX_CLICK_DISTANCE = 15;
+    val MAX_CLICK_DURATION = 1000
+    val MAX_CLICK_DISTANCE = 15
 
     lateinit var activity: MainDetailActivity
 
@@ -246,8 +246,6 @@ class MainDetailActivity : RootActivity() {
         pagerVP.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-
-
 
                     MotionEvent.ACTION_DOWN ->{
 
@@ -471,8 +469,5 @@ class MainDetailActivity : RootActivity() {
     private fun pxToDp(px: Float): Float {
         return px / resources.displayMetrics.density
     }
-
-
-
 
 }

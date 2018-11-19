@@ -686,7 +686,7 @@ class AddPostActivity : RootActivity() {
 
                     val charge_user : ArrayList<String> = ArrayList<String>()
 
-                    val item = Content(nowTime, 0 , 0 , nick.toString(), regionItem, title, texts, "", false,
+                    val item = Content(nowTime, 0 , 0 , nick, regionItem, title, texts, "", false,
                             0 , 0 , charge_user, false, 0 , exclude_looker, sharpTag)
 
                     ContentAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->

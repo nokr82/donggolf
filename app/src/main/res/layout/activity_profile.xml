@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".activities.ProfileActivity">
 
     <LinearLayout
@@ -14,7 +14,7 @@
             android:id="@+id/profBack"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="18">
+            android:layout_weight="1">
             <ImageView
                 android:layout_width="11dp"
                 android:layout_height="17dp"
@@ -153,11 +153,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
             <RelativeLayout
                 android:layout_width="70dp"
                 android:layout_height="70dp">
                 <ImageView
+                    android:id="@+id/click_chat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -192,17 +194,32 @@
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/btn_frd_cc1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_gravity="center"
+                android:background="#ffffff"
+                android:textColor="#ffffff"
+                android:text="친구신청"
+                android:textSize="11dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:orientation="vertical"
             android:gravity="center">
             <RelativeLayout
                 android:layout_width="70dp"
                 android:layout_height="70dp">
                 <ImageView
+                    android:id="@+id/click_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -239,17 +256,32 @@
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/btn_frd_cc2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_gravity="center"
+                android:background="#ffffff"
+                android:textColor="#ffffff"
+                android:text="친구신청"
+                android:textSize="11dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:orientation="vertical"
             android:gravity="center">
             <RelativeLayout
                 android:layout_width="70dp"
                 android:layout_height="70dp">
                 <ImageView
+                    android:id="@+id/click_friend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -286,6 +318,19 @@
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/btn_frd_cc3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_gravity="center"
+                android:background="#ffffff"
+                android:textColor="#ffffff"
+                android:text="친구신청"
+                android:textSize="11dp"/>
         </LinearLayout>
 
     </LinearLayout>

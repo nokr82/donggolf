@@ -18,6 +18,13 @@ class ProfileAction {
             }
         }
 
+        //page = 20,
+        fun searchFriendsWithTag(search:Map<String, Any>, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+            FirebaseFirestoreUtils.list("users", search){ success, data, exception ->
+                result(success, data, exception)
+            }
+        }
+
         fun modifyProfile(params: String, result: (success:Boolean, key:String?, exception:Exception?) -> Unit) {
             FirebaseFirestoreUtils.save("users", params) { success: Boolean, key: String?, exception: Exception? ->
                 result(success, key, exception)

@@ -38,6 +38,7 @@ open class ProfileTagAdapter(context: Context, view:Int, data:ArrayList<String>)
         var data : String = getItem(position)
 
         item.titleTV.setText(data)
+        println("ProfileTagAdapter=====$data")
 
         item.removeIV.setOnClickListener {
             removeItem(position)
