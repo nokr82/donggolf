@@ -88,16 +88,16 @@
 
         <!--여기부터 오른쪽 메뉴 ; 서랍효과 낼 레이아웃을 DrawerLayout으로 감싼다 -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/chat_right_menu"
+            android:orientation="vertical"
             android:layout_gravity="right"
-            android:orientation="vertical">
+            android:gravity="right">
             <LinearLayout
                 android:background="#ffffff"
                 android:layout_width="280dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="right"
                 android:orientation="vertical"><!--여기가 전체-->
 
 

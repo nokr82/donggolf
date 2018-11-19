@@ -2,13 +2,10 @@ package donggolf.android.activities
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import donggolf.android.R
-import donggolf.android.adapters.AreaRangeAdapter
 import donggolf.android.adapters.MarketMainAdapter
 import donggolf.android.base.RootActivity
-import kotlinx.android.synthetic.main.activity_area_range.*
 import kotlinx.android.synthetic.main.activity_market_main.*
 import org.json.JSONObject
 
@@ -27,7 +24,7 @@ class MarketMainActivity : RootActivity() {
 
         context = this
 
-        finishLL.setOnClickListener {
+        finishmLL.setOnClickListener {
             finish()
         }
 

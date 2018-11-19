@@ -215,19 +215,6 @@ class AddPostActivity : RootActivity() {
                             }
                         }
 
-//                        if (displaynamePaths != null) {
-//                            if (displaynamePaths.size != 0) {
-//
-//                                val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
-//                                for (i in 0..displaynamePaths.size - 1) {
-//                                    var ImagesPath = ImagesPath(null,userid,displaynamePaths.get(i))
-//
-//                                    dbManager.insertimagespath(ImagesPath)
-//                                }
-//                            }
-//                        }
-
-
                     })
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
@@ -532,7 +519,6 @@ class AddPostActivity : RootActivity() {
                                                 }
                                             }
 
-
                                         }
                                     }
                                 }
@@ -731,8 +717,6 @@ class AddPostActivity : RootActivity() {
 
                                                 }
                                             }
-
-
                                         }
                                     }
 

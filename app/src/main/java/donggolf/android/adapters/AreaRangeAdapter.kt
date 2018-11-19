@@ -7,14 +7,15 @@ import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.models.National
 import org.json.JSONObject
 
 
-open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
+open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>) : ArrayAdapter<National>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String, Any>> = data
+    var data:ArrayList<National> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -34,14 +35,21 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<Map<Strin
             }
         }
 
-        var data : Map<String, Any> = getItem(position)
+        var data : National = getItem(position)
 
+        item.titleTV.setText(data.title)
+
+        item.checkCB.setOnClickListener {
+            var checkBox:CheckBox = it as CheckBox
+
+            data.is_checked = checkBox.isChecked
+        }
 
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): National {
 
         return data.get(position)
     }

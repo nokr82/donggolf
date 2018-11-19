@@ -10,36 +10,37 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
-import donggolf.android.actions.NationalAction
 import donggolf.android.adapters.AreaRangeAdapter
+import donggolf.android.adapters.AreaRangeGridAdapter
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.models.National
+import donggolf.android.models.NationalGrid
 import kotlinx.android.synthetic.main.activity_area_range.*
-import org.json.JSONObject
-
 class AreaRangeActivity : RootActivity() {
 
     private lateinit var context: Context
 
     private  lateinit var  adapter : AreaRangeAdapter
 
-    private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private lateinit var GridAdapter : AreaRangeGridAdapter
 
     private var mAuth: FirebaseAuth? = null
 
     val user = HashMap<String, Any>()
     private val actArea = 3
 
+    var arealist: ArrayList<National> = ArrayList<National>()
+
+    var areaGridList: ArrayList<NationalGrid> = ArrayList<NationalGrid>()
+
+    var count = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_area_range)
 
         context = this
-
-        finishBT.setOnClickListener {
-            finish()
-        }
-
-        var dataObj: JSONObject = JSONObject()//파이어베이스 사용시 필수
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -59,29 +60,92 @@ class AreaRangeActivity : RootActivity() {
                     }
                 })
 
-        NationalAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+        FirebaseFirestoreUtils.get("settings","national"){ success, data, exception ->
 
-            if(success && data != null) {
-                data.forEach {
-                    println(it)
-                    println("====================================================")
+            var data:HashMap<String, Any> = data as HashMap<String, Any>
+            for (i in 0..(data.size - 1)) {
+                var sido:HashMap<String, Any>  = data.get(i.toString()) as HashMap<String, Any>
 
-                    if (it != null) {
-                        adapterData.add(it)
-                    }
+                val iterator = sido.entries.iterator()
+
+                while (iterator.hasNext()){
+
+                    var entry = iterator.next() as java.util.Map.Entry<String, ArrayList<java.util.Map.Entry<String,Long>>>
+
+                    var datas = National(entry.key,entry.value)
+
+                    arealist.add(datas)
 
                 }
 
-                adapter.notifyDataSetChanged()
-
             }
+
+            adapter.notifyDataSetChanged()
 
         }
 
-        adapter = AreaRangeAdapter(context, R.layout.item_area_range, adapterData)
+        adapter = AreaRangeAdapter(context, R.layout.item_area_range, arealist)
 
-        listLV.adapter = adapter
+        arealistLV.adapter = adapter
 
+        arealistLV.itemsCanFocus = true
+        arealistLV.setOnItemClickListener{ parent, view, position, id ->
+
+            gridGV.visibility = View.VISIBLE
+
+            arealistLV.visibility = View.GONE
+
+            val item = arealist.get(position)
+
+            println("item :========= ${item.national}")
+
+            if(areaGridList.size > 1) {
+                areaGridList.clear()
+                for (i in 0..item.national.size-1){
+
+                    var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
+
+                    val iterator = data.entries.iterator()
+
+                    while (iterator.hasNext()){
+
+                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
+
+                        var datas = NationalGrid(entry.key,entry.value)
+
+                        areaGridList.add(datas)
+
+                    }
+
+                }
+            }else {
+            for (i in 0..item.national.size-1){
+
+                var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
+
+                val iterator = data.entries.iterator()
+
+                while (iterator.hasNext()){
+
+                    var entry = iterator.next() as java.util.Map.Entry<String, Long>
+
+                    var datas = NationalGrid(entry.key,entry.value)
+
+                    areaGridList.add(datas)
+
+                }
+
+            }
+            }
+
+            GridAdapter.notifyDataSetChanged()
+
+
+        }
+
+        GridAdapter = AreaRangeGridAdapter(context,R.layout.item_area_range_grid,areaGridList)
+
+        gridGV.adapter = GridAdapter
 
         //활동 지역 범위 삭제
         area_deal1.setOnClickListener {
@@ -102,9 +166,25 @@ class AreaRangeActivity : RootActivity() {
             areaCnt.text = "지역 범위 설정 ($actArea/3)"
             //
         }
+
+        finishLL.setOnClickListener {
+            if(arealistLV.visibility == View.VISIBLE){
+                finish()
+            }
+
+            if(gridGV.visibility == View.VISIBLE){
+                arealistLV.visibility = View.VISIBLE
+                gridGV.visibility = View.GONE
+            }
+        }
     }
 
     fun hideArea(view: View){
         view.visibility = View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 }

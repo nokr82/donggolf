@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/finishaLL"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
             <ImageView
@@ -62,25 +62,27 @@
         android:layout_height="151dp"
         android:gravity="bottom|center">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="145dp"
+            android:layout_height="150dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_profile_l"
                 android:id="@+id/imgProfile"/>
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="15dp"
-                android:layout_gravity="bottom|right"
+                android:id="@+id/addProfImg"
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:background="@drawable/btn_add_photo" />
 
-        </FrameLayout>
+        </RelativeLayout>
         <TextView
-            android:id="@+id/txPhotoCnt"
+            android:id="@+id/mngTXPhotoCnt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -106,6 +108,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="5dp"/>
         <ImageView
+            android:id="@+id/btnNameModi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center"
@@ -126,6 +129,7 @@
             android:layout_marginRight="5dp"
             android:id="@+id/txUserRegion" />
         <ImageView
+            android:id="@+id/setRegion"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_gravity="bottom|right"
@@ -145,6 +149,7 @@
             android:background="@drawable/icon_first"
             android:layout_marginRight="5dp"/>
         <TextView
+            android:id="@+id/myNeighbor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -158,8 +163,9 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
     <LinearLayout
+        android:id="@+id/messageTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -174,7 +180,7 @@
             android:text="상태메시지"
             android:textSize="13dp"/>
         <TextView
-            android:id="@+id/messageTV"
+            android:id="@+id/infoStatusMsg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#c9c9c9"
@@ -185,8 +191,9 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
     <LinearLayout
+        android:id="@+id/prfhashtagLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -211,7 +218,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/line_1"/>
+        android:background="@drawable/line_1"/>
 
 
     <RelativeLayout

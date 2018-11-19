@@ -17,6 +17,9 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert" />
+
     <style name="full_screen_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>

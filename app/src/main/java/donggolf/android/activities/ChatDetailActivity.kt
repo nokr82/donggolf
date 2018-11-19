@@ -18,6 +18,15 @@ class ChatDetailActivity : RootActivity() {
 
         }
 
+        chatCont.setOnItemClickListener { parent, view, position, id ->
+            drawerMenu.closeDrawer(chat_right_menu)
+        }
+
+
+
+
+
+
         finishaLL.setOnClickListener {
             finish()
         }
