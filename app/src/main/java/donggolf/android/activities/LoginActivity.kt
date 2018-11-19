@@ -7,16 +7,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.squareup.okhttp.internal.Util
+import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
-import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -35,13 +31,48 @@ class LoginActivity : RootActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+
+
+
+        val params = HashMap<String, Any>()
+        params["standby"]
+
+
+        val db = FirebaseFirestore.getInstance()
+
+        db.runTransaction {
+            val docRef = db.collection("mates").document("5DaIBOw2yOaKjKFvwsVj8uva1XO2")
+            val doc = it.get(docRef)
+            val data = doc.data
+
+            println(data)
+
+            println("------------------------------")
+
+            val standby = data!!["standby"] as HashMap<String, Any>
+
+            val newData = HashMap<String, Any>()
+            newData["block"] = true
+            standby["www"] = newData
+
+
+
+            it.update(docRef, data)
+
+            println(standby)
+
+
+        }
+
+
+
         context = this
 
         mAuth = FirebaseAuth.getInstance()
 
         autoLogin = PrefUtils.getBooleanPreference(context, "auto", false)
-        atEmail = PrefUtils.getStringPreference(context, "email")
-        atPassword = PrefUtils.getStringPreference(context, "pass")
+        atEmail = PrefUtils.getStringPreference(context, "email", "")
+        atPassword = PrefUtils.getStringPreference(context, "pass", "")
         /*atEmail = "devstories@devstories.com"
         atPassword = "123456"*/
         if (atEmail.isEmpty() || atPassword.isEmpty())
