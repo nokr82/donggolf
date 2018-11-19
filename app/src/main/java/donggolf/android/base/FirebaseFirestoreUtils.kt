@@ -2,8 +2,8 @@ package donggolf.android.base
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.util.*
 import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -328,6 +328,38 @@ class FirebaseFirestoreUtils {
                     .addOnFailureListener {
                         result(false)
                     }
+
+        }
+
+        fun updateField(collectionName:String, key:String, field:String, propertyKey:String, propertyValue:Any, result: (success:Boolean) -> Unit) {
+
+            db.runTransaction {
+                val docRef = db.collection(collectionName).document(key)
+                val doc = it.get(docRef)
+                val data = doc.data
+
+                val field = data!![field] as HashMap<String, Any>
+                field[propertyKey] = propertyValue
+                it.update(docRef, data)
+
+                result(true)
+            }
+
+        }
+
+        fun deleteFieldKey(collectionName:String, key:String, field:String, propertyKey:String, result: (success:Boolean) -> Unit) {
+
+            db.runTransaction {
+                val docRef = db.collection(collectionName).document(key)
+                val doc = it.get(docRef)
+                val data = doc.data
+
+                val field = data!![field] as HashMap<String, Any>
+                field.remove(propertyKey)
+                it.update(docRef, data)
+
+                result(true)
+            }
 
         }
 
