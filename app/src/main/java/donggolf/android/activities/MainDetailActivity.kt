@@ -5,6 +5,7 @@ import android.content.*
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.MotionEvent
 import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
@@ -12,7 +13,9 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.actions.ContentAction
+import donggolf.android.actions.InfoAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
@@ -24,6 +27,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class MainDetailActivity : RootActivity() {
@@ -56,6 +60,8 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     lateinit var activity: MainDetailActivity
+
+    var owner : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +128,7 @@ class MainDetailActivity : RootActivity() {
                                 var exclude_looker: ArrayList<String> = data.get("exclude_looker") as ArrayList<String>
                                 val heart_user = data["heart_user"] as Boolean
                                 val looker = data["looker"]as Long
-                                val owner = data["owner"].toString()
+                                owner = data["owner"].toString()
                                 var region: ArrayList<String> = data.get("region") as ArrayList<String>
                                 var sharpTag: ArrayList<String> = data.get("sharp_tag") as ArrayList<String>
                                 var texts:ArrayList<Any> = data.get("texts") as ArrayList<Any>
@@ -372,18 +378,12 @@ class MainDetailActivity : RootActivity() {
                                                         }
                                                     }
                                                 }
-
                                             }
                                         }
-
                                     }
                                 }
-
                             }
-
                         }
-
-
                     })
                     .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
             val alert = builder.create()
@@ -400,11 +400,38 @@ class MainDetailActivity : RootActivity() {
             modify()
         }
 
+        addFriendTV.setOnClickListener {
+            var wid = ""
+            var uid = PrefUtils.getStringPreference(context, "uid")
+
+            val newData = HashMap<String, Any>()
+            newData["block"] = true
+
+            //원래는 user PK 값으로 users나 mates를 검색해야하는데 owner 에 nick 이 들어있어서 추후 수정
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("users")
+                    .whereEqualTo("nick",owner)
+                    .get()
+                    .addOnCompleteListener{
+                        if (it.isSuccessful) {
+                            for (document in it.getResult()) {
+                                //Log.d("getUserData", "getId : "+document.getId() + " => " + " getData : " +document.getData())
+                                wid = document.getId()
+//                                println("==========================================================")
+//                                println("nick : $owner, wid : $wid, uid : $uid")
+//                                println("==========================================================")
+
+                                //mates 테이블에서 키값이 wid인 문서의 standby 에
+                                FirebaseFirestoreUtils.updateField("mates", wid, "standby", uid, newData) {
+                                    println("it : $it")
+                                }
 
 
-
-
-
+                            }
+                        }
+                    }
+        }
     }
 
     fun MoveFindPictureActivity(){

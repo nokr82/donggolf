@@ -510,25 +510,17 @@ class AddPostActivity : RootActivity() {
 
                                                                 }
                                                             }
-
-
                                                         }
                                                     }
-
-
                                                 }
                                             }
-
                                         }
                                     }
                                 }
                             }
-
                         }
                     }
-
                 }
-
             }
 
             if (displaynamePaths.size == 0) {

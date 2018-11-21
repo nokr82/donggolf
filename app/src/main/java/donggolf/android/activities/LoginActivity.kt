@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -17,6 +18,14 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_login.*
+import android.provider.SyncStateContract.Helpers.update
+import android.content.pm.PackageManager
+import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
+import android.content.pm.PackageInfo
+import android.util.Base64
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
 
 class LoginActivity : RootActivity() {
 
@@ -33,8 +42,7 @@ class LoginActivity : RootActivity() {
 
 
 
-
-        val params = HashMap<String, Any>()
+        /*val params = HashMap<String, Any>()
         params["standby"]
 
 
@@ -53,13 +61,14 @@ class LoginActivity : RootActivity() {
 
             println("111111")
 
-            Thread.sleep(5000)
+            Thread.sleep(50000)
 
             println("222222")
 
+            //데이터입력
             val newData = HashMap<String, Any>()
             newData["block"] = false
-            standby["qqqqq"] = newData
+            standby["oooooo"] = newData
 
 
 
@@ -67,12 +76,11 @@ class LoginActivity : RootActivity() {
 
             println(standby)
 
-
-        }
-
-
+        }*/
 
         context = this
+
+        //getKeyHash(context)
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -81,19 +89,18 @@ class LoginActivity : RootActivity() {
         atPassword = PrefUtils.getStringPreference(context, "pass", "")
         /*atEmail = "devstories@devstories.com"
         atPassword = "123456"*/
-        if (atEmail.isEmpty() || atPassword.isEmpty())
-            return
 
         println("autoLogin========$autoLogin")
         if (autoLogin){
             autologinCB.isChecked = true
+            login()
         } else {
             autologinCB.isChecked = false
         }
 
-        if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
+        /*if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
             loginHandler.sendEmptyMessage(0)
-        }
+        }*/
 
         btn_login.setOnClickListener {
             login()
@@ -108,6 +115,7 @@ class LoginActivity : RootActivity() {
         }
 
         linear_go_register.setOnClickListener {
+            Log.i("ClickListener", "onClickListener pressed")
             moveregister()
         }
 
@@ -132,6 +140,10 @@ class LoginActivity : RootActivity() {
 
 
         }
+
+        /*if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
+            loginHandler.sendEmptyMessage(0)
+        }*/
 
     }
 
@@ -240,6 +252,7 @@ class LoginActivity : RootActivity() {
     }
 
     fun moveregister() {
+        println("moveRegister()")
         startActivity(Intent(this, RegisterActivity::class.java))
     }
 
@@ -270,5 +283,21 @@ class LoginActivity : RootActivity() {
         }
     }
 
+    fun getKeyHash(context: Context) : String? {
+        try {
+            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            for (signature in info.signatures) {
+                val md = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+
+        } catch (e: NoSuchAlgorithmException) {
+
+        }
+
+        return null
+    }
 
 }

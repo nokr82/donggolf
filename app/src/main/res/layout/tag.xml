@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="wrap_content"
     android:layout_height="wrap_content" android:gravity="center"
-    android:padding="5dp">
+    android:layout_margin="5dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/titleTV"
-        android:textSize="10dp"
+        android:id="@+id/titleTagTV"
+        android:textSize="13dp"
         android:layout_marginRight="3dp"
         android:text="대구광역시"/>
     <ImageView

@@ -325,14 +325,15 @@ class InfoFragment : Fragment(){
                     txUserName.setText(newNick)
                 }
                 MODIFY_TAG -> {
-                    var newTag = data?.getStringArrayExtra("newTags")
+                    /*var newTag = data?.getStringArrayExtra("newTags")
                     var tmp :String = ""
 
                     for (i in 0..(newTag!!.size-1)){
 
                         tmp += newTag.get(i) + " "
                     }
-                    hashtagTV.setText(tmp)
+                    hashtagTV.setText(tmp)*/
+
                 }
                 REGION_CHANGE -> {
                     var newRG1 = data!!.getStringExtra("RG1")

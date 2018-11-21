@@ -7,9 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
 import donggolf.android.actions.InfoAction
 import donggolf.android.actions.JoinAction
+import donggolf.android.actions.ProfileAction
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import donggolf.android.models.Info
+import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : RootActivity() {
@@ -174,6 +177,29 @@ class RegisterActivity : RootActivity() {
                                 InfoAction.getInfo(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                                     if(success) {
                                         println("data : $data")
+
+                                        var newbie = user?.uid
+                                        //println("newbie uid============================$newbie 가입 성공")
+
+                                        var imgl = ""
+                                        var imgs = ""
+                                        var lastN = 0L
+                                        var nick = nickName
+                                        var sex = (if (gender == 0) "M" else "F")
+                                        var sTag:ArrayList<String> = ArrayList<String>()
+                                        sTag.add("")
+                                        var statusMessage = ""
+
+                                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
+
+                                        FirebaseFirestoreUtils.save("users", uid, item) {
+                                            if (it) {
+                                                println("성공적으로 가입되었습니다")
+                                                finish()
+                                            } else {
+
+                                            }
+                                        }
 
                                         LoginActivity.setInfoData(context, data)
 

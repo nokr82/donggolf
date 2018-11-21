@@ -8,12 +8,14 @@ import android.widget.ImageView
 import android.widget.TextView
 //import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
+import donggolf.android.models.Users
+import java.net.UnknownServiceException
 import java.util.*
 
-class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data) {
+class FriendAdapter(context: Context, view:Int, data: ArrayList<Users>) : ArrayAdapter<Users>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String, Any>> = data
+    var data:ArrayList<Users> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -33,8 +35,8 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>
             }
         }
 
-        item.main_detail_listitem_nickname.setText(data.get(position).get("nick").toString())
-        item.main_detail_listitem_condition.setText(data.get(position).get("state_msg").toString())
+        item.main_detail_listitem_nickname.setText(data.get(position).nick)
+        item.main_detail_listitem_condition.setText(data.get(position).state_msg)
         /*if (data.get(position).get("relation").toString().equals("mate1")){
             item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_first)
         }else{
@@ -64,7 +66,7 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): Users {
 
         return data.get(position)
     }

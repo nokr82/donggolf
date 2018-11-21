@@ -10,7 +10,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
 import donggolf.android.actions.ProfileAction
+import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -33,6 +35,8 @@ class ProfileActivity : RootActivity() {
     var wTags : ArrayList<String> = ArrayList<String>()
     var wstmsg : String = ""
 
+    var friendTF = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -41,6 +45,7 @@ class ProfileActivity : RootActivity() {
 
         var wid = intent.getStringExtra("writerID")
         println("wid============$wid")
+        var uid = PrefUtils.getStringPreference(context, "uid")
 
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.getCurrentUser()
@@ -60,8 +65,26 @@ class ProfileActivity : RootActivity() {
         txUserName.setText(wnick)
         statusMessage.setText(wstmsg)
 
+        //회원 하나 추가해야함
         click_chat.setOnClickListener {
             btn_frd_cc1.setBackgroundColor(R.drawable.btn_frd_cancel)
+            val newData = HashMap<String, Any>()
+            newData["block"] = true
+
+            if (!friendTF) {
+
+                //mates 테이블에서 키값이 wid인 문서의 standby 에
+                FirebaseFirestoreUtils.updateField("mates", wid, "standby", uid, newData) {
+                    println("it : $it")
+                    friendTF = true
+                }
+
+            } else {
+                FirebaseFirestoreUtils.deleteFieldKey("mates", wid, "standby", uid) {
+                    println("deleteFieldKey it : $it")
+                    friendTF = false
+                }
+            }
         }
 
         click_post.setOnClickListener {
@@ -136,7 +159,5 @@ class ProfileActivity : RootActivity() {
                 }
             }
         }
-
-
     }
 }

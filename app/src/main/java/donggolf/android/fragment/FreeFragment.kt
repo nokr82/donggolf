@@ -228,6 +228,7 @@ open class FreeFragment : Fragment() {
                 searchPosts(srchWd)
                 main_listview_search.visibility = View.GONE
                 main_edit_search.setText("")
+                println("EnterKey was pressed in main_edit_search EditText")
                 true
             } else {
                 false
@@ -240,7 +241,7 @@ open class FreeFragment : Fragment() {
     }//onViewCreated end
 
     fun searchPosts(keyWord : String){
-        SearchAction.searchList(keyWord, Pair("createAt",Query.Direction.DESCENDING), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
+        SearchAction.searchList(keyWord, Pair("createAt",Query.Direction.DESCENDING), 20){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
             if(success && data != null) {
 
@@ -276,7 +277,7 @@ open class FreeFragment : Fragment() {
                 }
             }
         }
-        adapterData.clear()
+        //adapterData.clear()
 
     }
 

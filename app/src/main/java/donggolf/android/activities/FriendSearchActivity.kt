@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -27,6 +28,17 @@ import donggolf.android.base.Config.url
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_search.view.*
 import java.util.logging.Logger
+import android.provider.SyncStateContract.Helpers.update
+import android.content.pm.PackageManager
+import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
+import android.content.pm.PackageInfo
+import android.nfc.Tag
+import android.util.Base64
+import com.google.firebase.firestore.FirebaseFirestore
+import donggolf.android.models.Users
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.security.Signature
 
 
 class FriendSearchActivity : RootActivity() {
@@ -34,7 +46,7 @@ class FriendSearchActivity : RootActivity() {
     val REQUEST_INVITE = 700
     lateinit var context : Context
 
-    private  var friendData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var friendData : ArrayList<Users> = ArrayList<Users>()
     private  lateinit var  friendAdapter : FriendAdapter
     private  lateinit var  editadapter : MainEditAdapter
     private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
@@ -56,7 +68,9 @@ class FriendSearchActivity : RootActivity() {
 
         var user:HashMap<String,Any> = intent.getSerializableExtra("tUser") as HashMap<String, Any>
 
+        //main list view setting
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
+        frdResultLV.adapter = friendAdapter
 
         /*FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
                 .addOnSuccessListener(this, OnSuccessListener { data ->
@@ -86,23 +100,17 @@ class FriendSearchActivity : RootActivity() {
             main_listview_search.visibility = View.VISIBLE
         }
 
+        btn_txDel.setOnClickListener {
+            frdSearchET.setText("")
+        }
+
         frdSearchET.setOnEditorActionListener { v, actionId, event ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
-                var searchCond : HashMap<String, String> = HashMap<String,String>()
+                //var searchCond : HashMap<String, String> = HashMap<String,String>()
                 var keyWord = v.frdSearchET.text.toString()
-                searchCond.put("sharpTag", keyWord)
-                ProfileAction.searchFriendsWithTag(searchCond){ success, data, exception ->
-                    if (success) {
-                        data!!.forEach {
-                            if (it != null) {
-                                friendData.add(it)
-                            }
-                            println("getId in FriendSearch -----------> ${data.get(actionId)}")
 
-                        }
-                        friendAdapter.notifyDataSetChanged()
-                    }
-                }
+                //println("Search Words : $keyWord in FriendSearchActivity")
+                friendSearchWords(keyWord)
                 true
             } else {
                 false
@@ -123,7 +131,6 @@ class FriendSearchActivity : RootActivity() {
                     .build()
 
             startActivityForResult(intent, REQUEST_INVITE)*/
-
         }
 
         btn_search_friends.setOnClickListener {
@@ -134,15 +141,7 @@ class FriendSearchActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-            var condition : HashMap<String, String> = HashMap<String, String>()
-            condition.put("sharpTag", which)
-
-            ProfileAction.searchFriendsWithTag(condition){ success, data, exception ->
-                if (success){
-
-                }
-            }
-
+            friendSearchWords(which)
 
         }
     }
@@ -154,8 +153,80 @@ class FriendSearchActivity : RootActivity() {
 
     }
 
+    fun getKeyHash(context: Context) : String? {
+        val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES.toString())
+
+        if (packageInfo == null){
+            return null
+
+            for (signature in packageInfo?.signatures!!){
+                try {
+                    getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
+                    var md : MessageDigest = MessageDigest.getInstance("SHA")
+                    md.update(signature.toByteArray())
+                    return Base64.encodeToString(md.digest(), Base64.NO_WRAP)
+                } catch (e : NoSuchAlgorithmException) {
+                    Log.w("KEY_HASH", "Unable to get MessageDigest. signature===========================$signature", e)
+                }
+            }
+        }
+        return null
+    }
+
     fun addFriendSearchWords() {
 
+    }
+
+    fun friendSearchWords(keyWord : String) {
+        val db = FirebaseFirestore.getInstance()
+
+        friendData.clear()
+        db.collection("users")
+                .whereEqualTo("nick", keyWord)
+                //.whereEqualTo("sharpTag", keyWord)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        for (document in it.getResult()) {
+                            var tmpImgl = document.data.get("imgl") as String
+                            var tmpImgs = document.data.get("imgs") as String
+                            var tmpLast = document.data.get("last") as Long
+                            var tmpNick = document.data.get("nick") as String
+                            var tmpSex = document.data.get("sex") as String
+                            var tmpSharptag = document.data.get("sharpTag") as ArrayList<String>
+                            var tmpSttMsg = document.data.get("state_msg") as String
+
+                            var tmp = Users(tmpImgl, tmpImgs, tmpLast, tmpNick, tmpSex, tmpSharptag, tmpSttMsg)
+                            friendData.add(tmp)
+                        }
+                        friendAdapter.notifyDataSetChanged()
+                    }
+                }
+
+        //닉네임 조건에서 못 찾으면
+        if (friendData.isEmpty()){
+            db.collection("users")
+                    .whereEqualTo("sharpTag", keyWord)
+                    .get()
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            for (document in it.getResult()) {
+                                var tmpImgl = document.data.get("imgl") as String
+                                var tmpImgs = document.data.get("imgs") as String
+                                var tmpLast = document.data.get("last") as Long
+                                var tmpNick = document.data.get("nick") as String
+                                var tmpSex = document.data.get("sex") as String
+                                var tmpSharptag = document.data.get("sharpTag") as ArrayList<String>
+                                var tmpSttMsg = document.data.get("state_msg") as String
+
+                                var tmp = Users(tmpImgl, tmpImgs, tmpLast, tmpNick, tmpSex, tmpSharptag, tmpSttMsg)
+                                friendData.add(tmp)
+                            }
+                            println("friendData size : ${friendData.size}")
+                            friendAdapter.notifyDataSetChanged()
+                        }
+                    }
+        }
     }
 
 

@@ -5,10 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.models.National
 import donggolf.android.models.NationalGrid
+import kotlinx.android.synthetic.main.item_area_range_grid.view.*
 import org.json.JSONObject
 
 
@@ -40,8 +42,29 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<Natio
 
         item.titleTV.setText(data.title)
 
-        item.checkCB.isChecked = true
+        item.checkCB.isChecked = data.isSel
 
+        //if()로 처리
+        /*item.checkCB.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked){
+                println("checked!")
+                println("checked item ::: ${data.title}")
+
+            }
+        }*/
+
+        /*
+        item.checkCB.setOnClickListener {
+            if (it.checkCB.isChecked) {
+
+            }
+        }
+
+        item.areaItemLL.setOnClickListener {
+            it.checkCB.isChecked = !it.checkCB.isChecked
+            println("checkbox status ::: ${it.checkCB.isChecked}")
+        }
+        */
 
 
         return retView
@@ -72,10 +95,12 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<Natio
 
         var titleTV : TextView
         var checkCB : CheckBox
+        var areaItemLL : LinearLayout
 
         init {
             titleTV = v.findViewById<View>(R.id.titleTV) as TextView
             checkCB = v.findViewById<View>(R.id.checkCB) as CheckBox
+            areaItemLL = v.findViewById<View>(R.id.areaItemLL) as LinearLayout
         }
     }
 }

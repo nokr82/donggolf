@@ -64,7 +64,7 @@ class ProfileTagChangeActivity : RootActivity() {
         tagList.adapter = adapter
 
         mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
+//        val currentUser = mAuth!!.getCurrentUser()
         val db = FirebaseFirestore.getInstance()
 
         var uid = PrefUtils.getStringPreference(context, "uid")
@@ -80,36 +80,27 @@ class ProfileTagChangeActivity : RootActivity() {
                     nick = data!!.get("nick") as String
                     sex = data!!.get("sex") as String
                     sTag = data!!.get("sharpTag") as ArrayList<String>
-                    adapterData = sTag
-                }
 
+                    for (i in 0..(sTag.size-1)) {
+                        adapterData.add("#"+sTag.get(i))
 
-            }
-
-            /*if(success && data != null) {
-                data.forEach {
-                    println(it)
-                    adapterData.clear()
-                    if (it != null) {
-                        adapter.add(it)
                     }
+                        adapter.notifyDataSetChanged()
 
                 }
-
-                adapter.notifyDataSetChanged()
-
-            }*/
-
+            }
         }
 
+
+
         confirmRL.setOnClickListener {
-            nick = nameET.text.toString()
-            val item = Users(imgl, imgs, lastN, nick, sex, adapterData, statusMessage)
+
+            val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
             FirebaseFirestoreUtils.save("users", uid, item) {
                 if (it) {
                     var itt = Intent()
-                    itt.putExtra("newNick", nick)
+                    itt.putExtra("newTags", nick)
                     setResult(RESULT_OK, itt)
                     finish()
                 } else {
@@ -168,7 +159,7 @@ class ProfileTagChangeActivity : RootActivity() {
             hashtagET.setText("")
         }
 
-        confirmRL.setOnClickListener {
+        /*confirmRL.setOnClickListener {
             var intent = Intent();
             intent.putExtra("data",adapterData)
             if(adapterData.size > 0 && !adapterData.get(0).equals("")){
@@ -179,13 +170,10 @@ class ProfileTagChangeActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-
             intent.putExtra("data",adapterData)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }
-
-
+        }*/
 
     }
 }

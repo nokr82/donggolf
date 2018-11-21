@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature
         android:name="android.hardware.Camera"
@@ -106,9 +107,20 @@
         <activity
             android:name=".activities.AreaRangeActivity"
             android:theme="@style/NoTitleDialog" />
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key"/>
         <activity
             android:name=".activities.FriendSearchActivity"
-            android:theme="@style/NoTitleDialog" />
+            android:theme="@style/NoTitleDialog"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activities.MarketMainActivity"
             android:theme="@style/NoTitleDialog" />

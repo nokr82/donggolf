@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
+                android:id="@+id/areaLL1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="14dp">
@@ -53,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="서울특별시"
+                    android:text=""
                     android:textSize="14dp"/>
                 <ImageView
                     android:id="@+id/area_deal1"
@@ -64,6 +65,7 @@
                     android:layout_gravity="center"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/areaLL2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="14dp">
@@ -72,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="서울특별시"
+                    android:text=""
                     android:textSize="14dp"/>
                 <ImageView
                     android:id="@+id/area_deal2"
@@ -83,6 +85,7 @@
                     android:layout_gravity="center"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/areaLL3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="14dp">
@@ -91,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="서울특별시"
+
                     android:textSize="14dp"/>
                 <ImageView
                     android:id="@+id/area_deal3"

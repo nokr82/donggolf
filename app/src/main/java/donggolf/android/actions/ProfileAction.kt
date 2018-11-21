@@ -31,6 +31,8 @@ class ProfileAction {
             }
         }
 
+        //user PK, information for users, result
+
         //탈퇴
         fun deleteUser(key: String, result: (success: Boolean) -> Unit) {
             FirebaseFirestoreUtils.delete("users", key) {

@@ -14,7 +14,6 @@ class FirebaseFirestoreUtils {
         val db = FirebaseFirestore.getInstance()
         val storage = FirebaseStorage.getInstance()
 
-
         fun list(collectionName: String, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
 
             val params = HashMap<String, Any>()
@@ -122,7 +121,6 @@ class FirebaseFirestoreUtils {
             // Create a reference to the cities collection
             val ref = db.collection(collectionName)
             var query:Query? = null
-
 
             params.keys.forEach {
                 val key = it
@@ -331,6 +329,83 @@ class FirebaseFirestoreUtils {
 
         }
 
+        fun updateField(collectionName:String, key:String, field:String, propertyKey:String, propertyValue:Any, result: (success:Boolean) -> Unit) {
+
+            db.runTransaction {
+                val docRef = db.collection(collectionName).document(key)
+                val doc = it.get(docRef)
+                val data = doc.data
+
+                val field = data!![field] as HashMap<String, Any>
+                field[propertyKey] = propertyValue
+                it.update(docRef, data)
+
+                result(true)
+            }
+
+        }
+
+        fun deleteFieldKey(collectionName:String, key:String, field:String, propertyKey:String, result: (success:Boolean) -> Unit) {
+
+            db.runTransaction {
+                val docRef = db.collection(collectionName).document(key)
+                val doc = it.get(docRef)
+                val data = doc.data
+
+                val field = data!![field] as HashMap<String, Any>
+                field.remove(propertyKey)
+                it.update(docRef, data)
+
+                result(true)
+            }
+
+        }
+
+    }
+
+
+    //임시 : 닉네임으로 user PK 검색 서칭
+    fun tempGetOthersPK(collectionName: String, params: String, orderBy:Pair<*, *>?, page: Int, limit: Long, result: (success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception?) -> Unit) {
+
+        // Create a reference to the cities collection
+        val ref = db.collection(collectionName)
+        var query:Query? = null
+
+        query = ref.whereEqualTo("title", params)
+
+        // orderBy
+        if(orderBy != null) {
+            val key = orderBy.first
+            if(key != null) {
+                var direction = orderBy.second as? Query.Direction
+                if(direction == null) {
+                    direction = Query.Direction.ASCENDING
+                }
+
+                query = ref.orderBy(key.toString(), direction)
+
+            }
+
+        }
+
+        query!!.get()
+                .addOnSuccessListener {
+
+                    val data = ArrayList<Map<String, Any>?>()
+
+                    it.documents.forEach {
+                        val item = it.data
+                        if (item != null) {
+                            item!!.put("id", it.id)
+                            data.add(item)
+                        }
+                    }
+
+                    result(true, data, null)
+                }
+                .addOnFailureListener {
+                    result(false, null, it)
+                }
     }
 
 }

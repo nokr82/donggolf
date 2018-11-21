@@ -104,6 +104,7 @@
                     android:textSize="12dp" />
             </LinearLayout>
             <Button
+                android:id="@+id/btn_txDel"
                 android:layout_width="11.33dp"
                 android:layout_height="11.33dp"
                 android:layout_alignParentRight="true"
@@ -127,9 +128,6 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/frdResultLV"
@@ -181,6 +179,6 @@
             </ListView>
 
         </LinearLayout>
-    </RelativeLayout>
+
 
 </LinearLayout>
