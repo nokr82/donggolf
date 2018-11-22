@@ -5,7 +5,7 @@
 
     <LinearLayout
         android:id="@+id/inviteSMS"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
@@ -24,7 +24,7 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inviteKaKaO"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
@@ -33,6 +33,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            />
+            android:src="@drawable/KakaoTalK"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="카카오톡"
+            android:textSize="13dp"/>
     </LinearLayout>
 </LinearLayout>

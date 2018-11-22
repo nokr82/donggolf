@@ -123,14 +123,11 @@ class FriendSearchActivity : RootActivity() {
 
         invFriend.setOnClickListener {
 
-            /*var intent = AppInviteInvitation.IntentBuilder(user.values.toString() + "님이 초대를 보내셨습니다")
-                    .setMessage("인싸스포츠 골프 하쉴? 아래 링크를 눌러 골프어플로 함께하세요!")
-                    .setDeepLink(Uri.EMPTY)
-                    .setCustomImage(p0)
-                    .setCallToActionText("Find Data")
-                    .build()
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_invite_frd, null)
 
-            startActivityForResult(intent, REQUEST_INVITE)*/
+            builder.setView(dialogView)
+                    .show()
         }
 
         btn_search_friends.setOnClickListener {
