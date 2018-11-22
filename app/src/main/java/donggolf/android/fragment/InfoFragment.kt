@@ -325,14 +325,14 @@ class InfoFragment : Fragment(){
                     txUserName.setText(newNick)
                 }
                 MODIFY_TAG -> {
-                    /*var newTag = data?.getStringArrayExtra("newTags")
+                    var newTag = data!!.getStringArrayListExtra("newTags") as ArrayList<String>
                     var tmp :String = ""
 
                     for (i in 0..(newTag!!.size-1)){
 
-                        tmp += newTag.get(i) + " "
+                        tmp += "#" + newTag.get(i) + " "
                     }
-                    hashtagTV.setText(tmp)*/
+                    hashtagTV.setText(tmp)
 
                 }
                 REGION_CHANGE -> {

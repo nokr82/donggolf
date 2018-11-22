@@ -25,6 +25,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_profile_name_modif.*
+import kotlinx.android.synthetic.main.tag.view.*
 
 
 class ProfileTagChangeActivity : RootActivity() {
@@ -91,16 +92,22 @@ class ProfileTagChangeActivity : RootActivity() {
             }
         }
 
-
+        tagList.setOnItemClickListener { parent, view, position, id ->
+            view.removeIV.setOnClickListener {
+                adapter.removeItem(position)
+                sTag.removeAt(position)
+            }
+        }
 
         confirmRL.setOnClickListener {
 
+            Utils.hideKeyboard(context!!)
             val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
             FirebaseFirestoreUtils.save("users", uid, item) {
                 if (it) {
                     var itt = Intent()
-                    itt.putExtra("newTags", nick)
+                    itt.putExtra("newTags", sTag)
                     setResult(RESULT_OK, itt)
                     finish()
                 } else {
