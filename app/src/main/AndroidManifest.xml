@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <uses-feature
         android:name="android.hardware.Camera"
@@ -19,9 +21,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/NoTitleDialog">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <!-- activity android:name=".MainActivity"></activity -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
 
         <activity
             android:name=".activities.IntroActivity"
@@ -107,20 +115,23 @@
         <activity
             android:name=".activities.AreaRangeActivity"
             android:theme="@style/NoTitleDialog" />
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="@string/kakao_app_key"/>
         <activity
             android:name=".activities.FriendSearchActivity"
-            android:theme="@style/NoTitleDialog"
             android:launchMode="singleTop"
+            android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.MarketMainActivity"
             android:theme="@style/NoTitleDialog" />
@@ -211,7 +222,16 @@
             android:theme="@style/NoTitleDialog" />
         <activity android:name=".activities.ModStatusMsgActivity" />
         <activity android:name=".activities.SelectProfileImgActivity" />
-        <activity android:name=".activities.ViewProfileListActivity"></activity>
+        <activity android:name=".activities.ViewProfileListActivity" />
+        <activity android:name=".activities.MyPostMngActivity" />
+        <activity android:name=".activities.FriendManageActivity" />
+        <activity android:name=".activities.RequestFriendActivity" />
+        <activity android:name=".activities.FriendReqSelectCategoryActivity" />
+        <activity android:name=".activities.FriendCategoryDetailActivity" />
+        <activity android:name=".activities.FriendGrpDetailSettingActivity" />
+        <activity android:name=".activities.DongChatDetailActivity" />
+        <activity android:name=".activities.AddDongChatActivity" />
+        <activity android:name=".activities.DongchatProfileActivity"></activity>
     </application>
 
 </manifest>

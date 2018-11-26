@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.ChatDetailActivity">
+    tools:context=".activities.DongChatDetailActivity">
 
     <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawerMenu"
+        android:id="@+id/dongchat_drawerMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -50,16 +51,17 @@
                         android:layout_weight="1">
 
                         <LinearLayout
-                            android:id="@+id/btn_opMenu"
+                            android:id="@+id/btn_opDongchatMenu"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true">
+
                             <ImageView
                                 android:layout_width="6dp"
                                 android:layout_height="15dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/btn_chat_option"
-                                android:layout_marginRight="20dp"/>
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/btn_chat_option" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -90,7 +92,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/chat_right_menu"
+            android:id="@+id/dongchat_right_menu"
             android:orientation="vertical"
             android:layout_gravity="right"
             android:gravity="right" >
@@ -99,7 +101,6 @@
                 android:layout_width="280dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"><!--여기가 전체-->
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -204,21 +205,114 @@
                         android:layout_gravity="left"
                         android:textSize="13dp"
                         android:textStyle="bold"
-                        android:text="대화내용 삭제"/>
-                    <LinearLayout
-                        android:layout_width="190dp"
-                        android:layout_height="wrap_content"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="right|center_vertical"
-                        android:src="@drawable/icon_depth_menu"/>
+                        android:text="지역채팅방 정보"/>
                 </LinearLayout>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/line_1"/>
+                <LinearLayout
+                    android:id="@+id/chatSettingLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
+                            android:textStyle="bold"
+                            android:textSize="13dp"
+                            android:layout_margin="10dp"
+                            android:text="채팅방 멤버 차단"/>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:src="@drawable/icon_depth_menu"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/line_1"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
+                            android:textStyle="bold"
+                            android:textSize="13dp"
+                            android:layout_margin="10dp"
+                            android:text="채팅방 멤버 차단 해제"/>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:src="@drawable/icon_depth_menu"/>
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/line_1"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13dp"
+                            android:textStyle="bold"
+                            android:layout_marginRight="70dp"
+                            android:text="채팅방 설정"/>
+
+                        <LinearLayout
+                            android:id="@+id/publicLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="15dp">
+                            <ImageView
+                                android:id="@+id/radio_public"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/btn_radio_off"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textSize="13dp"
+                                android:layout_marginLeft="5dp"
+                                android:text="공개"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/secretLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:id="@+id/radio_secret"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="5dp"
+                                android:src="@drawable/btn_radio_off"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="13dp"
+                                android:textStyle="bold"
+                                android:text="비공개"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -245,10 +339,53 @@
                         android:textStyle="bold"
                         android:text="아주 크게"/>
                 </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/line_1"/>
+                <LinearLayout
+                    android:id="@+id/chatReportLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="8"
+                        android:textStyle="bold"
+                        android:textSize="13dp"
+                        android:text="대화방 신고하기"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_depth_menu"
+                        android:layout_margin="15dp"/>
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/line_1"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom|right"
+                    android:padding="10dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="25dp"
+                        android:src="@drawable/img_alarm_off"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/btn_out_chat"/>
+                </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
     </android.support.v4.widget.DrawerLayout>
-
-
 
 </LinearLayout>

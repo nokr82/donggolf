@@ -2,6 +2,7 @@ package donggolf.android.base;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.google.firebase.FirebaseApp;
 import com.nostra13.universalimageloader.core.ImageLoader;

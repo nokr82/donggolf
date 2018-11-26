@@ -267,6 +267,7 @@
                 android:layout_margin="10dp">
 
                 <ImageView
+                    android:id="@+id/btn_myPosts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -308,6 +309,7 @@
                 android:layout_margin="10dp">
 
                 <ImageView
+                    android:id="@+id/btn_go_frd_mng"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />

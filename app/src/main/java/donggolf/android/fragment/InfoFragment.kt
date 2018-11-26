@@ -95,7 +95,7 @@ class InfoFragment : Fragment(){
         }
 
         mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
+        val currentUser = mAuth!!.currentUser
         db = FirebaseFirestore.getInstance()
 
         println("currentUser======$currentUser")
@@ -127,20 +127,20 @@ class InfoFragment : Fragment(){
         ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
 
             statusMessage = data!!.get("state_msg") as String
-            imgl = data!!.get("imgl") as String
-            imgs = data!!.get("imgs") as String
-            lastN = data!!.get("last") as Long
-            nick = data!!.get("nick") as String
-            sex = data!!.get("sex") as String
-            sTag = data!!.get("sharpTag") as ArrayList<String>
+            imgl = data.get("imgl") as String
+            imgs = data.get("imgs") as String
+            lastN = data.get("last") as Long
+            nick = data.get("nick") as String
+            sex = data.get("sex") as String
+            sTag = data.get("sharpTag") as ArrayList<String>
 
-            txUserName.setText(nick)
-            infoStatusMsg.setText(statusMessage)
+            txUserName.text = nick
+            infoStatusMsg.text = statusMessage
             var tmpmsg = ""
             for (i in 0..(sTag.size-1)){
                 tmpmsg += "#" + sTag.get(i) + " "
             }
-            hashtagTV.setText(tmpmsg)
+            hashtagTV.text = tmpmsg
         }
 
 
@@ -194,6 +194,17 @@ class InfoFragment : Fragment(){
         setRegion.setOnClickListener {
             var intent = Intent(activity, AreaRangeActivity::class.java)
             startActivityForResult(intent, REGION_CHANGE)
+        }
+
+        btn_myPosts.setOnClickListener {
+            val goIt = Intent(activity, MyPostMngActivity::class.java)
+            goIt.putExtra("user", uid)
+            startActivity(goIt)
+        }
+
+        btn_go_frd_mng.setOnClickListener {
+            val goIt = Intent(activity, FriendManageActivity::class.java)
+            startActivity(goIt)
         }
 
     }
@@ -313,34 +324,34 @@ class InfoFragment : Fragment(){
 
                     }
 
-                    mngTXPhotoCnt.setText(images.size.toString())
+                    mngTXPhotoCnt.text = images.size.toString()
 
                 }
                 SELECT_STATUS -> {
                     var sttsMsg = data?.getStringExtra("status_message")
-                    infoStatusMsg.setText(sttsMsg)
+                    infoStatusMsg.text = sttsMsg
                 }
                 MODIFY_NAME -> {
                     var newNick = data?.getStringExtra("newNick")
-                    txUserName.setText(newNick)
+                    txUserName.text = newNick
                 }
                 MODIFY_TAG -> {
                     var newTag = data!!.getStringArrayListExtra("newTags") as ArrayList<String>
                     var tmp :String = ""
 
-                    for (i in 0..(newTag!!.size-1)){
+                    for (i in 0..(newTag.size-1)){
 
                         tmp += "#" + newTag.get(i) + " "
                     }
-                    hashtagTV.setText(tmp)
+                    hashtagTV.text = tmp
 
                 }
                 REGION_CHANGE -> {
                     var newRG1 = data!!.getStringExtra("RG1")
-                    var newRG2 = data!!.getStringExtra("RG2")
-                    var newRG3 = data!!.getStringExtra("RG3")
+                    var newRG2 = data.getStringExtra("RG2")
+                    var newRG3 = data.getStringExtra("RG3")
 
-                    txUserRegion.setText(newRG1+","+newRG2+","+newRG3)
+                    txUserRegion.text = newRG1+","+newRG2+","+newRG3
                 }
             }
         }

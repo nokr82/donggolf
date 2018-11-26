@@ -4,41 +4,33 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Config
-import com.google.android.gms.appinvite.AppInviteInvitation
 import donggolf.android.R
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_friend_search.*
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import com.google.android.gms.appinvite.AppInvite
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.appinvite.FirebaseAppInvite
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import donggolf.android.actions.ProfileAction
 import donggolf.android.adapters.FriendAdapter
-import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
-import donggolf.android.base.Config.url
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_search.view.*
-import java.util.logging.Logger
-import android.provider.SyncStateContract.Helpers.update
 import android.content.pm.PackageManager
 import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
-import android.content.pm.PackageInfo
-import android.nfc.Tag
+import android.provider.ContactsContract
+import android.telephony.SmsManager
 import android.util.Base64
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.TextTemplate
+import com.kakao.network.callback.ResponseCallback
 import donggolf.android.models.Users
+import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
+import java.lang.Exception
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.security.Signature
 
 
 class FriendSearchActivity : RootActivity() {
@@ -50,6 +42,8 @@ class FriendSearchActivity : RootActivity() {
     private  lateinit var  friendAdapter : FriendAdapter
     private  lateinit var  editadapter : MainEditAdapter
     private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+
+    lateinit var user : HashMap<String,Any>
 
     //var getNick : String = ""
     //var getStMsg : String = ""
@@ -66,7 +60,7 @@ class FriendSearchActivity : RootActivity() {
 
         val intent:Intent = intent
 
-        var user:HashMap<String,Any> = intent.getSerializableExtra("tUser") as HashMap<String, Any>
+        user = intent.getSerializableExtra("tUser") as HashMap<String, Any>
 
         //main list view setting
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
@@ -123,15 +117,37 @@ class FriendSearchActivity : RootActivity() {
 
         invFriend.setOnClickListener {
 
-            val builder = AlertDialog.Builder(this)
-            val dialogView = layoutInflater.inflate(R.layout.dlg_invite_frd, null)
+            Utils.hideKeyboard(it.context)
 
-            builder.setView(dialogView)
-                    .show()
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_invite_frd, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView) // custom xml과 alertDialogBuilder를 붙임
+            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
+
+            dialogView.inviteSMS.setOnClickListener {
+                //println("SMS 이미지 클릭됨")
+
+                val smsit = Intent(Intent.ACTION_PICK)
+                smsit.data = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                startActivityForResult(smsit, REQUEST_INVITE)
+
+                alert.dismiss()
+            }
+
+            dialogView.inviteKaKaO.setOnClickListener {
+
+                try {
+                    shareKakao()
+                } catch (ke : Exception) {
+                    ke.printStackTrace()
+                }
+
+                alert.dismiss()
+            }
         }
 
         btn_search_friends.setOnClickListener {
-            //frdSearchET.text.toString()
+
             var which = Utils.getString(frdSearchET)
             if (which.isEmpty()){
                 Utils.alert(context, "검색할 키워드를 입력해주세요")
@@ -146,8 +162,20 @@ class FriendSearchActivity : RootActivity() {
     //카카오톡 공유
     fun shareKakao() {
         var intent = Intent()
+        //Get Image Url
 
+        val params = TextTemplate.newBuilder("동네골프",
+                LinkObject.newBuilder().setWebUrl("market://details?id=donggolf.android").setMobileWebUrl("market://details?id=donggolf.android").build()) //본체
+                .setButtonTitle("동네골프 멤버 되기") //버튼 String
+                .build()
 
+        val serverCallbackArgs = HashMap<String, String>()
+        serverCallbackArgs.put("user_id", "$user")
+        //serverCallbackArgs.put("product_id", "$shared_product_id")
+
+        /*KakaoLinkService.getInstance().sendDefault(this, params, serverCallbackArgs, ResponseCallback<KakaoLinkResponse> {
+
+        })*/
     }
 
     fun getKeyHash(context: Context) : String? {
@@ -171,7 +199,7 @@ class FriendSearchActivity : RootActivity() {
     }
 
     fun addFriendSearchWords() {
-
+        //최근 검색한 친구 키워드를 데이터리스트에 추가하고 DB에 save
     }
 
     fun friendSearchWords(keyWord : String) {
@@ -231,14 +259,27 @@ class FriendSearchActivity : RootActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_INVITE){
             if (resultCode === Activity.RESULT_OK) {
-                val ids = AppInviteInvitation.getInvitationIds(
-                        resultCode, data!!)
-                for (id in ids) {
-                    Log.d("CSH", "id of sent invitation: $id")
+
+                try {
+                    val uri = data?.data
+                    //여러 연락처 받아오기
+                    val cursor = contentResolver.query(uri, null, null, null, null)
+
+                    cursor.moveToFirst()
+                    var phoneIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    var phoneNum = cursor.getString(phoneIdx)
+
+                    //println("You got the phone number ::::::::::::::: $phoneNum")
+                    val smsMng = SmsManager.getDefault()
+                    smsMng.sendTextMessage(phoneNum, "나", "보낼 내용", null, null)
+
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             } else {
                 // Failed to send invitations
             }
         }
     }
+
 }

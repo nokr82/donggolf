@@ -14,7 +14,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.activities.ChatDetailActivity
 import donggolf.android.R
+import donggolf.android.activities.AddDongChatActivity
+import donggolf.android.activities.DongChatDetailActivity
 import donggolf.android.adapters.ChatFragAdapter
+import kotlinx.android.synthetic.main.fragment_chat.*
 import org.json.JSONObject
 
 class ChatFragment : android.support.v4.app.Fragment() {
@@ -35,7 +38,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var chat_list : ListView
     lateinit var viewpagerChat : ViewPager
 
-
+    var isMyChat = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -81,9 +84,39 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
 
-            var intent: Intent = Intent(activity, ChatDetailActivity::class.java)
-            startActivity(intent)
+            if (isMyChat) {
 
+                var intent: Intent = Intent(activity, ChatDetailActivity::class.java)
+                startActivity(intent)
+            } else {
+                var intent = Intent(activity, DongChatDetailActivity::class.java)
+                startActivity(intent)
+            }
+
+        }
+
+        //new section
+        chatTabLL.setOnClickListener {
+            if (isMyChat) {
+                tabMyChat.setImageResource(R.drawable.btn_my_chat_off)
+                btn_myChat_mng.visibility = View.GONE
+                btn_make_chat.visibility = View.GONE
+                tabTownChat.setImageResource(R.drawable.btn_town_chat_on)
+                btn_add_dongchat.visibility = View.VISIBLE
+                isMyChat = false
+            } else {
+                tabMyChat.setImageResource(R.drawable.btn_my_chat_on)
+                btn_myChat_mng.visibility = View.VISIBLE
+                btn_make_chat.visibility = View.VISIBLE
+                btn_add_dongchat.visibility = View.GONE
+                tabTownChat.setImageResource(R.drawable.btn_town_chat_off)
+                isMyChat = true
+            }
+        }//
+
+        btn_add_dongchat.setOnClickListener {
+            var intent = Intent(context, AddDongChatActivity::class.java)
+            startActivity(intent)
         }
 
     }

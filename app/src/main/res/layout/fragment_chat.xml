@@ -7,6 +7,7 @@
     tools:context=".fragment.ChatFragment">
 
     <LinearLayout
+        android:id="@+id/chatTabLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -16,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
             <ImageView
-                android:layout_width="270dp"
+                android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:background="@drawable/btn_my_chat_on"
                 android:id="@+id/tabMyChat"/>
@@ -33,7 +34,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginRight="220dp"
+                android:layout_marginRight="210dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/btn_chat_setting"
@@ -58,12 +59,21 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="75dp"
                 android:textColor="#ffffff"
                 android:textStyle="bold"
                 android:textSize="13dp"
                 android:id="@+id/txTownChat"
                 android:text="동네 채팅"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/btn_make_chat"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:id="@+id/btn_add_dongchat"/>
         </RelativeLayout>
 
 

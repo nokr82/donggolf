@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/item_profileImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/icon_profiles"/>
+
+    <TextView
+        android:id="@+id/item_nickNameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:textSize="13dp"
+        android:textColor="#EF5C34"
+        android:textStyle="bold"
+        android:maxLength="7"
+        android:text="닉네임일곱글자"/>
+    <ImageView
+        android:id="@+id/item_relationIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/icon_first"/>
+    <TextView
+        android:id="@+id/item_authorizationTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="15dp"
+        android:gravity="right"
+        android:textStyle="bold"
+        android:textSize="13dp"
+        android:textColor="#C9C9C9"
+        android:text="개설자"/>
+
+</LinearLayout>
