@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -23,6 +24,7 @@ import android.content.pm.PackageManager
 import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.content.pm.PackageInfo
 import android.util.Base64
+import com.squareup.okhttp.internal.Util
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -30,77 +32,41 @@ import java.security.NoSuchAlgorithmException
 class LoginActivity : RootActivity() {
 
     private lateinit var context: Context
+    private var progressDialog: ProgressDialog? = null
     private lateinit var mAuth: FirebaseAuth
 
     var autoLogin = false
-    var atEmail : String = ""
-    var atPassword : String =""
+    var email = ""
+    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
-
-        /*val params = HashMap<String, Any>()
-        params["standby"]
-
-
-        val db = FirebaseFirestore.getInstance()
-
-        db.runTransaction {
-            val docRef = db.collection("mates").document("5DaIBOw2yOaKjKFvwsVj8uva1XO2")
-            val doc = it.get(docRef)
-            val data = doc.data
-
-            println(data)
-
-            println("------------------------------")
-
-            val standby = data!!["standby"] as HashMap<String, Any>
-
-            println("111111")
-
-            Thread.sleep(50000)
-
-            println("222222")
-
-            //데이터입력
-            val newData = HashMap<String, Any>()
-            newData["block"] = false
-            standby["oooooo"] = newData
-
-
-
-            it.update(docRef, data)
-
-            println(standby)
-
-        }*/
-
         context = this
+        progressDialog = ProgressDialog(context)
 
         //getKeyHash(context)
 
         mAuth = FirebaseAuth.getInstance()
 
-        autoLogin = PrefUtils.getBooleanPreference(context, "auto", false)
-        atEmail = PrefUtils.getStringPreference(context, "email", "")
-        atPassword = PrefUtils.getStringPreference(context, "pass", "")
-        /*atEmail = "devstories@devstories.com"
-        atPassword = "123456"*/
+        //PrefUtils.clear(context)
+
+        autoLogin = PrefUtils.getBooleanPreference(context, "auto")
 
         println("autoLogin========$autoLogin")
         if (autoLogin){
-            autologinCB.isChecked = true
+            //autologinCB.isChecked = true
+            if (progressDialog != null) {
+                progressDialog!!.setMessage("loading...")
+                progressDialog!!.show()
+            }
             login()
+
         } else {
-            autologinCB.isChecked = false
+            PrefUtils.clear(context)
         }
 
-        /*if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
-            loginHandler.sendEmptyMessage(0)
-        }*/
 
         btn_login.setOnClickListener {
             login()
@@ -130,20 +96,18 @@ class LoginActivity : RootActivity() {
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
 
-                        autoLogin = autologinCB.isChecked
+                        autologinCB.isChecked = true
+                        //PrefUtils.setPreference(context, "auto", true)
 
                     })
                     .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+
                     })
             val alert = builder.create()
             alert.show()
 
 
         }
-
-        /*if(!(atEmail.equals("")) && !(atPassword.equals("")) && autoLogin){
-            loginHandler.sendEmptyMessage(0)
-        }*/
 
     }
 
@@ -156,31 +120,29 @@ class LoginActivity : RootActivity() {
 
     private fun login() {
 
-        var email = Utils.getString(emailET)
-        if (autoLogin){
-            email = atEmail
-        }
-        if (email.isEmpty()) {
-            Utils.alert(context, "아이디는 필수 입력입니다.")
-            return
-        }
+        if (PrefUtils.getBooleanPreference(context,"auto")){
 
-        var password = Utils.getString(passwordET)
-        if (autoLogin){
-            password = atPassword
-        }
-        if (password.isEmpty()) {
-            Utils.alert(context, "비밀번호는 필수 입력입니다.")
-            return
-        }
+            email = PrefUtils.getStringPreference(context, "email")
+            password = PrefUtils.getStringPreference(context, "pass")
 
-        /*if (autoLogin){
-            email = atEmail
-            password = atPassword
         } else {
+
+            //PrefUtils.clear(context)
+
             email = Utils.getString(emailET)
+
+            if (email.isEmpty()) {
+                Utils.alert(context, "아이디는 필수 입력입니다.")
+                return
+            }
+
             password = Utils.getString(passwordET)
-        }*/
+
+            if (password.isEmpty()) {
+                Utils.alert(context, "비밀번호는 필수 입력입니다.")
+                return
+            }
+        }
 
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -201,17 +163,21 @@ class LoginActivity : RootActivity() {
 
                                 println("autoLogin ==== $autoLogin")
 
-                                if (autoLogin){
+                                if (autologinCB.isChecked){
 
                                     PrefUtils.setPreference(context, "email", email)
                                     PrefUtils.setPreference(context, "pass", password)
-                                    PrefUtils.setPreference(context, "auto", autoLogin)
+                                    PrefUtils.setPreference(context, "auto", true)
 
                                 } else {
 
-                                    PrefUtils.setPreference(context, "email", null)
-                                    PrefUtils.setPreference(context, "pass", null)
-                                    PrefUtils.setPreference(context, "auto", autoLogin)
+//                                    PrefUtils.setPreference(context, "email", null)
+//                                    PrefUtils.setPreference(context, "pass", null)
+                                    PrefUtils.setPreference(context, "auto", false)
+                                }
+
+                                if (progressDialog != null) {
+                                    progressDialog!!.dismiss()
                                 }
 
                                 startActivity(Intent(context, MainActivity::class.java))
@@ -298,6 +264,10 @@ class LoginActivity : RootActivity() {
         }
 
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 }

@@ -20,12 +20,24 @@ import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.provider.ContactsContract
 import android.telephony.SmsManager
 import android.util.Base64
+import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kakao.auth.ErrorCode
+import com.kakao.auth.ISessionCallback
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.kakaotalk.callback.TalkResponseCallback
+import com.kakao.kakaotalk.response.KakaoTalkProfile
+import com.kakao.kakaotalk.v2.KakaoTalkService
 import com.kakao.message.template.LinkObject
 import com.kakao.message.template.TextTemplate
+import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
+import com.kakao.usermgmt.UserManagement
+import com.kakao.usermgmt.callback.MeResponseCallback
+import com.kakao.usermgmt.response.model.UserProfile
+import com.kakao.util.exception.KakaoException
+import com.kakao.util.helper.log.Logger
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
 import java.lang.Exception
@@ -50,7 +62,7 @@ class FriendSearchActivity : RootActivity() {
     //var getImg : String = ""
 
     //초대
-
+    private var callback: SessionCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,34 +72,13 @@ class FriendSearchActivity : RootActivity() {
 
         val intent:Intent = intent
 
+        callback = SessionCallback()
+
         user = intent.getSerializableExtra("tUser") as HashMap<String, Any>
 
         //main list view setting
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
         frdResultLV.adapter = friendAdapter
-
-        /*FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
-                .addOnSuccessListener(this, OnSuccessListener { data ->
-                    if (data == null) {
-                        return@OnSuccessListener
-                    }
-
-                    val deepLink = data.link
-
-                    val invite = FirebaseAppInvite.getInvitation(data)
-                    val invitationId = invite.invitationId
-
-                    deepLink?.let {
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setPackage(packageName)
-                        intent.data = it
-
-                        startActivity(intent)
-                    }
-                })
-                .addOnFailureListener(this) {
-
-                }*/
 
         frdSearchET.setOnClickListener {
 
@@ -161,8 +152,6 @@ class FriendSearchActivity : RootActivity() {
 
     //카카오톡 공유
     fun shareKakao() {
-        var intent = Intent()
-        //Get Image Url
 
         val params = TextTemplate.newBuilder("동네골프",
                 LinkObject.newBuilder().setWebUrl("market://details?id=donggolf.android").setMobileWebUrl("market://details?id=donggolf.android").build()) //본체
@@ -173,9 +162,18 @@ class FriendSearchActivity : RootActivity() {
         serverCallbackArgs.put("user_id", "$user")
         //serverCallbackArgs.put("product_id", "$shared_product_id")
 
-        /*KakaoLinkService.getInstance().sendDefault(this, params, serverCallbackArgs, ResponseCallback<KakaoLinkResponse> {
 
-        })*/
+        KakaoLinkService.getInstance().sendDefault(this, params, object : ResponseCallback<KakaoLinkResponse>() {
+            override fun onFailure(errorResult: ErrorResult) {
+                Logger.e(errorResult.toString())
+            }
+
+            override fun onSuccess(result: KakaoLinkResponse) {
+
+            }
+        })
+
+
     }
 
     fun getKeyHash(context: Context) : String? {
@@ -243,7 +241,6 @@ class FriendSearchActivity : RootActivity() {
                                 var tmpSex = document.data.get("sex") as String
                                 var tmpSharptag = document.data.get("sharpTag") as ArrayList<String>
                                 var tmpSttMsg = document.data.get("state_msg") as String
-
                                 var tmp = Users(tmpImgl, tmpImgs, tmpLast, tmpNick, tmpSex, tmpSharptag, tmpSttMsg)
                                 friendData.add(tmp)
                             }
@@ -255,6 +252,133 @@ class FriendSearchActivity : RootActivity() {
     }
 
 
+
+    inner class SessionCallback : ISessionCallback {
+
+        override fun onSessionOpened() {
+
+            // System.out.println("onSessionOpened : ");
+
+            redirectSignupActivity()
+        }
+
+        override fun onSessionOpenFailed(exception: KakaoException?) {
+
+            // System.out.println("exception : " + exception);
+
+            if (exception != null) {
+                //                Logger.e(exception);
+                if ("CANCELED_OPERATION" == exception.errorType.toString()) {
+                    Toast.makeText(dialogContext, "카카오톡 로그인 취소", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(dialogContext, exception.errorType.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+
+            //setContentView(R.layout.activity_login);
+        }
+    }
+
+    abstract inner class KakaoTalkResponseCallback<T> : TalkResponseCallback<T>() {
+
+        override fun onNotKakaoTalkUser() {
+            // KakaoToast.makeToast(getApplicationContext(), "not a KakaoTalk user", Toast.LENGTH_SHORT).show();
+        }
+
+        override fun onFailure(errorResult: ErrorResult?) {
+            // KakaoToast.makeToast(getApplicationContext(), "failure : " + errorResult, Toast.LENGTH_LONG).show();
+            Toast.makeText(dialogContext, errorResult!!.errorMessage, Toast.LENGTH_LONG).show()
+
+            val result = ErrorCode.valueOf(errorResult.errorCode)
+            if (result == ErrorCode.CLIENT_ERROR_CODE) {
+                finish()
+            } else {
+                redirectSignupActivity()
+            }
+        }
+
+        override fun onSessionClosed(errorResult: ErrorResult) {
+            Toast.makeText(dialogContext, errorResult.errorMessage, Toast.LENGTH_LONG).show()
+            finish()
+        }
+
+        override fun onNotSignedUp() {
+            Toast.makeText(dialogContext, "카카오톡 회원이 아닙니다\n가입후 이용해 주시기 바랍니다.", Toast.LENGTH_LONG).show()
+            finish()
+        }
+
+        override fun onDidStart() {
+            // showWaitingDialog();
+        }
+
+        override fun onDidEnd() {
+            // cancelWaitingDialog();
+        }
+    }
+
+    protected fun redirectSignupActivity() {
+        requestMe()
+    }
+
+    protected fun requestMe() { //유저의 정보를 받아오는 함수
+
+        UserManagement.getInstance().requestMe(object : MeResponseCallback() {
+            override fun onFailure(errorResult: ErrorResult?) {
+                val message = "failed to get user info. msg=" + errorResult!!
+                Logger.d(message)
+                Toast.makeText(dialogContext, errorResult.errorMessage, Toast.LENGTH_LONG).show()
+
+                val result = ErrorCode.valueOf(errorResult.errorCode)
+                if (result == ErrorCode.CLIENT_ERROR_CODE) {
+                    finish()
+                } else {
+                    redirectSignupActivity()
+                }
+            }
+
+            override fun onSessionClosed(errorResult: ErrorResult) {
+                Toast.makeText(dialogContext, errorResult.errorMessage, Toast.LENGTH_LONG).show()
+                finish()
+                //redirectSignupActivity();
+            }
+
+            override fun onNotSignedUp() {
+                Toast.makeText(dialogContext, "카카오톡 회원이 아닙니다\n가입후 이용해 주시기 바랍니다.", Toast.LENGTH_LONG).show()
+                finish()
+            } // 카카오톡 회원이 아닐 시 showSignup(); 호출해야함
+
+            override fun onSuccess(userProfile: UserProfile) {  //성공 시 userProfile 형태로 반환
+                val kakao_ID = userProfile.id.toString()
+                // final String kakao_name = userProfile.getNickname();
+                val kakao_email = userProfile.email
+                // String kakao_profile_image_path = userProfile.getProfileImagePath();
+
+                // System.out.println("kakao_name : " + kakao_name);
+                // System.out.println("kakao_profile_image_path : " + kakao_profile_image_path);
+                // System.out.println(userProfile.getProperties());
+
+
+                KakaoTalkService.getInstance().requestProfile(object : KakaoTalkResponseCallback<KakaoTalkProfile>() {
+                    override fun onSuccess(result: KakaoTalkProfile) {
+                        // System.out.println("df : " + result);
+
+                        val kakao_name = result.nickName
+
+                        // System.out.println("kakao_name : " + kakao_name);
+
+                        val kakao_profile_image_path = result.profileImageUrl
+                        // new DownloadFilesTask().execute(kakao_profile_image_path);
+
+                    }
+                })
+
+
+                // isMember(null, "3", null, null, null, kakao_ID, kakao_name, kakao_profile_image_path);
+            }
+        })
+    }
+
+    //문자로 초대메시지 보내기
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_INVITE){
