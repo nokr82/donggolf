@@ -1,23 +1,21 @@
 package donggolf.android.activities
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import com.google.firebase.auth.FirebaseAuth
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.InfoAction
-import donggolf.android.actions.JoinAction
-import donggolf.android.actions.ProfileAction
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.actions.MemberAction
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import donggolf.android.models.Info
-import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_register.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class RegisterActivity : RootActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
+    //private lateinit var mAuth: FirebaseAuth
 
     private lateinit var context: Context
 
@@ -31,7 +29,7 @@ class RegisterActivity : RootActivity() {
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance()
+        //mAuth = FirebaseAuth.getInstance()
 
         finishBT.setOnClickListener {
             finish()
@@ -91,6 +89,24 @@ class RegisterActivity : RootActivity() {
         if (email.isEmpty()) {
             Utils.alert(context, "아이디는 필수 입력입니다.")
             return
+        } else {
+            val tmpparam = RequestParams()
+            tmpparam.put("member_id", email)
+
+            MemberAction.is_duplicated_id(tmpparam, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "overlap") {
+                            emailET.setText("")
+                            Utils.alert(context, response!!.getString("result"))
+                        }
+                    } catch (e : JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            })
+
         }
 
         // 이메일 형식 체크
@@ -162,7 +178,29 @@ class RegisterActivity : RootActivity() {
             return
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        val params = RequestParams()
+
+        params.put("member_id", email)
+        params.put("passwd", password)
+        params.put("phone", phone)
+        params.put("sex", gender)
+        params.put("nick", nickName)
+
+        MemberAction.join_member(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                Utils.alert(context, response!!.getString("message"))
+                finish()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+            }
+
+        })
+
+        /* mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     val user = mAuth.currentUser
                     if(user != null) {
@@ -220,8 +258,7 @@ class RegisterActivity : RootActivity() {
                 .addOnFailureListener {
                     println("fa : $it")
                     it.printStackTrace()
-                }
-
+                }*/
 
     }
 }

@@ -24,7 +24,14 @@ import android.content.pm.PackageManager
 import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.content.pm.PackageInfo
 import android.util.Base64
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
 import com.squareup.okhttp.internal.Util
+import cz.msebera.android.httpclient.Header
+import donggolf.android.actions.MemberAction
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -144,8 +151,37 @@ class LoginActivity : RootActivity() {
             }
         }
 
+        val params = RequestParams()
+        params.put("member_id", email)
+        params.put("passwd", password)
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        MemberAction.member_login(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                super.onSuccess(statusCode, headers, response)
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        //Utils.alert(context,"로그인 성공")
+                        if (progressDialog != null) {
+                            progressDialog!!.dismiss()
+                        }
+                        startActivity(Intent(context, MainActivity::class.java))
+
+                        finish()
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                super.onFailure(statusCode, headers, responseString, throwable)
+                Utils.alert(context, "로그인에 실패했습니다.")
+            }
+
+        })
+        /*mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
@@ -193,7 +229,7 @@ class LoginActivity : RootActivity() {
                         // If sign in fails, display a messa to the user.
                         Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
                     }
-                }
+                }*/
     }
 
     fun nomemberlogin() {
