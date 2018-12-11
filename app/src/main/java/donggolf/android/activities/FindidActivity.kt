@@ -1,8 +1,10 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -71,15 +73,25 @@ class FindidActivity : RootActivity() {
                     if (result == "ok") {
                         //println("아이디 찾기 :: ${response.toString()}")
                         val member = response.getJSONObject("member")
-                        var member_id = Utils.getString(member, "member_id")
+                        var email = Utils.getString(member, "email")
                         //println("찾은 ID :: $member_id")
 
-                        if (!member_id.isEmpty()) {
+                        if (!email.isEmpty()) {
                             idhintTV.text = "아이디 힌트는 "
-                            useridTV.text = member_id.substring(0, 1) + "*****" + "@" + member_id.substringAfter("@", member_id) + "입니다."
-                            //hintTV.text = "입니다"
+                            useridTV.text = email.substring(0, 2) + "*****" + "@" + email.substringAfter("@", email)
+                            id_hint_endTV.visibility = View.VISIBLE
+                            id_hint_endTV.text = "입니다"
                         }
 
+                    } else {
+
+                        idhintTV.text = "가입된 정보가 없습니다."
+                        useridTV.text = "\t회원가입"
+                        id_hint_endTV.visibility = View.GONE
+
+                        useridTV.setOnClickListener {
+                            startActivity(Intent(context, RegisterActivity::class.java))
+                        }
 
                     }
                 }

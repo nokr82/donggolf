@@ -180,7 +180,7 @@ class RegisterActivity : RootActivity() {
 
         val params = RequestParams()
 
-        params.put("member_id", email)
+        params.put("email", email)
         params.put("passwd", password)
         params.put("phone", phone)
         params.put("sex", gender)

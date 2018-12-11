@@ -8,17 +8,24 @@ import android.text.Editable
 import android.text.TextWatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MemberAction
 import donggolf.android.actions.ProfileAction
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import donggolf.android.models.HashTag
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile_tag_change.*
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class ModStatusMsgActivity : RootActivity() {
@@ -69,38 +76,49 @@ class ModStatusMsgActivity : RootActivity() {
         statusTxDel.setOnClickListener {
             statusMsg.setText("")
         }
-        //pid : PK라 가져와서 Action류의 함수에 첫번째 파라미터로 넣어줌
-        //저장된 users 중 해당 유저의 정보 가져오기
-        var uid = PrefUtils.getStringPreference(context, "uid")
-//        println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-            statusMessage = data!!.get("state_msg") as String
 
-            imgl = data!!.get("imgl") as String
-            imgs = data!!.get("imgs") as String
-            lastN = data!!.get("last") as Long
-            nick = data!!.get("nick") as String
-            sex = data!!.get("sex") as String
-            sTag = data!!.get("sharpTag") as ArrayList<String>
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getStringPreference(context,"member_id"))
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    println("InfoFrag :: ${response.toString()}")
 
-            statusMsg.setText(statusMessage)
-        }
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
 
-        status_Ok.setOnClickListener {
-            //DB에 저장하고 finish
-            statusMessage = statusMsg.text.toString()
-            val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
-
-            FirebaseFirestoreUtils.save("users", uid, item) {
-                if (it) {
-                    var itt = Intent()
-                    itt.putExtra("status_message", statusMessage)
-                    setResult(RESULT_OK, itt)
-                    finish()
-                } else {
-
+                        var jStatusMsg = Utils.getString(member,"status_msg")
+                        statusMsg.setText(jStatusMsg)
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
                 }
             }
+        })
+
+        status_Ok.setOnClickListener {
+            statusMessage = statusMsg.text.toString()
+            val params = RequestParams()
+            params.put("status_msg", statusMessage)
+
+            //php구현 아직 안함
+            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+                            finish()
+                        }
+                    }catch (e : JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
         }
     }
 }

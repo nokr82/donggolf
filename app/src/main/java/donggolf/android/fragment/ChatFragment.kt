@@ -16,6 +16,7 @@ import donggolf.android.activities.ChatDetailActivity
 import donggolf.android.R
 import donggolf.android.activities.AddDongChatActivity
 import donggolf.android.activities.DongChatDetailActivity
+import donggolf.android.activities.DongchatProfileActivity
 import donggolf.android.adapters.ChatFragAdapter
 import kotlinx.android.synthetic.main.fragment_chat.*
 import org.json.JSONObject
@@ -38,7 +39,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var chat_list : ListView
     lateinit var viewpagerChat : ViewPager
 
-    var isMyChat = true
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -82,14 +83,16 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         chat_list.adapter = adapter
 
+        var isMyChat = true
+
         chat_list.setOnItemClickListener { parent, view, position, id ->
 
             if (isMyChat) {
 
-                var intent: Intent = Intent(activity, ChatDetailActivity::class.java)
+                var intent = Intent(activity, ChatDetailActivity::class.java)
                 startActivity(intent)
             } else {
-                var intent = Intent(activity, DongChatDetailActivity::class.java)
+                var intent = Intent(activity, DongchatProfileActivity::class.java)
                 startActivity(intent)
             }
 

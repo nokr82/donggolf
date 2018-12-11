@@ -16,7 +16,8 @@ class ChatDetailActivity : RootActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_detail)
 
-        val author = intent.getStringExtra("Author")
+        var author = intent.getStringExtra("Author")
+        author = "개설자"
         if (author.equals("개설자")) {
             chatListRemoveLL.visibility = View.GONE
 

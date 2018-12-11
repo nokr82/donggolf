@@ -88,7 +88,6 @@ class LoginActivity : RootActivity() {
         }
 
         linear_go_register.setOnClickListener {
-            Log.i("ClickListener", "onClickListener pressed")
             moveregister()
         }
 
@@ -104,7 +103,6 @@ class LoginActivity : RootActivity() {
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
 
                         autologinCB.isChecked = true
-                        //PrefUtils.setPreference(context, "auto", true)
 
                     })
                     .setNegativeButton("취소",DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
@@ -127,7 +125,12 @@ class LoginActivity : RootActivity() {
 
     private fun login() {
 
-        if (PrefUtils.getBooleanPreference(context,"auto")){
+        if (PrefUtils.getBooleanPreference(context, "auto") == null){
+
+            email = Utils.getString(emailET)
+            password = Utils.getString(passwordET)
+
+        } else if (PrefUtils.getBooleanPreference(context,"auto")){
 
             email = PrefUtils.getStringPreference(context, "email")
             password = PrefUtils.getStringPreference(context, "pass")
@@ -135,16 +138,13 @@ class LoginActivity : RootActivity() {
         } else {
 
             //PrefUtils.clear(context)
-
             email = Utils.getString(emailET)
-
             if (email.isEmpty()) {
                 Utils.alert(context, "아이디는 필수 입력입니다.")
                 return
             }
 
             password = Utils.getString(passwordET)
-
             if (password.isEmpty()) {
                 Utils.alert(context, "비밀번호는 필수 입력입니다.")
                 return
@@ -152,23 +152,38 @@ class LoginActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id", email)
+        params.put("email", email)
         params.put("passwd", password)
 
         MemberAction.member_login(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                super.onSuccess(statusCode, headers, response)
+
                 try {
                     val result = response!!.getString("result")
+                    println("LoginActivity :: ${response.toString()}")
                     if (result == "ok") {
                         //Utils.alert(context,"로그인 성공")
                         if (progressDialog != null) {
                             progressDialog!!.dismiss()
                         }
+                        val member = response.getJSONObject("member")
+
+                        val member_id = Utils.getInt(member, "id")
+                        PrefUtils.setPreference(context, "member_id", member_id)
+
+                        if (autologinCB.isChecked){
+                            PrefUtils.setPreference(context, "email", email)
+                            PrefUtils.setPreference(context, "pass", password)
+                            PrefUtils.setPreference(context, "auto", true)
+                        } else {
+                            PrefUtils.setPreference(context, "auto", false)
+                        }
+
                         startActivity(Intent(context, MainActivity::class.java))
 
                         finish()
+
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -176,61 +191,15 @@ class LoginActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                super.onFailure(statusCode, headers, responseString, throwable)
+                //super.onFailure(statusCode, headers, responseString, throwable)
                 Utils.alert(context, "로그인에 실패했습니다.")
             }
 
         })
-        /*mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        val user = mAuth.getCurrentUser()
 
-
-                        LoginActivity.setLoginData(context, user)
-
-                        InfoAction.getInfo(user!!.uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                            if(success) {
-                                println("data : $data")
-
-                                LoginActivity.setInfoData(context, data)
-
-
-                                println("autoLogin ==== $autoLogin")
-
-                                if (autologinCB.isChecked){
-
-                                    PrefUtils.setPreference(context, "email", email)
-                                    PrefUtils.setPreference(context, "pass", password)
-                                    PrefUtils.setPreference(context, "auto", true)
-
-                                } else {
-
-//                                    PrefUtils.setPreference(context, "email", null)
-//                                    PrefUtils.setPreference(context, "pass", null)
-                                    PrefUtils.setPreference(context, "auto", false)
-                                }
-
-                                if (progressDialog != null) {
-                                    progressDialog!!.dismiss()
-                                }
-
-                                startActivity(Intent(context, MainActivity::class.java))
-
-                                finish()
-
-                            } else {
-
-                            }
-                        }
-
-                    } else {
-                        // If sign in fails, display a messa to the user.
-                        Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                    }
-                }*/
     }
+
+
 
     fun nomemberlogin() {
         val email = emailET.text.toString()

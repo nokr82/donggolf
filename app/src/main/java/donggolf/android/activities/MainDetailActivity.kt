@@ -44,7 +44,7 @@ class MainDetailActivity : RootActivity() {
     var adverImagePaths:ArrayList<String> = ArrayList<String>()
 
 
-    var adPosition = 0;
+    var adPosition = 0
 
     var PICTURE_DETAIL = 1
 

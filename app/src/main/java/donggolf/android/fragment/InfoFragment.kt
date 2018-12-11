@@ -28,8 +28,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.internal.InternalTokenResult
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import com.squareup.okhttp.internal.Util
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
+import donggolf.android.actions.MemberAction
 import donggolf.android.actions.ProfileAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.ImageAdapter
@@ -45,29 +50,20 @@ import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
 import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.lang.Exception
 
 class InfoFragment : Fragment(){
 
     var ctx: Context? = null
 
-    lateinit var txUserName: TextView
-    lateinit var  txUserRegion: TextView
-    lateinit var messageTV:LinearLayout
-    lateinit var hashtagTV:TextView
-    lateinit var chatcountTV:TextView
-    lateinit var postcountTV:TextView
-    lateinit var friendcountTV:TextView
-    lateinit var tv_CONSEQUENCES:LinearLayout
-    lateinit var addProfImg:ImageView
-
-    private var mAuth: FirebaseAuth? = null
-
     val SELECT_PROFILE = 104
     val SELECT_STATUS = 105
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
     val REGION_CHANGE = 108
+
     private var pimgPaths: ArrayList<String> = ArrayList<String>()//이미지 경로
     private var images: ArrayList<ByteArray> = ArrayList()
     private var smimages: ArrayList<ByteArray> = ArrayList()
@@ -75,7 +71,7 @@ class InfoFragment : Fragment(){
     private var strPathsL : ArrayList<String> = ArrayList<String>()
     private var strPathsS : ArrayList<String> = ArrayList<String>()
 
-    lateinit var db : FirebaseFirestore
+    /*lateinit var db : FirebaseFirestore
 
     lateinit var imgl : String //경로
     lateinit var imgs : String //경로
@@ -83,7 +79,7 @@ class InfoFragment : Fragment(){
     lateinit var nick : String
     lateinit var sex : String
     private var sTag : ArrayList<String> = ArrayList<String>()
-    lateinit var statusMessage : String
+    lateinit var statusMessage : String*/
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,11 +90,6 @@ class InfoFragment : Fragment(){
             doSomethingWithContext(ctx)
         }
 
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.currentUser
-        db = FirebaseFirestore.getInstance()
-
-        println("currentUser======$currentUser")
 
         return inflater.inflate(R.layout.activity_profile_manage, container, false)
     }
@@ -106,25 +97,69 @@ class InfoFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //탭 호스트 글자색 변경같이 눌렀을 때 변경되는 것
-        txUserName = view.findViewById(R.id.txUserName)
-        txUserRegion = view.findViewById(R.id.txUserRegion)
-        messageTV = view.findViewById(R.id.messageTV)
-        hashtagTV = view.findViewById(R.id.hashtagTV)
-        chatcountTV = view.findViewById(R.id.chatcountTV)
-        postcountTV = view.findViewById(R.id.postcountTV)
-        friendcountTV = view.findViewById(R.id.friendcountTV)
-        tv_CONSEQUENCES = view.findViewById(R.id.tv_CONSEQUENCES)
-        addProfImg = view.findViewById(R.id.addProfImg)
-
-        /*val nick: String = PrefUtils.getStringPreference(context,"nick")
-
-        txUserName.setText(nick)*/
-
         //프로필 세팅
-        var uid = PrefUtils.getStringPreference(context, "uid")
-        //println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+        var member_id = PrefUtils.getIntPreference(context, "member_id")
+
+        //Action 으로 정보 가져오기
+        val params = RequestParams()
+        params.put("member_id", member_id)
+
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    println("InfoFrag :: ${response.toString()}")
+
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
+
+                        textDate.text = Utils.getString(member,"created")
+                        txUserName.text = Utils.getString(member,"nick")
+
+                        var region = ""
+                        if (Utils.getString(member,"region1") != null) {
+                            region += Utils.getString(member,"region1") + ","
+                        }
+                        if (Utils.getString(member,"region2") != null) {
+                            region += Utils.getString(member,"region2") + ","
+                        }
+                        if (Utils.getString(member,"region3") != null) {
+                            region += Utils.getString(member,"region3")
+                        }
+                        if (region.substring(region.length-1) == ","){
+                            region = region.substring(0, region.length-2)
+                        }
+                        txUserRegion.text = region
+
+                        var statusMessage = Utils.getString(member,"status_msg")
+                        if (statusMessage != null) {
+                            infoStatusMsg.text = statusMessage
+                        }
+
+                        knowTogether.visibility = View.GONE
+
+
+                        val data = response.getJSONArray("MemberTags")
+                        var string_tag = ""
+                        for (i in 0 until data.length()) {
+                            var json = data[i] as JSONObject
+                            val memberTag = json.getJSONObject("MemberTags")
+
+                            string_tag += "#" + Utils.getString(memberTag,"tag") + " "
+                        }
+                        hashtagTV.text = string_tag
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
+
+        /*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
 
             statusMessage = data!!.get("state_msg") as String
             imgl = data.get("imgl") as String
@@ -141,7 +176,7 @@ class InfoFragment : Fragment(){
                 tmpmsg += "#" + sTag.get(i) + " "
             }
             hashtagTV.text = tmpmsg
-        }
+        }*/
 
 
         tv_CONSEQUENCES.setOnClickListener {
@@ -157,7 +192,7 @@ class InfoFragment : Fragment(){
 
         imgProfile.setOnClickListener {
             var intent = Intent(activity, ViewProfileListActivity::class.java)
-            intent.putExtra("album", images)
+            //intent.putExtra("album", images)
             startActivity(intent)
         }
 
@@ -198,7 +233,6 @@ class InfoFragment : Fragment(){
 
         btn_myPosts.setOnClickListener {
             val goIt = Intent(activity, MyPostMngActivity::class.java)
-            goIt.putExtra("user", uid)
             startActivity(goIt)
         }
 
@@ -209,7 +243,7 @@ class InfoFragment : Fragment(){
 
     }
 
-    @SuppressLint("NewApi")
+    /*@SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -227,7 +261,7 @@ class InfoFragment : Fragment(){
                         println("image path ========= $strPaths")
 
                         var bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, uri)
-//                        var bt: Bitmap = Utils.getImage(context!!.contentResolver, MediaStore.Images.Media.DISPLAY_NAME, 500)
+                        //var bt: Bitmap = Utils.getImage(context!!.contentResolver, MediaStore.Images.Media.DISPLAY_NAME, 500)
 
                         var bo = BitmapFactory.Options()
                         bo.inSampleSize = 4
@@ -266,7 +300,7 @@ class InfoFragment : Fragment(){
 
                         var uid = PrefUtils.getStringPreference(context, "uid")
 
-                        /*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                        *//*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                             statusMessage = data!!.get("state_msg") as String
 
                             imgl = data!!.get("imgl") as ArrayList<String>
@@ -276,18 +310,18 @@ class InfoFragment : Fragment(){
                             sex = data!!.get("sex") as String
                             sTag = data!!.get("sharpTag") as ArrayList<String>
 
-                        }*/
-                        /*imgl = strPathsL
-                        imgs = strPathsS*/
+                        }*//*
+                        *//*imgl = strPathsL
+                        imgs = strPathsS*//*
 
                         //이미지 firebase로 전송
                         //사실 그냥 uri를 putFile해도 됨
-                        /*
+                        *//*
                             UploadTask uploadTask;
                             uploadTask = storageRef.putFile(file);
-                        */
+                        *//*
                         //여러 사진이 담긴 array list 를 전송해야하므로
-                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
+                        *//*val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
                         FirebaseFirestoreUtils.save("users", uid, item) {
                             if (it) {
@@ -303,8 +337,7 @@ class InfoFragment : Fragment(){
                             } else {
 
                             }
-                        }
-
+                        }*//*
 
 
                         //이미지 동그랗게
@@ -361,7 +394,7 @@ class InfoFragment : Fragment(){
     fun imageTransmission() {
 
     }
-
+*/
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context

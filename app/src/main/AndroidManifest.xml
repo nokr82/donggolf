@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
@@ -47,36 +48,14 @@
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-
-            <!--
-            intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="threemeals" />
-
-                <!- data android:scheme="@string/kakao_scheme"
-                    android:host="@string/kakaolink_host" />
-            </intent-filter
-            -->
-
-        </activity>
+            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
 
         <!-- 로그인 -->
         <activity
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
             android:name=".activities.RegisterActivity"
             android:theme="@style/NoTitleDialog" />
@@ -220,18 +199,43 @@
         <activity
             android:name=".activities.SelectMemberActivity"
             android:theme="@style/NoTitleDialog" />
-        <activity android:name=".activities.ModStatusMsgActivity" />
-        <activity android:name=".activities.SelectProfileImgActivity" />
-        <activity android:name=".activities.ViewProfileListActivity" />
-        <activity android:name=".activities.MyPostMngActivity" />
-        <activity android:name=".activities.FriendManageActivity" />
-        <activity android:name=".activities.RequestFriendActivity" />
-        <activity android:name=".activities.FriendReqSelectCategoryActivity" />
-        <activity android:name=".activities.FriendCategoryDetailActivity" />
-        <activity android:name=".activities.FriendGrpDetailSettingActivity" />
-        <activity android:name=".activities.DongChatDetailActivity" />
-        <activity android:name=".activities.AddDongChatActivity" />
-        <activity android:name=".activities.DongchatProfileActivity"></activity>
+        <activity
+            android:name=".activities.ModStatusMsgActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.SelectProfileImgActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.ViewProfileListActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.MyPostMngActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.FriendManageActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.RequestFriendActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.FriendReqSelectCategoryActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.FriendCategoryDetailActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.FriendGrpDetailSettingActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.DongChatDetailActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.AddDongChatActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.DongchatProfileActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity android:name=".activities.ViewAlbumActivity"></activity>
     </application>
 
 </manifest>
