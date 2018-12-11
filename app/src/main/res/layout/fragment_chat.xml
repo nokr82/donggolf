@@ -13,13 +13,14 @@
         android:orientation="horizontal">
         <!--my chatting tab-->
         <RelativeLayout
+            android:id="@+id/tab_my_chatRL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:background="@drawable/btn_my_chat_on"
+                android:background="@drawable/diagonal_shape"
                 android:id="@+id/tabMyChat"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -32,16 +33,16 @@
                 android:id="@+id/txMyChat"
                 android:text="내 채팅(999)"/>
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_marginRight="210dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/btn_chat_setting"
                 android:id="@+id/btn_myChat_mng"/>
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/btn_make_chat"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="170dp"
@@ -75,10 +76,16 @@
                 android:visibility="gone"
                 android:id="@+id/btn_add_dongchat"/>
         </RelativeLayout>
-
-
-
         <!--Town Chatting-->
+        <RelativeLayout
+            android:id="@+id/tab_town_chatRL"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <ImageView
+                android:layout_width="180dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/btn_my_chat_off"/>
+        </RelativeLayout>
 
     </LinearLayout>
 

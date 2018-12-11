@@ -23,7 +23,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@id/hintTV"
+            android:id="@+id/hintTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -107,7 +107,7 @@
                     android:textColor="#0EDA2F"/>
 
                 <TextView
-                    android:id="@+id/hintTV"
+                    android:id="@+id/id_hint_endTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14dp"

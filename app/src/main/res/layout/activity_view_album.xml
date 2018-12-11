@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.ViewAlbumActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/finishBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="11dp"
+                android:layout_height="17dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/btn_back" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="앨범  "
+                android:textSize="15dp"
+                android:textColor="#000000" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="(999)"
+                android:textSize="15dp"
+                android:textColor="#000000" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/albumMenuIV"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/btn_chat_option" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/line_0" />
+    <GridView
+        android:id="@+id/selectGV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numColumns="3"/>
+
+</LinearLayout>

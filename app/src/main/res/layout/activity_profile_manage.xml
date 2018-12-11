@@ -60,6 +60,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="151dp"
+        android:layout_marginTop="10dp"
         android:gravity="bottom|center">
 
         <RelativeLayout
@@ -98,11 +99,11 @@
         android:layout_gravity="center"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/txUserName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="사용자이름"
-            android:id="@+id/txUserName"
             android:textSize="24dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
@@ -118,6 +119,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
         android:orientation="horizontal"
         android:gravity="center">
         <TextView
@@ -137,6 +139,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
