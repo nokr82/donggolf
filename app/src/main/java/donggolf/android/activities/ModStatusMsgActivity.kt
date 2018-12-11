@@ -78,7 +78,8 @@ class ModStatusMsgActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getStringPreference(context,"member_id"))
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
         MemberAction.get_member_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
@@ -95,12 +96,18 @@ class ModStatusMsgActivity : RootActivity() {
                     e.printStackTrace()
                 }
             }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
         })
 
         status_Ok.setOnClickListener {
             statusMessage = statusMsg.text.toString()
             val params = RequestParams()
-            params.put("status_msg", statusMessage)
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+            params.put("update", statusMessage)
+            params.put("type", "status_msg")
 
             //php구현 아직 안함
             MemberAction.update_info(params, object : JsonHttpResponseHandler() {

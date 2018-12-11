@@ -108,7 +108,7 @@ class InfoFragment : Fragment(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("InfoFrag :: ${response.toString()}")
+                    println("InfoFrag :: $response")
 
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
@@ -117,6 +117,7 @@ class InfoFragment : Fragment(){
                         txUserName.text = Utils.getString(member,"nick")
 
                         var region = ""
+
                         if (Utils.getString(member,"region1") != null) {
                             region += Utils.getString(member,"region1") + ","
                         }
@@ -126,15 +127,18 @@ class InfoFragment : Fragment(){
                         if (Utils.getString(member,"region3") != null) {
                             region += Utils.getString(member,"region3")
                         }
+
                         if (region.substring(region.length-1) == ","){
                             region = region.substring(0, region.length-2)
                         }
                         txUserRegion.text = region
 
+
                         var statusMessage = Utils.getString(member,"status_msg")
                         if (statusMessage != null) {
                             infoStatusMsg.text = statusMessage
                         }
+
 
                         knowTogether.visibility = View.GONE
 
@@ -159,26 +163,6 @@ class InfoFragment : Fragment(){
             }
         })
 
-        /*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-
-            statusMessage = data!!.get("state_msg") as String
-            imgl = data.get("imgl") as String
-            imgs = data.get("imgs") as String
-            lastN = data.get("last") as Long
-            nick = data.get("nick") as String
-            sex = data.get("sex") as String
-            sTag = data.get("sharpTag") as ArrayList<String>
-
-            txUserName.text = nick
-            infoStatusMsg.text = statusMessage
-            var tmpmsg = ""
-            for (i in 0..(sTag.size-1)){
-                tmpmsg += "#" + sTag.get(i) + " "
-            }
-            hashtagTV.text = tmpmsg
-        }*/
-
-
         tv_CONSEQUENCES.setOnClickListener {
             var intent: Intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
@@ -201,10 +185,10 @@ class InfoFragment : Fragment(){
             startActivityForResult(intent, SELECT_STATUS)
         }
 
-        myNeighbor.setOnClickListener {
+        /*myNeighbor.setOnClickListener {
             var intent = Intent(activity, MutualActivity::class.java)
             startActivity(intent)
-        }
+        }*/
 
         btnNameModi.setOnClickListener {
             var intent = Intent(activity, ProfileNameModifActivity::class.java)
@@ -243,16 +227,40 @@ class InfoFragment : Fragment(){
 
     }
 
-    /*@SuppressLint("NewApi")
+    @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        var sttsMsg = ""
+        var newNick = ""
+
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+
+        MemberAction.get_member_info(params, object :JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
+                        sttsMsg = Utils.getString(member, "status_msg")
+                        newNick = Utils.getString(member, "nick")
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
 
         if (resultCode == Activity.RESULT_OK) {
+
             when (requestCode) {
                 SELECT_PROFILE -> {
-
-                    var cursor: Cursor? = null
+                    /*var cursor: Cursor? = null
                     val texts: ArrayList<Any> = ArrayList<Any>()
 
                     var uri = data?.data
@@ -300,7 +308,7 @@ class InfoFragment : Fragment(){
 
                         var uid = PrefUtils.getStringPreference(context, "uid")
 
-                        *//*ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+                        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                             statusMessage = data!!.get("state_msg") as String
 
                             imgl = data!!.get("imgl") as ArrayList<String>
@@ -310,18 +318,18 @@ class InfoFragment : Fragment(){
                             sex = data!!.get("sex") as String
                             sTag = data!!.get("sharpTag") as ArrayList<String>
 
-                        }*//*
-                        *//*imgl = strPathsL
-                        imgs = strPathsS*//*
+                        }
+                        imgl = strPathsL
+                        imgs = strPathsS
 
                         //이미지 firebase로 전송
                         //사실 그냥 uri를 putFile해도 됨
-                        *//*
+
                             UploadTask uploadTask;
                             uploadTask = storageRef.putFile(file);
-                        *//*
+
                         //여러 사진이 담긴 array list 를 전송해야하므로
-                        *//*val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
+                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
                         FirebaseFirestoreUtils.save("users", uid, item) {
                             if (it) {
@@ -337,7 +345,7 @@ class InfoFragment : Fragment(){
                             } else {
 
                             }
-                        }*//*
+                        }
 
 
                         //이미지 동그랗게
@@ -357,15 +365,13 @@ class InfoFragment : Fragment(){
 
                     }
 
-                    mngTXPhotoCnt.text = images.size.toString()
-
+                    mngTXPhotoCnt.text = images.size.toString()*/
                 }
                 SELECT_STATUS -> {
-                    var sttsMsg = data?.getStringExtra("status_message")
                     infoStatusMsg.text = sttsMsg
                 }
                 MODIFY_NAME -> {
-                    var newNick = data?.getStringExtra("newNick")
+                    //newNick = data?.getStringExtra("newNick")
                     txUserName.text = newNick
                 }
                 MODIFY_TAG -> {
@@ -391,10 +397,6 @@ class InfoFragment : Fragment(){
 
     }
 
-    fun imageTransmission() {
-
-    }
-*/
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context
