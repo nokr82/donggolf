@@ -177,7 +177,7 @@ class LoginActivity : RootActivity() {
                             PrefUtils.setPreference(context, "pass", password)
                             PrefUtils.setPreference(context, "auto", true)
                         } else {
-                            PrefUtils.setPreference(context, "auto", false)
+                            //PrefUtils.setPreference(context, "auto", false)
                         }
 
                         startActivity(Intent(context, MainActivity::class.java))

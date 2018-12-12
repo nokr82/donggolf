@@ -84,7 +84,7 @@ class ProfileTagChangeActivity : RootActivity() {
                 try {
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val data = response.getJSONArray("MemberTags")
+                        val data = response.getJSONArray("tags")
                         for (i in 0..data.length()-1) {
                             val json = data[i] as JSONObject
                             val member_tag = json.getJSONObject("MemberTags")
@@ -127,11 +127,12 @@ class ProfileTagChangeActivity : RootActivity() {
             val params = RequestParams()
             params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
             params.put("update", adapterData)//추가할거
-            params.put("delete", delList) //지울거
-            params.put("type", "tag") //태그를 건드릴것이다
+            //params.put("del_tag", delList) //지울거
+            params.put("type", "tags") //태그를 건드릴것이다
 
             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    setResult(RESULT_OK,intent)
                     finish()
                 }
 

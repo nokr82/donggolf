@@ -129,6 +129,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     fun MoveAreaRangeActivity(){
         var intent: Intent = Intent(this, AreaRangeActivity::class.java)
+        intent.putExtra("region_type", "content_filter")
         startActivity(intent)
     }
 

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -71,15 +72,6 @@ class InfoFragment : Fragment(){
     private var strPathsL : ArrayList<String> = ArrayList<String>()
     private var strPathsS : ArrayList<String> = ArrayList<String>()
 
-    /*lateinit var db : FirebaseFirestore
-
-    lateinit var imgl : String //경로
-    lateinit var imgs : String //경로
-    var lastN : Long = 0
-    lateinit var nick : String
-    lateinit var sex : String
-    private var sTag : ArrayList<String> = ArrayList<String>()
-    lateinit var statusMessage : String*/
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -105,10 +97,10 @@ class InfoFragment : Fragment(){
         params.put("member_id", member_id)
 
         MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
                 try {
-                    val result = response!!.getString("result")
                     println("InfoFrag :: $response")
+                    val result = response!!.getString("result")
 
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
@@ -142,35 +134,41 @@ class InfoFragment : Fragment(){
 
                         knowTogether.visibility = View.GONE
 
+                        //해시태그
+                        val data = response.getJSONArray("tags")
+                        if (data != null) {
+                            var string_tag = ""
+                            for (i in 0 until data.length()) {
+                                var json = data[i] as JSONObject
+                                val memberTag = json.getJSONObject("MemberTags")
 
-                        val data = response.getJSONArray("MemberTags")
-                        var string_tag = ""
-                        for (i in 0 until data.length()) {
-                            var json = data[i] as JSONObject
-                            val memberTag = json.getJSONObject("MemberTags")
-
-                            string_tag += "#" + Utils.getString(memberTag,"tag") + " "
+                                string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+                            }
+                            hashtagTV.text = string_tag
                         }
-                        hashtagTV.text = string_tag
+
+                        //프로필 이미지
+                        /*val imgdata = response.getJSONArray("")
+                        mngTXPhotoCnt.text*/
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
                 }
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
+                println(errorResponse.toString())
             }
         })
 
         tv_CONSEQUENCES.setOnClickListener {
-            var intent: Intent = Intent(activity, OtherManageActivity::class.java)
+            var intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }
 
         addProfImg.setOnClickListener {
-            //var intent = Intent(activity, FindPictureGridActivity::class.java)
-            var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            var intent = Intent(activity, SelectProfileImgActivity::class.java)
+            //var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, SELECT_PROFILE)
         }
 
@@ -212,6 +210,7 @@ class InfoFragment : Fragment(){
 
         setRegion.setOnClickListener {
             var intent = Intent(activity, AreaRangeActivity::class.java)
+            intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
 
@@ -231,35 +230,18 @@ class InfoFragment : Fragment(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        var sttsMsg = ""
-        var newNick = ""
-
-        val params = RequestParams()
-        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
-
-        MemberAction.get_member_info(params, object :JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        sttsMsg = Utils.getString(member, "status_msg")
-                        newNick = Utils.getString(member, "nick")
-                    }
-                } catch (e : JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
                 SELECT_PROFILE -> {
+
+                    data?.let {
+                        try {
+                            //var bitmap = uiHelper.decodeUri(this,it.data)
+                        }catch (e:Exception) {
+
+                        }
+                    }
                     /*var cursor: Cursor? = null
                     val texts: ArrayList<Any> = ArrayList<Any>()
 
@@ -368,35 +350,103 @@ class InfoFragment : Fragment(){
                     mngTXPhotoCnt.text = images.size.toString()*/
                 }
                 SELECT_STATUS -> {
-                    infoStatusMsg.text = sttsMsg
+                    getTempUserInformation("status_msg")
                 }
                 MODIFY_NAME -> {
-                    //newNick = data?.getStringExtra("newNick")
-                    txUserName.text = newNick
+                    getTempUserInformation("nick")
                 }
                 MODIFY_TAG -> {
-                    var newTag = data!!.getStringArrayListExtra("newTags") as ArrayList<String>
-                    var tmp :String = ""
-
-                    for (i in 0..(newTag.size-1)){
-
-                        tmp += "#" + newTag.get(i) + " "
-                    }
-                    hashtagTV.text = tmp
+                    getTempUserInformation("tag")
 
                 }
                 REGION_CHANGE -> {
-                    var newRG1 = data!!.getStringExtra("RG1")
-                    var newRG2 = data.getStringExtra("RG2")
-                    var newRG3 = data.getStringExtra("RG3")
+                    getTempUserInformation("region")
 
-                    txUserRegion.text = newRG1+","+newRG2+","+newRG3
                 }
             }
         }
 
     }
 
+    fun getTempUserInformation(type : String){
+
+        var sttsMsg = ""
+        var newNick = ""
+        var newRegion = ArrayList<String>()
+        var newRegionStr = ""
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+
+        MemberAction.get_member_info(params, object :JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    println("response : $response")
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
+                        val memberTags = response.getJSONArray("tags")
+                        sttsMsg = Utils.getString(member, "status_msg")
+                        newNick = Utils.getString(member, "nick")
+                        newRegion.clear()
+                        var tmprg = Utils.getString(member,"region1")
+                        if (tmprg != null){
+                            newRegion.add(tmprg)
+                            //rg1 = tmprg
+                        }
+                        tmprg = Utils.getString(member,"region2")
+                        if (tmprg != null){
+                            newRegion.add(tmprg)
+                            //rg2 = tmprg
+                        }
+                        tmprg = Utils.getString(member,"region3")
+                        if (tmprg != null){
+                            newRegion.add(tmprg)
+                            //rg3 = tmprg
+                        }
+                        for (i in 0 until newRegion.size){
+                            newRegionStr += newRegion[i] + ","
+                        }
+                        println("newRegionStr $newRegionStr")
+
+
+
+                        when(type){
+                            "status_msg" -> {
+                                infoStatusMsg.text = sttsMsg
+                            }
+                            "nick" -> {
+                                txUserName.text = newNick
+                            }
+                            "region" -> {
+                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-2)
+                            }
+                            "tag" -> {
+                                var taglist = ""
+                                for (i in 0..memberTags.length()-1){
+                                    val data = memberTags[i] as JSONObject
+                                    taglist += "#${Utils.getString(data,"tag")} "
+                                    println(taglist)
+                                }
+                                hashtagTV.text = taglist
+                            }
+                            else -> {
+
+                            }
+                        }
+
+                    }
+
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
+
+    }
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context

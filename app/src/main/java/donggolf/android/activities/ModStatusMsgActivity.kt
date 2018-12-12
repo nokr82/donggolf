@@ -115,6 +115,9 @@ class ModStatusMsgActivity : RootActivity() {
                     try {
                         val result = response!!.getString("result")
                         if (result == "ok") {
+                            var intent = Intent()
+                            setResult(RESULT_OK,intent)
+
                             finish()
                         }
                     }catch (e : JSONException) {
