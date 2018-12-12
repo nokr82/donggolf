@@ -30,6 +30,9 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 import java.lang.reflect.Member
 import java.util.*
 import kotlin.collections.ArrayList
@@ -86,8 +89,6 @@ class AddPostActivity : RootActivity() {
         }
 
         loadData(dbManager,member_id.toString())
-
-        // Create a new user with a first and last name
 
         permission()
 
@@ -373,8 +374,23 @@ class AddPostActivity : RootActivity() {
         if (videoPaths != null){
             if (videoPaths.size != 0){
                 for (i in 0..videoPaths.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, videoPaths.get(i), 800)
-                    params.put("videos[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+
+
+                    val baos = ByteArrayOutputStream()
+
+//                    val fis = FileInputStream(File(videoPaths.get(i)))
+//                    val buf = ByteArray(1024)
+//                    var n: Int
+//                    while ((bytesRead = inputStream.read(b)) != -1)
+//                    {
+//                        bos.write(b, 0, bytesRead);
+//                    }
+//
+//                    videoBytes = baos.toByteArray()
+//
+//                    var bt: Bitmap = Utils.getImage(context.contentResolver, videoPaths.get(i), 800)
+//
+//                    params.put("videos[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
                 }
             }
         }

@@ -170,6 +170,8 @@ class LoginActivity : RootActivity() {
                         val member = response.getJSONObject("member")
 
                         val member_id = Utils.getInt(member, "id")
+
+                        println("member_id -------$member_id")
                         PrefUtils.setPreference(context, "member_id", member_id)
 
                         if (autologinCB.isChecked){

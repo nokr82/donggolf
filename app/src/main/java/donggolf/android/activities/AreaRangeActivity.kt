@@ -40,12 +40,11 @@ class AreaRangeActivity : RootActivity() {
     var rg1 = 0L
     var rg2 = 0L
     var rg3 = 0L
+    var count = 0
 
     var arealist: ArrayList<National> = ArrayList<National>()
 
     var areaGridList: ArrayList<NationalGrid> = ArrayList<NationalGrid>()
-
-    var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,9 +94,6 @@ class AreaRangeActivity : RootActivity() {
                             }
                             println("rg :: $rg1, $rg2, $rg3")
 
-
-
-
                             for (i in 0..(data.size - 1)) {
                                 var sido:HashMap<String, Any>  = data.get(i.toString()) as HashMap<String, Any>
 
@@ -115,16 +111,11 @@ class AreaRangeActivity : RootActivity() {
                                     national.title = entry.key
                                     national.national = entry.value
 
-
-
                                     arealist.add(national)
-
 
                                 }
 
                                 adapter.notifyDataSetChanged()
-
-
 
                             }
 
@@ -197,50 +188,6 @@ class AreaRangeActivity : RootActivity() {
             }
         }
 
-
-        /*db.collection("infos")
-                .document(uid)
-                .get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        var rg1 = it.result.get("cont_region1") as Long
-                        var rg2 = it.result.get("cont_region2") as Long
-
-                        println("Get Area Data === $rg1, $rg2")
-
-                        println("arealist ; ${arealist.size}")
-
-                        var tmp : java.util.Map.Entry<String,Long>
-
-                        for(national in arealist) {
-                            val key = national.title
-                            val na = national.national
-
-                            for(n in na) {
-                                // println("${n.key} : ${n.value}")
-                            }
-                        }
-
-                        *//*
-                        for (i in 0..(arealist.size-1)) {
-                            for (j in 0..(arealist.get(i).national.size - 1)){
-                                tmp = arealist.get(i).national.get(j)
-                                if (tmp.value == rg1){
-                                    userRG1 = arealist.get(i).national.get(j).key.toString()
-                                } else if (tmp.value == rg2) {
-                                    userRG2 = arealist.get(i).national.get(j).key.toString()
-                                }
-
-                                println("usrRegion :===================: $userRG1, $userRG2")
-                            }
-                        }
-                        *//*
-                        //area1.setText(userRG1)
-                    }
-                }*/
-
-
-
         arealistLV.itemsCanFocus = true
         arealistLV.setOnItemClickListener{ parent, view, position, id ->
 
@@ -294,16 +241,11 @@ class AreaRangeActivity : RootActivity() {
 
             GridAdapter.notifyDataSetChanged()
 
-
         }
 
         GridAdapter = AreaRangeGridAdapter(context,R.layout.item_area_range_grid,areaGridList)
         gridGV.adapter = GridAdapter
         gridGV.setOnItemClickListener { parent, view, position, id ->
-
-            /*val j = areaGridList.get(position)
-
-            println(j)*/
 
             var area = areaGridList.get(position).title
 
