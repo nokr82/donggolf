@@ -141,16 +141,16 @@ class MainDetailActivity : RootActivity() {
                                 if(exclude_looker.size == 0){
                                     exclude_looker.add(nick)
 
-                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
-
-                                    FirebaseFirestoreUtils.save("contents", id, item) {
-                                        if (it) {
-
-                                        } else {
-
-                                        }
-                                    }
+//                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+//                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+//
+//                                    FirebaseFirestoreUtils.save("contents", id, item) {
+//                                        if (it) {
+//
+//                                        } else {
+//
+//                                        }
+//                                    }
                                 }
 
                                 for(i in 0.. exclude_looker.size -1){
@@ -166,16 +166,16 @@ class MainDetailActivity : RootActivity() {
                                 if(check == true){
                                     exclude_looker.add(nick)
 
-                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
+//                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+//                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
 
-                                    FirebaseFirestoreUtils.save("contents", id, item) {
-                                        if (it) {
-
-                                        } else {
-
-                                        }
-                                    }
+//                                    FirebaseFirestoreUtils.save("contents", id, item) {
+//                                        if (it) {
+//
+//                                        } else {
+//
+//                                        }
+//                                    }
                                 }
                             }
 
@@ -366,16 +366,9 @@ class MainDetailActivity : RootActivity() {
                                                     if(!charge_user[i].equals(nick)){
                                                         charge_user.add(nick)
 
-                                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-                                                                deletedAt, chargecnt + 1, charge_user, heart_user, looker, exclude_looker, sharpTag)
+//                                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
+//                                                                deletedAt, chargecnt + 1, charge_user, heart_user, looker, exclude_looker, sharpTag)
 
-                                                        FirebaseFirestoreUtils.save("contents", id, item) {
-                                                            if (it) {
-                                                                finish()
-                                                            } else {
-
-                                                            }
-                                                        }
                                                     }
                                                 }
                                             }

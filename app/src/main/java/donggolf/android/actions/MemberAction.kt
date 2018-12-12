@@ -21,8 +21,6 @@ object MemberAction {
         HttpClient.post("/login/login.json", params, handler)
     }
 
-
-
     //아이디 찾기
     fun find_id(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/login/find_id.json", params, handler)
@@ -36,5 +34,7 @@ object MemberAction {
     fun update_info(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/update_member_info.json", params, handler)
     }
+
+
 
 }

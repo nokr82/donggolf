@@ -47,7 +47,7 @@ open class MainFragment : Fragment() {
 
 
     //원본 데이터 정의 부분
-    private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  adapter : MainAdapter
     private  lateinit var  editadapter : MainEditAdapter
     private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
@@ -119,7 +119,7 @@ open class MainFragment : Fragment() {
                     println(it)
 
                     if (it != null) {
-                        adapterData.add(it)
+//                        adapterData.add(it)
                     }
 
                 }
