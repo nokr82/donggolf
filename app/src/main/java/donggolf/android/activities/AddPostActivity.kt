@@ -361,6 +361,18 @@ class AddPostActivity : RootActivity() {
         params.put("heart_count",0)
         params.put("cmt_count",0)
 
+        var cht_yn = "Y"
+        if (replyableCB.isChecked == false){
+            cht_yn = "N"
+        }
+        params.put("cht_yn",cht_yn)
+
+        var cmt_yn = "Y"
+        if (chatableCB.isChecked == false){
+            cmt_yn = "N"
+        }
+        params.put("cmt_yn",cmt_yn)
+
         if (displaynamePaths != null){
             if (displaynamePaths.size != 0){
                 for (i in 0..displaynamePaths.size - 1){
