@@ -25,16 +25,23 @@
             android:layout_height="wrap_content"
             android:text="xx.xx"
             android:textSize="15dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="20dp"
             />
-        <ImageView
-            android:id="@+id/main_edit_listitem_delete"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:background="@drawable/btn_del_history_1"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dp"/>
     </LinearLayout>
+        <LinearLayout
+            android:id="@+id/main_edit_listitem_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="@drawable/btn_del_history_1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

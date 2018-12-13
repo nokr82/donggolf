@@ -78,6 +78,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="7dp"/>
                         <TextView
+                            android:id="@+id/cmtcountTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="9999"
@@ -90,6 +91,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="7dp"/>
                         <TextView
+                            android:id="@+id/heartcountTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="9999"
@@ -170,6 +172,7 @@
                                 android:background="@drawable/icon_first" />
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/statusmsgTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#AFAFAF"
@@ -273,6 +276,13 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/hashtagTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textSize="13dp"/>
+
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
@@ -284,6 +294,7 @@
                     android:layout_marginLeft="9dp"
                     android:layout_gravity="center_vertical"/>
                 <TextView
+                    android:id="@+id/likecountTV"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="9999명이 좋아합니다."
@@ -356,6 +367,7 @@
                         android:layout_height="match_parent">
 
                         <LinearLayout
+                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <ImageView
@@ -364,7 +376,9 @@
                                 android:layout_height="23dp"
                                 android:background="@drawable/btn_add_photo"
                                 android:layout_margin="10dp"/>
+
                             <EditText
+                                android:id="@+id/cmtET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -374,6 +388,15 @@
                                 android:layout_marginRight="30dp"
                                 android:layout_gravity="center_vertical"
                                 android:textSize="13dp"/>
+                            <TextView
+                                android:id="@+id/cmtTV"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:textSize="13dp"
+                                android:layout_marginRight="30dp"
+                                android:text="댓글이 차단된 상태입니다"
+                                android:visibility="gone"/>
 
                         </LinearLayout>
                         <TextView

@@ -14,16 +14,19 @@ import android.view.View.OnTouchListener
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.InfoAction
+import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
+import donggolf.android.base.*
 import donggolf.android.models.Content
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,9 +79,6 @@ class MainDetailActivity : RootActivity() {
 
         adapterData.add(dataObj)
 
-        mAuth = FirebaseAuth.getInstance()
-
-
         adapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,adapterData)
 
         main_detail_listview.adapter = adapter
@@ -88,145 +88,6 @@ class MainDetailActivity : RootActivity() {
         activity = this as MainDetailActivity
 
         var check = false
-
-        if (intent.hasExtra("id")){
-            val id = intent.getStringExtra("id")
-
-            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                if (success){
-                    if(data != null){
-                        if(data.size != 0){
-
-                            println("data : detail $data")
-                            val time: Long = data["createAt"] as Long
-
-                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
-
-                            val currentTime: String = dateFormat.format(Date(time))
-
-                            titleTV.text = data["title"].toString()
-                            dateTV.text = currentTime.toString()
-                            viewTV.text = data["looker"].toString()
-                            nickNameTV.text = data["owner"].toString()
-                            detailowner = data["owner"].toString()
-
-                            val nick: String = PrefUtils.getStringPreference(context, "nick")
-
-                            if(!nick.equals(detailowner)){
-                                modifyTV.setVisibility(View.GONE)
-                                deleteTV.setVisibility(View.GONE)
-                            }
-
-                            if(!detailowner.equals(nick)){
-
-                                var charge_user: ArrayList<String> = data.get("charge_user") as ArrayList<String>
-                                val chargecnt = data["chargecnt"]as Long
-                                val createdAt = data["createAt"] as Long
-                                val deleted = data["deleted"] as Boolean
-                                val deletedAt = data["deletedAt"]as Long
-                                val door_image = data["door_image"].toString()
-                                var exclude_looker: ArrayList<String> = data.get("exclude_looker") as ArrayList<String>
-                                val heart_user = data["heart_user"] as Boolean
-                                val looker = data["looker"]as Long
-                                owner = data["owner"].toString()
-                                var region: ArrayList<String> = data.get("region") as ArrayList<String>
-                                var sharpTag: ArrayList<String> = data.get("sharp_tag") as ArrayList<String>
-                                var texts:ArrayList<Any> = data.get("texts") as ArrayList<Any>
-                                val title = data["title"].toString()
-                                val updateAt = data["updatedAt"] as Long
-                                val updatedCnt = data["updatedAt"] as Long
-
-                                println("exclude_looker == ${exclude_looker.size}")
-
-                                if(exclude_looker.size == 0){
-                                    exclude_looker.add(nick)
-
-//                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-//                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
-//
-//                                    FirebaseFirestoreUtils.save("contents", id, item) {
-//                                        if (it) {
-//
-//                                        } else {
-//
-//                                        }
-//                                    }
-                                }
-
-                                for(i in 0.. exclude_looker.size -1){
-
-                                    if(!exclude_looker[i].equals(nick)){
-                                        check = true
-                                    }
-                                    if (exclude_looker[i].equals(nick)){
-                                        check = false
-                                    }
-                                }
-
-                                if(check == true){
-                                    exclude_looker.add(nick)
-
-//                                    val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-//                                            deletedAt, chargecnt, charge_user, heart_user, looker + 1, exclude_looker, sharpTag)
-
-//                                    FirebaseFirestoreUtils.save("contents", id, item) {
-//                                        if (it) {
-//
-//                                        } else {
-//
-//                                        }
-//                                    }
-                                }
-                            }
-
-                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
-
-                            for(i in 0.. (texts.size-1)){
-
-                                val text_ = JSONObject(texts.get(i))
-
-                                val type = Utils.getString(text_, "type")
-
-                                if(type == "text") {
-                                    val text = text_.get("text")as String
-                                    textTV.text = text
-                                } else if (type == "photo") {
-                                    val photo = text_.get("file") as JSONArray
-
-
-                                    for(i in 0.. (photo.length() - 1)) {
-
-                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
-                                            if (s != null) {
-                                                adverImagePaths.add(s)
-
-                                                adverAdapter.notifyDataSetChanged()
-                                            }
-                                        }
-                                    }
-
-                                } else if (type == "video"){
-                                    val video = text_.get("file") as JSONArray
-                                    println("video : ========= $video")
-                                }
-
-                            }
-//
-//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
-//
-//                            detailIV.setImageBitmap(bt)
-
-                            //상태메시지
-
-
-                        }
-                    }
-
-                } else {
-
-                }
-            }
-        }
 
         adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
         pagerVP.adapter = adverAdapter
@@ -280,22 +141,155 @@ class MainDetailActivity : RootActivity() {
                         if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
                         }
 
-                            if (intent.hasExtra("id")) {
-                                val id = intent.getStringExtra("id")
-                                var intent = Intent(context, PictureDetailActivity::class.java);
-                                intent.putExtra("id", id)
-                                startActivityForResult(intent, PICTURE_DETAIL);
+                        if (intent.hasExtra("id")) {
+                            val id = intent.getStringExtra("id")
+                            var intent = Intent(context, PictureDetailActivity::class.java);
+                            intent.putExtra("id", id)
+                            startActivityForResult(intent, PICTURE_DETAIL);
 
-                                return true
-                            }
-
+                            return true
                         }
+
+                    }
 
                 }
 
                 return v?.onTouchEvent(event) ?: true
             }
         })
+
+        if (intent.getStringExtra("id") != null){
+            val id = intent.getStringExtra("id")
+
+            println("id ------ $id")
+
+            var params = RequestParams()
+            params.put("id",id)
+
+            PostAction.get_post(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+
+                            val data = response.getJSONObject("Content")
+
+                            val created = Utils.getString(data,"created")
+                            val title = Utils.getString(data,"title")
+                            val text = Utils.getString(data,"text")
+                            val member_id = Utils.getString(data,"member_id")
+                            val door_image = Utils.getString(data,"door_image")
+                            val deleted = Utils.getString(data,"deleted")
+                            val look_count = Utils.getInt(data,"look_count")
+                            val heart_count = Utils.getInt(data,"heart_count")
+                            val cmt_count = Utils.getInt(data,"cmt_count")
+                            val cht_yn = Utils.getString(data,"cht_yn")
+                            val cmt_yn = Utils.getString(data,"cmt_yn")
+
+                            val tags = response.getJSONArray("tags")
+                            val imageDatas = response.getJSONArray("ContentImgs")
+
+                            if (tags != null && tags.length() > 0 ){
+                                var hashtags: String = ""
+
+                                for (i in 0 until tags.length()){
+                                    var json = tags.get(i) as JSONObject
+                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    val division = Utils.getString(MemberTags,"division")
+
+                                    if (division == "1"){
+                                        val tag = Utils.getString(MemberTags,"tag")
+                                        hashtags += "#"+tag + "  "
+                                    }
+                                }
+                                hashtagTV.setText(hashtags)
+                            }
+
+                            if (imageDatas != null && imageDatas.length() > 0){
+                                var imagePaths: ArrayList<String> = ArrayList<String>()
+
+                                for (i in 0 until imageDatas.length()){
+                                    var json = imageDatas.get(i) as JSONObject
+
+                                    var contentFile = json.getJSONObject("contentFile")
+                                    var type = Utils.getInt(contentFile,"type")
+                                    if (type == 1) {
+                                        val path = Utils.getString(contentFile, "image_uri")
+                                        imagePaths.add(path)
+                                    }
+                                }
+
+                                if (adverImagePaths != null){
+                                    adverImagePaths.clear()
+                                }
+
+                                for (i in 0 until imagePaths.size){
+                                    val image = Config.url + imagePaths.get(i)
+                                    adverImagePaths.add(image)
+                                }
+                                adverAdapter.notifyDataSetChanged()
+                            }
+
+                            dateTV.setText(created)
+                            viewTV.setText(look_count.toString())
+                            cmtcountTV.setText(cmt_count.toString())
+                            heartcountTV.setText(heart_count.toString())
+                            titleTV.setText(title)
+                            textTV.setText(text)
+                            likecountTV.setText(heart_count.toString() + "명이 좋아합니다")
+
+                            if (cht_yn  == "Y"){
+
+                            } else {
+                            }
+
+                            if (cmt_yn == "Y"){
+                                cmtTV.visibility = View.GONE
+                                cmtET.visibility = View.VISIBLE
+                            } else {
+                                cmtTV.visibility = View.VISIBLE
+                                cmtET.visibility = View.GONE
+                            }
+
+                            val params = RequestParams()
+                            params.put("member_id", member_id)
+
+                            MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    println("success==========")
+                                    val result = response!!.getString("result")
+                                    if (result == "ok") {
+                                        val member = response.getJSONObject("Member")
+
+                                        val nick = Utils.getString(member, "nick")
+                                        val status_msg = Utils.getString(member, "status_msg")
+
+                                        println("nick ------$nick")
+
+                                        nickNameTV.setText(nick)
+                                        statusmsgTV.setText(status_msg)
+
+                                    }
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                    println("---------fail")
+                                }
+                            })
+
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
+
+
+        }
 
         finishLL.setOnClickListener {
             finish()
@@ -331,50 +325,7 @@ class MainDetailActivity : RootActivity() {
                             if (intent.hasExtra("id")) {
                                 val id = intent.getStringExtra("id")
 
-                                ContentAction.viewContent(id) { success, data, exception ->
-                                    if (success) {
-                                        if (data != null) {
-                                            if (data.size != 0) {
 
-                                                var charge_user: ArrayList<String> = data.get("charge_user") as ArrayList<String>
-                                                val chargecnt = data["chargecnt"]as Long
-                                                val createdAt = data["createAt"] as Long
-                                                val deleted = data["deleted"] as Boolean
-                                                val deletedAt = data["deletedAt"]as Long
-                                                val door_image = data["door_image"].toString()
-                                                var exclude_looker: ArrayList<String> = data.get("exclude_looker") as ArrayList<String>
-                                                val heart_user = data["heart_user"] as Boolean
-                                                val looker = data["looker"]as Long
-                                                val owner = data["owner"].toString()
-                                                var region: ArrayList<String> = data.get("region") as ArrayList<String>
-                                                var sharpTag: ArrayList<String> = data.get("sharp_tag") as ArrayList<String>
-                                                var texts:ArrayList<Any> = data.get("texts") as ArrayList<Any>
-                                                val title = data["title"].toString()
-                                                val updateAt = data["updatedAt"] as Long
-                                                val updatedCnt = data["updatedAt"] as Long
-
-
-                                                for(i in 0.. charge_user.size -1){
-                                                    if(charge_user[i].equals(nick)){
-                                                        Toast.makeText(context, "이미 신고를 하셨습니다.", Toast.LENGTH_LONG).show()
-
-                                                        finish()
-
-                                                        return@viewContent
-                                                    }
-
-                                                    if(!charge_user[i].equals(nick)){
-                                                        charge_user.add(nick)
-
-//                                                        val item = Content(createdAt, updateAt, updatedCnt, owner, region, title, texts, door_image, deleted,
-//                                                                deletedAt, chargecnt + 1, charge_user, heart_user, looker, exclude_looker, sharpTag)
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     })
@@ -473,9 +424,6 @@ class MainDetailActivity : RootActivity() {
                 })
         val alert = builder.create()
         alert.show()
-
-
-
 
     }
 

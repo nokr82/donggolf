@@ -99,8 +99,6 @@ class AddPostActivity : RootActivity() {
         if (category == 2) {
             addpostTV.text = "수정하기"
             val id = intent.getStringExtra("id")
-            println("id +====== $id")
-
         }
 
         finishaBT.setOnClickListener {
@@ -113,43 +111,39 @@ class AddPostActivity : RootActivity() {
                         val title = Utils.getString(titleET)
                         val content = Utils.getString(contentET)
 
-                        if (hashtag != null) {
-                            if (hashtag.size != 0) {
-                                var tmphashtag = hashtag[0].toString()
+                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
-                                for (i in 0..hashtag.size - 1) {
-                                    tmphashtag += "," + hashtag[i].toString()
-                                }
+                        dbManager.inserttmpcontent(tmpContent)
 
-                                val tmpContent = TmpContent(0, member_id.toString(), title, content)
-
-                                println("member_id ======= $member_id")
-
-                                dbManager.inserttmpcontent(tmpContent)
-
-                                finish()
+                        if (imagesPaths != null && imagesPaths.size > 0 ) {
+                            for (i in 0 until imagesPaths.size){
+                                val imagesPath = ImagesPath(0,member_id.toString(),imagesPaths.get(i),1)
+                                println("imagesPath ${imagesPath.path}")
+                                dbManager.insertimagespath(imagesPath)
                             }
                         }
 
-                        if (hashtag != null){
-                            if(hashtag.size == 0){
-                                var tmphashtag = ""
-
-                                val tmpContent = TmpContent(0, member_id.toString(), title, content)
-
-                                println("userid ======= $userid")
-
-                                dbManager.inserttmpcontent(tmpContent)
-
-                                finish()
+                        if (videoPaths != null && videoPaths.size > 0 ) {
+                            for (i in 0 until videoPaths.size){
+                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                                println("videoPath ${videoPath.path}")
+                                dbManager.insertimagespath(videoPath)
                             }
                         }
+
+                        if (hashtag != null && hashtag.size > 0 ) {
+                            for (i in 0 until hashtag.size){
+                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                                println("hastag ${hastag.path}")
+                                dbManager.insertimagespath(hastag)
+                            }
+                        }
+
+                        finish()
 
                     })
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-
-                        db.collection("users")
 
                         loadData(dbManager,member_id.toString())
 
@@ -157,10 +151,15 @@ class AddPostActivity : RootActivity() {
                             finish()
                         }
 
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            dbManager.deleteImagePaths(member_id.toString())
+                        }
+
                         if(tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
                             finish()
                         }
+
 
                     })
             val alert = builder.create()
@@ -212,6 +211,7 @@ class AddPostActivity : RootActivity() {
 
         hashtagLL.setOnClickListener {
             var intent = Intent(context, ProfileTagChangeActivity::class.java);
+            intent.putExtra("type",1)
             startActivityForResult(intent, SELECT_HASHTAG);
         }
 
@@ -224,11 +224,26 @@ class AddPostActivity : RootActivity() {
 
         val tmpcontent = dbManager.selectTmpContent(query)
 
-//        tmpImagesPath = dbManager.selectImagesPath(imagespathquery)
+        var tmpImagesPath = dbManager.selectImagesPath(imagespathquery)
 
-        println("tmpImagesPath ======== $tmpImagesPath")
+        if (tmpImagesPath != null && tmpImagesPath.size > 0){
+            for (i in 0 until tmpImagesPath.size){
+                if (tmpImagesPath.get(i).type == 1){
+                    imagesPaths.add(tmpImagesPath.get(i).path!!)
+                    println("imagesPaths -------- ${tmpImagesPath.get(i).path}")
+                } else if (tmpImagesPath.get(i).type == 2){
+                    videoPaths.add(tmpImagesPath.get(i).path!!)
+                    println("videoPaths -------- ${tmpImagesPath.get(i).path}")
+                } else if (tmpImagesPath.get(i).type == 3) {
+                    hashtag.add(tmpImagesPath.get(i).path!!)
+                    println("hashtag -------- ${tmpImagesPath.get(i).path}")
+                }
+                println("tmpImagesPath -------- ${tmpImagesPath.get(i).path}")
+            }
+        }
 
         tmpContent = tmpcontent
+        this.tmpImagesPath = tmpImagesPath
 
         titleET.setText(tmpcontent.title)
         contentET.setText(tmpcontent.texts)
@@ -373,6 +388,12 @@ class AddPostActivity : RootActivity() {
         }
         params.put("cmt_yn",cmt_yn)
 
+        if (hashtag != null){
+            for (i in 0 .. hashtag.size - 1){
+                params.put("tag[" + i + "]",  hashtag.get(i))
+            }
+        }
+
         if (displaynamePaths != null){
             if (displaynamePaths.size != 0){
                 for (i in 0..displaynamePaths.size - 1){
@@ -431,6 +452,10 @@ class AddPostActivity : RootActivity() {
         if(tmpContent.id != null) {
             dbManager.deleteTmpContent(tmpContent.id!!)
             finish()
+        }
+
+        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+            dbManager.deleteImagePaths(member_id.toString())
         }
 
     }
@@ -541,9 +566,11 @@ class AddPostActivity : RootActivity() {
 
                 SELECT_HASHTAG -> {
 
-                    hashtag = data?.getSerializableExtra("data") as ArrayList<String>
+                    if (data?.getStringArrayListExtra("data") != null) {
+                        hashtag = data?.getStringArrayListExtra("data") as ArrayList<String>
 
-                    println("tmpcontent : $hashtag")
+                        println("tmpcontent : $hashtag")
+                    }
 
                 }
             }

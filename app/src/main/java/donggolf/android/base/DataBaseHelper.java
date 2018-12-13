@@ -164,6 +164,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         imagespathquery += "imagespath ( id INTEGER PRIMARY KEY AUTOINCREMENT";
         imagespathquery += ", owner STRING";
         imagespathquery += ", path STRING";
+        imagespathquery += ", type Integer";
         imagespathquery += ");";
         db.execSQL(imagespathquery);
     }
@@ -180,8 +181,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         query += ", created STRING";
         query += ");";
         db.execSQL(query);
-
-
 
     }
 
@@ -200,11 +199,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertimagespath(ImagesPath imagespath){
-        String query = "INSERT INTO imagespath (owner, path)";
+        String query = "INSERT INTO imagespath (owner, path, type)";
 
         query += " values (";
         query += " '" + imagespath.getOwner() + "'";
         query += ", '" + imagespath.getPath() + "'";
+        System.out.println("image-------------------" + imagespath.getPath());
+        query += ", '" + imagespath.getType() + "'";
         query += " ); ";
 
         SQLiteDatabase db = getWritableDatabase();
@@ -238,33 +239,35 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(query, null);
 
-        ArrayList<ImagesPath> Imagespath = new ArrayList<ImagesPath>();
+        ArrayList<ImagesPath> Imagespaths = new ArrayList<ImagesPath>();
 
         if (cursor != null) {
-            while(cursor.moveToFirst()){
-                ImagesPath imagespath = new ImagesPath();
+            while(cursor.moveToNext()){
 
-                imagespath.setId(cursor.getInt(0));
-                imagespath.setOwner(cursor.getString(1));
-                imagespath.setPath(cursor.getString(2));
+                Integer id = (cursor.getInt(0));
+                String owner = (cursor.getString(1));
+                String path = (cursor.getString(2));
+                Integer type = (cursor.getInt(3));
 
-                Imagespath.add(imagespath);
+                ImagesPath item = new ImagesPath(id,owner,path,type);
+
+                Imagespaths.add(item);
             }
         }
         cursor.close();
 
-        return Imagespath;
+        return Imagespaths;
     }
 
     public int deleteTmpContent(int id){
 
-        String query = "DELETE FROM tmpcontent where id = " + id;
+        String query = "DELETE FROM tmpcontent where id = '"+ id + "'";
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
         db.close();
 
-        query = "SELECT count(*) FROM tmpcontent WHERE id = " + id;
+        query = "SELECT count(*) FROM tmpcontent WHERE id = '"+ id + "'";
 
         db = getReadableDatabase();
         int count = 0;
@@ -278,15 +281,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public int deleteImagePaths(int id){
+    public int deleteImagePaths(String id){
 
-        String query = "DELETE FROM imagespath where id = " + id;
+        String query = "DELETE FROM imagespath where owner = '"+ id + "'";
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
         db.close();
 
-        query = "SELECT count(*) FROM imagespath WHERE id = " + id;
+        query = "SELECT count(*) FROM imagespath WHERE owner = '"+ id + "'";
 
         db = getReadableDatabase();
         int count = 0;

@@ -72,8 +72,6 @@ class InfoFragment : Fragment(){
     private var strPathsL : ArrayList<String> = ArrayList<String>()
     private var strPathsS : ArrayList<String> = ArrayList<String>()
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
 
@@ -200,6 +198,7 @@ class InfoFragment : Fragment(){
 
         prfhashtagLL.setOnClickListener {
             var intent = Intent(activity, ProfileTagChangeActivity::class.java)
+            intent.putExtra("type",2)
             startActivityForResult(intent, MODIFY_TAG)
         }
 

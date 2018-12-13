@@ -14,4 +14,20 @@ object PostAction {
         HttpClient.post("/post/load_post.json", params, handler)
     }
 
+    fun get_post(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/get_post.json", params, handler)
+    }
+
+    fun add_search(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/add_search.json", params, handler)
+    }
+
+    fun search_list(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/search_list.json", params, handler)
+    }
+
+    fun delete_search(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/delete_search.json", params, handler)
+    }
+
 }

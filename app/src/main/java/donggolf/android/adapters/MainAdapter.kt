@@ -33,7 +33,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
     var view:Int = view
     var data:ArrayList<JSONObject> = data
 
-
     var text:Text = Text()
     var photo:JSONArray = JSONArray()
     var video:ArrayList<String> = ArrayList<String>()
@@ -86,6 +85,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                     println("nick ------$nick")
 
                     item.main_item_nickname.setText(nick)
+                    notifyDataSetChanged()
                 }
             }
 

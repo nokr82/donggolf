@@ -36,7 +36,6 @@ class ProfileTagChangeActivity : RootActivity() {
     private var adapterData : ArrayList<String> = ArrayList<String>()
     private var delList = ArrayList<Int>()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_tag_change)
@@ -76,43 +75,50 @@ class ProfileTagChangeActivity : RootActivity() {
                 }
             }
         }*/
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        val intent = getIntent()
+        val type = intent.getIntExtra("type",0)
 
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        val data = response.getJSONArray("tags")
-                        for (i in 0..data.length()-1) {
-                            val json = data[i] as JSONObject
-                            val member_tag = json.getJSONObject("MemberTags")
-                            val tag = Utils.getString(member_tag, "tag")
+        if(type == 2) {
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-                            adapterData.add(tag)
+            MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+                            val data = response.getJSONArray("tags")
+                            for (i in 0..data.length() - 1) {
+                                val json = data[i] as JSONObject
+                                val member_tag = json.getJSONObject("MemberTags")
+                                val tag = Utils.getString(member_tag, "tag")
+
+                                adapterData.add(tag)
+                            }
+
+                            adapter.notifyDataSetChanged()
+
                         }
-
-                        adapter.notifyDataSetChanged()
-
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
                     }
-                } catch (e : JSONException) {
-                    e.printStackTrace()
                 }
-            }
 
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
-            }
-        })
+                }
+            })
+        }
 
         tagList.setOnItemClickListener { parent, view, position, id ->
             view.removeIV.setOnClickListener {
 
-                val taglist = adapterData.get(position) as JSONObject
-                val tags = taglist.getJSONObject("MemberTags")
-                val oldTagID = Utils.getInt(tags, "id")
-                delList.add(oldTagID)
+                if (type == 2) {
+                    val taglist = adapterData.get(position) as JSONObject
+                    val tags = taglist.getJSONObject("MemberTags")
+                    val oldTagID = Utils.getInt(tags, "id")
+                    delList.add(oldTagID)
+                }
 
                 adapter.removeItem(position)
                 adapterData.removeAt(position)
@@ -124,22 +130,34 @@ class ProfileTagChangeActivity : RootActivity() {
 
             Utils.hideKeyboard(context!!)
 
-            val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
-            params.put("update", adapterData)//추가할거
-            //params.put("del_tag", delList) //지울거
-            params.put("type", "tags") //태그를 건드릴것이다
-
-            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    setResult(RESULT_OK,intent)
-                    finish()
+            if (type == 1){
+                val intent = Intent()
+                if (adapterData != null && adapterData.size > 0) {
+                    intent.putExtra("data", adapterData)
                 }
+                setResult(RESULT_OK,intent)
+                finish()
+            }
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+            if (type == 2) {
 
-                }
-            })
+                val params = RequestParams()
+                params.put("member_id", PrefUtils.getIntPreference(context, "member_id")) //where절에 들어갈 조건
+                params.put("update", adapterData)//추가할거
+                //params.put("del_tag", delList) //지울거
+                params.put("type", "tags") //태그를 건드릴것이다
+
+                MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                    }
+                })
+            }
         }
 
         //입력관련 처리
