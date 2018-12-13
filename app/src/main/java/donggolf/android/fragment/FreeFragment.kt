@@ -283,7 +283,7 @@ open class FreeFragment : Fragment() {
                 }
 
                 try {
-                    val list = response!!.getJSONArray("result")
+                    val list = response!!.getJSONArray("content")
 
                     Log.d("리스트",list.toString())
                     println("-------------------------")

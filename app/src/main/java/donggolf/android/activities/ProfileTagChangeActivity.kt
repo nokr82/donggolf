@@ -84,10 +84,10 @@ class ProfileTagChangeActivity : RootActivity() {
                 try {
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val data = response.getJSONArray("tags")
+                        val data = response.getJSONArray("MemberTags")
                         for (i in 0..data.length()-1) {
                             val json = data[i] as JSONObject
-                            val member_tag = json.getJSONObject("MemberTags")
+                            val member_tag = json.getJSONObject("MemberTag")
                             val tag = Utils.getString(member_tag, "tag")
 
                             adapterData.add(tag)
@@ -110,7 +110,7 @@ class ProfileTagChangeActivity : RootActivity() {
             view.removeIV.setOnClickListener {
 
                 val taglist = adapterData.get(position) as JSONObject
-                val tags = taglist.getJSONObject("MemberTags")
+                val tags = taglist.getJSONObject("MemberTag")
                 val oldTagID = Utils.getInt(tags, "id")
                 delList.add(oldTagID)
 

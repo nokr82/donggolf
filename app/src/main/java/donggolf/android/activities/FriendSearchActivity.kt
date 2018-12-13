@@ -38,8 +38,15 @@ import com.kakao.usermgmt.callback.MeResponseCallback
 import com.kakao.usermgmt.response.model.UserProfile
 import com.kakao.util.exception.KakaoException
 import com.kakao.util.helper.log.Logger
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
+import donggolf.android.actions.MemberAction
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.lang.Exception
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -50,7 +57,7 @@ class FriendSearchActivity : RootActivity() {
     val REQUEST_INVITE = 700
     lateinit var context : Context
 
-    private  var friendData : ArrayList<Users> = ArrayList<Users>()
+    private  var friendData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  friendAdapter : FriendAdapter
     private  lateinit var  editadapter : MainEditAdapter
     private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
@@ -74,21 +81,20 @@ class FriendSearchActivity : RootActivity() {
 
         callback = SessionCallback()
 
-        user = intent.getSerializableExtra("tUser") as HashMap<String, Any>
-
         //main list view setting
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
         frdResultLV.adapter = friendAdapter
 
-        frdSearchET.setOnClickListener {
-
-            main_listview_search.visibility = View.VISIBLE
-        }
 
         btn_txDel.setOnClickListener {
             frdSearchET.setText("")
         }
 
+        frdSearchET.setOnClickListener {
+            main_listview_search.visibility = View.VISIBLE
+        }
+
+        //엔터키
         frdSearchET.setOnEditorActionListener { v, actionId, event ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 //var searchCond : HashMap<String, String> = HashMap<String,String>()
@@ -100,6 +106,18 @@ class FriendSearchActivity : RootActivity() {
             } else {
                 false
             }
+        }
+
+        btn_search_friends.setOnClickListener {
+
+            var which = Utils.getString(frdSearchET)
+            if (which.isEmpty()){
+                Utils.alert(context, "검색할 키워드를 입력해주세요")
+                return@setOnClickListener
+            }
+
+            friendSearchWords(which)
+
         }
 
         finishBT.setOnClickListener {
@@ -137,17 +155,6 @@ class FriendSearchActivity : RootActivity() {
             }
         }
 
-        btn_search_friends.setOnClickListener {
-
-            var which = Utils.getString(frdSearchET)
-            if (which.isEmpty()){
-                Utils.alert(context, "검색할 키워드를 입력해주세요")
-                return@setOnClickListener
-            }
-
-            friendSearchWords(which)
-
-        }
     }
 
     //카카오톡 공유
@@ -201,54 +208,35 @@ class FriendSearchActivity : RootActivity() {
     }
 
     fun friendSearchWords(keyWord : String) {
-        val db = FirebaseFirestore.getInstance()
+        val params = RequestParams()
+        params.put("keyword", keyWord)
 
-        friendData.clear()
-        db.collection("users")
-                .whereEqualTo("nick", keyWord)
-                //.whereEqualTo("sharpTag", keyWord)
-                .get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        for (document in it.getResult()) {
-                            var tmpImgl = document.data.get("imgl") as String
-                            var tmpImgs = document.data.get("imgs") as String
-                            var tmpLast = document.data.get("last") as Long
-                            var tmpNick = document.data.get("nick") as String
-                            var tmpSex = document.data.get("sex") as String
-                            var tmpSharptag = document.data.get("sharpTag") as ArrayList<String>
-                            var tmpSttMsg = document.data.get("state_msg") as String
-
-                            var tmp = Users(tmpImgl, tmpImgs, tmpLast, tmpNick, tmpSex, tmpSharptag, tmpSttMsg)
-                            friendData.add(tmp)
+        MemberAction.search_member(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    println("친구검색 ::: $response")
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        val members = response.getJSONArray("members")
+                        for (i in 0 until members.length()) {
+                            val member = members[i] as JSONObject
+                            friendData.add(member)
                         }
-                        friendAdapter.notifyDataSetChanged()
                     }
+
+                }catch (e:JSONException) {
+                    e.printStackTrace()
                 }
+            }
 
-        //닉네임 조건에서 못 찾으면
-        if (friendData.isEmpty()){
-            db.collection("users")
-                    .whereEqualTo("sharpTag", keyWord)
-                    .get()
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            for (document in it.getResult()) {
-                                var tmpImgl = document.data.get("imgl") as String
-                                var tmpImgs = document.data.get("imgs") as String
-                                var tmpLast = document.data.get("last") as Long
-                                var tmpNick = document.data.get("nick") as String
-                                var tmpSex = document.data.get("sex") as String
-                                var tmpSharptag = document.data.get("sharpTag") as ArrayList<String>
-                                var tmpSttMsg = document.data.get("state_msg") as String
-                                var tmp = Users(tmpImgl, tmpImgs, tmpLast, tmpNick, tmpSex, tmpSharptag, tmpSttMsg)
-                                friendData.add(tmp)
-                            }
-                            println("friendData size : ${friendData.size}")
-                            friendAdapter.notifyDataSetChanged()
-                        }
-                    }
-        }
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+                println(errorResponse)
+            }
+        })
     }
 
 

@@ -9,16 +9,20 @@
         android:layout_weight="1"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/myPostTitleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:layout_margin="5dp"
             android:textSize="14dp"
             android:textStyle="bold"
             android:text="제목 텍스트가 들어갈 자리입니다."/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/myPostContTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:maxLines="2"
             android:textColor="#707070"
             android:textSize="12dp"
@@ -43,12 +47,23 @@
                 android:textColor="#EF5C34"
                 android:text="코드네임일이삼파티"/>
             <TextView
+                android:id="@+id/writeDateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textSize="9dp"
                 android:textColor="#0EDA2F"
-                android:text="2018.01.01 댓글(1)"/>
+                android:text="2018.01.01"/>
+            <TextView
+                android:id="@+id/mpCommentTV"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="9dp"
+                android:textColor="#0EDA2F"
+                android:text="댓글(1)"/>
         </LinearLayout>
     </LinearLayout>
 

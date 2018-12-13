@@ -16,19 +16,22 @@ import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.ImageAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
-import donggolf.android.base.ImageLoader
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
+import donggolf.android.base.*
 import donggolf.android.models.Photo
 import kotlinx.android.synthetic.main.activity_find_picture_grid.*
 import kotlinx.android.synthetic.main.activity_select_profile_img.*
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.Member
 import java.util.*
 
 class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListener {
@@ -162,11 +165,11 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
                             displaynamePaths = photoList[1].displayName
                             uploadProfileImage()
 
-                            val returnIntent = Intent()
-                            /*returnIntent.putExtra("images", result)
-                            returnIntent.putExtra("displayname", name)*/
+                            /*val returnIntent = Intent()
+//                            returnIntent.putExtra("images", result)
+//                            returnIntent.putExtra("displayname", name)
                             setResult(RESULT_OK, returnIntent)
-                            finish()
+                            finish()*/
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
@@ -181,35 +184,31 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
     fun uploadProfileImage() {
 
-        /*var photo = Photo()
-
-        val image_path = photo.file
-
-        var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths, 500)
-
-        var bytearray_ = Utils.getByteArray(bt)
-
-        val cutImage = Utils.resize(bt, 100)
-
-        val cutBytearray_ = Utils.getByteArray(cutImage)
-
-        val nowTime = System.currentTimeMillis()
-
-        FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/" + image_path) {
-            if (it) {
-                FirebaseFirestoreUtils.uploadFile(cutBytearray_, "imgs/" + nowTime + ".png") {
-                    if (it) {
-
-                    }
-                }
-            }
-        }*/
-        val params = RequestParams()
         var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths, 800)
+        println("displaynamePaths $displaynamePaths")
+        println("이미지 ::: ${ByteArrayInputStream(Utils.getByteArray(bt))}")
+        println("bt ------ $bt")
 
-        params.put("files[0]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+        val params = RequestParams()
 
-        
+        params.put("files",  ByteArrayInputStream(Utils.getByteArray(bt)))
+        params.put("type", "image")
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+
+        MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                setResult(RESULT_OK,intent)
+                finish()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                if (errorResponse != null)
+                    println(errorResponse!!.getString("message"))
+            }
+        })
     }
 
 
@@ -221,9 +220,9 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
         if (photo_id == -1) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
 
-            } else {
+            }/* else {
                 takePhoto()
-            }
+            }*/
         } else {
             if (selected.contains(strPo)) {
                 selected.remove(strPo)
@@ -252,7 +251,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
         }
     }
 
-    private fun takePhoto() {
+    /*private fun takePhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
 
@@ -263,9 +262,9 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
             try {
                 val photo = File.createTempFile(
-                        System.currentTimeMillis().toString(), /* prefix */
-                        ".jpg", /* suffix */
-                        storageDir      /* directory */
+                        System.currentTimeMillis().toString(), *//* prefix *//*
+                        ".jpg", *//* suffix *//*
+                        storageDir      *//* directory *//*
                 )
 
                 //                imageUri = Uri.fromFile(photo);
@@ -280,7 +279,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
             }
 
         }
-    }
+    }*/
 
     companion object CREATOR : Parcelable.Creator<SelectProfileImgActivity> {
         override fun createFromParcel(parcel: Parcel): SelectProfileImgActivity {

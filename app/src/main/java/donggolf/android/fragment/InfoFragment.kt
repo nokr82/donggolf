@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -53,6 +54,8 @@ import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.lang.Exception
 
 class InfoFragment : Fragment(){
@@ -73,6 +76,7 @@ class InfoFragment : Fragment(){
     private var strPathsS : ArrayList<String> = ArrayList<String>()
 
 
+    private val GALLERY = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
@@ -135,12 +139,12 @@ class InfoFragment : Fragment(){
                         knowTogether.visibility = View.GONE
 
                         //해시태그
-                        val data = response.getJSONArray("tags")
+                        val data = response.getJSONArray("MemberTags")
                         if (data != null) {
                             var string_tag = ""
                             for (i in 0 until data.length()) {
                                 var json = data[i] as JSONObject
-                                val memberTag = json.getJSONObject("MemberTags")
+                                val memberTag = json.getJSONObject("MemberTag")
 
                                 string_tag += "#" + Utils.getString(memberTag, "tag") + " "
                             }
@@ -148,6 +152,9 @@ class InfoFragment : Fragment(){
                         }
 
                         //프로필 이미지
+                        val imgData = response.getJSONArray("MemberImgs")
+                        var txtImgCnt = imgData.length().toString()
+                        mngTXPhotoCnt.text = txtImgCnt
                         /*val imgdata = response.getJSONArray("")
                         mngTXPhotoCnt.text*/
                     }
@@ -167,9 +174,13 @@ class InfoFragment : Fragment(){
         }
 
         addProfImg.setOnClickListener {
-            var intent = Intent(activity, SelectProfileImgActivity::class.java)
+
+            choosePhotoFromGallary()
+
+
+            /*var intent = Intent(activity, SelectProfileImgActivity::class.java)
             //var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, SELECT_PROFILE)
+            startActivityForResult(intent, SELECT_PROFILE)*/
         }
 
         imgProfile.setOnClickListener {
@@ -226,6 +237,17 @@ class InfoFragment : Fragment(){
 
     }
 
+
+    private fun choosePhotoFromGallary() {
+        val galleryIntent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        startActivityForResult(galleryIntent, GALLERY)
+
+    }
+
+
+
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -235,13 +257,7 @@ class InfoFragment : Fragment(){
             when (requestCode) {
                 SELECT_PROFILE -> {
 
-                    data?.let {
-                        try {
-                            //var bitmap = uiHelper.decodeUri(this,it.data)
-                        }catch (e:Exception) {
-
-                        }
-                    }
+                    getTempUserInformation("image")
                     /*var cursor: Cursor? = null
                     val texts: ArrayList<Any> = ArrayList<Any>()
 
@@ -366,6 +382,68 @@ class InfoFragment : Fragment(){
             }
         }
 
+        if (requestCode == GALLERY)
+        {
+            if (data != null)
+            {
+                val contentURI = data!!.data
+                Log.d("uri",contentURI.toString())
+                //content://media/external/images/media/1200
+
+                try
+                {
+                    var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
+//                    thumbnail = Utils.rotate(thumbnail, data)
+
+                    /*val params = RequestParams()
+                    params.put("member_id", company_id)
+                    if (delids.size>0){
+
+                        for (i in 0..(delids.size -1)){
+                            val delimg = delids[i]
+                            //배열로 입력저장은 [] 이걸 넣어준다
+                            params.put("del_ids["+i+"]",delimg)
+                            Log.d("삭제번호",delimg.toString())
+
+                        }
+
+                    }*/
+                    val params = RequestParams()
+
+                    params.put("files", thumbnail)
+                    params.put("type", "image")
+                    params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+
+                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            imgProfile.setImageBitmap(thumbnail)
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                            println(responseString)
+                        }
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                            if (errorResponse != null)
+                                println(errorResponse!!.getString("message"))
+                        }
+                    })
+
+
+
+
+
+
+
+                }
+                catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(ctx, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
+
+
     }
 
     fun getTempUserInformation(type : String){
@@ -374,6 +452,8 @@ class InfoFragment : Fragment(){
         var newNick = ""
         var newRegion = ArrayList<String>()
         var newRegionStr = ""
+        var newImg = ""
+
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
 
@@ -384,7 +464,8 @@ class InfoFragment : Fragment(){
                     println("response : $response")
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
-                        val memberTags = response.getJSONArray("tags")
+                        val memberTags = response.getJSONArray("MemberTags")
+                        val memberImgs = response.getJSONArray("MemberImgs")
                         sttsMsg = Utils.getString(member, "status_msg")
                         newNick = Utils.getString(member, "nick")
                         newRegion.clear()
@@ -409,7 +490,6 @@ class InfoFragment : Fragment(){
                         println("newRegionStr $newRegionStr")
 
 
-
                         when(type){
                             "status_msg" -> {
                                 infoStatusMsg.text = sttsMsg
@@ -429,6 +509,20 @@ class InfoFragment : Fragment(){
                                 }
                                 hashtagTV.text = taglist
                             }
+                            "image" -> {
+                                if (memberImgs.length() > 0) {
+                                    val imgOb = memberImgs[0] as JSONObject
+                                    val imguri = Utils.getString(imgOb, "image_uri")
+                                    /*val imgpath = Utils.getString(imgOb, "imgpath")
+                                newImg = imgpath + imguri*/
+                                    newImg = imguri
+                                    val imgUri = Uri.parse(newImg)
+
+                                    imgProfile.setImageURI(imgUri)
+                                    imgProfile.background = ShapeDrawable(OvalShape())
+                                }
+
+                            }
                             else -> {
 
                             }
@@ -439,6 +533,10 @@ class InfoFragment : Fragment(){
                 } catch (e : JSONException) {
                     e.printStackTrace()
                 }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {

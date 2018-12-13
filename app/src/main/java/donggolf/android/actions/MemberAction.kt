@@ -35,6 +35,14 @@ object MemberAction {
         HttpClient.post("/member/update_member_info.json", params, handler)
     }
 
+    //내 글
+    fun my_post_load(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/my_post_list_load.json", params, handler)
+    }
 
+    //친구찾기
+    fun search_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/search_member.json", params, handler)
+    }
 
 }
