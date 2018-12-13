@@ -58,7 +58,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         var json = data.get(position)
         var Content = json.getJSONObject("Content")
-        val member_id = Utils.getString(Content,"title")
+        val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
         val text = Utils.getString(Content,"text")
         val look_count = Utils.getInt(Content,"look_count")
@@ -81,7 +81,11 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                 if (result == "ok") {
                     val member = response.getJSONObject("Member")
 
-                    item.main_item_nickname.text = Utils.getString(member, "nick")
+                    val nick = Utils.getString(member, "nick")
+
+                    println("nick ------$nick")
+
+                    item.main_item_nickname.setText(nick)
                 }
             }
 
@@ -89,8 +93,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                 println("---------fail")
             }
         })
-
-
 
 //        var owner:String = data.get("owner").toString()
 //        item.main_item_nickname.text = owner
