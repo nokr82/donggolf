@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.google.firebase.firestore.Query
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -20,12 +21,15 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.PostAction
+import donggolf.android.actions.SearchAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
+import donggolf.android.models.Search
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -37,7 +41,7 @@ open class FreeFragment : Fragment() {
     private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  adapter : MainAdapter
     private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     val user = HashMap<String, Any>()
 
@@ -45,7 +49,7 @@ open class FreeFragment : Fragment() {
     lateinit var addpostLL : LinearLayout
     lateinit var main_edit_search : EditText
     lateinit var main_listview_search : LinearLayout
-    lateinit var main_edit_close : TextView
+    lateinit var main_edit_close : LinearLayout
     lateinit var main_listview:ListView
 
     private var progressDialog: ProgressDialog? = null
@@ -133,50 +137,6 @@ open class FreeFragment : Fragment() {
         main_edit_listview = view.findViewById(R.id.main_edit_listview)
         main_listview = view.findViewById(R.id.main_listview)
 
-        main_edit_search.setOnClickListener {
-
-        }
-
-        main_edit_search.setOnEditorActionListener { v, actionId, event ->
-            false
-        }
-
-        btn_del_searchWord.setOnClickListener {
-
-        }
-
-        val params = RequestParams()
-        params.put("member_id",member_id)
-
-        PostAction.load_post(params,object : JsonHttpResponseHandler(){
-
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-
-                try {
-
-                    val result = response!!.getString("result")
-
-                    if ("ok" == result) {
-
-                        val data = response!!.getJSONArray("content")
-                        for (i in 0 until data.length()){
-                            adapterData.add(data[i] as JSONObject)
-                        }
-                        adapter.notifyDataSetChanged()
-                    }
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("---------------------------------failure")
-            }
-
-        })
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -197,7 +157,11 @@ open class FreeFragment : Fragment() {
         main_edit_listview.adapter = editadapter
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
+            val data = adapter.getItem(position)
+            val content = data.getJSONObject("Content")
+            var id = Utils.getInt(content,"id")
 
+            MoveMainDetailActivity(id.toString())
         }
 
         addpostLL.setOnClickListener {
@@ -206,7 +170,68 @@ open class FreeFragment : Fragment() {
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
 
+        main_edit_search.setOnClickListener {
+            main_listview_search.visibility = View.VISIBLE
+        }
+
+        main_edit_search.setOnEditorActionListener() { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                val srchWd = main_edit_search.text.toString()
+                if (srchWd != null && srchWd != "") {
+                    addSearchWords(srchWd)
+                    getSearchList()
+                    resetList(srchWd)
+                }
+
+                if (srchWd == null || srchWd == ""){
+                    resetList(srchWd)
+                }
+                main_listview_search.visibility = View.GONE
+                main_edit_search.setText("")
+            } else {
+            }
+            false
+        }
+
+        main_edit_close.setOnClickListener {
+            main_listview_search.visibility = View.GONE
+        }
+
+        btn_del_searchWord.setOnClickListener {
+
+        }
+
+        main_edit_listview.setOnItemClickListener { parent, view, position, id ->
+            view.main_edit_listitem_delete.setOnClickListener {
+                var json = editadapterData.get(position)
+
+                var SearchList = json.getJSONObject("SearchList")
+
+                var searchid:String = Utils.getString(SearchList,"id")
+
+                val params = RequestParams()
+                params.put("searchid",searchid)
+
+                PostAction.delete_search(params,object : JsonHttpResponseHandler(){
+
+                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                        editadapterData.removeAt(position)
+                        editadapter.notifyDataSetChanged()
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+                    }
+
+                })
+            }
+        }
+
+        val params = RequestParams()
+        params.put("member_id",member_id)
+
         mainData()
+        getSearchList()
 
     }
 
@@ -238,42 +263,9 @@ open class FreeFragment : Fragment() {
         startActivity(intent)
     }
 
-    fun loadPost(){
-        val params = RequestParams()
-
-        PostAction.load_post(params,object : JsonHttpResponseHandler(){
-
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-
-                try {
-                    val data = response!!.getJSONArray("content")
-                    val result = response!!.getString("result")
-
-                    println("data.size ${data.length()}  result $result")
-
-                    if ("ok" == result) {
-                        for (i in 0 until data.length()){
-                            adapterData.add(data[i] as JSONObject)
-                        }
-                        adapter.notifyDataSetChanged()
-                    }
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("---------------------------------failure")
-            }
-
-        })
-    }
-
-
     fun mainData() {
         val params = RequestParams()
+        params.put("member_id",member_id)
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
 
@@ -282,24 +274,24 @@ open class FreeFragment : Fragment() {
                     progressDialog!!.dismiss()
                 }
 
-                try {
-                    val list = response!!.getJSONArray("content")
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    try {
+                        val list = response!!.getJSONArray("content")
 
-                    Log.d("리스트",list.toString())
-                    println("-------------------------")
-                    for (i in 0..(list.length()-1)){
-                        adapterData.add(list[i] as JSONObject)
+                        Log.d("리스트",list.toString())
+                        println("-------------------------")
+                        for (i in 0..(list.length()-1)){
+                            val Content = list.get(i) as JSONObject
+                            adapterData.add(Content as JSONObject)
+                        }
+                        adapter.notifyDataSetChanged()
+                        main_listview_search.visibility = View.GONE
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
                     }
-                    adapter.notifyDataSetChanged()
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
                 }
 
-            }
-
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
-                super.onSuccess(statusCode, headers, response)
             }
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, responseString: String?) {
@@ -353,4 +345,99 @@ open class FreeFragment : Fragment() {
             }
         })
     }
+
+    fun addSearchWords(content: String) {
+
+        val params = RequestParams()
+        params.put("member_id",member_id)
+        params.put("content",content)
+
+        PostAction.add_search(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                getSearchList()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+
+        })
+
+    }
+
+    fun getSearchList(){
+        val params = RequestParams()
+        params.put("member_id",member_id)
+
+        PostAction.search_list(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    if (editadapterData != null){
+                        editadapterData.clear()
+                    }
+
+                    var contents:ArrayList<JSONObject> = ArrayList<JSONObject>()
+                    val data = response.getJSONArray("SearchList")
+                    for (i in 0..data.length() - 1) {
+                        var json = data.get(i) as JSONObject
+                        editadapterData.add(json)
+                    }
+                    editadapter.notifyDataSetChanged()
+                    main_listview_search.visibility = View.GONE
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+
+        })
+    }
+
+    fun resetList(keyWord : String){
+
+        if (keyWord == null || keyWord == ""){
+            mainData()
+        } else {
+            val params = RequestParams()
+            params.put("searchKeyword",keyWord)
+
+            PostAction.load_post(params,object : JsonHttpResponseHandler(){
+
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        try {
+                            val list = response!!.getJSONArray("content")
+
+                            if(adapterData != null){
+                                adapterData.clear()
+                            }
+
+                            Log.d("리스트",list.toString())
+                            println("-------------------------")
+                            for (i in 0..(list.length()-1)){
+                                val Content = list.get(i) as JSONObject
+                                adapterData.add(Content as JSONObject)
+                            }
+                            adapter.notifyDataSetChanged()
+                            main_listview_search.visibility = View.GONE
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+                }
+
+            })
+        }
+
+    }
+
 }
