@@ -45,10 +45,8 @@ class ProfileTagChangeActivity : RootActivity() {
     var lastN : Long = 0
     lateinit var nick : String
     lateinit var sex : String
-    lateinit var sTag : ArrayList<String>
+    var sTag: ArrayList<String> = ArrayList<String>()
     lateinit var statusMessage : String
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,30 +66,6 @@ class ProfileTagChangeActivity : RootActivity() {
 //        val currentUser = mAuth!!.getCurrentUser()
         val db = FirebaseFirestore.getInstance()
 
-        var uid = PrefUtils.getStringPreference(context, "uid")
-        //println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-
-            if (success){
-                if (data != null) {
-                    statusMessage = data!!.get("state_msg") as String
-                    imgl = data!!.get("imgl") as String
-                    imgs = data!!.get("imgs") as String
-                    lastN = data!!.get("last") as Long
-                    nick = data!!.get("nick") as String
-                    sex = data!!.get("sex") as String
-                    sTag = data!!.get("sharpTag") as ArrayList<String>
-
-                    for (i in 0..(sTag.size-1)) {
-                        adapterData.add("#"+sTag.get(i))
-
-                    }
-                        adapter.notifyDataSetChanged()
-
-                }
-            }
-        }
-
         tagList.setOnItemClickListener { parent, view, position, id ->
             view.removeIV.setOnClickListener {
                 adapter.removeItem(position)
@@ -104,16 +78,6 @@ class ProfileTagChangeActivity : RootActivity() {
             Utils.hideKeyboard(context!!)
             val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
-            FirebaseFirestoreUtils.save("users", uid, item) {
-                if (it) {
-                    var itt = Intent()
-                    itt.putExtra("newTags", sTag)
-                    setResult(RESULT_OK, itt)
-                    finish()
-                } else {
-
-                }
-            }
         }
 
         hashtagET.addTextChangedListener(object : TextWatcher {
@@ -160,6 +124,7 @@ class ProfileTagChangeActivity : RootActivity() {
             }
 
             return@setOnEditorActionListener true
+
         }
 
         clearIV.setOnClickListener {

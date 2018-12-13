@@ -403,6 +403,7 @@ class AddPostActivity : RootActivity() {
 //                    var bt: Bitmap = Utils.getImage(context.contentResolver, videoPaths.get(i), 800)
 //
 //                    params.put("videos[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+
                 }
             }
         }
