@@ -30,4 +30,12 @@ object PostAction {
         HttpClient.post("/post/delete_search.json", params, handler)
     }
 
+    fun add_report(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/add_report.json", params, handler)
+    }
+
+    fun get_my_report(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/get_my_report.json", params, handler)
+    }
+
 }

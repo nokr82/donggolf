@@ -57,6 +57,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         var json = data.get(position)
         var Content = json.getJSONObject("Content")
+        println("json-------------------------$json")
         val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
         val text = Utils.getString(Content,"text")
@@ -85,7 +86,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                     println("nick ------$nick")
 
                     item.main_item_nickname.setText(nick)
-                    notifyDataSetChanged()
                 }
             }
 

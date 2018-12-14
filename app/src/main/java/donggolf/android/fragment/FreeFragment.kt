@@ -124,6 +124,8 @@ open class FreeFragment : Fragment() {
             doSomethingWithContext(ctx)
         }
 
+        mainData()
+
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -215,20 +217,18 @@ open class FreeFragment : Fragment() {
                 PostAction.delete_search(params,object : JsonHttpResponseHandler(){
 
                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                        editadapterData.removeAt(position)
-                        editadapter.notifyDataSetChanged()
+                        if (editadapterData.size > 0) {
+                            editadapterData.removeAt(position)
+                            editadapter.notifyDataSetChanged()
+                        }
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
 
                     }
-
                 })
             }
         }
-
-        val params = RequestParams()
-        params.put("member_id",member_id)
 
         mainData()
         getSearchList()
@@ -276,27 +276,24 @@ open class FreeFragment : Fragment() {
 
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    try {
-                        val list = response!!.getJSONArray("content")
-
-                        Log.d("리스트",list.toString())
-                        println("-------------------------")
-                        for (i in 0..(list.length()-1)){
-                            val Content = list.get(i) as JSONObject
-                            adapterData.add(Content as JSONObject)
-                        }
-                        adapter.notifyDataSetChanged()
-                        main_listview_search.visibility = View.GONE
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+                    if (adapterData != null){
+                        adapterData.clear()
                     }
+
+                    val list = response!!.getJSONArray("content")
+                    println("list.length ${list.length()}")
+                    println("-------------------------")
+
+                    for (i in 0..(list.length()-1)){
+                        val Content = list.get(i) as JSONObject
+                        adapterData.add(Content)
+                    }
+
+                    adapter.notifyDataSetChanged()
+                    main_listview_search.visibility = View.GONE
+
                 }
 
-            }
-
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, responseString: String?) {
-
-                // System.out.println(responseString);
             }
 
             private fun error() {
@@ -310,22 +307,6 @@ open class FreeFragment : Fragment() {
 
                 // System.out.println(responseString);
 
-                throwable.printStackTrace()
-                error()
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONObject?) {
-                if (progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
-                throwable.printStackTrace()
-                error()
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
-                if (progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
                 throwable.printStackTrace()
                 error()
             }

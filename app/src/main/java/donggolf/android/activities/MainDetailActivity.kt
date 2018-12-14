@@ -35,8 +35,6 @@ import kotlin.collections.HashMap
 
 class MainDetailActivity : RootActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
-
     private lateinit var context: Context
 
     private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
@@ -46,13 +44,11 @@ class MainDetailActivity : RootActivity() {
     private lateinit var adverAdapter: FullScreenImageAdapter
     var adverImagePaths:ArrayList<String> = ArrayList<String>()
 
-
     var adPosition = 0
 
     var PICTURE_DETAIL = 1
 
     var detailowner: String? = ""
-
 
     var pressStartTime: Long?  = 0
     var pressedX: Float? = 0F
@@ -64,7 +60,7 @@ class MainDetailActivity : RootActivity() {
 
     lateinit var activity: MainDetailActivity
 
-    var owner : String = ""
+    var login_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +82,8 @@ class MainDetailActivity : RootActivity() {
         adapter.notifyDataSetChanged()
 
         activity = this as MainDetailActivity
+
+        login_id = PrefUtils.getIntPreference(context, "member_id")
 
         var check = false
 
@@ -158,6 +156,150 @@ class MainDetailActivity : RootActivity() {
             }
         })
 
+
+        finishLL.setOnClickListener {
+            finish()
+        }
+
+        main_detail_gofindpicture.setOnClickListener {
+            MoveFindPictureActivity()
+        }
+
+        plusBT.setOnClickListener {
+            relativ_RL.visibility = View.VISIBLE
+
+        }
+
+        goneRL.setOnClickListener {
+            relativ_RL.visibility = View.GONE
+        }
+
+        reportTV.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                        if (intent.getStringExtra("id") != null) {
+                            val content_id = intent.getStringExtra("id")
+
+                            val params = RequestParams()
+                            params.put("member_id", login_id)
+                            params.put("content_id", content_id)
+
+                            PostAction.get_my_report(params, object : JsonHttpResponseHandler() {
+                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                            val result = response!!.getString("result")
+                                            if (result == "ok") {
+                                                val report = response.getJSONObject("Report")
+                                                val report_id = Utils.getInt(report,"id")
+                                                if (report_id == null){
+
+                                                    PostAction.add_report(params, object : JsonHttpResponseHandler() {
+                                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                                            println("success==========")
+                                                        }
+
+                                                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                                            println("---------fail")
+                                                        }
+                                                    })
+
+                                                } else {
+                                                    Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                }
+                            })
+
+                        }
+
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+        }
+
+
+
+        deleteTV.setOnClickListener {
+                delete()
+        }
+
+        modifyTV.setOnClickListener {
+            modify()
+        }
+
+        addFriendTV.setOnClickListener {
+
+        }
+
+        getPost()
+    }
+
+    fun MoveFindPictureActivity(){
+        startActivity(Intent(this,FindPictureActivity::class.java))
+    }
+
+    fun modify(){
+        if (intent.getStringExtra("id") != null) {
+            val id = intent.getStringExtra("id")
+            val intent = Intent(this, AddPostActivity::class.java)
+            intent.putExtra("category",2)
+            intent.putExtra("id",id)
+            startActivity(intent)
+        }
+    }
+
+    fun delete(){
+
+        val builder = AlertDialog.Builder(context)
+        builder
+                .setMessage("정말 삭제하시겠습니까 ?")
+
+                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                    if (intent.hasExtra("id")) {
+                        val id = intent.getStringExtra("id")
+
+                        ContentAction.deleteContent(id){
+                            if(it){
+
+                                intent = Intent()
+                                intent.action = "DELETE_POST"
+                                sendBroadcast(intent)
+
+                                finish()
+
+                            }else {
+
+                            }
+
+                        }
+                    }
+
+                })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                })
+        val alert = builder.create()
+        alert.show()
+
+    }
+
+    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        val dx = x1 - x2
+        val dy = y1 - y2
+        val distanceInPx = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+        return pxToDp(distanceInPx)
+    }
+
+    private fun pxToDp(px: Float): Float {
+        return px / resources.displayMetrics.density
+    }
+
+    fun getPost(){
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
 
@@ -261,6 +403,7 @@ class MainDetailActivity : RootActivity() {
                                     if (result == "ok") {
                                         val member = response.getJSONObject("Member")
 
+                                        val id = Utils.getString(member,"id")
                                         val nick = Utils.getString(member, "nick")
                                         val status_msg = Utils.getString(member, "status_msg")
 
@@ -268,6 +411,12 @@ class MainDetailActivity : RootActivity() {
 
                                         nickNameTV.setText(nick)
                                         statusmsgTV.setText(status_msg)
+
+                                        if (login_id == id.toInt()){
+                                            reportTV.visibility = View.GONE
+                                        } else {
+
+                                        }
 
                                     }
                                 }
@@ -288,154 +437,7 @@ class MainDetailActivity : RootActivity() {
                 }
             })
 
-
         }
-
-        finishLL.setOnClickListener {
-            finish()
-        }
-
-        main_detail_gofindpicture.setOnClickListener {
-            MoveFindPictureActivity()
-        }
-
-        plusBT.setOnClickListener {
-            relativ_RL.visibility = View.VISIBLE
-
-        }
-
-        goneRL.setOnClickListener {
-            relativ_RL.visibility = View.GONE
-        }
-
-        reportTV.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
-                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-
-                        val nick: String = PrefUtils.getStringPreference(context, "nick")
-
-                        if(nick.equals(detailowner)){
-                            Toast.makeText(context, "자신의 게시물은 신고하실수 없습니다.", Toast.LENGTH_LONG).show()
-                        }
-
-                        if(!nick.equals(detailowner)){
-
-
-                            if (intent.hasExtra("id")) {
-                                val id = intent.getStringExtra("id")
-
-
-                            }
-                        }
-                    })
-                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-            val alert = builder.create()
-            alert.show()
-        }
-
-
-
-        deleteTV.setOnClickListener {
-                delete()
-        }
-
-        modifyTV.setOnClickListener {
-            modify()
-        }
-
-        addFriendTV.setOnClickListener {
-            var wid = ""
-            var uid = PrefUtils.getStringPreference(context, "uid")
-
-            val newData = HashMap<String, Any>()
-            newData["block"] = true
-
-            //원래는 user PK 값으로 users나 mates를 검색해야하는데 owner 에 nick 이 들어있어서 추후 수정
-            val db = FirebaseFirestore.getInstance()
-
-            db.collection("users")
-                    .whereEqualTo("nick",owner)
-                    .get()
-                    .addOnCompleteListener{
-                        if (it.isSuccessful) {
-                            for (document in it.getResult()) {
-                                //Log.d("getUserData", "getId : "+document.getId() + " => " + " getData : " +document.getData())
-                                wid = document.getId()
-//                                println("==========================================================")
-//                                println("nick : $owner, wid : $wid, uid : $uid")
-//                                println("==========================================================")
-
-                                //mates 테이블에서 키값이 wid인 문서의 standby 에
-                                FirebaseFirestoreUtils.updateField("mates", wid, "standby", uid, newData) {
-                                    println("it : $it")
-                                }
-
-
-                            }
-                        }
-                    }
-        }
-    }
-
-    fun MoveFindPictureActivity(){
-        startActivity(Intent(this,FindPictureActivity::class.java))
-    }
-
-    fun modify(){
-        if (intent.hasExtra("id")) {
-            val id = intent.getStringExtra("id")
-            val intent = Intent(this, AddPostActivity::class.java)
-            intent.putExtra("category",2)
-            intent.putExtra("id",id)
-            startActivity(intent)
-        }
-    }
-
-    fun delete(){
-
-
-        val builder = AlertDialog.Builder(context)
-        builder
-                .setMessage("정말 삭제하시겠습니까 ?")
-
-                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
-                    if (intent.hasExtra("id")) {
-                        val id = intent.getStringExtra("id")
-
-                        ContentAction.deleteContent(id){
-                            if(it){
-
-                                intent = Intent()
-                                intent.action = "DELETE_POST"
-                                sendBroadcast(intent)
-
-                                finish()
-
-                            }else {
-
-                            }
-
-                        }
-                    }
-
-                })
-                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
-                })
-        val alert = builder.create()
-        alert.show()
-
-    }
-
-    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val dx = x1 - x2
-        val dy = y1 - y2
-        val distanceInPx = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-        return pxToDp(distanceInPx)
-    }
-
-    private fun pxToDp(px: Float): Float {
-        return px / resources.displayMetrics.density
     }
 
 }
