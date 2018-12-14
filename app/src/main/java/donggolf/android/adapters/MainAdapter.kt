@@ -12,6 +12,7 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import donggolf.android.models.Photo
@@ -60,36 +61,53 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
         val text = Utils.getString(Content,"text")
-        val look_count = Utils.getInt(Content,"look_count")
-        val heart_count = Utils.getInt(Content,"heart_count")
-        val cmt_count = Utils.getInt(Content,"cmt_count")
+        val content_id = Utils.getString(Content,"id")
+
+        val dparams = RequestParams()
+        dparams.put("id", content_id)
+        dparams.put("member_id", member_id)
 
         item.main_item_title.text = title.toString()
-        item.main_item_view_count.text = look_count.toString()
         item.main_item_content.text = text.toString()
-        item.main_item_like_count.text = heart_count.toString()
-        item.main_item_comment_count.text = cmt_count.toString()
+
+        PostAction.get_post(dparams, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println("success==========")
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
+                    val Looker = response.getJSONArray("Looker")
+                    val Like = response.getJSONArray("Like")
+
+                    item.main_item_view_count.text = Looker.length().toString()
+                    item.main_item_like_count.text = Like.length().toString()
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println("---------fail")
+            }
+        })
+
 
         val params = RequestParams()
         params.put("member_id", member_id)
 
         MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println("success==========")
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     val member = response.getJSONObject("Member")
 
                     val nick = Utils.getString(member, "nick")
 
-                    println("nick ------$nick")
 
                     item.main_item_nickname.setText(nick)
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("---------fail")
             }
         })
 

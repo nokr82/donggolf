@@ -237,6 +237,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/addfavoriteTV"
                             android:background="@drawable/boarder_707070_background_ffffff"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -288,9 +289,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
+                    android:id="@+id/likeIV"
                     android:layout_width="18dp"
                     android:layout_height="17dp"
-                    android:background="@drawable/btn_cancel_like"
+                    android:background="@drawable/icon_like"
                     android:layout_marginLeft="9dp"
                     android:layout_gravity="center_vertical"/>
                 <TextView

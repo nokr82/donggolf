@@ -182,31 +182,17 @@ class MainDetailActivity : RootActivity() {
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
-                            val params = RequestParams()
-                            params.put("member_id", login_id)
+                            var params = RequestParams()
                             params.put("content_id", content_id)
+                            params.put("member_id", login_id)
 
-                            PostAction.get_my_report(params, object : JsonHttpResponseHandler() {
+                            PostAction.add_report(params, object : JsonHttpResponseHandler() {
                                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                             val result = response!!.getString("result")
-                                            if (result == "ok") {
-                                                val report = response.getJSONObject("Report")
-                                                val report_id = Utils.getInt(report,"id")
-                                                if (report_id == null){
-
-                                                    PostAction.add_report(params, object : JsonHttpResponseHandler() {
-                                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                                            println("success==========")
-                                                        }
-
-                                                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                                                            println("---------fail")
-                                                        }
-                                                    })
-
-                                                } else {
-                                                    Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
-                                                }
+                                            if (result == "yes") {
+                                                Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                                            }else {
+                                                Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
                                             }
                                 }
 
@@ -223,10 +209,43 @@ class MainDetailActivity : RootActivity() {
             alert.show()
         }
 
+        addfavoriteTV.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (intent.getStringExtra("id") != null) {
+                            val content_id = intent.getStringExtra("id")
+
+                            var params = RequestParams()
+                            params.put("content_id", content_id)
+                            params.put("member_id", login_id)
+
+                            PostAction.add_favorite_content(params, object : JsonHttpResponseHandler() {
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    val result = response!!.getString("result")
+                                    if (result == "yes") {
+                                        Toast.makeText(context, "이미 추가하셨습니다.", Toast.LENGTH_SHORT).show()
+                                    }else {
+                                        Toast.makeText(context, "추가 완료.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                }
+                            })
+
+                        }
+
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+        }
 
         deleteTV.setOnClickListener {
-                delete()
+            delete()
         }
 
         modifyTV.setOnClickListener {
@@ -234,10 +253,75 @@ class MainDetailActivity : RootActivity() {
         }
 
         addFriendTV.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (intent.getStringExtra("id") != null) {
+                            val content_id = intent.getStringExtra("id")
+
+                            var params = RequestParams()
+                            params.put("content_id", content_id)
+                            params.put("member_id", login_id)
+                            params.put("category_id",0)
+                            params.put("status","w")
+
+                            PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    val result = response!!.getString("result")
+                                    if (result == "yes") {
+                                        Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                    }else {
+                                        Toast.makeText(context, "친구신청 완료.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                }
+                            })
+
+                        }
+
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+        }
+
+        likeIV.setOnClickListener {
+            if (intent.getStringExtra("id") != null) {
+                val content_id = intent.getStringExtra("id")
+
+                var params = RequestParams()
+                params.put("content_id", content_id)
+                params.put("member_id", login_id)
+
+                PostAction.add_like(params, object : JsonHttpResponseHandler() {
+                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                        val result = response!!.getString("result")
+                        if (result == "yes") {
+                            likeIV.setImageDrawable(resources.getDrawable(R.drawable.icon_like))
+                            val likes = response.getJSONArray("Like")
+                            heartcountTV.setText(likes.length().toString())
+                            likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
+                        } else {
+                            likeIV.setImageDrawable(resources.getDrawable(R.drawable.btn_cancel_like))
+                            val likes = response.getJSONArray("Like")
+                            heartcountTV.setText(likes.length().toString())
+                            likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
+                        }
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                    }
+                })
+            }
         }
 
         getPost()
+        getLooker()
     }
 
     fun MoveFindPictureActivity(){
@@ -302,11 +386,11 @@ class MainDetailActivity : RootActivity() {
     fun getPost(){
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
-
-            println("id ------ $id")
+            login_id = PrefUtils.getIntPreference(context, "member_id")
 
             var params = RequestParams()
             params.put("id",id)
+            params.put("member_id",login_id)
 
             PostAction.get_post(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -322,11 +406,18 @@ class MainDetailActivity : RootActivity() {
                             val member_id = Utils.getString(data,"member_id")
                             val door_image = Utils.getString(data,"door_image")
                             val deleted = Utils.getString(data,"deleted")
-                            val look_count = Utils.getInt(data,"look_count")
-                            val heart_count = Utils.getInt(data,"heart_count")
-                            val cmt_count = Utils.getInt(data,"cmt_count")
+                            val Looker = response.getJSONArray("Looker")
+                            val Like = response.getJSONArray("Like")
                             val cht_yn = Utils.getString(data,"cht_yn")
                             val cmt_yn = Utils.getString(data,"cmt_yn")
+
+                            val likeDiv = response.getString("LikeDiv")
+
+                            if (likeDiv == "N") {
+                                likeIV.setImageDrawable(resources.getDrawable(R.drawable.icon_like))
+                            } else {
+                                likeIV.setImageDrawable(resources.getDrawable(R.drawable.btn_cancel_like))
+                            }
 
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
@@ -373,12 +464,11 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             dateTV.setText(created)
-                            viewTV.setText(look_count.toString())
-                            cmtcountTV.setText(cmt_count.toString())
-                            heartcountTV.setText(heart_count.toString())
+                            viewTV.setText(Looker.length().toString())
+                            heartcountTV.setText(Like.length().toString())
                             titleTV.setText(title)
                             textTV.setText(text)
-                            likecountTV.setText(heart_count.toString() + "명이 좋아합니다")
+                            likecountTV.setText(Like.length().toString() + "명이 좋아합니다")
 
                             if (cht_yn  == "Y"){
 
@@ -414,8 +504,11 @@ class MainDetailActivity : RootActivity() {
 
                                         if (login_id == id.toInt()){
                                             reportTV.visibility = View.GONE
+                                            addFriendTV.visibility = View.GONE
+                                            addfavoriteTV.visibility = View.GONE
                                         } else {
-
+                                            modifyTV.visibility = View.GONE
+                                            deleteTV.visibility = View.GONE
                                         }
 
                                     }
@@ -438,6 +531,29 @@ class MainDetailActivity : RootActivity() {
             })
 
         }
+    }
+
+    fun getLooker(){
+        val id = intent.getStringExtra("id")
+        login_id = PrefUtils.getIntPreference(context, "member_id")
+
+        var params = RequestParams()
+        params.put("content_id",id)
+        params.put("member_id",login_id)
+
+        PostAction.add_looker(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok" || result == "yes") {
+                    val Looker = response.getJSONArray("Looker")
+                    viewTV.setText(Looker.length().toString())
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
     }
 
 }
