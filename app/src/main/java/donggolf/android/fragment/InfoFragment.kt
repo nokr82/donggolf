@@ -32,7 +32,12 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.internal.InternalTokenResult
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache
+import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
+import com.nostra13.universalimageloader.core.assist.ImageScaleType
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
@@ -93,6 +98,23 @@ class InfoFragment : Fragment(){
 
         //프로필 세팅
         var member_id = PrefUtils.getIntPreference(context, "member_id")
+        ////
+
+        /*val defaultOptions = DisplayImageOptions.Builder()
+                .cacheOnDisc(true).cacheInMemory(true)
+                .imageScaleType(ImageScaleType.EXACTLY)
+                .displayer(object : FadeInBitmapDisplayer(300){}).build()
+
+        val config = ImageLoaderConfiguration.Builder(
+                context)
+                .defaultDisplayImageOptions(defaultOptions)
+                .memoryCache(object : WeakMemoryCache(){})
+                .discCacheSize(100 * 1024 * 1024).build()
+*/
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(ctx))
+
+
+        ////
 
         //Action 으로 정보 가져오기
         val params = RequestParams()
@@ -107,7 +129,7 @@ class InfoFragment : Fragment(){
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
 
-                        textDate.text = Utils.getString(member,"created")
+                        textDate.text = Utils.getString(member,"created").substringBefore(" ")
                         txUserName.text = Utils.getString(member,"nick")
 
                         var region = ""
@@ -155,6 +177,16 @@ class InfoFragment : Fragment(){
                         mngTXPhotoCnt.text = txtImgCnt
                         /*val imgdata = response.getJSONArray("")
                         mngTXPhotoCnt.text*/
+                        val images = response.getJSONArray("MemberImgs")
+                        val json = images[0] as JSONObject
+                        val img_uri = Utils.getString(json,"image_uri")
+                        //var image = Config.url + image_uri
+                        val image = Config.url + img_uri
+
+
+                        ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
+                        //이미지 동그랗게
+                        imgProfile.background = ShapeDrawable(OvalShape())
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -283,12 +315,14 @@ class InfoFragment : Fragment(){
                             var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
 
                             val img = ByteArrayInputStream(Utils.getByteArray(profileImg))
+                            val small_img = Utils.resize(profileImg, 100)
 
                             val params = RequestParams()
 
                             params.put("files", img)
                             params.put("type", "image")
                             params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+                            params.put("small", small_img)
 
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -331,7 +365,6 @@ class InfoFragment : Fragment(){
         var newNick = ""
         var newRegion = ArrayList<String>()
         var newRegionStr = ""
-        var newImg = ""
 
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
@@ -406,10 +439,16 @@ class InfoFragment : Fragment(){
                                 //var image = Config.url + image_uri
                                 val image = Config.url + img_uri
 
+                                val uri = Uri.parse(image)
+                                val inputStream = ctx!!.contentResolver.openInputStream(uri)
+                                val btm = BitmapFactory.decodeStream(inputStream)
+                                val resized = Utils.resizeBitmap(btm, 100)
+                                imgProfile.setImageBitmap(resized)
+
+                                //ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
                                 //이미지 동그랗게
                                 imgProfile.background = ShapeDrawable(OvalShape())
-
-                                ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
+                                imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
                             }
                         }
 
