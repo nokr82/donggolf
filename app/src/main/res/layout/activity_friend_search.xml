@@ -126,15 +126,19 @@
             android:textColor="#ffffff"
             android:layout_marginRight="10dp"/>
 
+
+
     </RelativeLayout>
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <ListView
             android:id="@+id/frdResultLV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-        </ListView>
 
         <LinearLayout
             android:id="@+id/main_listview_search"
@@ -173,12 +177,14 @@
                 </RelativeLayout>
             </LinearLayout>
             <ListView
-                android:id="@+id/main_edit_listview"
+                android:id="@+id/frd_editLV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </ListView>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
+
+    </RelativeLayout>
+
 
 
 </LinearLayout>
