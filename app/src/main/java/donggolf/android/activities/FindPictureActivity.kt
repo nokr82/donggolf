@@ -211,7 +211,7 @@ class FindPictureActivity : RootActivity() {
 
                     Log.d("yjs", "findpicture : " + result)
 
-                    setResult(RESULT_OK,intent);
+                    setResult(RESULT_OK,intent)
                     finish()
 
                 }

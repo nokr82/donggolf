@@ -91,7 +91,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                         photo.photoID = photoID
                         photo.photoPath = photoPath
                         photo.displayName = displayName
-                        Log.d("yjs", "name : " + displayName)
+                        //Log.d("yjs", "name : " + displayName)
                         photo.orientation = orientation
                         photo.bucketPhotoName = bucketDisplayName
                         photoList!!.add(photo)

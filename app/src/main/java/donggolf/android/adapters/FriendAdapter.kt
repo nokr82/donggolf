@@ -8,14 +8,16 @@ import android.widget.ImageView
 import android.widget.TextView
 //import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
+import donggolf.android.base.Utils
 import donggolf.android.models.Users
+import org.json.JSONObject
 import java.net.UnknownServiceException
 import java.util.*
 
-class FriendAdapter(context: Context, view:Int, data: ArrayList<Users>) : ArrayAdapter<Users>(context,view, data) {
+class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Users> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,38 +37,24 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<Users>) : ArrayA
             }
         }
 
-        item.main_detail_listitem_nickname.setText(data.get(position).nick)
-        item.main_detail_listitem_condition.setText(data.get(position).state_msg)
-        /*if (data.get(position).get("relation").toString().equals("mate1")){
-            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_first)
-        }else{
-            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_second)
-        }*/
+        //var json = data.get(position)
+        //        var content = json.getJSONObject("Content")
+        //
+        //        val member_id = Utils.getString(content,"member_id")
+        //        val title = Utils.getString(content,"title")
+        //        val text = Utils.getString(content,"text")
+        //        val created = Utils.getString(content, "created").substringBefore(" ")
 
-        /*var data : Map<String, Any> = getItem(position)
+        val json = data.get(position)
+        val member = json.getJSONObject("Member")
 
-        var title:String = data.get("content") as String
-        item.main_edit_listitem_title.text = title
-
-        var date:Long = data.get("date") as Long
-        val dateFormat: SimpleDateFormat = SimpleDateFormat("MM-dd", Locale.KOREA)
-        val currentTime: String = dateFormat.format(Date(date))
-        item.main_edit_listitem_date.text = currentTime
-
-        item.main_edit_listitem_delete.setOnClickListener {
-
-            var id:String = data.get("id") as String
-            SearchAction.deleteContent(id){
-                if(it){
-                    removeItem(position)
-                }
-            }
-        }*/
+        item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
+        item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")
 
         return retView
     }
 
-    override fun getItem(position: Int): Users {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }

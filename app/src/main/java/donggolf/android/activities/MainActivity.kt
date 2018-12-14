@@ -106,7 +106,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         friendsLL.setOnClickListener {
             var intent = Intent(context, FriendSearchActivity::class.java)
-            intent.putExtra("tUser", user)
+            //intent.putExtra("tUser", user)
             startActivity(intent)
         }
 

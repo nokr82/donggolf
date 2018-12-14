@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.internal.InternalTokenResult
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
 import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
@@ -39,11 +41,8 @@ import donggolf.android.actions.MemberAction
 import donggolf.android.actions.ProfileAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.ImageAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.*
 import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
 import donggolf.android.models.Content
 import donggolf.android.models.Photo
 import donggolf.android.models.Users
@@ -53,6 +52,8 @@ import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.lang.Exception
 
 class InfoFragment : Fragment(){
@@ -71,6 +72,9 @@ class InfoFragment : Fragment(){
     private var strPaths: ArrayList<String> = ArrayList<String>()
     private var strPathsL : ArrayList<String> = ArrayList<String>()
     private var strPathsS : ArrayList<String> = ArrayList<String>()
+
+
+    private val GALLERY = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
@@ -133,12 +137,12 @@ class InfoFragment : Fragment(){
                         knowTogether.visibility = View.GONE
 
                         //해시태그
-                        val data = response.getJSONArray("tags")
+                        val data = response.getJSONArray("MemberTags")
                         if (data != null) {
                             var string_tag = ""
                             for (i in 0 until data.length()) {
                                 var json = data[i] as JSONObject
-                                val memberTag = json.getJSONObject("MemberTags")
+                                val memberTag = json.getJSONObject("MemberTag")
 
                                 string_tag += "#" + Utils.getString(memberTag, "tag") + " "
                             }
@@ -146,6 +150,9 @@ class InfoFragment : Fragment(){
                         }
 
                         //프로필 이미지
+                        val imgData = response.getJSONArray("MemberImgs")
+                        var txtImgCnt = imgData.length().toString()
+                        mngTXPhotoCnt.text = txtImgCnt
                         /*val imgdata = response.getJSONArray("")
                         mngTXPhotoCnt.text*/
                     }
@@ -165,9 +172,12 @@ class InfoFragment : Fragment(){
         }
 
         addProfImg.setOnClickListener {
-            var intent = Intent(activity, SelectProfileImgActivity::class.java)
+
+            choosePhotoFromGallary()
+
+            /*var intent = Intent(activity, SelectProfileImgActivity::class.java)
             //var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, SELECT_PROFILE)
+            startActivityForResult(intent, SELECT_PROFILE)*/
         }
 
         imgProfile.setOnClickListener {
@@ -198,7 +208,6 @@ class InfoFragment : Fragment(){
 
         prfhashtagLL.setOnClickListener {
             var intent = Intent(activity, ProfileTagChangeActivity::class.java)
-            intent.putExtra("type",2)
             startActivityForResult(intent, MODIFY_TAG)
         }
 
@@ -225,6 +234,17 @@ class InfoFragment : Fragment(){
 
     }
 
+
+    private fun choosePhotoFromGallary() {
+        val galleryIntent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        startActivityForResult(galleryIntent, GALLERY)
+
+    }
+
+
+
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -234,119 +254,8 @@ class InfoFragment : Fragment(){
             when (requestCode) {
                 SELECT_PROFILE -> {
 
-                    data?.let {
-                        try {
-                            //var bitmap = uiHelper.decodeUri(this,it.data)
-                        }catch (e:Exception) {
+                    getTempUserInformation("image")
 
-                        }
-                    }
-                    /*var cursor: Cursor? = null
-                    val texts: ArrayList<Any> = ArrayList<Any>()
-
-                    var uri = data?.data
-                    try {
-                        strPaths.add(MediaStore.Images.Media.DISPLAY_NAME)
-                        println("image path ========= $strPaths")
-
-                        var bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, uri)
-                        //var bt: Bitmap = Utils.getImage(context!!.contentResolver, MediaStore.Images.Media.DISPLAY_NAME, 500)
-
-                        var bo = BitmapFactory.Options()
-                        bo.inSampleSize = 4
-                        var tmpImg = BitmapFactory.decodeFile(context?.contentResolver.toString(), bo)
-
-                        var smallBmImg = Bitmap.createScaledBitmap(tmpImg, 50, 50, true)
-                        var resizedimg = Utils.getByteArray(smallBmImg)
-
-                        //bitmap image to byteArray image
-                        var bytearray_ = Utils.getByteArray(bitmap)
-
-                        images.add(bytearray_)
-                        smimages.add(resizedimg)
-
-                        val nowTime = System.currentTimeMillis()
-
-                        var imgPaths = ArrayList<String>()
-                        var imagsPaths = ArrayList<String>()
-                        var imgpath = ArrayList<String>()
-                        var photo = Photo()
-
-                        for (i in 0..(strPaths.size - 1)) {
-
-                            var image_path = "imgl/" + i + nowTime + ".png"
-                            var images_path = "imgs/" + i +nowTime + ".png"
-
-                            strPathsL.add(image_path)
-                            strPathsS.add(images_path)
-                            imgpath.add(i.toString() + nowTime.toString() + ".png")
-                        }
-
-                        photo.type = "photo"
-                        photo.file = imgpath
-
-                        texts.add(photo)
-
-                        var uid = PrefUtils.getStringPreference(context, "uid")
-
-                        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                            statusMessage = data!!.get("state_msg") as String
-
-                            imgl = data!!.get("imgl") as ArrayList<String>
-                            imgs = data!!.get("imgs") as ArrayList<String>
-                            lastN = data!!.get("last") as Long
-                            nick = data!!.get("nick") as String
-                            sex = data!!.get("sex") as String
-                            sTag = data!!.get("sharpTag") as ArrayList<String>
-
-                        }
-                        imgl = strPathsL
-                        imgs = strPathsS
-
-                        //이미지 firebase로 전송
-                        //사실 그냥 uri를 putFile해도 됨
-
-                            UploadTask uploadTask;
-                            uploadTask = storageRef.putFile(file);
-
-                        //여러 사진이 담긴 array list 를 전송해야하므로
-                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
-
-                        FirebaseFirestoreUtils.save("users", uid, item) {
-                            if (it) {
-                                FirebaseFirestoreUtils.uploadFile(bytearray_, "imgl/" + imgl) {
-                                    if (it) {
-                                        FirebaseFirestoreUtils.uploadFile(resizedimg, "imgs/" + imgs) {
-                                            if (it) {
-
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-
-                            }
-                        }
-
-
-                        //이미지 동그랗게
-                        imgProfile.background = ShapeDrawable(OvalShape())
-                        imgProfile.clipToOutline = true
-
-
-                    } catch (e:Exception) {
-                        e.printStackTrace()
-                    } finally {
-                        try {
-                            if (cursor != null && !cursor.isClosed) {
-                                cursor.close()
-                            }
-                        } catch (ex: Exception) {
-                        }
-
-                    }
-
-                    mngTXPhotoCnt.text = images.size.toString()*/
                 }
                 SELECT_STATUS -> {
                     getTempUserInformation("status_msg")
@@ -362,17 +271,68 @@ class InfoFragment : Fragment(){
                     getTempUserInformation("region")
 
                 }
+                GALLERY -> {
+                    if (data != null)
+                    {
+                        val contentURI = data!!.data
+                        Log.d("uri",contentURI.toString())
+                        //content://media/external/images/media/1200
+
+                        try
+                        {
+                            var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
+
+                            val img = ByteArrayInputStream(Utils.getByteArray(profileImg))
+
+                            val params = RequestParams()
+
+                            params.put("files", img)
+                            params.put("type", "image")
+                            params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+
+                            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    //imgProfile.setImageBitmap(thumbnail)
+                                    getTempUserInformation("image")
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                                    println(responseString)
+                                }
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                    if (errorResponse != null)
+                                        println(errorResponse!!.getString("message"))
+                                }
+                            })
+
+
+
+
+
+
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                            Toast.makeText(ctx, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                }
             }
         }
 
+
     }
 
-    fun getTempUserInformation(type : String){
+    fun getTempUserInformation(type : String) {
 
         var sttsMsg = ""
         var newNick = ""
         var newRegion = ArrayList<String>()
         var newRegionStr = ""
+        var newImg = ""
+
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
 
@@ -383,7 +343,8 @@ class InfoFragment : Fragment(){
                     println("response : $response")
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
-                        val memberTags = response.getJSONArray("tags")
+                        val memberTags = response.getJSONArray("MemberTags")
+                        //val memberImgs = response.getJSONArray("MemberImgs")
                         sttsMsg = Utils.getString(member, "status_msg")
                         newNick = Utils.getString(member, "nick")
                         newRegion.clear()
@@ -408,7 +369,6 @@ class InfoFragment : Fragment(){
                         println("newRegionStr $newRegionStr")
 
 
-
                         when(type){
                             "status_msg" -> {
                                 infoStatusMsg.text = sttsMsg
@@ -428,8 +388,28 @@ class InfoFragment : Fragment(){
                                 }
                                 hashtagTV.text = taglist
                             }
-                            else -> {
+                            "image" -> {
+                                /*if (memberImgs.length() > 0) {
+                                    val imgOb = memberImgs[0] as JSONObject
+                                    val imguri = Utils.getString(imgOb, "image_uri")
+                                    *//*val imgpath = Utils.getString(imgOb, "imgpath")
+                                newImg = imgpath + imguri*//*
+                                    newImg = imguri
+                                    val imgUri = Uri.parse(newImg)
 
+                                    imgProfile.setImageURI(imgUri)
+                                    imgProfile.background = ShapeDrawable(OvalShape())
+                                }*/
+                                val images = response.getJSONArray("MemberImgs")
+                                val json = images[0] as JSONObject
+                                val img_uri = Utils.getString(json,"image_uri")
+                                //var image = Config.url + image_uri
+                                val image = Config.url + img_uri
+
+                                //이미지 동그랗게
+                                imgProfile.background = ShapeDrawable(OvalShape())
+
+                                ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
                             }
                         }
 
@@ -438,6 +418,10 @@ class InfoFragment : Fragment(){
                 } catch (e : JSONException) {
                     e.printStackTrace()
                 }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
