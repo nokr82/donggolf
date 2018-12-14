@@ -40,9 +40,14 @@ import com.kakao.util.exception.KakaoException
 import com.kakao.util.helper.log.Logger
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
+import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
+import donggolf.android.adapters.FriendSearchAdapter
+import donggolf.android.base.PrefUtils
 import donggolf.android.models.Users
+import kotlinx.android.synthetic.main.activity_main_detail.*
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -59,8 +64,8 @@ class FriendSearchActivity : RootActivity() {
 
     private  var friendData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  friendAdapter : FriendAdapter
-    private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  lateinit var  editadapter : FriendSearchAdapter
+    private  var editadapterData : ArrayList<JSONObject> = ArrayList()
 
     lateinit var user : HashMap<String,Any>
 
@@ -85,13 +90,47 @@ class FriendSearchActivity : RootActivity() {
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
         frdResultLV.adapter = friendAdapter
 
+        editadapter = FriendSearchAdapter(context, R.layout.main_edit_listview_item, editadapterData)
+        frd_editLV.adapter = editadapter
+
 
         btn_txDel.setOnClickListener {
             frdSearchET.setText("")
         }
 
         frdSearchET.setOnClickListener {
+
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+            MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler(){
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        println(response)
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+                            val mateSearchHistories = response.getJSONArray("mateSearchHistories")
+                            editadapterData.clear()
+                            for (i in 0 until editadapterData.size) {
+                                val mateSearch = mateSearchHistories[i] as JSONObject
+
+                                editadapterData.add(mateSearch)
+                            }
+
+                            editadapter.notifyDataSetChanged()
+                        }
+                    } catch (e:JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            })
+
             main_listview_search.visibility = View.VISIBLE
+            main_edit_close.setOnClickListener {
+                main_listview_search.visibility = View.GONE
+            }
+
+
         }
 
         //엔터키
@@ -203,8 +242,42 @@ class FriendSearchActivity : RootActivity() {
         return null
     }
 
-    fun addFriendSearchWords() {
+    fun addFriendSearchWords(keywd : String) {
         //최근 검색한 친구 키워드를 데이터리스트에 추가하고 DB에 save
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("keyword", keywd)
+
+        MateAction.search_mate(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    //println("MateAction Result ::: $response")
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        val mateSearchHistories = response.getJSONArray("mateSearchHistories")
+                        editadapterData.clear()
+                        for (i in 0..editadapterData.size - 1) {
+                            val mateSearch = mateSearchHistories.getJSONObject(i)
+
+                            editadapterData.add(mateSearch)
+                        }
+
+                        editadapter.notifyDataSetChanged()
+                    }
+                    main_listview_search.visibility = View.GONE
+                } catch (e : JSONException) {
+                    Log.e("JsonError","Add mate search word history Action")
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println("친구 최근검색하다 오류난 부분 :: $responseString")
+            }
+        })
     }
 
     fun friendSearchWords(keyWord : String) {
@@ -216,6 +289,7 @@ class FriendSearchActivity : RootActivity() {
                 try {
                     println("친구검색 ::: $response")
                     val result = response!!.getString("result")
+                    friendData.clear()
                     if (result == "ok") {
                         val members = response.getJSONArray("members")
                         for (i in 0 until members.length()) {
@@ -223,6 +297,9 @@ class FriendSearchActivity : RootActivity() {
                             friendData.add(member)
                         }
                     }
+                    friendAdapter.notifyDataSetChanged()
+
+                    addFriendSearchWords(keyWord)
 
                 }catch (e:JSONException) {
                     e.printStackTrace()
@@ -394,4 +471,9 @@ class FriendSearchActivity : RootActivity() {
         }
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Utils.hideKeyboard(context)
+    }
 }

@@ -77,10 +77,11 @@ class FindidActivity : RootActivity() {
                         //println("찾은 ID :: $member_id")
 
                         if (!email.isEmpty()) {
-                            idhintTV.text = "아이디 힌트는 "
-                            useridTV.text = email.substring(0, 2) + "*****" + "@" + email.substringAfter("@", email)
-                            id_hint_endTV.visibility = View.VISIBLE
-                            id_hint_endTV.text = "입니다"
+                            guideTV.text = "전송된 코드를 입력해주세요"
+                            phoneET.setHint("코드 입력")
+                            findBT.setOnClickListener {
+                                //JoinController forget_pwd.json
+                            }
                         }
 
                     } else {
@@ -100,57 +101,42 @@ class FindidActivity : RootActivity() {
 
                 }
             })
-            /*var params = HashMap<String, Any>()
-            params.put("phone", phone)
 
-            InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-                if (success) {
-                    println("data : $data")
-                    // useridTV.text = data.toString()
-
-                    if (data != null) {
-                        if (data.size == 0){
-                            idhintTV.text = ""
-                            useridTV.text = ""
-                            hintTV.text = "아이디를 찾을 수 없습니다."
-                        }else {
-                            if (data.get(0)!!.get("phone") == phone){
-                                idhintTV.text = "아이디 힌트는 "
-                                useridTV.text = "K*****@naver.com"
-                                hintTV.text = "입니다"
-                            }
-                        }
-                    }
-                } else {
-
-                }
-            }*/
         }else {
-            var params = HashMap<String, Any>()
+
+            val params = RequestParams()
             params.put("phone", phone)
 
-            InfoAction.list(params) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-                if (success) {
-                    println("data : $data")
-                    // useridTV.text = data.toString()
+            MemberAction.find_id(params, object :JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        //println("아이디 찾기 :: ${response.toString()}")
+                        val member = response.getJSONObject("member")
+                        var email = Utils.getString(member, "email")
+                        //println("찾은 ID :: $member_id")
 
-                    if (data != null) {
-                        if (data.size == 0){
-                            idhintTV.text = ""
-                            useridTV.text = ""
-                            hintTV.text = "아이디를 찾을 수 없습니다."
-                        }else {
-                            if (data.get(0)!!.get("phone") == phone){
-                                idhintTV.text = "비밀번호 힌트는 "
-                                useridTV.text = "K*****@naver.com"
-                                hintTV.text = "입니다"
-                            }
+                        if (!email.isEmpty()) {
+
                         }
+
+                    } else {
+
+                        idhintTV.text = "가입된 정보가 없습니다."
+                        useridTV.text = "\t회원가입"
+                        id_hint_endTV.visibility = View.GONE
+
+                        useridTV.setOnClickListener {
+                            startActivity(Intent(context, RegisterActivity::class.java))
+                        }
+
                     }
-                } else {
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
                 }
-            }
+            })
         }
 
 
