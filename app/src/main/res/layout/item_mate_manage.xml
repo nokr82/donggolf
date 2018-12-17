@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:padding="10dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp">
+                <ImageView
+                    android:id="@+id/isOnlineIV"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/icon_user_online"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="6dp"/>
+                <ImageView
+                    android:id="@+id/mates_profileIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="7dp"
+                    android:background="@drawable/icon_profiles"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/mates_nickTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="닉네임일곱글자"
+                    android:textColor="#EF5C34"
+                    android:textSize="15dp"
+                    android:maxLength="7"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/mates_status_msgTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="상태메시지 텍스트가 들어 갈 자리입니다."
+                android:textColor="#AFAFAF"
+                android:textSize="13dp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:gravity="right"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/box_check"/>
+        <ImageView
+            android:id="@+id/mates_checkedIV"
+            android:visibility="invisible"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/checkbox_on"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
+</LinearLayout>

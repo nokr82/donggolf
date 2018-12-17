@@ -16,6 +16,14 @@ object MemberAction {
         HttpClient.post("/join/id_check.json", params, handler)
     }
 
+    fun getPassCode(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/join/send_pass_code.json", params, handler)
+    }
+
+    fun pass_reissue(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/join/forget_pwd.json", params, handler)
+    }
+
     //로그인
     fun member_login(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/login/login.json", params, handler)

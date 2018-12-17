@@ -333,16 +333,12 @@ class InfoFragment : Fragment(){
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
                                     println(responseString)
                                 }
+
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                                     if (errorResponse != null)
                                         println(errorResponse!!.getString("message"))
                                 }
                             })
-
-
-
-
-
 
 
                         }

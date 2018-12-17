@@ -6,8 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import com.loopj.android.http.RequestParams
 import donggolf.android.R
 import donggolf.android.adapters.FriendCategoryAdapter
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.models.FriendCategory
 import kotlinx.android.synthetic.main.activity_friend_manage.*
@@ -37,6 +39,7 @@ class FriendManageActivity : RootActivity() {
 
         reqFriendLL.setOnClickListener {
             val intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","waiting")
             startActivity(intent)
         }
 
@@ -76,7 +79,18 @@ class FriendManageActivity : RootActivity() {
                 dialogView.categoryTitleET.setText("")
             }
 
-
         }
+
+    }
+
+    fun getMatesList() {
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+
+
+    }
+
+    fun addMateCategory() {
+        val params = RequestParams()
     }
 }
