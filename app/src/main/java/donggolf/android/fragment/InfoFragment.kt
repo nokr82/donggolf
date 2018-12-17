@@ -315,14 +315,14 @@ class InfoFragment : Fragment(){
                             var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
 
                             val img = ByteArrayInputStream(Utils.getByteArray(profileImg))
-                            val small_img = Utils.resize(profileImg, 100)
+                            //val small_img = Utils.resize(profileImg, 100)
 
                             val params = RequestParams()
 
                             params.put("files", img)
                             params.put("type", "image")
                             params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-                            params.put("small", small_img)
+                            //params.put("small", small_img)
 
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
