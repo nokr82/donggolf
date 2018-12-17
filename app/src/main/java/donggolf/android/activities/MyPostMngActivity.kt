@@ -73,7 +73,7 @@ class MyPostMngActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
-                            val data = response!!.getJSONArray("content")
+                            val data = response!!.getJSONArray("contents")
                             myPostList.clear()
                             for (i in 0 until data.length()){
                                 myPostList.add(data[i] as JSONObject)
@@ -117,7 +117,7 @@ class MyPostMngActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
-                            val data = response!!.getJSONArray("content")
+                            val data = response!!.getJSONArray("contents")
                             myCommentPostList.clear()
                             for (i in 0 until data.length()){
                                 myCommentPostList.add(data[i] as JSONObject)
@@ -161,7 +161,7 @@ class MyPostMngActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
-                            val data = response!!.getJSONArray("content")
+                            val data = response!!.getJSONArray("contents")
                             myStoredPostList.clear()
                             for (i in 0 until data.length()){
                                 myStoredPostList.add(data[i] as JSONObject)
@@ -202,7 +202,7 @@ class MyPostMngActivity : RootActivity() {
                     val result = response!!.getString("result")
                     if ("ok" == result) {
 
-                        val data = response!!.getJSONArray("content")
+                        val data = response!!.getJSONArray("contents")
 
                         myPostList.clear()
                         for (i in 0 until data.length()){

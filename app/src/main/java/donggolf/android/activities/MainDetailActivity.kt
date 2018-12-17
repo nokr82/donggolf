@@ -61,6 +61,7 @@ class MainDetailActivity : RootActivity() {
     lateinit var activity: MainDetailActivity
 
     var login_id = 0
+    var writer = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -262,6 +263,7 @@ class MainDetailActivity : RootActivity() {
 
                             var params = RequestParams()
                             params.put("content_id", content_id)
+                            params.put("mate_id", writer)
                             params.put("member_id", login_id)
                             params.put("category_id",0)
                             params.put("status","w")
@@ -302,12 +304,12 @@ class MainDetailActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if (result == "yes") {
                             likeIV.setImageDrawable(resources.getDrawable(R.drawable.icon_like))
-                            val likes = response.getJSONArray("Like")
+                            val likes = response.getJSONObject("Like")
                             heartcountTV.setText(likes.length().toString())
                             likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
                         } else {
                             likeIV.setImageDrawable(resources.getDrawable(R.drawable.btn_cancel_like))
-                            val likes = response.getJSONArray("Like")
+                            val likes = response.getJSONObject("Like")
                             heartcountTV.setText(likes.length().toString())
                             likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
                         }
@@ -404,6 +406,7 @@ class MainDetailActivity : RootActivity() {
                             val title = Utils.getString(data,"title")
                             val text = Utils.getString(data,"text")
                             val member_id = Utils.getString(data,"member_id")
+                            writer = member_id
                             val door_image = Utils.getString(data,"door_image")
                             val deleted = Utils.getString(data,"deleted")
                             val Looker = response.getJSONArray("Looker")

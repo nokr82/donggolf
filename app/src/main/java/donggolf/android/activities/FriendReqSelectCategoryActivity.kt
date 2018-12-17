@@ -25,7 +25,7 @@ class FriendReqSelectCategoryActivity : RootActivity() {
         selectCategoryLV.adapter = selCategAdapter
 
         selectCategoryLV.setOnItemClickListener { parent, view, position, id ->
-            
+
         }
     }
 }
