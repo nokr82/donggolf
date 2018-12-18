@@ -13,6 +13,7 @@ import donggolf.android.actions.MateAction
 import donggolf.android.adapters.MateManageAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_request_friend.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -23,7 +24,7 @@ class RequestFriendActivity : RootActivity() {
 
     var mateRequestList = ArrayList<JSONObject>()
     lateinit var matesRequestAdapter: MateManageAdapter
-    var mateList = ArrayList<JSONObject>()
+    var mateList = ArrayList<Int>()
 
     var checkAll = false
 
@@ -40,48 +41,66 @@ class RequestFriendActivity : RootActivity() {
 
         val type = intent.getStringExtra("type")
         if (type == "waiting") {
+            println(type)
             getFriendList("w", 0)
-        } else if (type == "block") {
+        }/* else if (type == "block") {
 
         } else if (type == "first") {
             getFriendList("m",1)
         } else {
             var cateID = intent.getIntExtra("category_id", 0)
             getFriendList("m", cateID)
-        }
+        }*/
 
 
         frdReq_check_all.setOnClickListener {
-            if (checkAll){
+            if (!checkAll){
                 checkAll = true
                 checkIcon.visibility = View.VISIBLE
 
-                //matesRequestAdapter.isCheckedMate = true
 
-                for (i in 0 until mateRequestList.size) {
-                    //matesRequestAdapter.isCheckedMate = true
-
-                }
-
-                matesRequestAdapter.notifyDataSetChanged()
+//                matesRequestAdapter.isCheckedMate = true
+//
+//                for (i in 0 until mateRequestList.size) {
+//                    matesRequestAdapter.isCheckedMate = true
+//
+//                }
+//
+//                matesRequestAdapter.notifyDataSetChanged()
 
             } else {
-                
+                mateList.clear()
                 checkAll = false
                 checkIcon.visibility = View.GONE
-                matesRequestAdapter.isCheckedMate = false
-
-                matesRequestAdapter.notifyDataSetChanged()
 
             }
+
+            mateList.clear()
+
+            for (i in 0 until mateRequestList.size) {
+                mateRequestList.get(i).put("check", checkAll)
+                mateList.add(mateRequestList.get(i).getInt("mate_id"))
+            }
+            matesRequestAdapter.notifyDataSetChanged()
+            println(mateList)
+
         }
+
 
         acceptTV.setOnClickListener {
             val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
-            startActivity(acceptItt)
+            startActivityForResult(acceptItt,SELECT_CATEGORY)
         }
 
         rejectTV.setOnClickListener {
+            mateList.clear()
+
+            for (i in 0 until mateRequestList.size) {
+                if(mateRequestList.get(i).getBoolean("check")) {
+                    mateList.add(mateRequestList.get(i).getInt("mate_id"))
+                }
+            }
+
             val params = RequestParams()
             params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
             params.put("mate_id", mateList)
@@ -90,26 +109,50 @@ class RequestFriendActivity : RootActivity() {
             MateAction.rejectMateRequest(params, object : JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        Utils.alert(context,"선택한 대상의 요청을 거절했습니다")
+                        getFriendList("w",0)
+                    }
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    println("reject action error : $errorResponse")
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println("reject error : $responseString")
                 }
             })
         }
 
         blockTV.setOnClickListener {
+            mateList.clear()
+
+            for (i in 0 until mateRequestList.size) {
+                if(mateRequestList.get(i).getBoolean("check")) {
+                    mateList.add(mateRequestList.get(i).getInt("mate_id"))
+                }
+            }
             val params = RequestParams()
             params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-            params.put("object", mateList)
+            params.put("mate_id", mateList)
 
             MateAction.blockMember(params, object : JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        getFriendList("w",0)
+                    }
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                     println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
                 }
             })
         }
@@ -129,8 +172,12 @@ class RequestFriendActivity : RootActivity() {
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         val mates = response.getJSONArray("mates")
+                        mateRequestList.clear()
                         for (i in 0 until mates.length()) {
                             val mate = mates[i] as JSONObject
+
+                            mate.put("check", false)
+
                             mateRequestList.add(mate)
                         }
                         matesRequestAdapter.notifyDataSetChanged()
@@ -164,6 +211,13 @@ class RequestFriendActivity : RootActivity() {
     }
 
     fun acceptMates(category_id: Int) {
+        mateList.clear()
+
+        for (i in 0 until mateRequestList.size) {
+            if(mateRequestList.get(i).getBoolean("check")) {
+                mateList.add(mateRequestList.get(i).getInt("mate_id"))
+            }
+        }
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("mate_id", mateList)
@@ -173,10 +227,15 @@ class RequestFriendActivity : RootActivity() {
         MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 println(response)
+                getFriendList("w",0)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                 println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
             }
         })
     }

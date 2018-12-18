@@ -3,19 +3,21 @@ package donggolf.android.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.base.Utils
 import donggolf.android.models.FriendCategory
+import org.json.JSONObject
 import java.util.ArrayList
 
-class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<FriendCategory>) : BaseAdapter() {
+class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
-    private lateinit var item: FriendCategoryAdapter.ViewHolder
+    private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<FriendCategory> = data
-    val context = context
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         lateinit var retView: View
@@ -34,17 +36,21 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<FriendCa
             }
         }
 
-        var tmpData = data.get(position)
+        var json = data.get(position)
+        val category = json.getJSONObject("MateCategory")
 
-        item.cateTitleTV.setText(tmpData.cateTitle)
-        item.item_category_count.setText(tmpData.memberCount)
+        json.put("title",Utils.getString(category,"category"))
+
+        item.cateTitleTV.text = Utils.getString(category,"category")
+        item.item_category_count.visibility = View.INVISIBLE
+
         var listFirst = true
         var alarmTxt = ""
-        if (tmpData.newPost){
+        if (Utils.getString(category,"new_post") == "y"){
             alarmTxt += "새 글"
             listFirst = false
         }
-        if (tmpData.newChat){
+        if (Utils.getString(category,"chat") == "y"){
             if (listFirst){
                 alarmTxt += "채팅"
                 listFirst = false
@@ -52,7 +58,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<FriendCa
                 alarmTxt += "/채팅"
             }
         }
-        if (tmpData.newLogin){
+        if (Utils.getString(category,"login") == "y"){
             if (listFirst){
                 alarmTxt += "로그인"
                 listFirst = false
@@ -61,7 +67,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<FriendCa
             }
 
         }
-        if (tmpData.newFrdPub){
+        if (Utils.getString(category,"open_mate") == "y"){
             if (listFirst){
                 alarmTxt += "친구공개"
                 listFirst = false
@@ -71,10 +77,12 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<FriendCa
         }
         item.alarmListTV.text = alarmTxt
 
+
+
         return retView
     }
 
-    override fun getItem(position: Int): Any {
+    override fun getItem(position: Int): JSONObject {
         return data.get(position)
     }
 

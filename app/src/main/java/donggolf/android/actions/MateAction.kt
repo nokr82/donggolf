@@ -26,7 +26,7 @@ object MateAction {
         HttpClient.post("/mate/update_mate.json", params, handler)
     }
 
-    fun getCategoryID(params: RequestParams, handler: JsonHttpResponseHandler) {
+    fun getCategoryInfo(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/mate/category_info.json", params, handler)
     }
 

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.base.Utils
@@ -17,7 +18,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
     var view:Int = view
     var data:ArrayList<JSONObject> = data
 
-    var isCheckedMate = false
+//    var isCheckedMate = false
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -38,15 +39,33 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
         }
 
         val json = data.get(position)
+
+        var check = json.getBoolean("check")//임의로 따로 넣어준 변수값
+
         val member = json.getJSONObject("Member")
 
         item.mates_nickTV.text = Utils.getString(member,"nick")
         item.mates_status_msgTV.text = Utils.getString(member,"status_msg")
 
-        if (isCheckedMate) {
+        json.put("mate_id", Utils.getInt(member,"id"))
+
+        if (check) {
             item.mates_checkedIV.visibility = View.VISIBLE
-        } else {
+        } else  {
             item.mates_checkedIV.visibility = View.INVISIBLE
+        }
+
+        item.mates_checkboxRL.setOnClickListener {
+            println("체크박스 클릭됨")
+
+            check = !check
+
+            json.put("check", check)
+
+            notifyDataSetChanged()
+
+//            isCheckedMate = !isCheckedMate
+
         }
 
         return retView
@@ -78,14 +97,16 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
         var isOnlineIV : ImageView //프사에 붙은 초록불
         var mates_nickTV : TextView //닉네임
         var mates_status_msgTV : TextView //상메
-        var mates_checkedIV : ImageView //체크박스
+        var mates_checkedIV : ImageView //체크박스 체크
+        var mates_checkboxRL : RelativeLayout
 
         init {
-            mates_profileIV = v.findViewById<View>(R.id.mates_profileIV) as ImageView
-            isOnlineIV = v.findViewById<View>(R.id.isOnlineIV) as ImageView
-            mates_nickTV = v.findViewById<View>(R.id.mates_nickTV) as TextView
-            mates_status_msgTV = v.findViewById<View>(R.id.mates_status_msgTV) as TextView
-            mates_checkedIV = v.findViewById<View>(R.id.mates_checkedIV) as ImageView
+            mates_profileIV = v.findViewById(R.id.mates_profileIV)
+            isOnlineIV = v.findViewById(R.id.isOnlineIV)
+            mates_nickTV = v.findViewById(R.id.mates_nickTV)
+            mates_status_msgTV = v.findViewById(R.id.mates_status_msgTV)
+            mates_checkedIV = v.findViewById(R.id.mates_checkedIV)
+            mates_checkboxRL = v.findViewById(R.id.mates_checkboxRL)
         }
     }
 }

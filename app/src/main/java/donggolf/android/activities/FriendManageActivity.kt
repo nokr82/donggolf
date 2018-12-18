@@ -11,15 +11,16 @@ import donggolf.android.R
 import donggolf.android.adapters.FriendCategoryAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
-import donggolf.android.models.FriendCategory
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_manage.*
 import kotlinx.android.synthetic.main.dialog_add_category.view.*
+import org.json.JSONObject
 
 class FriendManageActivity : RootActivity() {
 
     //adapter랑 dataList
     lateinit var frdMngAdapter : FriendCategoryAdapter
-    var friendCategoryData : ArrayList<FriendCategory> = ArrayList<FriendCategory>()
+    var friendCategoryData = ArrayList<JSONObject>()
     lateinit var context : Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,13 +34,27 @@ class FriendManageActivity : RootActivity() {
 
         friendCategoryLV.setOnItemClickListener { parent, view, position, id ->
             val itt = Intent(context, FriendCategoryDetailActivity::class.java)
-            itt.putExtra("groupTitle", friendCategoryData.get(position).cateTitle)
+            itt.putExtra("groupTitle", friendCategoryData.get(position).getString("title"))
             startActivity(itt)
         }
 
         reqFriendLL.setOnClickListener {
             val intent = Intent(context, RequestFriendActivity::class.java)
             intent.putExtra("type","waiting")
+            startActivity(intent)
+        }
+
+        blockListLL.setOnClickListener {
+            val intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","block")
+            startActivity(intent)
+        }
+
+        friendCategoryLV.setOnItemClickListener { parent, view, position, id ->
+            val data = friendCategoryData.get(position)
+            val category = data.getJSONObject("MateCategory")
+            val intent = Intent(context, FriendCategoryDetailActivity::class.java)
+            intent.putExtra("category_id", Utils.getInt(category,"id"))
             startActivity(intent)
         }
 
@@ -66,10 +81,10 @@ class FriendManageActivity : RootActivity() {
             builder.setView(dialogView)
                     .setPositiveButton("확인") { dialog, id ->
                         //println("그룹 제목 ::: $title")
-                        var tmp = FriendCategory("", "0", true, true, true)
-                        tmp.cateTitle = dialogView.categoryTitleET.text.toString()
-                        println("그룹 제목 ::: ${tmp.cateTitle}")
-                        friendCategoryData.add(tmp)
+//                        var tmp = FriendCategory("", "0", true, true, true)
+//                        tmp.cateTitle = dialogView.categoryTitleET.text.toString()
+//                        println("그룹 제목 ::: ${tmp.cateTitle}")
+//                        friendCategoryData.add(tmp)
                         frdMngAdapter.notifyDataSetChanged()
                     }
                     .show()
