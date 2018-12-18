@@ -190,9 +190,9 @@ class AddPostActivity : RootActivity() {
                             val id = intent.getStringExtra("id")
                             modify(id)
 
-                            intent = Intent()
-                            intent.action = "UPDATE_POST"
-                            sendBroadcast(intent)
+//                            intent = Intent()
+//                            intent.action = "UPDATE_POST"
+//                            sendBroadcast(intent)
 
                             finish()
 
@@ -248,6 +248,8 @@ class AddPostActivity : RootActivity() {
         titleET.setText(tmpcontent.title)
         contentET.setText(tmpcontent.texts)
 
+        getPost()
+
     }
 
     private fun moveMyPicture() {
@@ -288,69 +290,59 @@ class AddPostActivity : RootActivity() {
             return
         }
 
-        var content = Utils.getString(contentET)
-        if (content.isEmpty()) {
+        var text = Utils.getString(contentET)
+        if (text.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
 
-        val user = mAuth.currentUser
+        val params = RequestParams()
+        params.put("content_id",id)
+        val login_id = PrefUtils.getIntPreference(context, "member_id")
+        params.put("member_id",login_id)
+        params.put("title",title)
+        params.put("text",text)
 
-        if (user != null) {
+        var cht_yn = "Y"
+        if (replyableCB.isChecked == false){
+            cht_yn = "N"
+        }
+        params.put("cht_yn",cht_yn)
 
-            val title = Utils.getString(titleET)
-            val content = Utils.getString(contentET)
+        var cmt_yn = "Y"
+        if (chatableCB.isChecked == false){
+            cmt_yn = "N"
+        }
+        params.put("cmt_yn",cmt_yn)
 
-            if (displaynamePaths != null) {
-                if (displaynamePaths.size != 0) {
-
-                    val title = Utils.getString(titleET)
-                    val content = Utils.getString(contentET)
-
-                    val text = Text("text", content)
-
-                    val texts: ArrayList<Any> = ArrayList<Any>()
-
-                    texts.add(text)
-
-                    val bytearray__: ArrayList<ByteArray> = ArrayList<ByteArray>()
-                    for (i in 0..displaynamePaths.size - 1) {
-                        var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 500)
-
-                        var bytearray_ = Utils.getByteArray(bt)
-
-                        bytearray__.add(bytearray_)
-                    }
-
-                    val nowTime = System.currentTimeMillis()
-
-                    var imgPaths = ArrayList<String>()
-                    var imagsPaths = ArrayList<String>()
-                    var imgpath = ArrayList<String>()
-                    var photo = Photo()
-
-                    for (i in 0..(displaynamePaths.size - 1)) {
-
-                        var image_path = "imgl/" + nowTime + ".png"
-                        var images_path = "imgs/" + nowTime + ".png"
-
-                        imagesPaths.add(image_path)
-                        imgPaths.add(images_path)
-                        imgpath.add(nowTime.toString() + ".png")
-                    }
-
-                    photo.type = "photo"
-                    photo.file = imgpath
-
-                    texts.add(photo)
-
-                }
-            }
-
-            if (displaynamePaths.size == 0) {
-
+        if (hashtag != null){
+            for (i in 0 .. hashtag.size - 1){
+                params.put("tag[" + i + "]",  hashtag.get(i))
             }
         }
+
+        if (displaynamePaths != null){
+            if (displaynamePaths.size != 0){
+                for (i in 0..displaynamePaths.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 800)
+
+                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+                }
+            }
+        }
+
+        PostAction.update_post(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                finish()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+            }
+
+        })
+
     }
 
     private fun addContent() {
@@ -372,9 +364,6 @@ class AddPostActivity : RootActivity() {
         params.put("title",title)
         params.put("text",text)
         params.put("deleted","N")
-        params.put("look_count",0)
-        params.put("heart_count",0)
-        params.put("cmt_count",0)
 
         var cht_yn = "Y"
         if (replyableCB.isChecked == false){
@@ -500,7 +489,6 @@ class AddPostActivity : RootActivity() {
                         if (displaynamePaths != null) {
                             displaynamePaths.add(str)
 
-
                             Log.d("yjs", "display " + displaynamePaths.get(0))
                             Log.d("yjs", "display " + displaynamePaths.get(0))
                         } else {
@@ -574,6 +562,93 @@ class AddPostActivity : RootActivity() {
 
                 }
             }
+        }
+    }
+
+    fun getPost(){
+        if (intent.getStringExtra("id") != null){
+            val id = intent.getStringExtra("id")
+            val login_id = PrefUtils.getIntPreference(context, "member_id")
+
+            var params = RequestParams()
+            params.put("id",id)
+            params.put("member_id",login_id)
+
+            PostAction.get_post(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+
+                            val data = response.getJSONObject("Content")
+
+                            val title = Utils.getString(data,"title")
+                            val text = Utils.getString(data,"text")
+                            val member_id = Utils.getString(data,"member_id")
+                            val cht_yn = Utils.getString(data,"cht_yn")
+                            val cmt_yn = Utils.getString(data,"cmt_yn")
+
+                            val tags = response.getJSONArray("tags")
+                            val imageDatas = response.getJSONArray("ContentImgs")
+
+                            if (tags != null && tags.length() > 0 ){
+                                var hashtags: String = ""
+
+                                for (i in 0 until tags.length()){
+                                    var json = tags.get(i) as JSONObject
+                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    val division = Utils.getString(MemberTags,"division")
+
+                                    if (division == "1"){
+                                        val tag = Utils.getString(MemberTags,"tag")
+                                        hashtags += "#"+tag + "  "
+                                        hashtag.add(tag)
+                                    }
+                                }
+
+                            }
+
+                            if (imageDatas != null && imageDatas.length() > 0){
+                                var imagePaths: java.util.ArrayList<String> = java.util.ArrayList<String>()
+
+                                for (i in 0 until imageDatas.length()){
+                                    var json = imageDatas.get(i) as JSONObject
+
+                                    var contentFile = json.getJSONObject("contentFile")
+                                    var type = Utils.getInt(contentFile,"type")
+                                    if (type == 1) {
+                                        val path = Utils.getString(contentFile, "image_uri")
+                                        imagePaths.add(path)
+                                        displaynamePaths.add(path)
+                                    }
+                                }
+                            }
+                            titleET.setText(title)
+                            contentET.setText(text)
+
+                            if (cht_yn  == "Y"){
+                                chatableCB.isChecked = true
+                            } else {
+                                chatableCB.isChecked = false
+                            }
+
+                            if (cmt_yn == "Y"){
+                                replyableCB.isChecked = true
+                            } else {
+                                replyableCB.isChecked = false
+                            }
+
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
+
         }
     }
 }

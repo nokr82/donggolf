@@ -13,10 +13,7 @@ import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.PictureDetailViewAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
-import donggolf.android.base.ImageLoader
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
+import donggolf.android.base.*
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import kotlinx.android.synthetic.main.activity_picture_detail.*
 import org.json.JSONArray
@@ -32,6 +29,8 @@ class PictureDetailActivity : RootActivity() {
     private lateinit var pagerAdapter: PictureDetailViewAdapter
 
     var adverImagePaths: ArrayList<String> = ArrayList<String>()
+
+
 
     var adPosition = 0
 
@@ -52,6 +51,32 @@ class PictureDetailActivity : RootActivity() {
         if (intent.hasExtra("id")) {
             val id = intent.getStringExtra("id")
 
+            if (intent.getSerializableExtra("paths") != null){
+                adverImagePaths = intent.getSerializableExtra("paths") as ArrayList<String>
+
+                if (adverImagePaths != null){
+
+                    for (i in 0 until adverImagePaths.size){
+                        val iv = ImageView(context)
+
+                        val photoViewAttacher = PhotoViewAttacher(iv)
+                        photoViewAttacher.scaleType = ImageView.ScaleType.FIT_XY
+
+                        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(adverImagePaths.get(i),iv,Utils.UILoptions)
+
+                        if(i == 0) {
+                            pagerAdapter.addView(iv,i)
+                        } else {
+                            pagerAdapter.addView(iv)
+                        }
+
+                        pageTV.setText("(" + 1 + "/" + adverImagePaths.size.toString() + ")")
+
+                        pagerAdapter.notifyDataSetChanged()
+                    }
+                }
+
+            }
 
             ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
                 if (success){

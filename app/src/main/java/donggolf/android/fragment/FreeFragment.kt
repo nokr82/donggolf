@@ -82,7 +82,6 @@ open class FreeFragment : Fragment() {
                         adapter.notifyDataSetChanged()
 
                     }
-
                 }
             }
         }
@@ -109,7 +108,6 @@ open class FreeFragment : Fragment() {
                         adapter.notifyDataSetChanged()
 
                     }
-
                 }
             }
         }
