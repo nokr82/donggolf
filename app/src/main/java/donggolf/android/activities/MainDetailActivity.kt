@@ -144,6 +144,9 @@ class MainDetailActivity : RootActivity() {
                             val id = intent.getStringExtra("id")
                             var intent = Intent(context, PictureDetailActivity::class.java);
                             intent.putExtra("id", id)
+                            if (adverImagePaths != null){
+                                intent.putExtra("paths",adverImagePaths)
+                            }
                             startActivityForResult(intent, PICTURE_DETAIL);
 
                             return true
@@ -350,20 +353,24 @@ class MainDetailActivity : RootActivity() {
                     if (intent.hasExtra("id")) {
                         val id = intent.getStringExtra("id")
 
-                        ContentAction.deleteContent(id){
-                            if(it){
+                        val params = RequestParams()
+                        params.put("content_id",id)
+                        params.put("deleted","Y")
 
-                                intent = Intent()
-                                intent.action = "DELETE_POST"
-                                sendBroadcast(intent)
+                        PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
+                            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                 finish()
-
-                            }else {
-
                             }
 
-                        }
+                            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+                            }
+
+                        })
+
+                        finish()
+
                     }
 
                 })

@@ -285,9 +285,7 @@ class InfoFragment : Fragment(){
 
             when (requestCode) {
                 SELECT_PROFILE -> {
-
                     getTempUserInformation("image")
-
                 }
                 SELECT_STATUS -> {
                     getTempUserInformation("status_msg")

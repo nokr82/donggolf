@@ -62,54 +62,18 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         val title = Utils.getString(Content,"title")
         val text = Utils.getString(Content,"text")
         val content_id = Utils.getString(Content,"id")
-
-        val dparams = RequestParams()
-        dparams.put("id", content_id)
-        dparams.put("member_id", member_id)
+        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
+        val look_cnt = Utils.getString(Content,"look_cnt")
+        val like_cnt = Utils.getString(Content,"like_cnt")
+        var member = json.getJSONObject("Member")
+        var nick = Utils.getString(member,"nick")
 
         item.main_item_title.text = title.toString()
         item.main_item_content.text = text.toString()
+        item.main_item_view_count.text = like_cnt.toString()
+        item.main_item_like_count.text = favorite_cnt.toString()
+        item.main_item_nickname.text = nick.toString()
 
-        PostAction.get_post(dparams, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println("success==========")
-                val result = response!!.getString("result")
-                if (result == "ok") {
-
-                    val Looker = response.getJSONArray("Looker")
-                    val Like = response.getJSONArray("Like")
-
-                    item.main_item_view_count.text = Looker.length().toString()
-                    item.main_item_like_count.text = Like.length().toString()
-
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("---------fail")
-            }
-        })
-
-
-        val params = RequestParams()
-        params.put("member_id", member_id)
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                val result = response!!.getString("result")
-                if (result == "ok") {
-                    val member = response.getJSONObject("Member")
-
-                    val nick = Utils.getString(member, "nick")
-
-
-                    item.main_item_nickname.setText(nick)
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-            }
-        })
 
 //        var owner:String = data.get("owner").toString()
 //        item.main_item_nickname.text = owner

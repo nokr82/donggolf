@@ -18,6 +18,10 @@ object PostAction {
         HttpClient.post("/post/get_post.json", params, handler)
     }
 
+    fun update_post(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/update_post.json", params, handler)
+    }
+
     fun add_search(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/post/add_search.json", params, handler)
     }
