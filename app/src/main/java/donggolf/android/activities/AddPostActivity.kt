@@ -6,9 +6,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.joooonho.SelectableRoundedImageView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -63,6 +67,10 @@ class AddPostActivity : RootActivity() {
 
     var member_id = 0
 
+    private var addPicturesLL: LinearLayout? = null
+
+    private val imgSeq = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_post)
@@ -79,6 +87,8 @@ class AddPostActivity : RootActivity() {
         val one = 1
 
         val setContent = TmpContent()
+
+        addPicturesLL = findViewById(R.id.addPicturesLL)
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
         println("member_id ----- $member_id")
@@ -218,6 +228,8 @@ class AddPostActivity : RootActivity() {
     }
 
     private fun loadData(dbManager: DataBaseHelper , userid: String) {
+
+        //임시저장 데이터 불러오기
         val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
 
         val imagespathquery = "SELECT * FROM imagespath WHERE owner ='" + userid + "'"
@@ -230,15 +242,11 @@ class AddPostActivity : RootActivity() {
             for (i in 0 until tmpImagesPath.size){
                 if (tmpImagesPath.get(i).type == 1){
                     imagesPaths.add(tmpImagesPath.get(i).path!!)
-                    println("imagesPaths -------- ${tmpImagesPath.get(i).path}")
                 } else if (tmpImagesPath.get(i).type == 2){
                     videoPaths.add(tmpImagesPath.get(i).path!!)
-                    println("videoPaths -------- ${tmpImagesPath.get(i).path}")
                 } else if (tmpImagesPath.get(i).type == 3) {
                     hashtag.add(tmpImagesPath.get(i).path!!)
-                    println("hashtag -------- ${tmpImagesPath.get(i).path}")
                 }
-                println("tmpImagesPath -------- ${tmpImagesPath.get(i).path}")
             }
         }
 
@@ -482,6 +490,17 @@ class AddPostActivity : RootActivity() {
 
                     }
 
+                    val child = addPicturesLL!!.getChildCount()
+                    for (i in 0 until child) {
+
+                        println("test : $i")
+
+                        val v = addPicturesLL!!.getChildAt(i)
+
+                        val delIV = v.findViewById(R.id.delIV) as ImageView
+
+                    }
+
                     displaynamePaths.clear()
                     for (i in 0..(name!!.size - 1)) {
                         val str = name[i]
@@ -497,6 +516,8 @@ class AddPostActivity : RootActivity() {
                         }
 
                     }
+
+
 
                     var intent = Intent();
 
@@ -566,6 +587,7 @@ class AddPostActivity : RootActivity() {
     }
 
     fun getPost(){
+        //게시글 불러오기
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
             val login_id = PrefUtils.getIntPreference(context, "member_id")
@@ -608,6 +630,10 @@ class AddPostActivity : RootActivity() {
 
                             }
 
+                            if (hashtag != null){
+
+                            }
+
                             if (imageDatas != null && imageDatas.length() > 0){
                                 var imagePaths: java.util.ArrayList<String> = java.util.ArrayList<String>()
 
@@ -622,6 +648,10 @@ class AddPostActivity : RootActivity() {
                                         displaynamePaths.add(path)
                                     }
                                 }
+                            }
+
+                            if (displaynamePaths != null){
+
                             }
                             titleET.setText(title)
                             contentET.setText(text)
@@ -649,6 +679,36 @@ class AddPostActivity : RootActivity() {
                 }
             })
 
+        }
+    }
+
+    fun reset(str: String, i: Int) {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(str, options)
+        options.inJustDecodeBounds = false
+        options.inSampleSize = 1
+        if (options.outWidth > 96) {
+            val ws = options.outWidth / 96 + 1
+            if (ws > options.inSampleSize) {
+                options.inSampleSize = ws
+            }
+        }
+        if (options.outHeight > 96) {
+            val hs = options.outHeight / 96 + 1
+            if (hs > options.inSampleSize) {
+                options.inSampleSize = hs
+            }
+        }
+        val bitmap = BitmapFactory.decodeFile(str)
+        val v = View.inflate(context, R.layout.item_add_image, null)
+        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
+        imageIV.setImageBitmap(bitmap)
+        delIV.tag = i
+
+        if (imgSeq == 0) {
+            addPicturesLL!!.addView(v)
         }
     }
 }

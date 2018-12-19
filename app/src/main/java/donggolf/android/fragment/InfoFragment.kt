@@ -272,7 +272,6 @@ class InfoFragment : Fragment(){
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
         startActivityForResult(galleryIntent, GALLERY)
-
     }
 
 
@@ -299,7 +298,6 @@ class InfoFragment : Fragment(){
                 }
                 REGION_CHANGE -> {
                     getTempUserInformation("region")
-
                 }
                 GALLERY -> {
                     if (data != null)

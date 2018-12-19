@@ -48,6 +48,8 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.9'
     //  smart location
 
+    implementation 'com.joooonho:selectableroundedimageview:1.0.1'
+
     implementation 'gun0912.ted:tedpermission:2.2.2'
 
     implementation 'com.commit451:PhotoView:1.2.4'
