@@ -349,9 +349,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ListView
-                    android:id="@+id/main_detail_listview"
+                    android:id="@+id/commentListLV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></ListView>
+                    android:layout_height="wrap_content"/>
                 <LinearLayout
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
@@ -363,8 +363,9 @@
                         android:layout_height="1dp"
                         android:background="@drawable/line_0" />
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:background="#ffffff"
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -411,7 +412,11 @@
                             android:text="등록"
                             android:textColor="#0EDA2F"
                             android:textSize="13dp" />
-                    </RelativeLayout>
+                    </LinearLayout>
+
+
+                    <!--댓글입력란 끝-->
+
 
                 </LinearLayout>
             </RelativeLayout>
