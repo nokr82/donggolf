@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.*
 import android.graphics.Paint
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.MotionEvent
@@ -11,23 +12,24 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
-import donggolf.android.actions.ContentAction
-import donggolf.android.actions.InfoAction
-import donggolf.android.actions.MemberAction
-import donggolf.android.actions.PostAction
+import donggolf.android.actions.*
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
 import donggolf.android.models.Content
+import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -37,9 +39,9 @@ class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var commentList = ArrayList<JSONObject>()
 
-    private  lateinit var  adapter : MainDeatilAdapter
+    private  lateinit var  commentAdapter : MainDeatilAdapter
 
     private lateinit var adverAdapter: FullScreenImageAdapter
     var adverImagePaths:ArrayList<String> = ArrayList<String>()
@@ -58,36 +60,110 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DURATION = 1000
     val MAX_CLICK_DISTANCE = 15
 
-    lateinit var activity: MainDetailActivity
+    //lateinit var activity: MainDetailActivity
 
     var login_id = 0
     var writer = ""
+    var content_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
 
-        detail_add_comment.paintFlags = detail_add_comment.getPaintFlags() or Paint.FAKE_BOLD_TEXT_FLAG
+        detail_add_commentTV.paintFlags = detail_add_commentTV.paintFlags or Paint.FAKE_BOLD_TEXT_FLAG
 
         context = this
-        intent = getIntent()
-
-        var dataObj : JSONObject = JSONObject();
-
-        adapterData.add(dataObj)
-
-        adapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,adapterData)
-
-        main_detail_listview.adapter = adapter
-
-        adapter.notifyDataSetChanged()
-
-        activity = this as MainDetailActivity
-
+        intent = intent
         login_id = PrefUtils.getIntPreference(context, "member_id")
+
+        //댓글 관련 어댑터
+        commentAdapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,commentList)
+
+        commentListLV.adapter = commentAdapter
+        commentListLV.isExpanded = true
+
+        commentAdapter.notifyDataSetChanged()
+
+        //댓글 리스트뷰 롱클릭
+        commentListLV.setOnItemLongClickListener { parent, view, position, id ->
+
+            var commenter = commentList[position].getInt("cmt_wrt_id")
+
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlg_comment_delTV.visibility = View.GONE
+
+            //댓삭
+            if (commenter == login_id){
+                dialogView.dlg_comment_delTV.visibility = View.VISIBLE
+                dialogView.dlg_comment_delTV.setOnClickListener {
+                    val params = RequestParams()
+                    params.put("cont_id", content_id)
+                    params.put("commenter", commenter)
+                    params.put("comment_id", commentList[position].getInt("comment_id"))
+
+                    CommentAction.delete_content_comment(params, object :JsonHttpResponseHandler(){
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            println(response)
+
+                            val result = response!!.getString("result")
+                            if (result == "ok"){
+                                //할일 : 리스트뷰에서 아이템을 지운다
+
+                                commentAdapter.removeItem(position)
+                                commentAdapter.notifyDataSetChanged()
+
+                                alert.dismiss()
+                            }
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                            println(errorResponse)
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                            println(responseString)
+                        }
+                    })
+                }
+            }
+
+            //댓글복사
+            dialogView.dlg_comment_copyTV.setOnClickListener {
+
+                //클립보드 사용 코드
+                val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("Golf", commentList[position].getString("comment_content")) //클립보드에 ID라는 이름표로 id 값을 복사하여 저장
+                clipboardManager.primaryClip = clipData
+
+                Toast.makeText(context, "댓글이 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show()
+
+                alert.dismiss()
+            }
+
+            //댓글 작성자 게시글에 차단
+            dialogView.dlg_comment_blockTV.setOnClickListener {
+                var cmt_wrt_id = commentList[position].getInt("cmt_wrt_id")
+                val params = RequestParams()
+                params.put("member_id", cmt_wrt_id)
+                params.put("writer", writer)
+                params.put("comment", commentList[position].getString("comment_content"))
+
+
+
+                alert.dismiss()
+            }
+
+            true
+        }
 
         var check = false
 
+        //이미지 관련 어댑터
         adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
         pagerVP.adapter = adverAdapter
         pagerVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -115,10 +191,10 @@ class MainDetailActivity : RootActivity() {
 
                     MotionEvent.ACTION_DOWN ->{
 
-                        pressStartTime = System.currentTimeMillis();
-                        pressedX = event.getX();
-                        pressedY = event.getY();
-                        stayedWithinClickDistance = true;
+                        pressStartTime = System.currentTimeMillis()
+                        pressedX = event.x
+                        pressedY = event.y
+                        stayedWithinClickDistance = true
 
                         println("OnTouch : ACTION_DOWN")
 
@@ -127,8 +203,8 @@ class MainDetailActivity : RootActivity() {
 
                     MotionEvent.ACTION_CANCEL->{
 
-                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
-                            stayedWithinClickDistance = false;
+                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.x, event.y) > MAX_CLICK_DISTANCE) {
+                            stayedWithinClickDistance = false
                         }
                         return true
 
@@ -142,12 +218,12 @@ class MainDetailActivity : RootActivity() {
 
                         if (intent.hasExtra("id")) {
                             val id = intent.getStringExtra("id")
-                            var intent = Intent(context, PictureDetailActivity::class.java);
+                            var intent = Intent(context, PictureDetailActivity::class.java)
                             intent.putExtra("id", id)
                             if (adverImagePaths != null){
                                 intent.putExtra("paths",adverImagePaths)
                             }
-                            startActivityForResult(intent, PICTURE_DETAIL);
+                            startActivityForResult(intent, PICTURE_DETAIL)
 
                             return true
                         }
@@ -159,6 +235,40 @@ class MainDetailActivity : RootActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
+
+
+        //댓글 달기
+        detail_add_commentTV.setOnClickListener {
+            var comment = Utils.getString(cmtET)
+
+            val params = RequestParams()
+            params.put("cont_id", content_id)
+            params.put("member_id", login_id)
+            params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+            params.put("comment", comment)
+            //params.put("type","d")
+
+            CommentAction.comment_at_content(params,object :JsonHttpResponseHandler(){
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok"){
+                        val comments = response.getJSONObject("comments")
+                        commentList.add(comments)
+                        commentAdapter.notifyDataSetChanged()
+                        cmtET.setText("")
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                    println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
+                }
+            })
+        }
 
 
         finishLL.setOnClickListener {
@@ -308,13 +418,13 @@ class MainDetailActivity : RootActivity() {
                         if (result == "yes") {
                             likeIV.setImageDrawable(resources.getDrawable(R.drawable.icon_like))
                             val likes = response.getJSONObject("Like")
-                            heartcountTV.setText(likes.length().toString())
-                            likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
+                            heartcountTV.text = likes.length().toString()
+                            likecountTV.text = likes.length().toString() + "명이 좋아합니다"
                         } else {
                             likeIV.setImageDrawable(resources.getDrawable(R.drawable.btn_cancel_like))
                             val likes = response.getJSONObject("Like")
-                            heartcountTV.setText(likes.length().toString())
-                            likecountTV.setText(likes.length().toString() + "명이 좋아합니다")
+                            heartcountTV.text = likes.length().toString()
+                            likecountTV.text = likes.length().toString() + "명이 좋아합니다"
                         }
                     }
 
@@ -329,6 +439,7 @@ class MainDetailActivity : RootActivity() {
         getLooker()
     }
 
+    //이미지 자세히 보기 액티비티
     fun MoveFindPictureActivity(){
         startActivity(Intent(this,FindPictureActivity::class.java))
     }
@@ -409,6 +520,7 @@ class MainDetailActivity : RootActivity() {
 
                             val data = response.getJSONObject("Content")
 
+                            content_id = Utils.getInt(data,"id")
                             val created = Utils.getString(data,"created")
                             val title = Utils.getString(data,"title")
                             val text = Utils.getString(data,"text")
@@ -445,7 +557,7 @@ class MainDetailActivity : RootActivity() {
                                         hashtags += "#"+tag + "  "
                                     }
                                 }
-                                hashtagTV.setText(hashtags)
+                                hashtagTV.text = hashtags
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
@@ -473,12 +585,12 @@ class MainDetailActivity : RootActivity() {
                                 adverAdapter.notifyDataSetChanged()
                             }
 
-                            dateTV.setText(created)
-                            viewTV.setText(Looker.length().toString())
-                            heartcountTV.setText(Like.length().toString())
-                            titleTV.setText(title)
-                            textTV.setText(text)
-                            likecountTV.setText(Like.length().toString() + "명이 좋아합니다")
+                            dateTV.text = created
+                            viewTV.text = Looker.length().toString()
+                            heartcountTV.text = Like.length().toString()
+                            titleTV.text = title
+                            textTV.text = text
+                            likecountTV.text = Like.length().toString() + "명이 좋아합니다"
 
                             if (cht_yn  == "Y"){
 
@@ -509,8 +621,8 @@ class MainDetailActivity : RootActivity() {
 
                                         println("nick ------$nick")
 
-                                        nickNameTV.setText(nick)
-                                        statusmsgTV.setText(status_msg)
+                                        nickNameTV.text = nick
+                                        statusmsgTV.text = status_msg
 
                                         if (login_id == id.toInt()){
                                             reportTV.visibility = View.GONE
@@ -521,6 +633,7 @@ class MainDetailActivity : RootActivity() {
                                             deleteTV.visibility = View.GONE
                                         }
 
+                                        getComments()
                                     }
                                 }
 
@@ -556,12 +669,40 @@ class MainDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok" || result == "yes") {
                     val Looker = response.getJSONArray("Looker")
-                    viewTV.setText(Looker.length().toString())
+                    viewTV.text = Looker.length().toString()
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
+            }
+        })
+    }
+
+    //나중에 합칠 계획 ; 서버 조회 최소화
+    fun getComments() {
+        val params = RequestParams()
+        params.put("cont_id", content_id)
+
+        CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    val comments = response.getJSONArray("comments")
+                    for (i in 0 until comments.length()){
+                        commentList.add(comments[i] as JSONObject)
+                    }
+                    commentAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
             }
         })
     }

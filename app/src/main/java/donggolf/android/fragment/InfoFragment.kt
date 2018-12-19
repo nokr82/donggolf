@@ -198,7 +198,10 @@ class InfoFragment : Fragment(){
             }
         })
 
+
+        //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
+
             var intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }

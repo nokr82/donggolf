@@ -113,7 +113,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("내 글 보기 :: $response")
+                        println("댓글단 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -124,7 +124,7 @@ class MyPostMngActivity : RootActivity() {
                             }
                             myCommentPostAdapter.notifyDataSetChanged()
 
-                            myPostContTV.text = "댓글단 글(" + data.length() +")"
+                            myPostContTV.text = "댓글단 글(" + myCommentPostList.size +")"
                         }
 
                     } catch (e: JSONException) {
@@ -136,6 +136,10 @@ class MyPostMngActivity : RootActivity() {
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
                     println("DataLoad failed. Because of")
                     println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
                 }
 
             })
