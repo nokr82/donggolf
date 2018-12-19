@@ -47,6 +47,8 @@ class ProfileTagChangeActivity : RootActivity() {
             finish()
         }
 
+        var intent = getIntent()
+
         adapter = ProfileTagAdapter(context,R.layout.tag,adapterData)
 
         tagList.adapter = adapter
@@ -123,23 +125,37 @@ class ProfileTagChangeActivity : RootActivity() {
         confirmRL.setOnClickListener {
 
             Utils.hideKeyboard(context!!)
-
-            val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
-            params.put("update", adapterData)//추가할거
-            //params.put("del_tag", delList) //지울거
-            params.put("type", "tags") //태그를 건드릴것이다
-
-            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    setResult(RESULT_OK,intent)
+            
+            if (intent.getStringExtra("type") != null){
+                val type = intent.getStringExtra("type")
+                println("type $type")
+                if (type == "post"){
+                    if (adapterData.size > 0 ){
+                        intent.putExtra("data",adapterData)
+                    }
+                    setResult(Activity.RESULT_OK, intent)
                     finish()
-                }
+                } else {
+                    val params = RequestParams()
+                    params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
+                    params.put("update", adapterData)//추가할거
+                    //params.put("del_tag", delList) //지울거
+                    params.put("type", "tags") //태그를 건드릴것이다
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            setResult(RESULT_OK,intent)
 
+                            finish()
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                        }
+                    })
                 }
-            })
+            }
+
         }
 
         //입력관련 처리

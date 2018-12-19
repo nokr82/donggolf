@@ -22,6 +22,7 @@ import com.gun0912.tedpermission.TedPermission
 import com.joooonho.SelectableRoundedImageView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
@@ -70,6 +71,12 @@ class AddPostActivity : RootActivity() {
     private var addPicturesLL: LinearLayout? = null
 
     private val imgSeq = 0
+
+    var pk : String? = null
+    var images_path: ArrayList<String> = ArrayList<String>()
+    var images_url: ArrayList<String> = ArrayList<String>()
+    var images_url_remove: ArrayList<String> = ArrayList<String>()
+    var images_id: ArrayList<Int> = ArrayList<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -221,7 +228,7 @@ class AddPostActivity : RootActivity() {
 
         hashtagLL.setOnClickListener {
             var intent = Intent(context, ProfileTagChangeActivity::class.java);
-            intent.putExtra("type",1)
+            intent.putExtra("type","post")
             startActivityForResult(intent, SELECT_HASHTAG);
         }
 
@@ -488,6 +495,8 @@ class AddPostActivity : RootActivity() {
 
                         }
 
+                        reset(str, i)
+
                     }
 
                     val child = addPicturesLL!!.getChildCount()
@@ -579,6 +588,14 @@ class AddPostActivity : RootActivity() {
                         hashtag = data?.getStringArrayListExtra("data") as ArrayList<String>
 
                         println("tmpcontent : $hashtag")
+                        var tag = ""
+                        if (hashtag.size > 0){
+                            for (i in 0 until hashtag.size){
+                                tag += "#"+hashtag.get(i) + " "
+                            }
+                            hashtagsTV.setText(tag)
+                        }
+
                     }
 
                 }
@@ -710,6 +727,112 @@ class AddPostActivity : RootActivity() {
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
+    }
+
+    fun clickMethod(v: View) {
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
+                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                    addPicturesLL!!.removeAllViews()
+                    images!!.clear()
+                    val tag = v.tag as Int
+                    imagesPaths!!.removeAt(tag)
+
+                    for (k in images_url!!.indices) {
+                        val vv = View.inflate(context, R.layout.item_add_image, null)
+                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
+                        delIV.visibility = View.GONE
+                        val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
+                        del2IV.visibility = View.VISIBLE
+                        del2IV.tag = k
+                        ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
+                        ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
+                        if (imgSeq == 0) {
+                            addPicturesLL!!.addView(vv)
+                        }
+                    }
+                    for (j in imagesPaths!!.indices) {
+
+                        val paths = imagesPaths!!.get(j).split("/")
+                        val file_name = paths.get(paths.size - 1)
+                        val getPk = file_name.split("_")
+                        val pathPk = getPk.get(0)
+
+                        if (pathPk == pk){
+                            val add_file = Utils.getImage(context!!.getContentResolver(), imagesPaths!!.get(j))
+                            if (images!!.size == 0) {
+                                images!!.add(add_file)
+                            } else {
+                                try {
+                                    images!!.set(images!!.size, add_file)
+                                } catch (e: IndexOutOfBoundsException) {
+                                    images!!.add(add_file)
+                                }
+
+                            }
+                            reset(imagesPaths!!.get(j), j)
+                        }
+                    }
+                })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        val alert = builder.create()
+        alert.show()
+    }
+
+    fun clickMethod2(v: View) {
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
+                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                    addPicturesLL!!.removeAllViews()
+                    val tag = v.tag as Int
+                    images_url!!.removeAt(tag)
+                    images_url_remove!!.add(images_id!!.get(tag).toString())
+                    images_id!!.removeAt(tag)
+
+                    for (k in images_url!!.indices) {
+                        val vv = View.inflate(context, R.layout.item_add_image, null)
+                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
+                        delIV.visibility = View.GONE
+                        val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
+                        del2IV.visibility = View.VISIBLE
+                        del2IV.tag = k
+                        ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
+                        if (imgSeq == 0) {
+                            addPicturesLL!!.addView(vv)
+                        }
+                    }
+                    for (j in images_path!!.indices) {
+
+                        val paths = images_path!!.get(j).split("/")
+                        val file_name = paths.get(paths.size - 1)
+                        val getPk = file_name.split("_")
+                        val pathPk = getPk.get(0)
+
+                        if (pathPk == pk){
+                            val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
+                            if (images!!.size == 0) {
+                                images!!.add(add_file)
+                            } else {
+                                try {
+                                    images!!.set(images!!.size, add_file)
+                                } catch (e: IndexOutOfBoundsException) {
+                                    images!!.add(add_file)
+                                }
+
+                            }
+                            reset(images_path!!.get(j), j)
+                        }
+                    }
+
+                })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        val alert = builder.create()
+        alert.show()
+
     }
 }
 

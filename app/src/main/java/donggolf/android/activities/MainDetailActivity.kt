@@ -78,7 +78,7 @@ class MainDetailActivity : RootActivity() {
 
         adapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,adapterData)
 
-        main_detail_listview.adapter = adapter
+        commentListLV.adapter = adapter
 
         adapter.notifyDataSetChanged()
 
