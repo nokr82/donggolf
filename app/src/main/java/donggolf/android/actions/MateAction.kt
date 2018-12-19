@@ -23,7 +23,7 @@ object MateAction {
     }
 
     fun update_mates_status(params: RequestParams, handler: JsonHttpResponseHandler) {
-        HttpClient.post("/mate/update_mate.json", params, handler)
+        HttpClient.post("/mate/update_mates.json", params, handler)
     }
 
     fun getCategoryInfo(params: RequestParams, handler: JsonHttpResponseHandler) {
@@ -36,5 +36,21 @@ object MateAction {
 
     fun blockMember(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/mate/block_mate.json", params, handler)
+    }
+
+    fun blockList(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/mate/block_list.json", params, handler)
+    }
+
+    fun addCategory(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/mate/add_category.json", params, handler)
+    }
+
+    fun mateList(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/mate_list.json", params, handler)
+    }
+
+    fun updateCategory(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/modify_category.json", params, handler)
     }
 }

@@ -6,12 +6,18 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MateAction
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.models.FriendCategory
 import kotlinx.android.synthetic.main.activity_friend_grp_detail_setting.*
 import kotlinx.android.synthetic.main.activity_notice2.view.*
 import kotlinx.android.synthetic.main.dialog_add_category.view.*
+import org.json.JSONObject
 
 class FriendGrpDetailSettingActivity : RootActivity() {
 
@@ -24,6 +30,8 @@ class FriendGrpDetailSettingActivity : RootActivity() {
     var frdOpenOnOff = false
     var marketAlarmOnOff = false
 
+    var category_id = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_grp_detail_setting)
@@ -31,12 +39,13 @@ class FriendGrpDetailSettingActivity : RootActivity() {
         context = this
 
         var groupName = intent.getStringExtra("groupTitle")
-        titleFrdCateTV.setText("$groupName 설정")
+        titleFrdCateTV.text = "$groupName 설정"
+        category_id = intent.getIntExtra("cate_id", 0)
 
         changeCategNameLL.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
-            dialogView.dlgTitle.setText("카테고리 이름변경")
+            dialogView.dlgTitle.text = "카테고리 이름변경"
             dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -46,7 +55,7 @@ class FriendGrpDetailSettingActivity : RootActivity() {
                 override fun afterTextChanged(count: Editable) {
                     // 입력이 끝났을 때 호출된다.
 
-                    dialogView.leftWords.setText(Integer.toString(dialogView.categoryTitleET.text.toString().length))
+                    dialogView.leftWords.text = Integer.toString(dialogView.categoryTitleET.text.toString().length)
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -57,8 +66,9 @@ class FriendGrpDetailSettingActivity : RootActivity() {
                     .setPositiveButton("확인") { dialog, id ->
                         //방제 바꾸는 곳
                         var title = dialogView.categoryTitleET.text.toString()
-                        titleFrdCateTV.setText("$title 설정")
+                        titleFrdCateTV.text = "$title 설정"
                         //DB의 카테고리 이름 변경
+                        updateCategory(category_id, title)
                     }
                     .show()
             //val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
@@ -82,6 +92,9 @@ class FriendGrpDetailSettingActivity : RootActivity() {
                 loginAlarmSetting.setImageResource(R.drawable.btn_alarm_on)
                 myFriendOpenSetting.setImageResource(R.drawable.btn_alarm_on)
                 marketNewWritingAlarm.setImageResource(R.drawable.btn_alarm_on)
+
+                entireOnOff = !entireOnOff
+
             } else {
                 frdGroupSetAlarm.setImageResource(R.drawable.btn_alarm_off)
 
@@ -144,5 +157,26 @@ class FriendGrpDetailSettingActivity : RootActivity() {
             }
         }
 
+    }
+
+    fun updateCategory(categoryID : Int, title : String) {
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("category",title)
+        params.put("category_id",categoryID)
+
+        MateAction.updateCategory(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
     }
 }

@@ -52,7 +52,7 @@ class RequestFriendActivity : RootActivity() {
             getFriendList("m", cateID)
         }*/
 
-
+        //전체선택버튼
         frdReq_check_all.setOnClickListener {
             if (!checkAll){
                 checkAll = true
