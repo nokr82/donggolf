@@ -1,15 +1,10 @@
 package donggolf.android.adapters
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewManager
 import android.widget.*
-import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
-import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -49,20 +44,40 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         data.put("comment_content", Utils.getString(comment,"comment"))
         item.main_detail_comment_nicknameTV.text = Utils.getString(comment,"nick")
         item.main_detail_comment_dateTV.text = Utils.getString(comment,"created")
+        item.main_detail_comment_typeIV.visibility = View.GONE
 
-        var type = Utils.getString(data,"type")
-        if (type == "r"){
+        var typeAdt = Utils.getString(comment,"type")
+
+        if (typeAdt == "r"){
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
             item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
-        } else if (type == "c") {
+
+        } else if (typeAdt == "c") {
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
             item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE
+
         }
 
         var comment_memberID = Utils.getInt(comment,"member_id")
         data.put("cmt_wrt_id", comment_memberID)
+
+        var isBlocked = Utils.getString(comment,"block_yn")
+
+        /*var cbyn = data.getString("changedBlockYN")
+        if (cbyn == "Y"){
+            isBlocked = data.getString("block_yn")
+        }*/
+
+        if (isBlocked == "Y") {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
+            notifyDataSetChanged()
+        } else {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+            notifyDataSetChanged()
+        }
 
         return retView
     }

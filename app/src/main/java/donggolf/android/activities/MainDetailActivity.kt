@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.actions.*
 import donggolf.android.adapters.FullScreenImageAdapter
@@ -26,12 +27,14 @@ import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
 import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
+import kotlinx.android.synthetic.main.item_chat_member_list.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
@@ -40,6 +43,7 @@ class MainDetailActivity : RootActivity() {
     private lateinit var context: Context
 
     private  var commentList = ArrayList<JSONObject>()
+    private var commentBlockList = ArrayList<JSONObject>()
 
     private  lateinit var  commentAdapter : MainDeatilAdapter
 
@@ -65,6 +69,9 @@ class MainDetailActivity : RootActivity() {
     var login_id = 0
     var writer = ""
     var content_id = 0
+    var commentType = ""
+    var commentParent = ""
+    var blockYN = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +83,7 @@ class MainDetailActivity : RootActivity() {
         intent = intent
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
+        cmtET.hint = ""
         //댓글 관련 어댑터
         commentAdapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,commentList)
 
@@ -96,6 +104,8 @@ class MainDetailActivity : RootActivity() {
             val alert = builder.show()
 
             dialogView.dlg_comment_delTV.visibility = View.GONE
+            dialogView.dlg_comment_blockTV.visibility = View.GONE
+
 
             //댓삭
             if (commenter == login_id){
@@ -145,23 +155,133 @@ class MainDetailActivity : RootActivity() {
                 alert.dismiss()
             }
 
-            //댓글 작성자 게시글에 차단
-            dialogView.dlg_comment_blockTV.setOnClickListener {
-                var cmt_wrt_id = commentList[position].getInt("cmt_wrt_id")
-                val params = RequestParams()
-                params.put("member_id", cmt_wrt_id)
-                params.put("writer", writer)
-                params.put("comment", commentList[position].getString("comment_content"))
 
+            if (login_id.toString() == writer){
+                dialogView.dlg_comment_blockTV.visibility = View.VISIBLE
 
+                val json = commentList[position].getJSONObject("ContentComment")
+                val blocked_yn = Utils.getString(json,"block_yn")
 
-                alert.dismiss()
+                if (blocked_yn == "Y"){
+                    dialogView.dlg_comment_blockTV.text = "차단해제"
+                    blockYN = "unblock"
+                } else {
+                    dialogView.dlg_comment_blockTV.text = "차단하기"
+                    blockYN = "block"
+                }
+
+                //댓글 작성자 게시글에 차단
+                dialogView.dlg_comment_blockTV.setOnClickListener {
+                    /*val json = commentList.get(position)
+                    val data = json.getJSONObject("")*/
+                    var cmt_wrt_id = commentList[position].getInt("cmt_wrt_id")
+
+                    val params = RequestParams()
+                    params.put("content_id", content_id)
+                    params.put("writer", writer)
+                    params.put("commenter", cmt_wrt_id)
+                    params.put("status", blockYN)
+
+                    CommentAction.content_commenter_ben(params, object : JsonHttpResponseHandler(){
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            try {
+                                println(response)
+                                //차단 성공하면 표시하고 토스트
+                                val result = response!!.getString("result")
+                                if (result == "ok") {
+                                    //아이고 의미없다
+                                    /*var message = response.getString("message")
+                                    if (message == "registerd") {
+                                        commentList[position].put("changedBlockYN", "Y")
+                                        commentList[position].put("block_yn", "Y")
+                                        commentAdapter.notifyDataSetChanged()
+                                    } else {
+                                        commentList[position].put("changedBlockYN", "Y")
+                                        commentList[position].put("block_yn", "N")
+                                        commentAdapter.notifyDataSetChanged()
+                                    }*/
+                                    commentList.clear()
+                                    getComments()
+
+                                } else {
+                                    commentList[position].put("changedBlockYN", "N")
+                                }
+                            }catch (e : JSONException){
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                            println(errorResponse)
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                            println(responseString)
+                        }
+                    })
+
+                    alert.dismiss()
+                }
             }
+
+
 
             true
         }
 
-        var check = false
+
+        //댓글 달기
+        detail_add_commentTV.setOnClickListener {
+            var comment = Utils.getString(cmtET)
+
+            val params = RequestParams()
+            params.put("cont_id", content_id)
+            params.put("member_id", login_id)
+            params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+            params.put("comment", comment)
+            params.put("type", commentType)
+            params.put("parent", commentParent)
+
+            CommentAction.comment_at_content(params,object :JsonHttpResponseHandler(){
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok"){
+                        val comments = response.getJSONObject("comments")
+                        commentList.add(comments)
+                        commentAdapter.notifyDataSetChanged()
+                        cmtET.setText("")
+                        cmtET.hint = ""
+                        Utils.hideKeyboard(this@MainDetailActivity)
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                    println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
+                }
+            })
+        }
+
+        //대댓글
+        commentListLV.setOnItemClickListener { parent, view, position, id ->
+            val data = commentList.get(position).getJSONObject("ContentComment")
+
+            var parentType = Utils.getString(data,"type")
+            if (parentType == "d") {
+                commentType = "r"
+                commentParent = Utils.getString(data,"id")
+                cmtET.hint = Utils.getString(data,"nick") + "님의 댓글에 답글"
+            } else {
+                commentType = "c"
+                commentParent = Utils.getString(data,"parent")
+                cmtET.hint = Utils.getString(data,"nick") + "님의 대댓글에 답글"
+            }
+
+        }
 
         //이미지 관련 어댑터
         adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
@@ -235,41 +355,6 @@ class MainDetailActivity : RootActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
-
-
-        //댓글 달기
-        detail_add_commentTV.setOnClickListener {
-            var comment = Utils.getString(cmtET)
-
-            val params = RequestParams()
-            params.put("cont_id", content_id)
-            params.put("member_id", login_id)
-            params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
-            params.put("comment", comment)
-            //params.put("type","d")
-
-            CommentAction.comment_at_content(params,object :JsonHttpResponseHandler(){
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
-                    val result = response!!.getString("result")
-                    if (result == "ok"){
-                        val comments = response.getJSONObject("comments")
-                        commentList.add(comments)
-                        commentAdapter.notifyDataSetChanged()
-                        cmtET.setText("")
-                    }
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
-                }
-            })
-        }
-
 
         finishLL.setOnClickListener {
             finish()
@@ -683,6 +768,7 @@ class MainDetailActivity : RootActivity() {
     fun getComments() {
         val params = RequestParams()
         params.put("cont_id", content_id)
+        params.put("writer", writer)
 
         CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -692,6 +778,7 @@ class MainDetailActivity : RootActivity() {
                     val comments = response.getJSONArray("comments")
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
+                        //commentList.get(i).put("changedBlockYN", "N")
                     }
                     commentAdapter.notifyDataSetChanged()
                 }
