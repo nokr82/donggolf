@@ -16,10 +16,12 @@ object MemberAction {
         HttpClient.post("/join/id_check.json", params, handler)
     }
 
+    //비밀번호 코드
     fun getPassCode(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/join/send_pass_code.json", params, handler)
     }
 
+    //비밀번호 재발급
     fun pass_reissue(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/join/forget_pwd.json", params, handler)
     }
@@ -39,6 +41,11 @@ object MemberAction {
         HttpClient.post("/member/member_info.json", params, handler)
     }
 
+    //이미지만 가져오기
+    fun get_member_img_history(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/get_member_prfimg_history.json", params, handler)
+    }
+
     fun update_info(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/update_member_info.json", params, handler)
     }
@@ -53,6 +60,7 @@ object MemberAction {
         HttpClient.post("/member/search_member.json", params, handler)
     }
 
+    //문의하기
     fun inquire(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/inquire.json", params, handler)
     }

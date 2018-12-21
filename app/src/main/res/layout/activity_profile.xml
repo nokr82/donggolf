@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/icon_profile_l"
-                android:id="@+id/profileCnt"/>
+                android:id="@+id/otherPrfImgIV"/>
 
             <ImageView
                 android:id="@+id/showProfImg"

@@ -69,10 +69,6 @@ class FriendSearchActivity : RootActivity() {
 
     lateinit var user : HashMap<String,Any>
 
-    //var getNick : String = ""
-    //var getStMsg : String = ""
-    //var getImg : String = ""
-
     //초대
     private var callback: SessionCallback? = null
 
@@ -242,6 +238,7 @@ class FriendSearchActivity : RootActivity() {
         return null
     }
 
+    //최근검색목록키워드 저장
     fun addFriendSearchWords(keywd : String) {
         //최근 검색한 친구 키워드를 데이터리스트에 추가하고 DB에 save
         val params = RequestParams()
@@ -265,6 +262,7 @@ class FriendSearchActivity : RootActivity() {
                         editadapter.notifyDataSetChanged()
                     }
                     main_listview_search.visibility = View.GONE
+                    frdSearchET.setText("")
                 } catch (e : JSONException) {
                     Log.e("JsonError","Add mate search word history Action")
                 }
@@ -280,6 +278,7 @@ class FriendSearchActivity : RootActivity() {
         })
     }
 
+    //키워드로 찾음
     fun friendSearchWords(keyWord : String) {
         val params = RequestParams()
         params.put("keyword", keyWord)

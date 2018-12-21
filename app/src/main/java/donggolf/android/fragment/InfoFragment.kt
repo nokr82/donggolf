@@ -119,14 +119,17 @@ class InfoFragment : Fragment(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
                 try {
                     println("InfoFrag :: $response")
-                    val result = response!!.getString("result")
+                    val result = response.getString("result")
 
                     if (result == "ok") {
+                        friendCountTV.text = response.getString("friendCount")
+
                         val member = response.getJSONObject("Member")
 
                         textDate.text = Utils.getString(member,"created").substringBefore(" ")
                         txUserName.text = Utils.getString(member,"nick")
 
+                        //지역
                         var region = ""
 
                         if (Utils.getString(member,"region1") != null) {
@@ -144,12 +147,11 @@ class InfoFragment : Fragment(){
                         }
                         txUserRegion.text = region
 
-
+                        //상메
                         var statusMessage = Utils.getString(member,"status_msg")
                         if (statusMessage != null) {
                             infoStatusMsg.text = statusMessage
                         }
-
 
                         knowTogether.visibility = View.GONE
 
@@ -170,14 +172,12 @@ class InfoFragment : Fragment(){
                         val imgData = response.getJSONArray("MemberImgs")
                         mngTXPhotoCnt.text = imgData.length().toString()
 
-                        val tmpProfileImage = imgData.getJSONObject(0)
-                        val img_uri = Utils.getString(tmpProfileImage,"small_uri")//small_uri
+                        //val tmpProfileImage = imgData.getJSONObject(0)
+                        val img_uri = Utils.getString(member,"profile_img")//small_uri
                         val image = Config.url + img_uri
 
                         ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
-                        //이미지 동그랗게
-//                        imgProfile.background = ShapeDrawable(OvalShape())
-//                        imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
+
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -208,7 +208,7 @@ class InfoFragment : Fragment(){
 
         imgProfile.setOnClickListener {
             var intent = Intent(activity, ViewProfileListActivity::class.java)
-            //intent.putExtra("album", images)
+            intent.putExtra("viewAlbumUser", member_id)
             startActivity(intent)
         }
 
@@ -291,7 +291,7 @@ class InfoFragment : Fragment(){
                 GALLERY -> {
                     if (data != null)
                     {
-                        val contentURI = data!!.data
+                        val contentURI = data.data
                         Log.d("uri",contentURI.toString())
                         //content://media/external/images/media/1200
 
@@ -299,13 +299,12 @@ class InfoFragment : Fragment(){
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
-                            imgProfile.setImageBitmap(thumbnail)
-//                            imgProfile.background = ShapeDrawable(OvalShape())
-//                            imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
+                            val resized = Utils.resizeBitmap(thumbnail, 4000)
+                            imgProfile.setImageBitmap(resized)
 
                             //전송하기 위한 전처리
+                            //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
                             val bitmap = imgProfile.drawable as BitmapDrawable
-                            //var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI) as BitmapDrawable
                             val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
                             //이미지 전송
@@ -326,7 +325,7 @@ class InfoFragment : Fragment(){
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                                     if (errorResponse != null)
-                                        println(errorResponse!!.getString("message"))
+                                        println(errorResponse.getString("message"))
                                 }
                             })
 

@@ -12,41 +12,42 @@ import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.ProfileAction
-import donggolf.android.adapters.FullScreenImageAdapter
-import donggolf.android.adapters.PictureDetailViewAdapter
+import donggolf.android.adapters.ProfileSlideViewAdapter
 import donggolf.android.base.*
-import kotlinx.android.synthetic.main.activity_picture_detail.*
 import kotlinx.android.synthetic.main.activity_view_profile_list.*
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import uk.co.senab.photoview.PhotoViewAttacher
-import java.io.FileInputStream
-import java.lang.reflect.InvocationTargetException
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ViewProfileListActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    private lateinit var pagerAdapter: PictureDetailViewAdapter
+    //private lateinit var pagerAdapter: PictureDetailViewAdapter
+    private lateinit var pagerAdapter: ProfileSlideViewAdapter
 
+    var profileImagePaths = ArrayList<String>()
     var getImages : ArrayList<Bitmap> = ArrayList()
 
-    var adPosition = 0
+
+    //private lateinit var adverAdapter: FullScreenImageAdapter
+    //    var adverImagePaths:ArrayList<String> = ArrayList<String>()
+    //
+    //    var adPosition = 0
+
+    var imgPosition = 0
+    var member_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_profile_list)
 
         context = this
+        member_id = intent.getIntExtra("viewAlbumUser",0)
 
-        pagerAdapter = PictureDetailViewAdapter()
+        //pagerAdapter = PictureDetailViewAdapter()
+        pagerAdapter = ProfileSlideViewAdapter(this, profileImagePaths)
 
         albumVP.adapter = pagerAdapter
 
@@ -57,26 +58,30 @@ class ViewProfileListActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+        MemberAction.get_member_img_history(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        getImages.clear()
+                        profileImagePaths.clear()
                         val memberImages = response.getJSONArray("MemberImgs")
                         for (i in 0 until memberImages.length()) {
 
                             val json = memberImages[i] as JSONObject
                             val memberImg = json.getJSONObject("MemberImg")
-                            var image = Config.url + "/" + Utils.getString(memberImg,"image_uri")
+                            var image = Config.url + Utils.getString(memberImg,"image_uri")
 
-                            val btm = BitmapFactory.decodeFile(image)
+                            profileImagePaths.add(image)
 
-                            getImages.add(btm)
+                            /*val btm = BitmapFactory.decodeFile(image)
+
+                            getImages.add(btm)*/
 
                         }
+
                         pagerAdapter.notifyDataSetChanged()
-                        albumPageTV.text = "(" + (adPosition + 1) + "/" + getImages.size + ")"
+
+                        albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -89,18 +94,20 @@ class ViewProfileListActivity : RootActivity() {
 
         albumVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                adPosition = position
+                imgPosition = position
             }
 
             override fun onPageSelected(position: Int) {}
 
             override fun onPageScrollStateChanged(state: Int) {
-                albumPageTV.text = "(" + (adPosition + 1) + "/" + getImages.size + ")"
+                albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
             }
         })
 
         showProfImgAlbumIV.setOnClickListener {
-            startActivity(Intent(context, ViewAlbumActivity::class.java))
+            val intent = Intent(context, ViewAlbumActivity::class.java)
+            intent.putExtra("viewAlbumListUserID", member_id)
+            startActivity(intent)
         }
 
     }

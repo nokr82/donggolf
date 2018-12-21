@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
 //import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.Users
 import org.json.JSONObject
@@ -37,19 +39,15 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
             }
         }
 
-        //var json = data.get(position)
-        //        var content = json.getJSONObject("Content")
-        //
-        //        val member_id = Utils.getString(content,"member_id")
-        //        val title = Utils.getString(content,"title")
-        //        val text = Utils.getString(content,"text")
-        //        val created = Utils.getString(content, "created").substringBefore(" ")
-
         val json = data.get(position)
         val member = json.getJSONObject("Member")
 
         item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
         item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")
+
+        val img_uri = Utils.getString(member,"profile_img")//small_uri
+        val image = Config.url + img_uri
+        ImageLoader.getInstance().displayImage(image, item.main_detail_listitem_profileimage, Utils.UILoptionsProfile)
 
         return retView
     }
