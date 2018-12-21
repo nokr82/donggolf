@@ -65,6 +65,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         val favorite_cnt = Utils.getString(Content,"favorite_cnt")
         val look_cnt = Utils.getString(Content,"look_cnt")
         val like_cnt = Utils.getString(Content,"like_cnt")
+        val cmt_cnt = Utils.getString(Content,"cmt_cnt")
         var member = json.getJSONObject("Member")
         var nick = Utils.getString(member,"nick")
 
@@ -73,7 +74,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_view_count.text = look_cnt.toString()
         item.main_item_like_count.text = like_cnt.toString()
         item.main_item_nickname.text = nick.toString()
-
+        item.main_item_comment_count.text = cmt_cnt.toString()
 
 //        var owner:String = data.get("owner").toString()
 //        item.main_item_nickname.text = owner

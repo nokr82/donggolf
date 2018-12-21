@@ -615,6 +615,7 @@ class MainDetailActivity : RootActivity() {
                             val deleted = Utils.getString(data,"deleted")
                             val Looker = response.getJSONArray("Looker")
                             val Like = response.getJSONArray("Like")
+                            val Comments = response.getJSONArray("Comments")
                             val cht_yn = Utils.getString(data,"cht_yn")
                             val cmt_yn = Utils.getString(data,"cmt_yn")
 
@@ -675,6 +676,7 @@ class MainDetailActivity : RootActivity() {
                             heartcountTV.text = Like.length().toString()
                             titleTV.text = title
                             textTV.text = text
+                            cmtcountTV.text = Comments.length().toString()
                             likecountTV.text = Like.length().toString() + "명이 좋아합니다"
 
                             if (cht_yn  == "Y"){

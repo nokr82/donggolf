@@ -15,11 +15,17 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.joooonho.SelectableRoundedImageView
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MarketAction
+import donggolf.android.adapters.GoodsCategoryAdapter
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_goods.*
+import org.json.JSONObject
 import java.util.ArrayList
 
 class AddGoodsActivity : RootActivity() {
@@ -38,6 +44,11 @@ class AddGoodsActivity : RootActivity() {
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
+
+    private  lateinit var  categoryAdapter : GoodsCategoryAdapter
+    private  var categoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+
+    var category = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +85,8 @@ class AddGoodsActivity : RootActivity() {
 
         brandLL.setOnClickListener {
             choiceLL.visibility = View.VISIBLE
+            category = 1
+            getbrand()
         }
 
         configRV.setOnClickListener {
@@ -86,6 +99,13 @@ class AddGoodsActivity : RootActivity() {
 
         dellRL.setOnClickListener {
             choiceLL.visibility = View.VISIBLE
+        }
+
+        listviewLV.setOnItemClickListener { parent, view, position, id ->
+            val data = categoryData.get(position)
+            if (category == 1){
+
+            }
         }
 
     }
@@ -268,4 +288,36 @@ class AddGoodsActivity : RootActivity() {
         alert.show()
 
     }
+    fun getbrand(){
+        val params = RequestParams()
+        params.put("all",1)
+
+        if (categoryData != null){
+            categoryData.clear()
+        }
+
+        MarketAction.load_category(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    val category = response.getJSONArray("category")
+
+                    if (category.length() > 0 && category != null){
+                        for (i in 0 until category.length()){
+                            categoryData.add(category.get(i) as JSONObject)
+                        }
+
+                        categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_addgoodsclick,categoryData)
+                        listviewLV.adapter = categoryAdapter
+                    }
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+        })
+    }
+
 }
