@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
@@ -72,6 +73,8 @@ class InfoFragment : Fragment(){
     val REGION_CHANGE = 108
 
     private val GALLERY = 1
+    private val RESULT_IMG = 1
+    var imgString: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
@@ -165,20 +168,16 @@ class InfoFragment : Fragment(){
 
                         //프로필 이미지
                         val imgData = response.getJSONArray("MemberImgs")
-                        var txtImgCnt = imgData.length().toString()
-                        mngTXPhotoCnt.text = txtImgCnt
-                        /*val imgdata = response.getJSONArray("")
-                        mngTXPhotoCnt.text*/
-                        val images = response.getJSONArray("MemberImgs")
-                        val json = images[0] as JSONObject
-                        val img_uri = Utils.getString(json,"image_uri")
-                        //var image = Config.url + image_uri
-                        val image = Config.url + img_uri
+                        mngTXPhotoCnt.text = imgData.length().toString()
 
+                        val tmpProfileImage = imgData.getJSONObject(0)
+                        val img_uri = Utils.getString(tmpProfileImage,"small_uri")//small_uri
+                        val image = Config.url + img_uri
 
                         ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
                         //이미지 동그랗게
-                        imgProfile.background = ShapeDrawable(OvalShape())
+//                        imgProfile.background = ShapeDrawable(OvalShape())
+//                        imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -217,11 +216,6 @@ class InfoFragment : Fragment(){
             var intent = Intent(activity, ModStatusMsgActivity::class.java)
             startActivityForResult(intent, SELECT_STATUS)
         }
-
-        /*myNeighbor.setOnClickListener {
-            var intent = Intent(activity, MutualActivity::class.java)
-            startActivity(intent)
-        }*/
 
         btnNameModi.setOnClickListener {
             var intent = Intent(activity, ProfileNameModifActivity::class.java)
@@ -303,22 +297,27 @@ class InfoFragment : Fragment(){
 
                         try
                         {
-                            var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
+                            //갤러리에서 가져온 이미지를 프로필에 세팅
+                            var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
+                            imgProfile.setImageBitmap(thumbnail)
+//                            imgProfile.background = ShapeDrawable(OvalShape())
+//                            imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
 
-                            val img = ByteArrayInputStream(Utils.getByteArray(profileImg))
-                            //val small_img = Utils.resize(profileImg, 100)
+                            //전송하기 위한 전처리
+                            val bitmap = imgProfile.drawable as BitmapDrawable
+                            //var profileImg = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI) as BitmapDrawable
+                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
+                            //이미지 전송
                             val params = RequestParams()
-
                             params.put("files", img)
                             params.put("type", "image")
                             params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-                            //params.put("small", small_img)
 
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                    //imgProfile.setImageBitmap(thumbnail)
-                                    getTempUserInformation("image")
+                                    //getTempUserInformation("image")
+                                    println(response)
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -432,10 +431,9 @@ class InfoFragment : Fragment(){
                                 val resized = Utils.resizeBitmap(btm, 100)
                                 imgProfile.setImageBitmap(resized)
 
-                                //ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
                                 //이미지 동그랗게
-                                imgProfile.background = ShapeDrawable(OvalShape())
-                                imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
+//                                imgProfile.background = ShapeDrawable(OvalShape())
+//                                imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
                             }
                         }
 

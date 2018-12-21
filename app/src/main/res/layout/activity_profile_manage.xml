@@ -67,12 +67,18 @@
             android:layout_width="145dp"
             android:layout_height="150dp">
 
-            <ImageView
+            <!--<ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_profile_l"
                 android:scaleType="centerCrop"
+                android:id="@+id/imgProfile"/>-->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/icon_profile_l"
                 android:id="@+id/imgProfile"/>
             <ImageView
                 android:id="@+id/addProfImg"

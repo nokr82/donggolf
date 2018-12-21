@@ -50,6 +50,9 @@ dependencies {
 
     implementation 'com.joooonho:selectableroundedimageview:1.0.1'
 
+    //동그란 이미지
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
     implementation 'gun0912.ted:tedpermission:2.2.2'
 
     implementation 'com.commit451:PhotoView:1.2.4'
