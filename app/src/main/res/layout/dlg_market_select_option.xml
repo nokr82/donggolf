@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="250dp"
+    android:layout_height="match_parent" android:background="@null">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="형태/성향"
+            android:textSize="13dp"
+            android:textStyle="bold"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/btn_close"/>
+    </LinearLayout>
+
+    <!--커스텀다이얼로그 쓰는 곳에서 dlg_marketLV.isExpanded = true 선언 필수-->
+    <donggolf.android.base.ExpandableHeightListView
+        android:id="@+id/dlg_marketLV"
+        android:layout_width="match_parent"
+        android:layout_height="400dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="확인"
+        android:textSize="14dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"/>
+</LinearLayout>
