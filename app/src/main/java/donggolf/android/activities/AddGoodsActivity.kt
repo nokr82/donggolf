@@ -25,6 +25,8 @@ import donggolf.android.adapters.GoodsCategoryAdapter
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_goods.*
+import kotlinx.android.synthetic.main.dlg_market_select_option.*
+import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
 import org.json.JSONObject
 import java.util.ArrayList
 
@@ -62,6 +64,10 @@ class AddGoodsActivity : RootActivity() {
         images = ArrayList()
         images_url = ArrayList()
 
+        categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op,categoryData)
+
+        getbrand()
+
         addpictureLL.setOnClickListener {
             var intent = Intent(context, FindPictureGridActivity::class.java);
             startActivityForResult(intent, SELECT_PICTURE);
@@ -84,9 +90,27 @@ class AddGoodsActivity : RootActivity() {
         }
 
         brandLL.setOnClickListener {
-            choiceLL.visibility = View.VISIBLE
-            category = 1
-            getbrand()
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "브랜드 선택"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = categoryAdapter
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+
+            } 
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
         }
 
         configRV.setOnClickListener {
@@ -239,7 +263,6 @@ class AddGoodsActivity : RootActivity() {
     }
 
     fun clickMethod2(v: View) {
-        println("------------click2")
         val builder = AlertDialog.Builder(context)
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
@@ -307,9 +330,6 @@ class AddGoodsActivity : RootActivity() {
                         for (i in 0 until category.length()){
                             categoryData.add(category.get(i) as JSONObject)
                         }
-
-                        categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_addgoodsclick,categoryData)
-                        listviewLV.adapter = categoryAdapter
                     }
                 }
             }

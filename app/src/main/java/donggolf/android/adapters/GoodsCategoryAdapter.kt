@@ -47,10 +47,10 @@ open class GoodsCategoryAdapter(context: Context, view:Int, data:ArrayList<JSONO
 
         var json = data.get(position)
 
-        var category = json.getJSONObject("GoodCategory")
+        var category = json.getJSONObject("GoodsCategory")
 
         var content:String = Utils.getString(category,"title")
-        item.titleTV.text = content
+        item.item_option_nameTV.text = content
 
         return retView
     }
@@ -78,12 +78,12 @@ open class GoodsCategoryAdapter(context: Context, view:Int, data:ArrayList<JSONO
     class ViewHolder(v: View) {
 
 
-        var titleTV : TextView
-        var imgIV : ImageView
+        var item_option_nameTV : TextView
+        var item_option_checkIV : ImageView
 
         init {
-            titleTV = v.findViewById<View>(R.id.titleTV) as TextView
-            imgIV = v.findViewById<View>(R.id.imgIV) as ImageView
+            item_option_nameTV = v.findViewById<View>(R.id.item_option_nameTV) as TextView
+            item_option_checkIV = v.findViewById<View>(R.id.item_option_checkIV) as ImageView
         }
     }
 }
