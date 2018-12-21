@@ -48,14 +48,14 @@
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <!-- 로그인 -->
         <activity
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.RegisterActivity"
             android:theme="@style/NoTitleDialog" />
@@ -235,7 +235,7 @@
         <activity
             android:name=".activities.DongchatProfileActivity"
             android:theme="@style/NoTitleDialog" />
-        <activity android:name=".activities.ViewAlbumActivity"></activity>
+        <activity android:name=".activities.ViewAlbumActivity" />
     </application>
 
 </manifest>
