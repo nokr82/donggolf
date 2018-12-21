@@ -63,14 +63,26 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         context = this
 
         mAuth = FirebaseAuth.getInstance();
-
-        val resolver = contentResolver
         var cursor: Cursor? = null
+        val resolver = contentResolver
+
         try {
-            val proj = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA, MediaStore.Images.Media.ORIENTATION, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            val proj = arrayOf(
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.ORIENTATION,
+                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
             val idx = IntArray(proj.size)
 
-            cursor = MediaStore.Images.Media.query(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC")
+            cursor = MediaStore.Images.Media.query(
+                    resolver,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    null,
+                    null,
+                    MediaStore.Images.Media.DATE_ADDED + " DESC"
+            )
             if (cursor != null && cursor.moveToFirst()) {
                 idx[0] = cursor.getColumnIndex(proj[0])
                 idx[1] = cursor.getColumnIndex(proj[1])
@@ -90,8 +102,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                         photo = ImageAdapter.PhotoData()
                         photo.photoID = photoID
                         photo.photoPath = photoPath
-                        photo.displayName = displayName
                         //Log.d("yjs", "name : " + displayName)
+                        photo.displayName = displayName
                         photo.orientation = orientation
                         photo.bucketPhotoName = bucketDisplayName
                         photoList!!.add(photo)
@@ -119,7 +131,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
         val adapter = ImageAdapter(this, photoList, imageLoader, selected)
 
-        selectGV.setAdapter(adapter)
+        selectGV.adapter = adapter
 
         imageLoader.setListener(adapter)
 

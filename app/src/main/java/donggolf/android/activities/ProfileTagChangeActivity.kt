@@ -125,7 +125,7 @@ class ProfileTagChangeActivity : RootActivity() {
         confirmRL.setOnClickListener {
 
             Utils.hideKeyboard(context!!)
-            
+
             if (intent.getStringExtra("type") != null){
                 val type = intent.getStringExtra("type")
                 println("type $type")

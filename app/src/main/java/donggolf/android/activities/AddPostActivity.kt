@@ -54,9 +54,7 @@ class AddPostActivity : RootActivity() {
     private val SELECT_HASHTAG: Int = 103
 
     var result: ArrayList<String> = ArrayList<String>()
-    private var imagesPaths: ArrayList<String> = ArrayList<String>()
     private var displaynamePaths: ArrayList<String> = ArrayList<String>()
-    private var images: ArrayList<Bitmap> = ArrayList()
     private var videoPaths: ArrayList<String> = ArrayList<String>()
     private var videos: ArrayList<Bitmap>? = ArrayList()
     var hashtag: ArrayList<String> = ArrayList<String>()
@@ -73,10 +71,11 @@ class AddPostActivity : RootActivity() {
     private val imgSeq = 0
 
     var pk : String? = null
-    var images_path: ArrayList<String> = ArrayList<String>()
-    var images_url: ArrayList<String> = ArrayList<String>()
-    var images_url_remove: ArrayList<String> = ArrayList<String>()
-    var images_id: ArrayList<Int> = ArrayList<Int>()
+    var images_path: ArrayList<String>? = null
+    var images: ArrayList<Bitmap>? = null
+    var images_url: ArrayList<String>? = null
+    var images_url_remove: ArrayList<String>? = null
+    var images_id: ArrayList<Int>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +95,10 @@ class AddPostActivity : RootActivity() {
         val setContent = TmpContent()
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
+
+        images_path = ArrayList();
+        images = ArrayList()
+        images_url = ArrayList()
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
         println("member_id ----- $member_id")
@@ -132,9 +135,9 @@ class AddPostActivity : RootActivity() {
 
                         dbManager.inserttmpcontent(tmpContent)
 
-                        if (imagesPaths != null && imagesPaths.size > 0 ) {
-                            for (i in 0 until imagesPaths.size){
-                                val imagesPath = ImagesPath(0,member_id.toString(),imagesPaths.get(i),1)
+                        if (images_path != null && images_path!!.size > 0 ) {
+                            for (i in 0 until images_path!!.size){
+                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
                                 println("imagesPath ${imagesPath.path}")
                                 dbManager.insertimagespath(imagesPath)
                             }
@@ -248,13 +251,56 @@ class AddPostActivity : RootActivity() {
         if (tmpImagesPath != null && tmpImagesPath.size > 0){
             for (i in 0 until tmpImagesPath.size){
                 if (tmpImagesPath.get(i).type == 1){
-                    imagesPaths.add(tmpImagesPath.get(i).path!!)
+                    images_path!!.add(tmpImagesPath.get(i).path!!)
                 } else if (tmpImagesPath.get(i).type == 2){
                     videoPaths.add(tmpImagesPath.get(i).path!!)
                 } else if (tmpImagesPath.get(i).type == 3) {
                     hashtag.add(tmpImagesPath.get(i).path!!)
                 }
             }
+        }
+
+        if (images_path!!.size > 0 ){
+            for (i in 0..(images_path!!.size - 1)) {
+                val str = images_path!![i]
+
+                val add_file = Utils.getImage(context.contentResolver, str)
+
+                if (images?.size == 0) {
+
+                    images?.add(add_file)
+
+                } else {
+                    try {
+                        images?.set(images!!.size, add_file)
+                    } catch (e: IndexOutOfBoundsException) {
+                        images?.add(add_file)
+                    }
+
+                }
+
+                reset(str, i)
+
+            }
+
+            val child = addPicturesLL!!.getChildCount()
+            for (i in 0 until child) {
+
+                println("test : $i")
+
+                val v = addPicturesLL!!.getChildAt(i)
+
+                val delIV = v.findViewById(R.id.delIV) as ImageView
+
+            }
+        }
+
+        if (hashtag.size > 0 ){
+            var tag = ""
+            for (i in 0 until hashtag.size) {
+                tag += "#" + hashtag.get(i) + "  "
+            }
+            hashtagsTV.setText(tag)
         }
 
         tmpContent = tmpcontent
@@ -336,10 +382,10 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (displaynamePaths != null){
-            if (displaynamePaths.size != 0){
-                for (i in 0..displaynamePaths.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 800)
+        if (images_path != null){
+            if (images_path!!.size != 0){
+                for (i in 0..images_path!!.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
                     params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
                 }
@@ -398,10 +444,10 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (displaynamePaths != null){
-            if (displaynamePaths.size != 0){
-                for (i in 0..displaynamePaths.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths.get(i), 800)
+        if (images_path != null){
+            if (images_path!!.size != 0){
+                for (i in 0..images_path!!.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
                     params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
                 }
@@ -475,12 +521,9 @@ class AddPostActivity : RootActivity() {
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
-                        imagesPaths.add(str)
+                        images_path!!.add(str)
 
-                        Log.d("yjs", "Pathi : " + imagesPaths.get(0))
-
-
-                        val add_file = Utils.getImage(context.contentResolver, str, 10)
+                        val add_file = Utils.getImage(context.contentResolver, str)
 
                         if (images?.size == 0) {
 
@@ -502,8 +545,6 @@ class AddPostActivity : RootActivity() {
                     val child = addPicturesLL!!.getChildCount()
                     for (i in 0 until child) {
 
-                        println("test : $i")
-
                         val v = addPicturesLL!!.getChildAt(i)
 
                         val delIV = v.findViewById(R.id.delIV) as ImageView
@@ -516,23 +557,13 @@ class AddPostActivity : RootActivity() {
 
                         if (displaynamePaths != null) {
                             displaynamePaths.add(str)
-
-                            Log.d("yjs", "display " + displaynamePaths.get(0))
-                            Log.d("yjs", "display " + displaynamePaths.get(0))
                         } else {
                             displaynamePaths.add(str)
-                            Log.d("yjs", "display " + displaynamePaths.get(0))
                         }
 
                     }
 
-
-
                     var intent = Intent();
-
-                    println("display : ======== $displaynamePaths")
-
-                    Log.d("yjs", "PostResult : " + item?.size.toString() + " : " + item?.get(0).toString())
 
                     setResult(RESULT_OK, intent);
 
@@ -560,7 +591,6 @@ class AddPostActivity : RootActivity() {
                         }
 
                     }
-
 
                     videoPaths.clear()
                     for (i in 0..(name!!.size - 1)) {
@@ -662,12 +692,12 @@ class AddPostActivity : RootActivity() {
                                     if (type == 1) {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
-                                        displaynamePaths.add(path)
+                                        images_path!!.add(path)
                                     }
                                 }
                             }
 
-                            if (displaynamePaths != null){
+                            if (images_path != null){
 
                             }
                             titleET.setText(title)
@@ -727,6 +757,7 @@ class AddPostActivity : RootActivity() {
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
+
     }
 
     fun clickMethod(v: View) {
@@ -737,7 +768,7 @@ class AddPostActivity : RootActivity() {
                     addPicturesLL!!.removeAllViews()
                     images!!.clear()
                     val tag = v.tag as Int
-                    imagesPaths!!.removeAt(tag)
+                    images_path!!.removeAt(tag)
 
                     for (k in images_url!!.indices) {
                         val vv = View.inflate(context, R.layout.item_add_image, null)
@@ -753,27 +784,23 @@ class AddPostActivity : RootActivity() {
                             addPicturesLL!!.addView(vv)
                         }
                     }
-                    for (j in imagesPaths!!.indices) {
+                    for (j in images_path!!.indices) {
 
-                        val paths = imagesPaths!!.get(j).split("/")
+                        val paths = images_path!!.get(j).split("/")
                         val file_name = paths.get(paths.size - 1)
                         val getPk = file_name.split("_")
                         val pathPk = getPk.get(0)
-
-                        if (pathPk == pk){
-                            val add_file = Utils.getImage(context!!.getContentResolver(), imagesPaths!!.get(j))
-                            if (images!!.size == 0) {
+                        val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
+                        if (images!!.size == 0) {
+                            images!!.add(add_file)
+                        } else {
+                            try {
+                                images!!.set(images!!.size, add_file)
+                            } catch (e: IndexOutOfBoundsException) {
                                 images!!.add(add_file)
-                            } else {
-                                try {
-                                    images!!.set(images!!.size, add_file)
-                                } catch (e: IndexOutOfBoundsException) {
-                                    images!!.add(add_file)
-                                }
-
                             }
-                            reset(imagesPaths!!.get(j), j)
                         }
+                        reset(images_path!!.get(j), j)
                     }
                 })
                 .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
@@ -782,6 +809,7 @@ class AddPostActivity : RootActivity() {
     }
 
     fun clickMethod2(v: View) {
+        println("------------click2")
         val builder = AlertDialog.Builder(context)
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
@@ -811,21 +839,17 @@ class AddPostActivity : RootActivity() {
                         val file_name = paths.get(paths.size - 1)
                         val getPk = file_name.split("_")
                         val pathPk = getPk.get(0)
-
-                        if (pathPk == pk){
-                            val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
-                            if (images!!.size == 0) {
+                        val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
+                        if (images!!.size == 0) {
+                            images!!.add(add_file)
+                        } else {
+                            try {
+                                images!!.set(images!!.size, add_file)
+                            } catch (e: IndexOutOfBoundsException) {
                                 images!!.add(add_file)
-                            } else {
-                                try {
-                                    images!!.set(images!!.size, add_file)
-                                } catch (e: IndexOutOfBoundsException) {
-                                    images!!.add(add_file)
-                                }
-
                             }
-                            reset(images_path!!.get(j), j)
                         }
+                        reset(images_path!!.get(j), j)
                     }
 
                 })

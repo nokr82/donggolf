@@ -70,6 +70,10 @@ object PostAction {
         HttpClient.post("/post/add_looker.json", params, handler)
     }
 
+    fun load_region(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/load_region.json", params, handler)
+    }
+
 
 
 }
