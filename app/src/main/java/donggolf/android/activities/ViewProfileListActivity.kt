@@ -36,8 +36,6 @@ class ViewProfileListActivity : RootActivity() {
 
     private lateinit var pagerAdapter: PictureDetailViewAdapter
 
-    //private var albumList = ArrayList<String>()
-
     var getImages : ArrayList<Bitmap> = ArrayList()
 
     var adPosition = 0
