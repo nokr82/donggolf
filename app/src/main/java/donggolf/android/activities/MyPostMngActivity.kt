@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -13,8 +14,10 @@ import donggolf.android.actions.PostAction
 import donggolf.android.adapters.MyPostAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_my_post_mng.*
 import kotlinx.android.synthetic.main.item_my_post_manage.*
+import kotlinx.android.synthetic.main.item_my_post_manage.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -77,6 +80,7 @@ class MyPostMngActivity : RootActivity() {
                             myPostList.clear()
                             for (i in 0 until data.length()){
                                 myPostList.add(data[i] as JSONObject)
+                                myPostList[i].put("willDel", false)
                             }
                             myPostAdapter.notifyDataSetChanged()
 
@@ -113,7 +117,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("내 글 보기 :: $response")
+                        println("댓글단 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -121,10 +125,11 @@ class MyPostMngActivity : RootActivity() {
                             myCommentPostList.clear()
                             for (i in 0 until data.length()){
                                 myCommentPostList.add(data[i] as JSONObject)
+                                myCommentPostList[i].put("willDel", false)
                             }
                             myCommentPostAdapter.notifyDataSetChanged()
 
-                            myPostContTV.text = "댓글단 글(" + data.length() +")"
+                            myPost_commentTV.text = "댓글단 글(" + data.length() +")"
                         }
 
                     } catch (e: JSONException) {
@@ -136,6 +141,10 @@ class MyPostMngActivity : RootActivity() {
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
                     println("DataLoad failed. Because of")
                     println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
                 }
 
             })
@@ -162,13 +171,16 @@ class MyPostMngActivity : RootActivity() {
                         if ("ok" == result) {
 
                             val data = response!!.getJSONArray("contents")
-                            myStoredPostList.clear()
-                            for (i in 0 until data.length()){
-                                myStoredPostList.add(data[i] as JSONObject)
-                            }
-                            myStoredPostAdapter.notifyDataSetChanged()
 
-                            myPost_commentTV.text = "보관 글(" + data.length() +")"
+                                myStoredPostList.clear()
+                                for (i in 0 until data.length()) {
+                                    myStoredPostList.add(data[i] as JSONObject)
+                                    myStoredPostList.get(i).put("willDel", false)
+                                }
+                                myStoredPostAdapter.notifyDataSetChanged()
+
+                                myPost_storeTV.text = "보관 글(" + data.length() + ")"
+
                         }
 
                     } catch (e: JSONException) {
@@ -184,6 +196,51 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+
+        //보관글 지우기
+        myStorePostLV.setOnItemLongClickListener { parent, view, position, id ->
+            myStoredPostList[position].put("willDel",true)
+            myStoredPostAdapter.notifyDataSetChanged()
+
+            val data = myStoredPostList.get(position)
+            val contentOb = data.getJSONObject("Content")
+
+            var contIdx = Utils.getString(contentOb,"id")
+
+            view.item_btn_del.setOnClickListener {
+                val params = RequestParams()
+                params.put("content_id", contIdx)
+                params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+                PostAction.delete_favorite_content(params, object : JsonHttpResponseHandler(){
+                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                        try {
+                            val result = response!!.getString("result")
+                            if (result == "ok") {
+                                myStoredPostList.remove(myStoredPostList.removeAt(position))
+                                myStoredPostAdapter.notifyDataSetChanged()
+                                Toast.makeText(context,"보관글을 삭제했습니다", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "보관글 삭제에 실패했습니다", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e : JSONException) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                        println(responseString)
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                        println(errorResponse)
+                    }
+                })
+            }
+
+            true
+        }
+
 
         //기본 화면
         myPost_myPostTV.setTextColor(Color.parseColor("#0EDA2F"))
@@ -207,6 +264,7 @@ class MyPostMngActivity : RootActivity() {
                         myPostList.clear()
                         for (i in 0 until data.length()){
                             myPostList.add(data[i] as JSONObject)
+                            myPostList[i].put("willDel", false)
                         }
                         myPostAdapter.notifyDataSetChanged()
                         myPost_myPostTV.text = "내 게시글(" + data.length() +")"

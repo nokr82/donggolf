@@ -6,11 +6,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
-import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.MemberAction
 import donggolf.android.base.Utils
 import donggolf.android.models.Text
 import org.json.JSONArray
@@ -45,6 +41,8 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
         var json = data.get(position)
         var content = json.getJSONObject("Content")
 
+        json.put("cmt_wrt_id", Utils.getInt(content,""))
+
         val member_id = Utils.getString(content,"member_id")
         val title = Utils.getString(content,"title")
         val text = Utils.getString(content,"text")
@@ -54,25 +52,18 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
         item.myPostContTV.text = text.toString()
         item.writeDateTV.text = created
 
-        val params = RequestParams()
-        params.put("member_id", member_id)
+        var wd = json.getBoolean("willDel")
+        if (wd) {
+            item.item_btn_del.visibility = View.VISIBLE
+            notifyDataSetChanged()
+        } else {
+            item.item_btn_del.visibility = View.GONE
+            notifyDataSetChanged()
+        }
 
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-
-                val result = response!!.getString("result")
-                if (result == "ok") {
-                    val member = response.getJSONObject("Member")
-                    val nick = Utils.getString(member, "nick")
-                    item.myPostItem_nick.text = nick
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("데이터 로드 실패")
-                println(errorResponse)
-            }
-        })
+        val member = json.getJSONObject("Member")
+        val nick = Utils.getString(member, "nick")
+        item.myPostItem_nick.text = nick
 
         return retView
     }
@@ -118,7 +109,7 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
             myPostItem_nick = v.findViewById<View>(R.id.myPostItem_nick) as TextView
             writeDateTV = v.findViewById<View>(R.id.writeDateTV) as TextView
             mpCommentTV = v.findViewById<View>(R.id.mpCommentTV) as TextView
-            item_btn_del = v.findViewById<View>(R.id.item_btn_del) as ImageView
+            item_btn_del = v.findViewById<View>(R.id.item_btn_del) as ImageView//item_btn_del
             itemMyPostMng_postImg = v.findViewById<View>(R.id.itemMyPostMng_postImg) as ImageView
 
         }

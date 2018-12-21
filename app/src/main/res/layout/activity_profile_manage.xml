@@ -72,6 +72,7 @@
                 android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_profile_l"
+                android:scaleType="centerCrop"
                 android:id="@+id/imgProfile"/>
             <ImageView
                 android:id="@+id/addProfImg"

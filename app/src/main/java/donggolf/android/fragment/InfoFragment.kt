@@ -71,14 +71,6 @@ class InfoFragment : Fragment(){
     val MODIFY_TAG = 107
     val REGION_CHANGE = 108
 
-    private var pimgPaths: ArrayList<String> = ArrayList<String>()//이미지 경로
-    private var images: ArrayList<ByteArray> = ArrayList()
-    private var smimages: ArrayList<ByteArray> = ArrayList()
-    private var strPaths: ArrayList<String> = ArrayList<String>()
-    private var strPathsL : ArrayList<String> = ArrayList<String>()
-    private var strPathsS : ArrayList<String> = ArrayList<String>()
-
-
     private val GALLERY = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -198,7 +190,10 @@ class InfoFragment : Fragment(){
             }
         })
 
+
+        //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
+
             var intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }

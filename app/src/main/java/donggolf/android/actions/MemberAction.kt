@@ -53,4 +53,8 @@ object MemberAction {
         HttpClient.post("/member/search_member.json", params, handler)
     }
 
+    fun inquire(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/inquire.json", params, handler)
+    }
+
 }

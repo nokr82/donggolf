@@ -173,18 +173,30 @@ class LoginActivity : RootActivity() {
 
                         println("member_id -------$member_id")
                         PrefUtils.setPreference(context, "member_id", member_id)
+                        PrefUtils.setPreference(context,"login_nick", Utils.getString(member,"nick"))
 
-                        if (autologinCB.isChecked){
-                            PrefUtils.setPreference(context, "email", email)
-                            PrefUtils.setPreference(context, "pass", password)
-                            PrefUtils.setPreference(context, "auto", true)
+                        val isActive = Utils.getString(member,"status")
+                        if (isActive == "a") {
+
+                            if (autologinCB.isChecked) {
+                                PrefUtils.setPreference(context, "email", email)
+                                PrefUtils.setPreference(context, "pass", password)
+                                PrefUtils.setPreference(context, "auto", true)
+
+                            } else {
+                                //PrefUtils.setPreference(context, "auto", false)
+                            }
+
+                            PrefUtils.setPreference(context,"isActiveAccount","a")
+                            PrefUtils.setPreference(context,"userPhone",Utils.getString(member,"phone"))
+
+                            startActivity(Intent(context, MainActivity::class.java))
+
+                            finish()
                         } else {
-                            //PrefUtils.setPreference(context, "auto", false)
+                            PrefUtils.setPreference(context,"isActiveAccount", "i")
+                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
-
-                        startActivity(Intent(context, MainActivity::class.java))
-
-                        finish()
 
                     }
                 } catch (e : JSONException) {
@@ -206,10 +218,6 @@ class LoginActivity : RootActivity() {
     fun nomemberlogin() {
         val email = emailET.text.toString()
         val password = passwordET.text.toString()
-    }
-
-    fun moveaddpost() {
-        startActivity(Intent(this, AddPostActivity::class.java))
     }
 
     fun movefindid() {

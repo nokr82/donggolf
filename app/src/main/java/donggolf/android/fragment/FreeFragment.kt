@@ -419,4 +419,15 @@ open class FreeFragment : Fragment() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (ResetPostReceiver != null) {
+            context!!.unregisterReceiver(ResetPostReceiver)
+        }
+        if (DeletePostReceiver != null) {
+            context!!.unregisterReceiver(DeletePostReceiver)
+        }
+    }
+
 }
