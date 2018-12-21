@@ -70,8 +70,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         item.main_item_title.text = title.toString()
         item.main_item_content.text = text.toString()
-        item.main_item_view_count.text = like_cnt.toString()
-        item.main_item_like_count.text = favorite_cnt.toString()
+        item.main_item_view_count.text = look_cnt.toString()
+        item.main_item_like_count.text = like_cnt.toString()
         item.main_item_nickname.text = nick.toString()
 
 

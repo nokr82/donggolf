@@ -11,6 +11,7 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.AreaRangeAdapter
 import donggolf.android.adapters.AreaRangeGridAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
@@ -54,209 +55,96 @@ class AreaRangeActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        adapter = AreaRangeAdapter(context, R.layout.item_area_range, arealist)
-
         intent = getIntent()
         type = intent.getStringExtra("region_type")//content_filter
 
-        arealistLV.adapter = adapter
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
+        PostAction.load_region(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
 
-        FirebaseFirestoreUtils.get("settings","national"){ success, data, exception ->
-            if (success) {
-
-                for (i in 0..(data!!.size - 1)) {
-                    var sido: HashMap<String, Any> = data?.get(i.toString()) as HashMap<String, Any>
-
-                    // println("sido ==============================$sido")
-
-                    val iterator = sido.entries.iterator()
-
-                    var j = 0
-
-                    while (iterator.hasNext()) {
-
-                        var entry = iterator.next() as java.util.Map.Entry<String, ArrayList<java.util.HashMap<String, Long>>>
-
-                        var national = National(entry.key, entry.value)
-                        national.title = entry.key
-                        national.national = entry.value
-
-
-                        arealist.add(national)
-
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    var region = response.getJSONArray("region")
+                    if (region.length() > 0 ){
+                        for (i in 0 until region.length()){
+                            var item = region.get(i) as JSONObject
+                            var region = item.getJSONObject("Region")
+                            var id = Utils.getString(region,"id")
+                            var title = Utils.getString(region,"title")
+                            var regionitem = National(id,title,false)
+                            arealist.add(regionitem)
+                        }
                     }
 
-                    adapter.notifyDataSetChanged()
-                }
-
-                if (type == "my_profile") {
-                    tempMyActRegion()
-                }
-
-                /*var data:HashMap<String, Any> = data as HashMap<String, Any>
-                db.collection("infos")
-                        .document(uid)
-                        .get()
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-
-                                var document = it.result
-                                //println("값 가져오기 테스트 :: ${document.get("cont_region1")}")
-                                rg1 = document.get("cont_region1").toString().toLong()
-                                rg2 = document.get("cont_region2").toString().toLong()
-                                rg3 = document.get("cont_region3").toString().toLong()
-
-                            }
-                            println("rg :: $rg1, $rg2, $rg3")
-
-                            for (i in 0..(data.size - 1)) {
-                                var sido:HashMap<String, Any>  = data.get(i.toString()) as HashMap<String, Any>
-
-                                // println("sido ==============================$sido")
-
-                                val iterator = sido.entries.iterator()
-
-                                var j = 0
-
-                                while (iterator.hasNext()){
-
-                                    var entry = iterator.next() as java.util.Map.Entry<String, ArrayList<java.util.HashMap<String,Long>>>
-
-                                    var national = National(entry.key,entry.value)
-                                    national.title = entry.key
-                                    national.national = entry.value
-
-                                    arealist.add(national)
-                                }
-
-                                adapter.notifyDataSetChanged()
-                            }
-
-                            //지역 정보 출력
-                            for(national in arealist) {
-                                val key = national.title
-                                val na = national.national
-
-                                for(n in na) {
-
-                                    // println("$key :: $n")
-
-                                    val keys = n.keys.iterator()
-                                    if(keys.hasNext()) {
-                                        val key2 = keys.next()
-                                        val value = n.get(key2)
-
-                                        //println("$key ::: $key2 ::: $value")
-                                        if (rg1 == value) {
-                                            userRG1 = key2
-
-                                            if (!userRG1.equals("")){
-                                                areaLL1.visibility = View.VISIBLE
-                                                area1.setText(userRG1)
-                                                actArea += 1
-
-                                                //println("actArea ===== $actArea in $key2")
-                                            }
-                                            //println("first region name :: $key2")
-                                        } else if (rg2 == value) {
-                                            userRG2 = key2
-                                            if (!userRG2.equals("")){
-                                                areaLL2.visibility = View.VISIBLE
-                                                area2.setText(userRG2)
-                                                actArea += 1
-                                                //println("actArea ===== $actArea in $key2")
-                                            }
-                                            //println("$key2")
-                                        } else if (rg3 == value) {
-                                            userRG3 = key2
-                                            if (!userRG3.equals("")){
-                                                areaLL3.visibility = View.VISIBLE
-                                                area3.setText(userRG3)
-                                                actArea += 1
-                                                //println("actArea ===== $actArea in $key2")
-                                            }
-                                            //println("$key2")
-                                        }
-
-                                        if (userRG1.equals("")){
-                                            areaLL1.visibility = View.GONE
-                                        }
-                                        if (userRG2.equals("")){
-                                            areaLL2.visibility = View.GONE
-                                        }
-                                        if (userRG3.equals("")){
-                                            areaLL3.visibility = View.GONE
-                                        }
-
-                                        areaCnt.text = "지역 범위 설정 ($actArea/3)"
-
-                                    }
-
-                                }
-                            }
-
-
-                        }*/
-
-            }
-        }
-
-
-        arealistLV.itemsCanFocus = true
-        arealistLV.setOnItemClickListener{ parent, view, position, id ->
-
-            gridGV.visibility = View.VISIBLE
-
-            arealistLV.visibility = View.GONE
-
-            val item = arealist.get(position)
-
-            println("item :========= ${item.national}")
-
-            if(areaGridList.size > 1) {
-                areaGridList.clear()
-                for (i in 0..item.national.size-1){
-
-                    var data:HashMap<String, Long> = item.national.get(i)
-
-                    val iterator = data.entries.iterator()
-
-                    while (iterator.hasNext()){
-
-                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
-
-                        var datas = NationalGrid(entry.key,entry.value)
-
-                        areaGridList.add(datas)
-
-                    }
-
-                }
-            }else {
-                for (i in 0..item.national.size-1){
-
-                    var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
-
-                    val iterator = data.entries.iterator()
-
-                    while (iterator.hasNext()){
-
-                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
-
-                        var datas = NationalGrid(entry.key,entry.value)
-
-                        areaGridList.add(datas)
-
-                    }
+                    adapter = AreaRangeAdapter(context, R.layout.item_area_range, arealist)
+                    arealistLV.adapter = adapter
 
                 }
 
             }
 
-            GridAdapter.notifyDataSetChanged()
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                Toast.makeText(context, "지역 변경 실패", Toast.LENGTH_SHORT).show()
+            }
+        })
 
-        }
+
+//        arealistLV.itemsCanFocus = true
+//        arealistLV.setOnItemClickListener{ parent, view, position, id ->
+//
+//            gridGV.visibility = View.VISIBLE
+//
+//            arealistLV.visibility = View.GONE
+//
+//            val item = arealist.get(position)
+//
+//            println("item :========= ${item.national}")
+//
+//            if(areaGridList.size > 1) {
+//                areaGridList.clear()
+//                for (i in 0..item.national.size-1){
+//
+//                    var data:HashMap<String, Long> = item.national.get(i)
+//
+//                    val iterator = data.entries.iterator()
+//
+//                    while (iterator.hasNext()){
+//
+//                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
+//
+//                        var datas = NationalGrid(entry.key,entry.value)
+//
+//                        areaGridList.add(datas)
+//
+//                    }
+//
+//                }
+//            }else {
+//                for (i in 0..item.national.size-1){
+//
+//                    var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
+//
+//                    val iterator = data.entries.iterator()
+//
+//                    while (iterator.hasNext()){
+//
+//                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
+//
+//                        var datas = NationalGrid(entry.key,entry.value)
+//
+//                        areaGridList.add(datas)
+//
+//                    }
+//
+//                }
+//
+//            }
+//
+//            GridAdapter.notifyDataSetChanged()
+//
+//        }
 
         GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, areaGridList)
         gridGV.adapter = GridAdapter
