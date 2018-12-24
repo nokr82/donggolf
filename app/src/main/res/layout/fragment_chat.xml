@@ -6,88 +6,107 @@
     android:orientation="vertical"
     tools:context=".fragment.ChatFragment">
 
-    <LinearLayout
-        android:id="@+id/chatTabLL"
+    <RelativeLayout
+        android:id="@+id/myChatOnRL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <!--my chatting tab-->
-        <RelativeLayout
-            android:id="@+id/tab_my_chatRL"
-            android:layout_width="match_parent"
+
+        <ImageView
+            android:layout_width="220dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="155dp"
+            android:src="@mipmap/btn_my_chat_on"/>
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:background="@drawable/diagonal_shape"
-                android:id="@+id/tabMyChat"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_centerVertical="true"
-                android:textSize="13dp"
-                android:textStyle="bold"
-                android:textColor="#ffffff"
-                android:id="@+id/txMyChat"
-                android:text="내 채팅(999)"/>
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginRight="210dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/btn_chat_setting"
-                android:id="@+id/btn_myChat_mng"/>
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/btn_make_chat"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="170dp"
-                android:layout_centerVertical="true"
-                android:id="@+id/btn_make_chat"/>
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:textSize="13dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:text="내 채팅(999)"/>
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="140dp"
+            android:src="@mipmap/btn_chat_setting"/>
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="175dp"
+            android:src="@mipmap/btn_make_chat"/>
 
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/btn_town_chat_off"
-                android:id="@+id/tabTownChat"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="75dp"
-                android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:textSize="13dp"
-                android:id="@+id/txTownChat"
-                android:text="동네 채팅"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/btn_make_chat"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="30dp"
-                android:layout_centerVertical="true"
-                android:visibility="gone"
-                android:id="@+id/btn_add_dongchat"/>
-        </RelativeLayout>
-        <!--Town Chatting-->
-        <RelativeLayout
-            android:id="@+id/tab_town_chatRL"
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
-            <ImageView
-                android:layout_width="180dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/btn_my_chat_off"/>
-        </RelativeLayout>
 
-    </LinearLayout>
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/btn_town_chat_off"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="90dp"
+            android:textSize="13dp"
+            android:textColor="#ffffff"
+            android:text="동네 채팅"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/townChatOnRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="210dp"
+            android:src="@mipmap/btn_my_chat_off"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:textSize="13dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:text="내 채팅"/>
+
+
+        <ImageView
+            android:layout_width="220dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/btn_town_chat_on"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="110dp"
+            android:textSize="13dp"
+            android:textColor="#ffffff"
+            android:text="동네 채팅(999)"/>
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/btn_make_chat"/>
+
+    </RelativeLayout>
 
 
     <!--view pager-->

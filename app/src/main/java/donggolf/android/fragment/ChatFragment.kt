@@ -62,12 +62,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tabMyChat = view.findViewById(R.id.tabMyChat)
+        /*tabMyChat = view.findViewById(R.id.tabMyChat)
         tabTownChat = view.findViewById(R.id.tabTownChat)
         btn_myChat_mng = view.findViewById(R.id.btn_myChat_mng)
         btn_make_chat = view.findViewById(R.id.btn_make_chat)
         txMyChat = view.findViewById(R.id.txMyChat)
-        txTownChat = view.findViewById(R.id.txTownChat)
+        txTownChat = view.findViewById(R.id.txTownChat)*/
 
         chat_list = view.findViewById(R.id.chat_list)
 
@@ -99,28 +99,18 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
 
         //new section
-        chatTabLL.setOnClickListener {
-            if (isMyChat) {
-                tabMyChat.setImageResource(R.drawable.btn_my_chat_off)
-                btn_myChat_mng.visibility = View.GONE
-                btn_make_chat.visibility = View.GONE
-                tabTownChat.setImageResource(R.drawable.btn_town_chat_on)
-                btn_add_dongchat.visibility = View.VISIBLE
-                isMyChat = false
-            } else {
-                tabMyChat.setImageResource(R.drawable.btn_my_chat_on)
-                btn_myChat_mng.visibility = View.VISIBLE
-                btn_make_chat.visibility = View.VISIBLE
-                btn_add_dongchat.visibility = View.GONE
-                tabTownChat.setImageResource(R.drawable.btn_town_chat_off)
-                isMyChat = true
-            }
-        }//
-
-        btn_add_dongchat.setOnClickListener {
-            var intent = Intent(context, AddDongChatActivity::class.java)
-            startActivity(intent)
+        myChatOnRL.setOnClickListener {
+            myChatOnRL.visibility = View.GONE
+            townChatOnRL.visibility = View.VISIBLE
         }
+
+
+
+        townChatOnRL.setOnClickListener {
+            myChatOnRL.visibility = View.VISIBLE
+            townChatOnRL.visibility = View.GONE
+        }
+
 
     }
 
