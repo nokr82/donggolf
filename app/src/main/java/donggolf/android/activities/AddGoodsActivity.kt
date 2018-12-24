@@ -61,7 +61,7 @@ class AddGoodsActivity : RootActivity() {
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
-        images_path = ArrayList();
+        images_path = ArrayList()
         images = ArrayList()
         images_url = ArrayList()
 
@@ -70,8 +70,8 @@ class AddGoodsActivity : RootActivity() {
         getbrand()
 
         addpictureLL.setOnClickListener {
-            var intent = Intent(context, FindPictureGridActivity::class.java);
-            startActivityForResult(intent, SELECT_PICTURE);
+            var intent = Intent(context, FindPictureGridActivity::class.java)
+            startActivityForResult(intent, SELECT_PICTURE)
         }
 
         finishLL.setOnClickListener {
@@ -180,7 +180,7 @@ class AddGoodsActivity : RootActivity() {
 
                     }
 
-                    setResult(RESULT_OK, intent);
+                    setResult(RESULT_OK, intent)
 
                 }
             }
