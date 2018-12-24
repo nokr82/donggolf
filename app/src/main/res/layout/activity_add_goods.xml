@@ -33,7 +33,7 @@
                         android:layout_width="15dp"
                         android:layout_height="17dp"
                         android:layout_margin="10dp"
-                        android:background="@drawable/btn_cancel" />
+                        android:background="@mipmap/btn_cancel" />
                 </LinearLayout>
 
                 <TextView
@@ -68,7 +68,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:background="@drawable/line_0" />
+                android:background="@mipmap/line_0" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,12 +85,12 @@
                         <ImageView
                             android:layout_width="105dp"
                             android:layout_height="105dp"
-                            android:background="@drawable/btn_add_picture"
+                            android:background="@mipmap/btn_add_picture"
                             android:layout_margin="5dp"/>
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_add_picture"
+                            android:background="@mipmap/icon_add_picture"
                             android:layout_centerInParent="true"/>
                     </RelativeLayout>
                 </LinearLayout>
@@ -141,7 +141,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -189,7 +189,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:id="@+id/goodsinfoLL"
@@ -207,7 +207,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_drop_list"
+                            android:background="@mipmap/icon_drop_list"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"/>
@@ -245,7 +245,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:id="@+id/brandLL"
@@ -264,7 +264,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_drop_list"
+                            android:background="@mipmap/icon_drop_list"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"/>
@@ -303,7 +303,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -320,7 +320,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_drop_list"
+                            android:background="@mipmap/icon_drop_list"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"/>
@@ -356,7 +356,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -413,7 +413,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -430,7 +430,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_drop_list"
+                            android:background="@mipmap/icon_drop_list"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"/>
@@ -465,7 +465,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -482,7 +482,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/icon_drop_list"
+                            android:background="@mipmap/icon_drop_list"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"/>
@@ -609,7 +609,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:background="@drawable/btn_cancel"
+                                    android:background="@mipmap/btn_cancel"
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginRight="10dp"/>
                             </LinearLayout>
@@ -620,7 +620,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@drawable/line_0" />
+                        android:background="@mipmap/line_0" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="30dp">
@@ -640,7 +640,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:background="@drawable/icon_check"
+                                    android:background="@mipmap/icon_check"
                                     android:layout_marginRight="5dp"
                                     android:layout_gravity="center_vertical"/>
                             </LinearLayout>
@@ -656,7 +656,7 @@
                             android:id="@+id/listviewLV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:scrollbars="none"></ListView>
+                            android:scrollbars="none"/>
                      </LinearLayout>
 
                 </LinearLayout>
