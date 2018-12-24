@@ -17,5 +17,6 @@
         android:layout_height="match_parent"
         android:padding="15dp"
         android:layout_weight="1"
+        android:visibility="invisible"
         android:src="@mipmap/icon_check"/>
 </LinearLayout>
