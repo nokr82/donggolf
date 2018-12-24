@@ -49,7 +49,7 @@ class AddGoodsActivity : RootActivity() {
     var images_id: ArrayList<Int>? = null
 
     private  lateinit var  categoryAdapter : GoodsCategoryAdapter
-    private  var categoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var categoryData = ArrayList<JSONObject>()
 
     var category = 1
 
@@ -69,15 +69,14 @@ class AddGoodsActivity : RootActivity() {
 
         getbrand()
 
+        finishLL.setOnClickListener { finish() }
+
         addpictureLL.setOnClickListener {
             var intent = Intent(context, FindPictureGridActivity::class.java)
             startActivityForResult(intent, SELECT_PICTURE)
         }
 
-        finishLL.setOnClickListener {
-            finish()
-        }
-
+        //
         finishaLL.setOnClickListener {
             choiceLL.visibility = View.GONE
         }
@@ -131,6 +130,10 @@ class AddGoodsActivity : RootActivity() {
             if (category == 1){
 
             }
+        }
+
+        addGoodsLL.setOnClickListener {
+
         }
 
         var phoneNum = PrefUtils.getStringPreference(context,"userPhone")
@@ -315,6 +318,8 @@ class AddGoodsActivity : RootActivity() {
         alert.show()
 
     }
+
+
     fun getbrand(){
         val params = RequestParams()
         params.put("all",1)
