@@ -42,24 +42,27 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="@drawable/line_0" />
+        android:background="@mipmap/line_0" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
+            android:id="@+id/entireClassificationTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_marginLeft="40dp"
             android:text="분류 전체"/>
         <TextView
+            android:id="@+id/entireBrandTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_marginLeft="25dp"
             android:text="브랜드 전체"/>
         <TextView
+            android:id="@+id/entireTypeTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -68,20 +71,20 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" >
             <LinearLayout
                 android:id="@+id/addgoodsTV"
                 android:layout_marginTop="3dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="30dp"
+                android:layout_marginRight="15dp"
                 android:orientation="vertical">
                 <ImageView
                     android:layout_gravity="center"
                     android:layout_width="21dp"
                     android:layout_height="21dp"
-                    android:background="@drawable/btn_posting"/>
+                    android:background="@mipmap/btn_posting"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,11 +93,15 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/line_1"/>
 
     <GridView
         android:id="@+id/maingridGV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="2"></GridView>
+        android:numColumns="2"/>
 
 </LinearLayout>

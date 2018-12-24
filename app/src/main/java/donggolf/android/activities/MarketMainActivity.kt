@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import donggolf.android.R
 import donggolf.android.adapters.MarketMainAdapter
@@ -15,7 +16,7 @@ class MarketMainActivity : RootActivity() {
 
     private  lateinit var  adapter : MarketMainAdapter
 
-    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var adapterData = ArrayList<JSONObject>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,16 +25,22 @@ class MarketMainActivity : RootActivity() {
 
         context = this
 
+
         finishmLL.setOnClickListener {
             finish()
         }
 
-        var dataObj : JSONObject = JSONObject();
+        init_menu()
+        entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+        //목록 가져와서 array에 추가
+        var dataObj = JSONObject()
 
         adapterData.add(dataObj)
         adapterData.add(dataObj)
         adapterData.add(dataObj)
 
+        //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
 
         maingridGV.adapter = adapter
@@ -50,12 +57,18 @@ class MarketMainActivity : RootActivity() {
     }
 
     fun MoveGoodsDetailActivity(){
-        var intent: Intent = Intent(this, GoodsDetailActivity::class.java)
+        var intent = Intent(this, GoodsDetailActivity::class.java)
         startActivity(intent)
     }
 
     fun MoveAddGoodsAcitity(){
-        var intent: Intent = Intent(this, AddGoodsActivity::class.java)
+        var intent = Intent(this, AddGoodsActivity::class.java)
         startActivity(intent)
+    }
+
+    fun init_menu(){
+        entireClassificationTV.setTextColor(Color.parseColor("#000000"))
+        entireBrandTV.setTextColor(Color.parseColor("#000000"))
+        entireTypeTV.setTextColor(Color.parseColor("#000000"))
     }
 }

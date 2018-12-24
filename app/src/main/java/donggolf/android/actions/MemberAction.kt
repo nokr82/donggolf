@@ -46,6 +46,16 @@ object MemberAction {
         HttpClient.post("/member/get_member_prfimg_history.json", params, handler)
     }
 
+    //앨범에서 이미지 추가
+    fun add_img_in_album(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/add_album_img.json", params, handler)
+    }
+
+    //프사 삭제
+    fun delete_profile_imgs(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/delete_profile_images.json", params, handler)
+    }
+
     fun update_info(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/update_member_info.json", params, handler)
     }

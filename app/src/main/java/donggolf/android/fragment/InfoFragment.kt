@@ -73,8 +73,6 @@ class InfoFragment : Fragment(){
     val REGION_CHANGE = 108
 
     private val GALLERY = 1
-    private val RESULT_IMG = 1
-    var imgString: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)

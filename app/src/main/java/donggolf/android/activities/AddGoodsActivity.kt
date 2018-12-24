@@ -22,6 +22,7 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.GoodsCategoryAdapter
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_goods.*
@@ -131,6 +132,9 @@ class AddGoodsActivity : RootActivity() {
 
             }
         }
+
+        var phoneNum = PrefUtils.getStringPreference(context,"userPhone")
+        sellerPhoneNumTV.text = phoneNum.substring(0,3) + "-" + phoneNum.substring(3,7) + "-" + phoneNum.substring(7)
 
     }
 
