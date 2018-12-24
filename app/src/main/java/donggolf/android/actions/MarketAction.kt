@@ -9,4 +9,6 @@ object MarketAction {
         HttpClient.post("/market/load_category.json", params, handler)
     }
 
+
+
 }

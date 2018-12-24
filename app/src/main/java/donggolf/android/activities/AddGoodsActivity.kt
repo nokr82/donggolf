@@ -21,7 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
-import donggolf.android.adapters.GoodsCategoryAdapter
+import donggolf.android.adapters.*
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -49,8 +49,16 @@ class AddGoodsActivity : RootActivity() {
     var images_id: ArrayList<Int>? = null
 
     private  lateinit var  categoryAdapter : GoodsCategoryAdapter
-    private  var categoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  lateinit var  productTypeAdapter: ProductTypeAdaapter
+    private lateinit var productCategoryAdatper : ProductCategoryAdapter
+    private lateinit var tradeTypeAdatper : TradeTypeAdapater
+    private lateinit var regionAdatper : RegionAdapter
 
+    private  var categoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var productData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var productCategoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var tradeTypeData :  ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var regionData :  ArrayList<JSONObject> = ArrayList<JSONObject>()
     var category = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,8 +74,12 @@ class AddGoodsActivity : RootActivity() {
         images_url = ArrayList()
 
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op,categoryData)
+        productTypeAdapter = ProductTypeAdaapter(context,R.layout.item_dlg_market_sel_op,productData)
+        productCategoryAdatper = ProductCategoryAdapter(context,R.layout.item_dlg_market_sel_op,productCategoryData)
+        tradeTypeAdatper = TradeTypeAdapater(context,R.layout.item_dlg_market_sel_op,tradeTypeData)
+        regionAdatper = RegionAdapter(context,R.layout.item_dlg_market_sel_op,regionData)
 
-        getbrand()
+        getCategory()
 
         addpictureLL.setOnClickListener {
             var intent = Intent(context, FindPictureGridActivity::class.java)
@@ -87,7 +99,32 @@ class AddGoodsActivity : RootActivity() {
         }
 
         goodsinfoLL.setOnClickListener {
-            choiceLL.visibility = View.VISIBLE
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "제품 종류"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = productTypeAdapter
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var position = productTypeAdapter.getItem(position)
+                var type = position.getJSONObject("ProductType")
+                val title = Utils.getString(type,"title")
+                producttypeTV.setText(title)
+                println("title ------ $title")
+                alert.dismiss()
+            }
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
         }
 
         brandLL.setOnClickListener {
@@ -105,7 +142,7 @@ class AddGoodsActivity : RootActivity() {
                 alert.dismiss()
             }
 
-            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+            dialogView.dlg_marketLV.setOnItemClickListener{ parent, view, position, id ->
 
             } 
 
@@ -115,22 +152,87 @@ class AddGoodsActivity : RootActivity() {
         }
 
         configRV.setOnClickListener {
-            choiceLL.visibility = View.VISIBLE
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "형태/성향 선택"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.dlg_marketLV.setOnItemClickListener{ parent, view, position, id ->
+            }
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
         }
 
         areaRL.setOnClickListener {
-            choiceLL.visibility = View.VISIBLE
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "지역 선택"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = regionAdatper
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var position = regionAdatper.getItem(position)
+                var type = position.getJSONObject("Region")
+                val title = Utils.getString(type,"name")
+                regionTV.setText(title)
+                alert.dismiss()
+            }
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
         }
 
         dellRL.setOnClickListener {
-            choiceLL.visibility = View.VISIBLE
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "거래 방법"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = tradeTypeAdatper
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var position = tradeTypeAdatper.getItem(position)
+                var type = position.getJSONObject("TradeType")
+                val title = Utils.getString(type,"title")
+                tradetypeTV.setText(title)
+                alert.dismiss()
+            }
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
         }
 
         listviewLV.setOnItemClickListener { parent, view, position, id ->
             val data = categoryData.get(position)
-            if (category == 1){
 
-            }
         }
 
         var phoneNum = PrefUtils.getStringPreference(context,"userPhone")
@@ -315,12 +417,28 @@ class AddGoodsActivity : RootActivity() {
         alert.show()
 
     }
-    fun getbrand(){
+    fun getCategory(){
         val params = RequestParams()
         params.put("all",1)
 
         if (categoryData != null){
             categoryData.clear()
+        }
+
+        if (productData != null){
+            productData.clear()
+        }
+
+        if (productCategoryData != null){
+            productCategoryData.clear()
+        }
+
+        if (tradeTypeData != null){
+            tradeTypeData.clear()
+        }
+
+        if (regionData != null){
+            regionData.clear()
         }
 
         MarketAction.load_category(params,object : JsonHttpResponseHandler(){
@@ -329,12 +447,41 @@ class AddGoodsActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val category = response.getJSONArray("category")
+                    val producttype = response.getJSONArray("producttype")
+                    val productcategory = response.getJSONArray("productcategory")
+                    val tradetype = response.getJSONArray("tradetype")
+                    val region = response.getJSONArray("region")
 
                     if (category.length() > 0 && category != null){
                         for (i in 0 until category.length()){
                             categoryData.add(category.get(i) as JSONObject)
                         }
                     }
+
+                    if (producttype.length() > 0 && producttype != null){
+                        for (i in 0 until producttype.length()){
+                            productData.add(producttype.get(i) as JSONObject)
+                        }
+                    }
+
+                    if (productcategory.length() > 0 && productcategory != null){
+                        for (i in 0 until productcategory.length()){
+                            productCategoryData.add(productcategory.get(i) as JSONObject)
+                        }
+                    }
+
+                    if (tradetype.length() > 0 && tradetype != null){
+                        for (i in 0 until tradetype.length()){
+                            tradeTypeData.add(tradetype.get(i) as JSONObject)
+                        }
+                    }
+
+                    if (region.length() > 0 && region != null){
+                        for (i in 0 until region.length()){
+                            regionData.add(region.get(i) as JSONObject)
+                        }
+                    }
+
                 }
             }
 
@@ -343,5 +490,7 @@ class AddGoodsActivity : RootActivity() {
             }
         })
     }
+
+
 
 }
