@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.joooonho.SelectableRoundedImageView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -29,6 +31,8 @@ import kotlinx.android.synthetic.main.activity_add_goods.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.util.ArrayList
 
 class AddGoodsActivity : RootActivity() {
@@ -59,7 +63,15 @@ class AddGoodsActivity : RootActivity() {
     private var productCategoryData = ArrayList<JSONObject>()
     private var tradeTypeData = ArrayList<JSONObject>()
     private var regionData = ArrayList<JSONObject>()
-    var category = 1
+    //var category = 1
+
+    //등록을 위해 전송할 데이터
+    var prod_type = "" //제품 종류
+    var prod_brand = ""
+    var prod_form = ""//성향/형태
+    var prod_regoin = ""
+    var trade_type = ""//거래 방법
+    var deliv_way = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,11 +118,14 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                var position = productTypeAdapter.getItem(position)
-                var type = position.getJSONObject("ProductType")
+                var json = productTypeAdapter.getItem(position)
+                var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
                 producttypeTV.text = title
-                println("title ------ $title")
+                prod_type = title
+                productData[position].put("isSelectedOp",true)
+                productTypeAdapter.notifyDataSetChanged()
+                //println("title ------ $title")
                 alert.dismiss()
             }
 
@@ -135,7 +150,15 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var json = categoryAdapter.getItem(position)
+                var type = json.getJSONObject("GoodsCategory")
+                val title = Utils.getString(type, "title")
+                brandTV.text = title
+                prod_brand = title
+                categoryData[position].put("isSelectedOp",true)
+                categoryAdapter.notifyDataSetChanged()
 
+                alert.dismiss()
             }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
@@ -159,6 +182,15 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var json = productCategoryAdatper.getItem(position)
+                var type = json.getJSONObject("ProductCategory")
+                val title = Utils.getString(type, "title")
+                tendencyTV.text = title
+                prod_form = title
+                productCategoryData[position].put("isSelectedOp",true)
+                productCategoryAdatper.notifyDataSetChanged()
+
+                alert.dismiss()
             }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
@@ -186,6 +218,8 @@ class AddGoodsActivity : RootActivity() {
                 var type = position.getJSONObject("Region")
                 val title = Utils.getString(type, "name")
                 regionTV.text = title
+                prod_regoin = title
+
                 alert.dismiss()
             }
 
@@ -194,7 +228,7 @@ class AddGoodsActivity : RootActivity() {
             }
         }
 
-        dellRL.setOnClickListener {
+        dealRL.setOnClickListener {
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
@@ -214,6 +248,13 @@ class AddGoodsActivity : RootActivity() {
                 var type = position.getJSONObject("TradeType")
                 val title = Utils.getString(type, "title")
                 tradetypeTV.text = title
+                trade_type = title
+                if (title == "택배거래" || title == "직+택배거래" || title == "안전거래(준비중입니다)"){
+                    pay_wayLL.visibility = View.VISIBLE
+                } else {
+                    pay_wayLL.visibility = View.GONE
+                }
+
                 alert.dismiss()
             }
 
@@ -227,7 +268,7 @@ class AddGoodsActivity : RootActivity() {
 
         //등록버튼
         registerLL.setOnClickListener {
-
+            register_product()
         }
 
     }
@@ -238,35 +279,45 @@ class AddGoodsActivity : RootActivity() {
             when (requestCode) {
 
                 SELECT_PICTURE -> {
-                    var item = data?.getStringArrayExtra("images")
-                    var name = data?.getStringArrayExtra("displayname")
+                    println("onActivityResult로 돌아와서")
+                    var item = data?.getStringArrayExtra("images")//photoPath
+                    //var name = data?.getStringArrayExtra("displayname")
 
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
                         images_path!!.add(str)
 
-                        val add_file = Utils.getImage(context.contentResolver, str)
+                        var add_file = Utils.getImage(context.contentResolver, str)
 
-                        if (images?.size == 0) {
+                        var imageView = View.inflate(context, R.layout.item_addgoods, null)
+                        val imageIV :ImageView = imageView.findViewById(R.id.addedImgIV)
+                        val delIV :ImageView = imageView.findViewById(R.id.delIV)
+                        imageIV.setImageBitmap(add_file)
+                        addPicturesLL?.addView(imageView)
 
+                        delIV.setOnClickListener {
+                            if (addPicturesLL != null){
+                                addPicturesLL!!.removeView(imageView)
+                            }
+                        }
+
+                        /*if (images?.size == 0) {
                             images?.add(add_file)
-
                         } else {
-
                             try {
                                 images?.set(images!!.size, add_file)
                             } catch (e: IndexOutOfBoundsException) {
                                 images?.add(add_file)
                             }
-
                         }
+                        reset(str, i)*/
+                        //=====================================================================
 
-                        reset(str, i)
 
                     }
 
-                    val child = addPicturesLL!!.childCount
+                    /*val child = addPicturesLL!!.childCount
                     for (i in 0 until child) {
 
                         val v = addPicturesLL!!.getChildAt(i)
@@ -275,8 +326,46 @@ class AddGoodsActivity : RootActivity() {
 
                     }
 
-                    setResult(RESULT_OK, intent)
+                    setResult(RESULT_OK, intent)*/
 
+                    /*if (data != null)
+                    {
+                        val contentURI = data!!.data
+                        Log.d("uri",contentURI.toString())
+                        //content://media/external/images/media/1200
+
+                        try
+                        {
+                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            //비트맵배열에 비트맵추가
+                            images?.add(thumbnail)
+
+
+                            Log.d("이미지 추가",images.toString())
+                            val userView = View.inflate(context, R.layout.item_add_image, null)
+                            val imageIV :ImageView = userView.findViewById(R.id.imageIV)
+                            val delIV :ImageView = userView.findViewById(R.id.delIV)
+                            imageIV.setImageBitmap(thumbnail)
+                            addPicturesLL?.addView(userView)
+                            //배열사이즈값 -해줘서
+                            if (images?.size != 0) {
+                                userView.tag = images!!.size - 1
+                            }
+
+                            delIV.setOnClickListener {
+                                Log.d("태그",userView.tag.toString())
+                                if (addPicturesLL != null){
+                                    addPicturesLL!!.removeView(userView)
+                                }
+                            }
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                            Toast.makeText(context, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }*/
                 }
             }
         }
@@ -456,24 +545,28 @@ class AddGoodsActivity : RootActivity() {
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
                             categoryData.add(category.get(i) as JSONObject)
+                            categoryData[i].put("isSelectedOp",false)
                         }
                     }
 
                     if (productcategory.length() > 0 && productcategory != null) {
                         for (i in 0 until productcategory.length()) {
                             productCategoryData.add(productcategory.get(i) as JSONObject)
+                            productCategoryData.get(i).put("isSelectedOp",false)
                         }
                     }
 
                     if (tradetype.length() > 0 && tradetype != null) {
                         for (i in 0 until tradetype.length()) {
                             tradeTypeData.add(tradetype.get(i) as JSONObject)
+                            tradeTypeData.get(i).put("isSelectedOp",false)
                         }
                     }
 
                     if (region.length() > 0 && region != null) {
                         for (i in 0 until region.length()) {
                             regionData.add(region.get(i) as JSONObject)
+                            regionData.get(i).put("isSelectedOp",false)
                         }
                     }
 
@@ -486,5 +579,64 @@ class AddGoodsActivity : RootActivity() {
         })
     }
 
+    fun register_product(){
+
+        when(delivery_typeRG.checkedRadioButtonId){
+            R.id.seller_payRB -> {
+                deliv_way = "판매자 부담"
+            }
+            R.id.buyer_payRB -> {
+                deliv_way = "구매자 부담"
+            }
+        }
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("title", Utils.getString(titleTV))
+        params.put("product_type", prod_type)
+        params.put("form", prod_form)
+        params.put("brand", prod_brand)
+        params.put("price", Utils.getString(priceTV))
+        params.put("region", prod_regoin)
+        params.put("trade_way", trade_type)
+        params.put("deliv_pay", deliv_way)
+        params.put("phone", Utils.getString(sellerPhoneNumTV))
+        params.put("description", Utils.getString(descriptionET))
+
+        //이미지
+        var seq = 0
+        if (addPicturesLL != null){
+            for (i in 0 until addPicturesLL!!.childCount) {
+                val v = addPicturesLL?.getChildAt(i)
+                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+                if (imageIV is ImageView) {
+                    val bitmap = imageIV.drawable as BitmapDrawable
+                    params.put("upload[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    seq++
+                }
+            }
+        }
+
+        //println(params)
+
+        MarketAction.add_market_product(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    //Utils.alert(context,"상품이 성공적으로 등록되었습니다.")
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+
+    }
 
 }

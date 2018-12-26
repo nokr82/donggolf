@@ -52,6 +52,13 @@ open class TradeTypeAdapater(context: Context, view:Int, data:ArrayList<JSONObje
         var title:String = Utils.getString(type,"title")
         item.item_option_nameTV.text = title
 
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
+        }
+
         return retView
     }
 

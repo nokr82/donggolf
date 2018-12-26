@@ -52,6 +52,13 @@ open class RegionAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
         var name:String = Utils.getString(type,"name")
         item.item_option_nameTV.text = name
 
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
+        }
+
         return retView
     }
 

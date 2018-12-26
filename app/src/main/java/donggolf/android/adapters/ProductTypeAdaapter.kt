@@ -51,6 +51,13 @@ open class ProductTypeAdaapter(context: Context, view:Int, data:ArrayList<JSONOb
         var title:String = Utils.getString(category,"title")
         item.item_option_nameTV.text = title
 
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
+        }
+
         return retView
     }
 

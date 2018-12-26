@@ -52,6 +52,13 @@ open class GoodsCategoryAdapter(context: Context, view:Int, data:ArrayList<JSONO
         var content:String = Utils.getString(category,"title")
         item.item_option_nameTV.text = content
 
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
+        }
+
         return retView
     }
 

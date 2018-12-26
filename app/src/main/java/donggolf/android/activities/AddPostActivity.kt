@@ -210,10 +210,6 @@ class AddPostActivity : RootActivity() {
                             val id = intent.getStringExtra("id")
                             modify(id)
 
-//                            intent = Intent()
-//                            intent.action = "UPDATE_POST"
-//                            sendBroadcast(intent)
-
                             finish()
 
                         }

@@ -158,7 +158,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
-                                    android:id="@+id/nameTV"
+                                    android:id="@+id/titleTV"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -304,7 +304,6 @@
                         android:layout_height="40dp">
 
                         <TextView
-
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -336,6 +335,7 @@
                                 android:layout_height="match_parent">
 
                                 <TextView
+                                    android:id="@+id/tendencyTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -395,6 +395,7 @@
                                 android:layout_height="match_parent">
 
                                 <EditText
+                                    android:id="@+id/priceTV"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
@@ -502,7 +503,7 @@
                         android:gravity="center">
 
                         <RelativeLayout
-                            android:id="@+id/dellRL"
+                            android:id="@+id/dealRL"
                             android:layout_width="match_parent"
                             android:layout_height="28dp"
                             android:layout_marginRight="20dp">
@@ -541,8 +542,10 @@
 
 
                 <LinearLayout
+                    android:id="@+id/pay_wayLL"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="80dp"
@@ -564,11 +567,13 @@
                         android:gravity="center_vertical">
 
                         <RadioGroup
+                            android:id="@+id/delivery_typeRG"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="horizontal">
 
                             <RadioButton
+                                android:id="@+id/seller_payRB"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:buttonTint="#0EDA2F"
@@ -576,6 +581,7 @@
                                 android:textSize="13dp" />
 
                             <RadioButton
+                                android:id="@+id/buyer_payRB"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_marginLeft="10dp"
@@ -622,7 +628,7 @@
                 </LinearLayout>
 
                 <EditText
-
+                    android:id="@+id/descriptionET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"

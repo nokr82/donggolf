@@ -138,6 +138,12 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         adapter.notifyDataSetChanged()
 
         finishBT.setOnClickListener {
+            try {
+                if (cursor != null && !cursor.isClosed) {
+                    cursor.close()
+                }
+            } catch (ex: Exception) {
+            }
             finish()
         }
 
@@ -171,6 +177,12 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             returnIntent.putExtra("images", result)
                             returnIntent.putExtra("displayname",name)
                             setResult(RESULT_OK, returnIntent)
+                            try {
+                                if (cursor != null && !cursor.isClosed) {
+                                    cursor.close()
+                                }
+                            } catch (ex: Exception) {
+                            }
                             finish()
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
