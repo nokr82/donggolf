@@ -109,6 +109,14 @@ class GoodsDetailActivity : RootActivity() {
                     val image = Config.url + img_uri
                     ImageLoader.getInstance().displayImage(image, profileImgIV, Utils.UILoptionsProfile)
 
+
+                    val marketImg = product.getJSONArray("MarketImg")
+                    for (i in 0 until marketImg.length()){
+                        val data = marketImg[i] as JSONObject
+                        _Images.add(Utils.getString(data,"img_uri"))
+                    }
+                    
+
                 }
             }
 
