@@ -7,14 +7,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="15dp">
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
         <TextView
             android:id="@+id/dlg_titleTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
+            android:paddingLeft="30dp"
             android:text="형태/성향"
-            android:textSize="13dp"
+            android:textSize="20dp"
             android:textStyle="bold"/>
         <ImageView
             android:id="@+id/dlg_exitIV"
@@ -24,10 +26,10 @@
             android:padding="2dp"
             android:src="@mipmap/btn_close"/>
     </LinearLayout>
-    <ImageView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/line_0"/>
+        android:layout_height="4dp"
+        android:background="#c9c9c9"/>
 
     <!--커스텀다이얼로그 쓰는 곳에서 dlg_marketLV.isExpanded = true 선언 필수-->
     <LinearLayout

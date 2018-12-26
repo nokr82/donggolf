@@ -41,24 +41,24 @@ class AddGoodsActivity : RootActivity() {
 
     private val imgSeq = 0
 
-    var pk : String? = null
+    var pk: String? = null
     var images_path: ArrayList<String>? = null
     var images: ArrayList<Bitmap>? = null
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
 
-    private  lateinit var  categoryAdapter : GoodsCategoryAdapter
-    private  lateinit var  productTypeAdapter: ProductTypeAdaapter
-    private lateinit var productCategoryAdatper : ProductCategoryAdapter
-    private lateinit var tradeTypeAdatper : TradeTypeAdapater
-    private lateinit var regionAdatper : RegionAdapter
+    private lateinit var categoryAdapter: GoodsCategoryAdapter
+    private lateinit var productTypeAdapter: ProductTypeAdaapter
+    private lateinit var productCategoryAdatper: ProductCategoryAdapter
+    private lateinit var tradeTypeAdatper: TradeTypeAdapater
+    private lateinit var regionAdatper: RegionAdapter
 
-    private  var categoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  var productData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private var productCategoryData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private var tradeTypeData :  ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private var regionData :  ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var categoryData = ArrayList<JSONObject>()
+    private var productData = ArrayList<JSONObject>()
+    private var productCategoryData = ArrayList<JSONObject>()
+    private var tradeTypeData = ArrayList<JSONObject>()
+    private var regionData = ArrayList<JSONObject>()
     var category = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,11 +73,11 @@ class AddGoodsActivity : RootActivity() {
         images = ArrayList()
         images_url = ArrayList()
 
-        categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op,categoryData)
-        productTypeAdapter = ProductTypeAdaapter(context,R.layout.item_dlg_market_sel_op,productData)
-        productCategoryAdatper = ProductCategoryAdapter(context,R.layout.item_dlg_market_sel_op,productCategoryData)
-        tradeTypeAdatper = TradeTypeAdapater(context,R.layout.item_dlg_market_sel_op,tradeTypeData)
-        regionAdatper = RegionAdapter(context,R.layout.item_dlg_market_sel_op,regionData)
+        categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, categoryData)
+        productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
+        productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, productCategoryData)
+        tradeTypeAdatper = TradeTypeAdapater(context, R.layout.item_dlg_market_sel_op, tradeTypeData)
+        regionAdatper = RegionAdapter(context, R.layout.item_dlg_market_sel_op, regionData)
 
         getCategory()
 
@@ -88,14 +88,6 @@ class AddGoodsActivity : RootActivity() {
 
         finishLL.setOnClickListener {
             finish()
-        }
-
-        finishaLL.setOnClickListener {
-            choiceLL.visibility = View.GONE
-        }
-
-        selectedTV.setOnClickListener {
-            choiceLL.visibility = View.GONE
         }
 
         goodsinfoLL.setOnClickListener {
@@ -116,8 +108,8 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var position = productTypeAdapter.getItem(position)
                 var type = position.getJSONObject("ProductType")
-                val title = Utils.getString(type,"title")
-                producttypeTV.setText(title)
+                val title = Utils.getString(type, "title")
+                producttypeTV.text = title
                 println("title ------ $title")
                 alert.dismiss()
             }
@@ -142,9 +134,9 @@ class AddGoodsActivity : RootActivity() {
                 alert.dismiss()
             }
 
-            dialogView.dlg_marketLV.setOnItemClickListener{ parent, view, position, id ->
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
 
-            } 
+            }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
                 alert.dismiss()
@@ -166,7 +158,7 @@ class AddGoodsActivity : RootActivity() {
                 alert.dismiss()
             }
 
-            dialogView.dlg_marketLV.setOnItemClickListener{ parent, view, position, id ->
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
             }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
@@ -192,8 +184,8 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var position = regionAdatper.getItem(position)
                 var type = position.getJSONObject("Region")
-                val title = Utils.getString(type,"name")
-                regionTV.setText(title)
+                val title = Utils.getString(type, "name")
+                regionTV.text = title
                 alert.dismiss()
             }
 
@@ -220,8 +212,8 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var position = tradeTypeAdatper.getItem(position)
                 var type = position.getJSONObject("TradeType")
-                val title = Utils.getString(type,"title")
-                tradetypeTV.setText(title)
+                val title = Utils.getString(type, "title")
+                tradetypeTV.text = title
                 alert.dismiss()
             }
 
@@ -230,13 +222,13 @@ class AddGoodsActivity : RootActivity() {
             }
         }
 
-        listviewLV.setOnItemClickListener { parent, view, position, id ->
-            val data = categoryData.get(position)
+        var phoneNum = PrefUtils.getStringPreference(context, "userPhone")
+        sellerPhoneNumTV.text = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, 7) + "-" + phoneNum.substring(7)
+
+        //등록버튼
+        registerLL.setOnClickListener {
 
         }
-
-        var phoneNum = PrefUtils.getStringPreference(context,"userPhone")
-        sellerPhoneNumTV.text = phoneNum.substring(0,3) + "-" + phoneNum.substring(3,7) + "-" + phoneNum.substring(7)
 
     }
 
@@ -261,6 +253,7 @@ class AddGoodsActivity : RootActivity() {
                             images?.add(add_file)
 
                         } else {
+
                             try {
                                 images?.set(images!!.size, add_file)
                             } catch (e: IndexOutOfBoundsException) {
@@ -273,7 +266,7 @@ class AddGoodsActivity : RootActivity() {
 
                     }
 
-                    val child = addPicturesLL!!.getChildCount()
+                    val child = addPicturesLL!!.childCount
                     for (i in 0 until child) {
 
                         val v = addPicturesLL!!.getChildAt(i)
@@ -350,7 +343,7 @@ class AddGoodsActivity : RootActivity() {
                         val file_name = paths.get(paths.size - 1)
                         val getPk = file_name.split("_")
                         val pathPk = getPk.get(0)
-                        val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
+                        val add_file = Utils.getImage(context.contentResolver, images_path!!.get(j))
                         if (images!!.size == 0) {
                             images!!.add(add_file)
                         } else {
@@ -398,7 +391,7 @@ class AddGoodsActivity : RootActivity() {
                         val file_name = paths.get(paths.size - 1)
                         val getPk = file_name.split("_")
                         val pathPk = getPk.get(0)
-                        val add_file = Utils.getImage(context!!.getContentResolver(), images_path!!.get(j))
+                        val add_file = Utils.getImage(context.contentResolver, images_path!!.get(j))
                         if (images!!.size == 0) {
                             images!!.add(add_file)
                         } else {
@@ -417,67 +410,69 @@ class AddGoodsActivity : RootActivity() {
         alert.show()
 
     }
-    fun getCategory(){
-        val params = RequestParams()
-        params.put("all",1)
 
-        if (categoryData != null){
+    fun getCategory() {
+        val params = RequestParams()
+        params.put("all", 1)
+
+        if (categoryData != null) {
             categoryData.clear()
         }
 
-        if (productData != null){
+        if (productData != null) {
             productData.clear()
         }
 
-        if (productCategoryData != null){
+        if (productCategoryData != null) {
             productCategoryData.clear()
         }
 
-        if (tradeTypeData != null){
+        if (tradeTypeData != null) {
             tradeTypeData.clear()
         }
 
-        if (regionData != null){
+        if (regionData != null) {
             regionData.clear()
         }
 
-        MarketAction.load_category(params,object : JsonHttpResponseHandler(){
+        MarketAction.load_category(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                if (result == "ok"){
+                if (result == "ok") {
                     val category = response.getJSONArray("category")
                     val producttype = response.getJSONArray("producttype")
                     val productcategory = response.getJSONArray("productcategory")
                     val tradetype = response.getJSONArray("tradetype")
                     val region = response.getJSONArray("region")
 
-                    if (category.length() > 0 && category != null){
-                        for (i in 0 until category.length()){
+                    if (producttype.length() > 0 && producttype != null) {
+                        for (i in 0 until producttype.length()) {
+                            productData.add(producttype.get(i) as JSONObject)
+                            productData.get(i).put("isSelectedOp",false)
+                        }
+                    }
+
+                    if (category.length() > 0 && category != null) {
+                        for (i in 0 until category.length()) {
                             categoryData.add(category.get(i) as JSONObject)
                         }
                     }
 
-                    if (producttype.length() > 0 && producttype != null){
-                        for (i in 0 until producttype.length()){
-                            productData.add(producttype.get(i) as JSONObject)
-                        }
-                    }
-
-                    if (productcategory.length() > 0 && productcategory != null){
-                        for (i in 0 until productcategory.length()){
+                    if (productcategory.length() > 0 && productcategory != null) {
+                        for (i in 0 until productcategory.length()) {
                             productCategoryData.add(productcategory.get(i) as JSONObject)
                         }
                     }
 
-                    if (tradetype.length() > 0 && tradetype != null){
-                        for (i in 0 until tradetype.length()){
+                    if (tradetype.length() > 0 && tradetype != null) {
+                        for (i in 0 until tradetype.length()) {
                             tradeTypeData.add(tradetype.get(i) as JSONObject)
                         }
                     }
 
-                    if (region.length() > 0 && region != null){
-                        for (i in 0 until region.length()){
+                    if (region.length() > 0 && region != null) {
+                        for (i in 0 until region.length()) {
                             regionData.add(region.get(i) as JSONObject)
                         }
                     }
@@ -490,7 +485,6 @@ class AddGoodsActivity : RootActivity() {
             }
         })
     }
-
 
 
 }
