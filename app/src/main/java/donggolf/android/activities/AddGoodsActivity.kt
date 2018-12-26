@@ -602,6 +602,7 @@ class AddGoodsActivity : RootActivity() {
         params.put("deliv_pay", deliv_way)
         params.put("phone", Utils.getString(sellerPhoneNumTV))
         params.put("description", Utils.getString(descriptionET))
+        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
 
         //이미지
         var seq = 0

@@ -36,8 +36,17 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             }
         }
 
-        var data : JSONObject = getItem(position)
-
+        var json = data.get(position)
+        val market = json.getJSONObject("Market")
+        val id = Utils.getInt(market,"id")
+        json.put("prodId", id)
+        val title = Utils.getString(market,"title")
+//        val product_type = Utils.getString(market,"product_type")
+//        val form = Utils.getString(market,"form")
+//        val brand = Utils.getString(market,"brand")
+        val price = Utils.getString(market,"price")
+        val region = Utils.getString(market,"region")
+        val created = Utils.getString(market,"created")
 
 
         return retView
