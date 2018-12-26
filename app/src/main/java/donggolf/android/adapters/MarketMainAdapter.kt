@@ -41,13 +41,21 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         val id = Utils.getInt(market,"id")
         json.put("prodId", id)
         val title = Utils.getString(market,"title")
-//        val product_type = Utils.getString(market,"product_type")
-//        val form = Utils.getString(market,"form")
-//        val brand = Utils.getString(market,"brand")
         val price = Utils.getString(market,"price")
         val region = Utils.getString(market,"region")
         val created = Utils.getString(market,"created")
+        val nick = Utils.getString(market,"nick")
+        val status = Utils.getString(market,"status")
 
+        item.contentTV.text = title
+        item.nicknameTV.text = nick
+        item.timeTV.text = created.substringBefore(" ")
+        item.priceTV.text = price
+        item.moreTV.text = region
+        item.divisionTV.text = status
+        if (status != null){
+            item.divisionTV.visibility = View.VISIBLE
+        }
 
         return retView
     }
