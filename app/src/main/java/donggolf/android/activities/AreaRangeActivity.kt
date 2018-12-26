@@ -12,6 +12,7 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.PostAction
+import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.AreaRangeAdapter
 import donggolf.android.adapters.AreaRangeGridAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
@@ -20,6 +21,7 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import donggolf.android.models.National
 import donggolf.android.models.NationalGrid
+import donggolf.android.models.Region
 import kotlinx.android.synthetic.main.activity_area_range.*
 import kotlinx.android.synthetic.main.item_area.view.*
 import org.json.JSONException
@@ -43,9 +45,9 @@ class AreaRangeActivity : RootActivity() {
 
     lateinit var type :String
 
-    var arealist: ArrayList<National> = ArrayList<National>()
+    var bigcitylist: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
-    var areaGridList: ArrayList<NationalGrid> = ArrayList<NationalGrid>()
+    var gugunList: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,39 +59,6 @@ class AreaRangeActivity : RootActivity() {
 
         intent = getIntent()
         type = intent.getStringExtra("region_type")//content_filter
-
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-
-        PostAction.load_region(params, object : JsonHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-
-                val result = response!!.getString("result")
-                if (result == "ok"){
-                    var region = response.getJSONArray("region")
-                    if (region.length() > 0 ){
-                        for (i in 0 until region.length()){
-                            var item = region.get(i) as JSONObject
-                            var region = item.getJSONObject("Region")
-                            var id = Utils.getString(region,"id")
-                            var title = Utils.getString(region,"title")
-                            var regionitem = National(id,title,false)
-                            arealist.add(regionitem)
-                        }
-                    }
-
-                    adapter = AreaRangeAdapter(context, R.layout.item_area_range, arealist)
-                    arealistLV.adapter = adapter
-
-                }
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                Toast.makeText(context, "지역 변경 실패", Toast.LENGTH_SHORT).show()
-            }
-        })
-
 
 //        arealistLV.itemsCanFocus = true
 //        arealistLV.setOnItemClickListener{ parent, view, position, id ->
@@ -146,28 +115,41 @@ class AreaRangeActivity : RootActivity() {
 //
 //        }
 
-        GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, areaGridList)
+        getBigCity()
+
+        adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
+        arealistLV.adapter = adapter
+        arealistLV.setOnItemClickListener { parent, view, position, id ->
+            val item = bigcitylist.get(position)
+            var type = item.getJSONObject("Regions")
+            val parent_id = Utils.getString(type,"id")
+            getGugun(parent_id.toInt())
+            arealistLV.visibility = View.GONE
+            gridGV.visibility = View.VISIBLE
+        }
+
+        GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, gugunList)
         gridGV.adapter = GridAdapter
         gridGV.setOnItemClickListener { parent, view, position, id ->
+            val item = gugunList.get(position)
+            var type = item.getJSONObject("Regions")
+            var name:String = Utils.getString(type,"name")
 
-            /*val j = areaGridList.get(position)
-
-            println(j)*/
-
-            var area = areaGridList[position].title
-
-            println("선택된 gridGV ::: $area")
-
-            if (actArea < 3) {
-                areaGridList[position].isSel = !areaGridList[position].isSel
-                actArea ++
-                val regionView = View.inflate(context, R.layout.item_area,null)
-                regionView.regionNameTV.text = area
-
+            var index = areaCnt.text.toString().toInt()
+            var nowIndex = index + 1
+            val regionView = View.inflate(context, R.layout.item_area,null)
+            regionView.regionNameTV.text = name
+            if (nowIndex > 3){
+                Toast.makeText(context, "3개 이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                areaCnt.setText(nowIndex.toString())
+                gugunList[position].put("isSelectedOp",true)
+                GridAdapter.notifyDataSetChanged()
+                actArea++
                 when (actArea) {
-                    1 -> userRG1 = area.toString()
-                    2 -> userRG2 = area.toString()
-                    3 -> userRG3 = area.toString()
+                    1 -> userRG1 = name.toString()
+                    2 -> userRG2 = name.toString()
+                    3 -> userRG3 = name.toString()
                 }
 
                 regionView.regionDelIV.setOnClickListener {
@@ -177,21 +159,57 @@ class AreaRangeActivity : RootActivity() {
                         3 -> userRG3 = ""
                     }
                     actArea--
-
-                    areaCnt.text = "지역 범위 설정 ($actArea/3)"
+                    areaCnt.text = "${actArea.toString()}"
                     tmpRegionLL.removeView(regionView)
+                    gugunList[position].put("isSelectedOp",false)
+                    GridAdapter.notifyDataSetChanged()
                 }
 
                 tmpRegionLL.addView(regionView)
-                        //actArea = count
-                //actArea = count
-                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-
-            } else {
-                Toast.makeText(context, "활동지역 설정은 최대 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
+                areaCnt.text = "${actArea.toString()}"
             }
-
-            GridAdapter.notifyDataSetChanged()
+//            /*val j = areaGridList.get(position)
+//
+//            println(j)*/
+//
+//            var area = areaGridList[position].title
+//
+//            println("선택된 gridGV ::: $area")
+//
+//            if (actArea < 3) {
+//                areaGridList[position].isSel = !areaGridList[position].isSel
+//                actArea ++
+//                val regionView = View.inflate(context, R.layout.item_area,null)
+//                regionView.regionNameTV.text = area
+//
+//                when (actArea) {
+//                    1 -> userRG1 = area.toString()
+//                    2 -> userRG2 = area.toString()
+//                    3 -> userRG3 = area.toString()
+//                }
+//
+//                regionView.regionDelIV.setOnClickListener {
+//                    when (actArea) {
+//                        1 -> userRG1 = ""
+//                        2 -> userRG2 = ""
+//                        3 -> userRG3 = ""
+//                    }
+//                    actArea--
+//
+//                    areaCnt.text = "지역 범위 설정 ($actArea/3)"
+//                    tmpRegionLL.removeView(regionView)
+//                }
+//
+//                tmpRegionLL.addView(regionView)
+//                        //actArea = count
+//                //actArea = count
+//                areaCnt.text = "지역 범위 설정 ($actArea/3)"
+//
+//            } else {
+//                Toast.makeText(context, "활동지역 설정은 최대 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            GridAdapter.notifyDataSetChanged()
 
         }
 
@@ -204,7 +222,6 @@ class AreaRangeActivity : RootActivity() {
                 params.put("region1", userRG1)
                 params.put("region2", userRG2)
                 params.put("region3", userRG3)
-
 
                 MemberAction.update_info(params, object : JsonHttpResponseHandler(){
                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -233,7 +250,10 @@ class AreaRangeActivity : RootActivity() {
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
             }
+
+
         }
+
     }
 
     fun tempMyActRegion() {
@@ -317,4 +337,62 @@ class AreaRangeActivity : RootActivity() {
             }
         })
     }
+
+
+    fun getBigCity(){
+
+        val params = RequestParams()
+        params.put("member_id",1)
+
+        RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val datalist = response!!.getJSONArray("sido")
+
+                if (datalist.length() > 0 && datalist != null){
+                    for (i in 0 until datalist.length()){
+                        bigcitylist.add(datalist.get(i) as JSONObject)
+                        bigcitylist[i].put("isSelectedOp",false)
+                    }
+
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+            }
+
+        })
+
+    }
+
+    fun getGugun(position: Int){
+        if (gugunList != null){
+            gugunList.clear()
+        }
+
+        val params = RequestParams()
+        params.put("sido",position)
+
+        RegionAction.api_gugun(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var datalist = response!!.getJSONArray("gugun")
+
+                if (datalist.length() > 0 && datalist != null){
+                    for (i in 0 until datalist.length()){
+                        gugunList.add(datalist.get(i) as JSONObject)
+                        gugunList[i].put("isSelectedOp",false)
+                    }
+                    GridAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                Toast.makeText(context, "불러오기 실패", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
 }

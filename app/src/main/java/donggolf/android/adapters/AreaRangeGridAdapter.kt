@@ -4,21 +4,28 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.models.National
-import donggolf.android.models.NationalGrid
-import kotlinx.android.synthetic.main.item_area_range_grid.view.*
+import donggolf.android.R.id.main_edit_listitem_title
+import donggolf.android.actions.PostAction
+import donggolf.android.actions.SearchAction
+import donggolf.android.base.Utils
+import donggolf.android.fragment.FreeFragment
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<NationalGrid>) : ArrayAdapter<NationalGrid>(context,view, data){
+open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<NationalGrid> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -38,39 +45,25 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<Natio
             }
         }
 
-        var data : NationalGrid = getItem(position)
+        var json = data.get(position)
 
-        item.titleTV.setText(data.title)
+        var type = json.getJSONObject("Regions")
 
-        item.checkCB.isChecked = data.isSel
+        var name:String = Utils.getString(type,"name")
+        item.item_option_nameTV.text = name
 
-        //if()로 처리
-        /*item.checkCB.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked){
-                println("checked!")
-                println("checked item ::: ${data.title}")
+        var isSel = json.getBoolean("isSelectedOp")
 
-            }
-        }*/
-
-        /*
-        item.checkCB.setOnClickListener {
-            if (it.checkCB.isChecked) {
-
-            }
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
         }
-
-        item.areaItemLL.setOnClickListener {
-            it.checkCB.isChecked = !it.checkCB.isChecked
-            println("checkbox status ::: ${it.checkCB.isChecked}")
-        }
-        */
-
 
         return retView
     }
 
-    override fun getItem(position: Int): NationalGrid {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -93,14 +86,12 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<Natio
     class ViewHolder(v: View) {
 
 
-        var titleTV : TextView
-        var checkCB : CheckBox
-        var areaItemLL : LinearLayout
+        var item_option_nameTV : TextView
+        var item_option_checkIV : ImageView
 
         init {
-            titleTV = v.findViewById<View>(R.id.titleTV) as TextView
-            checkCB = v.findViewById<View>(R.id.checkCB) as CheckBox
-            areaItemLL = v.findViewById<View>(R.id.areaItemLL) as LinearLayout
+            item_option_nameTV = v.findViewById<View>(R.id.item_option_nameTV) as TextView
+            item_option_checkIV = v.findViewById<View>(R.id.item_option_checkIV) as ImageView
         }
     }
 }
