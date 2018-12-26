@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MarketMainActivity"
+    tools:context=".activities.SellerActivity"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/addpostTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -63,8 +62,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="전체보기"/>
-
-
     </LinearLayout>
 
     <ImageView
@@ -76,6 +73,6 @@
         android:id="@+id/gridGV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="2"></GridView>
+        android:numColumns="2"/>
 
 </LinearLayout>
