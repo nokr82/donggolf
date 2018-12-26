@@ -18,4 +18,8 @@ object MarketAction {
         HttpClient.post("/market/get_second_hand_market_item.json", params, handler)
     }
 
+    fun get_product_detail(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_product_detail.json", params, handler)
+    }
+
 }

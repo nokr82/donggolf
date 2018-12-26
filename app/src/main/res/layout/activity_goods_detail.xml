@@ -62,11 +62,13 @@
                         android:layout_weight="20"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/categoryTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13dp"
                             android:text="[우타형][남성용] 브랜드 > 퍼터"/>
                         <TextView
+                            android:id="@+id/tagTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#C9C9C9"
@@ -80,10 +82,12 @@
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical">
                         <ImageView
+                            android:id="@+id/sale_mngIV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@mipmap/btn_option_sale"/>
                         <TextView
+                            android:id="@+id/sale_statusTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -127,6 +131,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/titleTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="뉴포터 2 블랙 34인치"
@@ -137,6 +142,7 @@
                             android:layout_height="wrap_content">
 
                             <TextView
+                                android:id="@+id/writtenDateTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="13dp"
@@ -182,8 +188,9 @@
                             android:layout_centerVertical="true"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="20dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent">
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
                             <ImageView
                                 android:layout_gravity="center"
                                 android:layout_width="20dp"
@@ -194,6 +201,7 @@
                 </LinearLayout>
                 <!--날자랑 플러스표시-->
                 <TextView
+                    android:id="@+id/descriptionTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -272,6 +280,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="판매가"/>
                                 <TextView
+                                    android:id="@+id/priceTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="999,999,999"
@@ -283,13 +292,14 @@
                                     android:layout_height="wrap_content"
                                     android:text="원"/>
                                 <TextView
+                                    android:id="@+id/delivPayTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="택포"
                                     android:gravity="center"
                                     android:textColor="#EF5B33"
                                     android:layout_marginLeft="10dp"
-                                    android:background="@drawable/icon_package"/>
+                                    android:background="@mipmap/icon_package"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -301,6 +311,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="지역"/>
                                 <TextView
+                                    android:id="@+id/sale_regionTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="경상,울산"
@@ -316,6 +327,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="거래방법"/>
                                 <TextView
+                                    android:id="@+id/trade_methodTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="직거래만"
@@ -332,7 +344,7 @@
                                 android:layout_gravity="center"
                                 android:layout_width="36dp"
                                 android:layout_height="36dp"
-                                android:background="@drawable/icon_send_text_message"/>
+                                android:background="@mipmap/icon_send_text_message"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -362,7 +374,7 @@
                         <ImageView
                             android:layout_width="286dp"
                             android:layout_height="31dp"
-                            android:background="@drawable/register"
+                            android:background="@mipmap/register"
                             android:layout_centerVertical="true"/>
                         <LinearLayout
                             android:layout_width="match_parent"

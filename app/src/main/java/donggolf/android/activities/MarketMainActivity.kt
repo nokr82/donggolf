@@ -53,8 +53,8 @@ class MarketMainActivity : RootActivity() {
         maingridGV.adapter = adapter
 
         maingridGV.setOnItemClickListener { parent, view, position, id ->
-
-            MoveGoodsDetailActivity(position)
+            val product_id = adapterData[position].getInt("prodId")
+            MoveGoodsDetailActivity(product_id)
         }
 
         addgoodsTV.setOnClickListener {
@@ -65,18 +65,40 @@ class MarketMainActivity : RootActivity() {
         entireClassificationTV.setOnClickListener {
             init_menu()
             entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+            adapterData.clear()
+            for (i in 0 until classifData.size) {
+                adapterData.add(classifData[i])
+            }
+            adapter.notifyDataSetChanged()
         }
 
         //브랜드전체(brand)
         entireBrandTV.setOnClickListener {
             init_menu()
             entireBrandTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+            adapterData.clear()
+            for (i in 0 until brandData.size) {
+                adapterData.add(brandData[i])
+            }
+            adapter.notifyDataSetChanged()
         }
 
         //종류전체(type)
         entireTypeTV.setOnClickListener {
             init_menu()
             entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+            adapterData.clear()
+            for (i in 0 until assortData.size) {
+                adapterData.add(assortData[i])
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+        market_mngIV.setOnClickListener {
+            startActivity(Intent(context,MarketManageActivity::class.java))
         }
 
     }
@@ -95,10 +117,16 @@ class MarketMainActivity : RootActivity() {
                     val allBrand = response.getJSONArray("allBrand")
 
                     for (i in 0 until allClassif.length()){
-                        assortData.add(allClassif[i] as JSONObject)
-                        classifData.add(allType[i] as JSONObject)
+                        assortData.add(allType[i] as JSONObject)
+                        classifData.add(allClassif[i] as JSONObject)
                         brandData.add(allBrand[i] as JSONObject)
                     }
+
+                    adapterData.clear()
+                    for (i in 0 until assortData.size) {
+                        adapterData.add(assortData[i])
+                    }
+                    adapter.notifyDataSetChanged()
                 }
             }
 
