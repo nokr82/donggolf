@@ -302,19 +302,16 @@ class AddGoodsActivity : RootActivity() {
                             }
                         }
 
-                        /*if (images?.size == 0) {
-                            images?.add(add_file)
-                        } else {
-                            try {
-                                images?.set(images!!.size, add_file)
-                            } catch (e: IndexOutOfBoundsException) {
-                                images?.add(add_file)
-                            }
-                        }
-                        reset(str, i)*/
-                        //=====================================================================
-
-
+//                        if (images?.size == 0) {
+//                            images?.add(add_file)
+//                        } else {
+//                            try {
+//                                images?.set(images!!.size, add_file)
+//                            } catch (e: IndexOutOfBoundsException) {
+//                                images?.add(add_file)
+//                            }
+//                        }
+//                        reset(str, i)
                     }
 
                     /*val child = addPicturesLL!!.childCount
@@ -605,15 +602,25 @@ class AddGoodsActivity : RootActivity() {
         params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
 
         //이미지
-        var seq = 0
-        if (addPicturesLL != null){
-            for (i in 0 until addPicturesLL!!.childCount) {
-                val v = addPicturesLL?.getChildAt(i)
-                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-                if (imageIV is ImageView) {
-                    val bitmap = imageIV.drawable as BitmapDrawable
-                    params.put("upload[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
-                    seq++
+//        var seq = 0
+//        if (addPicturesLL != null){
+//            for (i in 0 until addPicturesLL!!.childCount) {
+//                val v = addPicturesLL?.getChildAt(i)
+//                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+//                if (imageIV is ImageView) {
+//                    val bitmap = imageIV.drawable as BitmapDrawable
+//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+//                    seq++
+//                }
+//            }
+//        }
+
+        if (images_path != null){
+            if (images_path!!.size != 0){
+                for (i in 0..images_path!!.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+
+                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
                 }
             }
         }
