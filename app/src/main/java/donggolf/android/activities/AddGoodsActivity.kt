@@ -753,7 +753,7 @@ class AddGoodsActivity : RootActivity() {
 
         if (images_path != null) {
             if (images_path!!.size != 0) {
-                for (i in 0..images_path!!.size - 1) {
+                for (i in 0 until images_path!!.size) {
                     /*if (images_path!!.get(i).substring(2, 6) == "data") {
                         continue
                     } else {*/
@@ -765,7 +765,19 @@ class AddGoodsActivity : RootActivity() {
             }
         }
 
-        MarketAction
+        MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
     }
 
 }
