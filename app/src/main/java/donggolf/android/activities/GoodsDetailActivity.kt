@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -58,6 +59,7 @@ class GoodsDetailActivity : RootActivity() {
 
         context = this
         product_id = intent.getIntExtra("product_id",0)
+
         getProductData()
 
         //이미지 관련 어댑터
@@ -118,6 +120,14 @@ class GoodsDetailActivity : RootActivity() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == PRODUCT_MODIFY){
+            getProductData()
+        }
+    }
+
     fun popupDialogView(){
 
         if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
@@ -139,16 +149,54 @@ class GoodsDetailActivity : RootActivity() {
                 val intent = Intent(context,AddGoodsActivity::class.java)
                 intent.putExtra("product_id", product_id)
                 startActivityForResult(intent,PRODUCT_MODIFY)
+
+                alert.dismiss()
             }
 
             dialogView.dlg_prod_delTV.setOnClickListener {
                 //삭제 액션
+                delete_product("del")
+                alert.dismiss()
             }
 
             dialogView.dlg_pull_LL.setOnClickListener {
                 //끌올
+                delete_product("pull")
+                alert.dismiss()
             }
         }
+    }
+
+    private fun delete_product(type : String) {
+        val params = RequestParams()
+        params.put("type", type)
+        params.put("product_id", product_id)
+
+        MarketAction.delete_market_item(params,object :JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    var message = response.getString("message")
+                    if (message == "delete"){
+                        Toast.makeText(context,"게시물이 삭제되었습니다",Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else if (message == "pullup"){
+                        Utils.alert(context,"게시글을 끌어올렸습니다.")
+                    } else if (message == "already pulled-up content"){
+                        Utils.alert(context,"오늘 이미 끌어올리기를 사용한 게시글입니다.\n더이상 게시글을 끌어올릴 수 없습니다.\n내일 다시 시도해주시길 바랍니다.")
+                    }
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+        })
     }
 
     fun MoveSellerActivity(){

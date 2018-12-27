@@ -752,23 +752,42 @@ class AddGoodsActivity : RootActivity() {
         params.put("deliv_pay", deliv_way)
         params.put("description", Utils.getString(descriptionET))
 
-        if (images_path != null) {
+        var seq = 0
+        if (addPicturesLL != null){
+            for (i in 0 until addPicturesLL!!.childCount) {
+                val v = addPicturesLL?.getChildAt(i)
+                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+                if (imageIV is ImageView) {
+                    val bitmap = imageIV.drawable as BitmapDrawable
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    seq++
+                }
+            }
+        }
+
+        /*if (images_path != null) {
             if (images_path!!.size != 0) {
                 for (i in 0 until images_path!!.size) {
-                    /*if (images_path!!.get(i).substring(2, 6) == "data") {
+                    *//*if (images_path!!.get(i).substring(2, 6) == "data") {
                         continue
-                    } else {*/
+                    } else {*//*
                         var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
                         params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
                     //}
                 }
             }
-        }
+        }*/
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    var intent = Intent()
+                    setResult(RESULT_OK,intent)
+                    finish()
+                }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
