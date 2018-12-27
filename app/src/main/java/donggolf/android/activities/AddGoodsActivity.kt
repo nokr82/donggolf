@@ -365,6 +365,7 @@ class AddGoodsActivity : RootActivity() {
                         val str = item[i]
 
                         images_path!!.add(str)
+                        println(str)
 
                         var add_file = Utils.getImage(context.contentResolver, str)
 
