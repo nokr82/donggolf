@@ -140,6 +140,7 @@ class GoodsDetailActivity : RootActivity() {
     fun MoveSellerActivity(){
         var intent = Intent(this, SellerActivity::class.java)
         intent.putExtra("seller_id", seller_id)
+        intent.putExtra("type","seller")
         startActivity(intent)
     }
 
