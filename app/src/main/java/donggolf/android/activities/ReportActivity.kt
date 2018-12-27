@@ -21,6 +21,7 @@ import org.json.JSONObject
 class ReportActivity : RootActivity() {
 
     var member_id = 0
+    var market_id = 0
     var reportListData:ArrayList<JSONObject> = ArrayList<JSONObject>()
     lateinit var reportAdapter: ReportAdapter
 
@@ -34,6 +35,7 @@ class ReportActivity : RootActivity() {
 
         if (intent.getIntExtra("member_id",0) != null){
             member_id = intent.getIntExtra("member_id",0)
+            market_id = intent.getIntExtra("market_id",0)
         }
 
 
@@ -72,6 +74,7 @@ class ReportActivity : RootActivity() {
     fun get_market_report(){
         val params = RequestParams()
         params.put("member_id", member_id)
+        params.put("market_id",market_id)
 
         MarketAction.get_market_report(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -119,7 +122,7 @@ class ReportActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id", member_id)
+        params.put("market_id", market_id)
         params.put("report_member_id",PrefUtils.getIntPreference(context, "member_id"))
         params.put("title",title)
         params.put("content",content)

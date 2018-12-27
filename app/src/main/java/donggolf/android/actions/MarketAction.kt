@@ -34,4 +34,8 @@ object MarketAction {
         HttpClient.post("/market/get_content_cnt.json", params, handler)
     }
 
+    fun get_my_market_item(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_my_market_item.json", params, handler)
+    }
+
 }

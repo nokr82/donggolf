@@ -7,7 +7,9 @@ import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -36,9 +38,33 @@ open class SellerAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var json = data.get(position)
+        val market = json.getJSONObject("Market")
+        val id = Utils.getInt(market,"id")
+        json.put("prodId", id)
+        val title = Utils.getString(market,"title")
+        val price = Utils.getString(market,"price")
+        val region = Utils.getString(market,"region")
+        val created = Utils.getString(market,"created")
+        val nick = Utils.getString(market,"nick")
+        val status = Utils.getString(market,"status")
 
+        item.contentTV.text = title
+        item.nicknameTV.text = nick
+        item.timeTV.text = created.substringBefore(" ")
+        item.priceTV.text = price
+        item.moreTV.text = region
+        item.divisionTV.text = status
+        if (status != null){
+            item.divisionTV.visibility = View.VISIBLE
+        }
 
+        val marketImg = json.getJSONArray("MarketImg")
+        if (marketImg.length() != 0) {
+            val img_uri = Utils.getString(marketImg[0] as JSONObject, "img_small")
+            val image = Config.url + img_uri
+            ImageLoader.getInstance().displayImage(image, item.imageIV, Utils.UILoptionsProfile)
+        }
 
         return retView
     }

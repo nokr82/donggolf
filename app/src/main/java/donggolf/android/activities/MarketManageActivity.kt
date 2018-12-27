@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -28,6 +29,17 @@ class MarketManageActivity : RootActivity() {
         context = this
 
         finishaBT.setOnClickListener { finish() }
+
+        servicecenterLL.setOnClickListener {
+            val intent = Intent(this, InquireActivity::class.java)
+            startActivity(intent)
+        }
+
+        myMarketPostLL.setOnClickListener {
+            val intent = Intent(this, SellerActivity::class.java)
+            intent.putExtra("type","my")
+            startActivity(intent)
+        }
 
         get_content_cnt()
     }
