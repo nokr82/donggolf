@@ -432,7 +432,7 @@
                             android:layout_height="match_parent">
 
                             <EditText
-                                android:id="@+id/phoneET"
+                                android:id="@+id/findET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
@@ -440,6 +440,8 @@
                                 android:layout_marginRight="90dp"
                                 android:background="@null"
                                 android:singleLine="true"
+                                android:hint="숫자 또는 계좌번호를 입력하세요."
+                                android:inputType="number"
                                 android:textSize="12dp" />
                         </LinearLayout>
 

@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -110,6 +111,11 @@ class GoodsDetailActivity : RootActivity() {
                     null, null)
         }
 
+        findBT.setOnClickListener {
+            val find = findET.text.toString()
+//            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://thecheat.co.kr/")))
+        }
+
     }
 
     fun popupDialogView(){
@@ -151,6 +157,7 @@ class GoodsDetailActivity : RootActivity() {
         } else {
             var intent = Intent(this, ReportActivity::class.java)
             intent.putExtra("member_id", member_id)
+            intent.putExtra("market_id",product_id)
             startActivity(intent)
         }
 

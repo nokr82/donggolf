@@ -32,7 +32,6 @@ class SellerActivity : RootActivity() {
     var seller_id = 0
     var type = ""
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seller)
@@ -51,7 +50,7 @@ class SellerActivity : RootActivity() {
             finish()
         }
 
-        adapter = SellerAdapter(context,R.layout.item_seller,adapterData)
+        adapter = SellerAdapter(context,R.layout.item_market_main,adapterData)
 
         gridGV.adapter = adapter
 
