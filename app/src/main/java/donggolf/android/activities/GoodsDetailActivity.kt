@@ -18,14 +18,17 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
+import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_add_goods.*
 import kotlinx.android.synthetic.main.activity_goods_detail.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
+import kotlinx.android.synthetic.main.dlg_simple_radio_option.view.*
 import org.json.JSONObject
 import java.util.ArrayList
 
@@ -50,6 +53,7 @@ class GoodsDetailActivity : RootActivity() {
     var product_id = 0
     var seller_phone = ""
     var seller_id = 0
+    var tmp_prod_status = ""
 
     var member_id = 0
 
@@ -93,7 +97,7 @@ class GoodsDetailActivity : RootActivity() {
             popupDialogView()
         }
 
-        finishLL.setOnClickListener {
+        finish_goods_dtlLL.setOnClickListener {
             finish()
         }
 
@@ -103,6 +107,48 @@ class GoodsDetailActivity : RootActivity() {
 
         reportTV.setOnClickListener {
             MoveReportActivity(member_id)
+        }
+
+        change_prod_stateLL.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_simple_radio_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            when(tmp_prod_status){
+                "판매예약"-> dialogView.dlg_sale_bookIV.setImageResource(R.mipmap.btn_radio_on)
+                "판매중"-> dialogView.dlg_saleIV.setImageResource(R.mipmap.btn_radio_on)
+                "거래중"-> dialogView.dlg_in_dealIV.setImageResource(R.mipmap.btn_radio_on)
+                "판매보류"-> dialogView.dlg_holdIV.setImageResource(R.mipmap.btn_radio_on)
+                "판매완료"-> dialogView.dlg_completeIV.setImageResource(R.mipmap.btn_radio_on)
+            }
+
+            dialogView.dlg_sale_bookLL.setOnClickListener {
+                tmp_prod_status = "판매예약"
+                alert.dismiss()
+                updateProductStatus()
+            }
+            dialogView.dlg_saleLL.setOnClickListener {
+                tmp_prod_status = "판매중"
+                alert.dismiss()
+                updateProductStatus()
+            }
+            dialogView.dlg_in_dealLL.setOnClickListener {
+                tmp_prod_status = "거래중"
+                alert.dismiss()
+                updateProductStatus()
+            }
+            dialogView.dlg_holdLL.setOnClickListener {
+                tmp_prod_status = "판매보류"
+                alert.dismiss()
+                updateProductStatus()
+            }
+            dialogView.dlg_completeLL.setOnClickListener {
+                tmp_prod_status = "판매완료"
+                alert.dismiss()
+                updateProductStatus()
+            }
+
         }
 
         contact_sellerLL.setOnClickListener {
@@ -235,11 +281,12 @@ class GoodsDetailActivity : RootActivity() {
                             "[${Utils.getString(market,"form").substringAfter(" ")}용]" +
                             " 브랜드 > ${Utils.getString(market,"brand")}"
                     tagTV.text = "# ${Utils.getString(market,"brand")} 정품"
-                    sale_statusTV.text = Utils.getString(market,"status")
-                    titleTV.text = Utils.getString(market,"title")
+                    tmp_prod_status = Utils.getString(market,"status")
+                    sale_statusTV.text = tmp_prod_status
+                    prd_titleTV.text = Utils.getString(market,"title")
                     writtenDateTV.text = Utils.getString(market,"created")
                     descriptionTV.text = Utils.getString(market,"description")
-                    priceTV.text = Utils._comma(Utils.getString(market,"price"))
+                    prd_priceTV.text = Utils._comma(Utils.getString(market,"price"))
                     if (Utils.getString(market,"deliv_pay") == "구매자 부담"){
                         delivPayTV.visibility = View.VISIBLE
                     } else {
@@ -277,6 +324,30 @@ class GoodsDetailActivity : RootActivity() {
                     }
 
                     reportTV.text = "신고하기(${response.getString("reportcount")})"
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun updateProductStatus(){
+        val params = RequestParams()
+        params.put("status", tmp_prod_status)
+        params.put("product_id", product_id)
+
+        MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    sale_statusTV.text = tmp_prod_status
                 }
             }
 
