@@ -19,6 +19,7 @@ class MarketManageActivity : RootActivity() {
 
     var todayCount = 0
     var monthCount = 0
+    var contentCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +43,11 @@ class MarketManageActivity : RootActivity() {
                 if (result == "ok") {
                     todayCount = Utils.getInt(response,"today")
                     monthCount = Utils.getInt(response,"month")
+                    contentCount = Utils.getInt(response,"contentcnt")
 
                     availDayTV.setText(todayCount.toString())
                     availMonthTV.setText(monthCount.toString())
+                    mycontentTV.setText("내가 올린글(" + contentCount.toString() + ")")
 
                 }
             }
