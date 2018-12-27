@@ -203,6 +203,7 @@
                         android:layout_height="match_parent">
 
                         <LinearLayout
+                            android:id="@+id/show_mng_dlgLL"
                             android:layout_width="40dp"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
@@ -214,7 +215,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:background="@drawable/btn_posting_option" />
+                                android:background="@mipmap/btn_posting_option" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>

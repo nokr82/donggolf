@@ -27,6 +27,7 @@
             <ImageView
                 android:id="@+id/imageIV"
                 android:layout_width="match_parent"
+                android:scaleType="centerCrop"
                 android:layout_height="159dp" />
             <TextView
                 android:id="@+id/contentTV"

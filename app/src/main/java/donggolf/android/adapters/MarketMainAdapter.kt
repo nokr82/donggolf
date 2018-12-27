@@ -7,7 +7,9 @@ import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -55,6 +57,13 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         item.divisionTV.text = status
         if (status != null){
             item.divisionTV.visibility = View.VISIBLE
+        }
+
+        val marketImg = json.getJSONArray("MarketImg")
+        if (marketImg.length() != 0) {
+            val img_uri = Utils.getString(marketImg[0] as JSONObject, "img_small")
+            val image = Config.url + img_uri
+            ImageLoader.getInstance().displayImage(image, item.imageIV, Utils.UILoptionsProfile)
         }
 
         return retView

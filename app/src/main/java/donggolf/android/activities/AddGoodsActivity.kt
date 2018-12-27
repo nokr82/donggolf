@@ -34,6 +34,7 @@ import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.util.ArrayList
+import kotlin.coroutines.experimental.coroutineContext
 
 class AddGoodsActivity : RootActivity() {
 
@@ -72,6 +73,8 @@ class AddGoodsActivity : RootActivity() {
     var prod_regoin = ""
     var trade_type = ""//거래 방법
     var deliv_way = ""
+
+    var modified_product_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -269,6 +272,56 @@ class AddGoodsActivity : RootActivity() {
         //등록버튼
         registerLL.setOnClickListener {
             register_product()
+        }
+
+        modified_product_id = intent.getIntExtra("product_id",0)
+        if (modified_product_id != 0){
+            val params = RequestParams()
+            params.put("product_id", modified_product_id)
+
+            MarketAction.get_product_detail(params, object :JsonHttpResponseHandler(){
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    //println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok"){
+                        val data = response.getJSONObject("product")
+                        val market = data.getJSONObject("Market")
+                        titleTV.setText(Utils.getString(market,"title"))
+                        producttypeTV.text = Utils.getString(market,"product_type")
+                        brandTV.text = Utils.getString(market,"brand")
+                        tendencyTV.text = Utils.getString(market,"form")
+                        priceTV.setText(Utils.getString(market,"price"))
+                        regionTV.text = Utils.getString(market,"region")
+                        tradetypeTV.text = Utils.getString(market,"trade_way")
+                        if (tradetypeTV.text.contains("택배거래")){
+                            delivery_typeRG.visibility = View.VISIBLE
+                            var tmpPayMtd = Utils.getString(market,"deliv_pay")
+                            if (tmpPayMtd.contains("판매자")){
+                                seller_payRB.isSelected = true
+                            } else {
+                                buyer_payRB.isSelected = true
+                            }
+                        }else{
+                            delivery_typeRG.visibility = View.GONE
+                        }
+                        descriptionET.setText(Utils.getString(market,"description"))
+
+                        val images = data.getJSONArray("MarketImg")
+                        for (i in 0 until images.length()){
+                            var imgView = View.inflate(context, R.layout.item_addgoods, null)
+                            //addPicturesLL.addView()
+                        }
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                    println(errorResponse)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
+                }
+            })
         }
 
     }

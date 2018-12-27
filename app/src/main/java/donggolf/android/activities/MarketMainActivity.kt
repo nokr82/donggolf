@@ -21,6 +21,7 @@ class MarketMainActivity : RootActivity() {
     private  lateinit var  adapter : MarketMainAdapter
 
     private  var adapterData = ArrayList<JSONObject>()
+    //var imgPathStr = ArrayList<String>()
     var classifData = ArrayList<JSONObject>()//분류별로
     var assortData = ArrayList<JSONObject>()//종류별로
     var brandData = ArrayList<JSONObject>()
@@ -42,11 +43,6 @@ class MarketMainActivity : RootActivity() {
 
         //목록 가져와서 array에 추가
         getSecondHandMarketItems("tmpType")
-//        var dataObj = JSONObject()
-//
-//        adapterData.add(dataObj)
-//        adapterData.add(dataObj)
-//        adapterData.add(dataObj)
 
         //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)

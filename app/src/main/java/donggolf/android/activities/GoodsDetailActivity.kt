@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +21,8 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_goods_detail.*
+import kotlinx.android.synthetic.main.dlg_comment_menu.*
+import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import org.json.JSONObject
 import java.util.ArrayList
 
@@ -38,10 +41,12 @@ class GoodsDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     var imgPosition = 0
+    val PRODUCT_DETAIL = 111
+    val PRODUCT_MODIFY = 112
 
     var product_id = 0
     var seller_phone = ""
-    var tmp_member_phone = ""
+    var seller_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,68 +69,23 @@ class GoodsDetailActivity : RootActivity() {
             override fun onPageScrollStateChanged(state: Int) {
 
                 if (_Images != null){
+                    pagerVP.visibility = View.VISIBLE
                     for (i in _Images.indices) {
                         if (i == imgPosition) {
-                            imageCountTV.text = "$i/${_Images.size}"
-                        } else {
-
+                            imageCountTV.text = "${i+1}/${_Images.size}"
                         }
                     }
+                } else {
+                    pagerVP.visibility = View.GONE
+                    imageCountTV.text = "이미지가 없습니다."
                 }
 
             }
         })
 
-        /*pagerVP.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-
-                    MotionEvent.ACTION_DOWN ->{
-
-                        pressStartTime = System.currentTimeMillis()
-                        pressedX = event.x
-                        pressedY = event.y
-                        stayedWithinClickDistance = true
-
-                        println("OnTouch : ACTION_DOWN")
-
-                        return true
-                    }
-
-                    MotionEvent.ACTION_CANCEL->{
-
-                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.x, event.y) > MAX_CLICK_DISTANCE) {
-                            stayedWithinClickDistance = false
-                        }
-                        return true
-
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-
-                        val pressDuration = System.currentTimeMillis() - pressStartTime!!
-                        if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
-                        }
-
-                        if (intent.hasExtra("id")) {
-                            val id = intent.getStringExtra("id")
-                            var intent = Intent(context, PictureDetailActivity::class.java)
-                            intent.putExtra("id", id)
-                            if (_Images != null){
-                                intent.putExtra("paths",_Images)
-                            }
-                            startActivityForResult(intent, PICTURE_DETAIL)
-
-                            return true
-                        }
-
-                    }
-
-                }
-
-                return v?.onTouchEvent(event) ?: true
-            }
-        })*/
+        show_mng_dlgLL.setOnClickListener {
+            popupDialogView()
+        }
 
         finishLL.setOnClickListener {
             finish()
@@ -149,8 +109,34 @@ class GoodsDetailActivity : RootActivity() {
 
     }
 
+    fun popupDialogView(){
+
+        //if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView) // custom xml과 alertDialogBuilder를 붙임
+            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
+
+            dialogView.dlg_comment_copyTV.visibility = View.GONE
+            dialogView.dlg_comment_blockTV.visibility = View.GONE
+            dialogView.dlg_comment_delTV.visibility = View.GONE
+
+            dialogView.dlg_prod_modTV.visibility = View.VISIBLE
+            dialogView.dlg_prod_delTV.visibility = View.VISIBLE
+            dialogView.dlg_pull_LL.visibility = View.VISIBLE
+
+            dialogView.dlg_prod_modTV.setOnClickListener {
+                val intent = Intent(context,AddGoodsActivity::class.java)
+                intent.putExtra("product_id", product_id)
+                startActivityForResult(intent,PRODUCT_MODIFY)
+            }
+        //}
+    }
+
     fun MoveSellerActivity(){
         var intent = Intent(this, SellerActivity::class.java)
+        intent.putExtra("seller_id", seller_id)
         startActivity(intent)
     }
 
@@ -194,6 +180,7 @@ class GoodsDetailActivity : RootActivity() {
                     val seller = response.getJSONObject("seller")
                     val member = seller.getJSONObject("Member")
                     nickTV.text = Utils.getString(member,"nick")
+                    seller_id = Utils.getInt(member,"id")
 
                     val img_uri = Utils.getString(member,"profile_img")
                     val image = Config.url + img_uri
@@ -203,8 +190,10 @@ class GoodsDetailActivity : RootActivity() {
                     val marketImg = product.getJSONArray("MarketImg")
                     for (i in 0 until marketImg.length()){
                         val data = marketImg[i] as JSONObject
-                        _Images.add(Utils.getString(data,"img_uri"))
+                        _Images.add(Config.url + Utils.getString(data,"img_uri"))
                     }
+                    prodImgAdapter.notifyDataSetChanged()
+                    imageCountTV.text = "1/${_Images.size}"
 
                 }
             }

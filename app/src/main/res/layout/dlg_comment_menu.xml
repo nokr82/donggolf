@@ -9,6 +9,14 @@
         android:padding="20dp"
         android:gravity="center"
         android:text="댓글복사"/>
+    <TextView
+        android:id="@+id/dlg_prod_modTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="수정하기"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +28,14 @@
         android:padding="20dp"
         android:gravity="center"
         android:text="차단하기"/>
+    <TextView
+        android:id="@+id/dlg_prod_delTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="삭제하기"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,4 +47,23 @@
         android:padding="20dp"
         android:gravity="center"
         android:text="삭제하기"/>
+    <LinearLayout
+        android:id="@+id/dlg_pull_LL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="20dp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="게시물끌어올림"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#0EDA2F"
+            android:text="(일 1회 사용가능)"/>
+    </LinearLayout>
+
 </LinearLayout>
