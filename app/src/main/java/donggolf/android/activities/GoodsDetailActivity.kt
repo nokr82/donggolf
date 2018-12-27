@@ -2,16 +2,21 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Messenger
 import android.support.v4.view.ViewPager
 import android.telephony.SmsManager
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -106,11 +111,34 @@ class GoodsDetailActivity : RootActivity() {
         }
 
         contact_sellerLL.setOnClickListener {
-            var myPhoneNum = PrefUtils.getStringPreference(context,"userPhone")
-            val smsMng = SmsManager.getDefault()
-            smsMng.sendTextMessage(seller_phone,null,
-                    "[동네골프]안녕하세요? 중고장터에 올라온 게시글을 보고 연락드립니다. 판매의사 있으시면 회신 바랍니다.",
-                    null, null)
+
+            val permissionlistener = object : PermissionListener {
+                override fun onPermissionGranted() {
+                    var myPhoneNum = PrefUtils.getStringPreference(context,"userPhone")
+
+                    val text = "[동네골프]안녕하세요? 중고장터에 올라온 게시글을 보고 연락드립니다. 판매의사 있으시면 회신 바랍니다."
+                    val phone = "01089939435"
+                    SmsManager.getDefault().sendTextMessage(phone,null, text, null, null)
+
+                    Toast.makeText(context,"문자 전송 완료",Toast.LENGTH_SHORT).show()
+
+                }
+
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                }
+
+            }
+
+            TedPermission.with(this)
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                    .setPermissions(
+                            android.Manifest.permission.READ_PHONE_STATE,
+                            android.Manifest.permission.SEND_SMS,
+                            android.Manifest.permission.RECEIVE_SMS
+                    )
+                    .check();
+
         }
 
         findBT.setOnClickListener {
@@ -289,5 +317,7 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
     }
+
+
 
 }
