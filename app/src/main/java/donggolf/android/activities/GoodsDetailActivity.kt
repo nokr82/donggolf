@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.telephony.SmsManager
+import android.view.MotionEvent
 import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -12,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
+import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -25,6 +28,17 @@ class GoodsDetailActivity : RootActivity() {
     private lateinit var context: Context
 
     var _Images: ArrayList<String> = ArrayList<String>()
+    private lateinit var prodImgAdapter: FullScreenImageAdapter
+    var pressStartTime: Long?  = 0
+    var pressedX: Float? = 0F
+    var pressedY: Float? = 0F
+    var stayedWithinClickDistance: Boolean? = false
+
+    val MAX_CLICK_DURATION = 1000
+    val MAX_CLICK_DISTANCE = 15
+
+    var imgPosition = 0
+
     var product_id = 0
     var seller_phone = ""
     var tmp_member_phone = ""
@@ -36,6 +50,82 @@ class GoodsDetailActivity : RootActivity() {
         context = this
         product_id = intent.getIntExtra("product_id",0)
         getProductData()
+
+        //이미지 관련 어댑터
+        prodImgAdapter = FullScreenImageAdapter(this@GoodsDetailActivity, _Images)
+        pagerVP.adapter = prodImgAdapter
+        pagerVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                imgPosition = position
+            }
+
+            override fun onPageSelected(position: Int) {}
+
+            override fun onPageScrollStateChanged(state: Int) {
+
+                if (_Images != null){
+                    for (i in _Images.indices) {
+                        if (i == imgPosition) {
+                            imageCountTV.text = "$i/${_Images.size}"
+                        } else {
+
+                        }
+                    }
+                }
+
+            }
+        })
+
+        /*pagerVP.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+
+                    MotionEvent.ACTION_DOWN ->{
+
+                        pressStartTime = System.currentTimeMillis()
+                        pressedX = event.x
+                        pressedY = event.y
+                        stayedWithinClickDistance = true
+
+                        println("OnTouch : ACTION_DOWN")
+
+                        return true
+                    }
+
+                    MotionEvent.ACTION_CANCEL->{
+
+                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.x, event.y) > MAX_CLICK_DISTANCE) {
+                            stayedWithinClickDistance = false
+                        }
+                        return true
+
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+
+                        val pressDuration = System.currentTimeMillis() - pressStartTime!!
+                        if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
+                        }
+
+                        if (intent.hasExtra("id")) {
+                            val id = intent.getStringExtra("id")
+                            var intent = Intent(context, PictureDetailActivity::class.java)
+                            intent.putExtra("id", id)
+                            if (_Images != null){
+                                intent.putExtra("paths",_Images)
+                            }
+                            startActivityForResult(intent, PICTURE_DETAIL)
+
+                            return true
+                        }
+
+                    }
+
+                }
+
+                return v?.onTouchEvent(event) ?: true
+            }
+        })*/
 
         finishLL.setOnClickListener {
             finish()
@@ -115,7 +205,6 @@ class GoodsDetailActivity : RootActivity() {
                         val data = marketImg[i] as JSONObject
                         _Images.add(Utils.getString(data,"img_uri"))
                     }
-                    
 
                 }
             }
@@ -129,4 +218,5 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
     }
+
 }
