@@ -24,12 +24,14 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.*
+import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_goods.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
+import kotlinx.android.synthetic.main.item_addgoods.view.*
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -128,7 +130,7 @@ class AddGoodsActivity : RootActivity() {
                 val title = Utils.getString(type, "title")
                 producttypeTV.text = title
                 prod_type = title
-                productData[position].put("isSelectedOp",true)
+                productData[position].put("isSelectedOp", true)
                 productTypeAdapter.notifyDataSetChanged()
                 //println("title ------ $title")
                 alert.dismiss()
@@ -160,7 +162,7 @@ class AddGoodsActivity : RootActivity() {
                 val title = Utils.getString(type, "title")
                 brandTV.text = title
                 prod_brand = title
-                categoryData[position].put("isSelectedOp",true)
+                categoryData[position].put("isSelectedOp", true)
                 categoryAdapter.notifyDataSetChanged()
 
                 alert.dismiss()
@@ -192,7 +194,7 @@ class AddGoodsActivity : RootActivity() {
                 val title = Utils.getString(type, "title")
                 tendencyTV.text = title
                 prod_form = title
-                productCategoryData[position].put("isSelectedOp",true)
+                productCategoryData[position].put("isSelectedOp", true)
                 productCategoryAdatper.notifyDataSetChanged()
 
                 alert.dismiss()
@@ -254,7 +256,7 @@ class AddGoodsActivity : RootActivity() {
                 val title = Utils.getString(type, "title")
                 tradetypeTV.text = title
                 trade_type = title
-                if (title == "택배거래" || title == "직+택배거래" || title == "안전거래(준비중입니다)"){
+                if (title == "택배거래" || title == "직+택배거래" || title == "안전거래(준비중입니다)") {
                     pay_wayLL.visibility = View.VISIBLE
                 } else {
                     pay_wayLL.visibility = View.GONE
@@ -273,45 +275,66 @@ class AddGoodsActivity : RootActivity() {
 
         //등록버튼
         registerLL.setOnClickListener {
-            register_product()
+            if (modified_product_id != 0){
+                modifyProductInform()
+            }else {
+                register_product()
+            }
         }
 
-        modified_product_id = intent.getIntExtra("product_id",0)
-        if (modified_product_id != 0){
+        modified_product_id = intent.getIntExtra("product_id", 0)
+        if (modified_product_id != 0) {
             val params = RequestParams()
             params.put("product_id", modified_product_id)
 
-            MarketAction.get_product_detail(params, object :JsonHttpResponseHandler(){
+            MarketAction.get_product_detail(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     //println(response)
                     val result = response!!.getString("result")
-                    if (result == "ok"){
+                    if (result == "ok") {
                         val data = response.getJSONObject("product")
                         val market = data.getJSONObject("Market")
-                        titleTV.setText(Utils.getString(market,"title"))
-                        producttypeTV.text = Utils.getString(market,"product_type")
-                        brandTV.text = Utils.getString(market,"brand")
-                        tendencyTV.text = Utils.getString(market,"form")
-                        priceTV.setText(Utils.getString(market,"price"))
-                        regionTV.text = Utils.getString(market,"region")
-                        tradetypeTV.text = Utils.getString(market,"trade_way")
-                        if (tradetypeTV.text.contains("택배거래")){
-                            delivery_typeRG.visibility = View.VISIBLE
-                            var tmpPayMtd = Utils.getString(market,"deliv_pay")
-                            if (tmpPayMtd.contains("판매자")){
+                        titleTV.setText(Utils.getString(market, "title"))
+                        prod_type = Utils.getString(market, "product_type")
+                        producttypeTV.text = prod_type
+                        prod_brand = Utils.getString(market, "brand")
+                        brandTV.text = prod_brand
+                        prod_form = Utils.getString(market, "form")
+                        tendencyTV.text = prod_form
+                        priceTV.setText(Utils.getString(market, "price"))
+                        prod_regoin = Utils.getString(market, "region")
+                        regionTV.text = prod_regoin
+                        trade_type = Utils.getString(market, "trade_way")
+                        tradetypeTV.text = trade_type
+                        if (trade_type == "택배거래" || trade_type == "직+택배거래") {
+                            pay_wayLL.visibility = View.VISIBLE
+                            var tmpPayMtd = Utils.getString(market, "deliv_pay")
+                            if (tmpPayMtd.contains("판매자")) {
                                 seller_payRB.isSelected = true
+                                deliv_way = "판매자 부담"
                             } else {
                                 buyer_payRB.isSelected = true
+                                deliv_way = "구매자 부담"
                             }
-                        }else{
-                            delivery_typeRG.visibility = View.GONE
+                        } else {
+                            pay_wayLL.visibility = View.GONE
                         }
-                        descriptionET.setText(Utils.getString(market,"description"))
+                        descriptionET.setText(Utils.getString(market, "description"))
 
                         val images = data.getJSONArray("MarketImg")
-                        for (i in 0 until images.length()){
-                            var imgView = View.inflate(context, R.layout.item_addgoods, null)
-                            //addPicturesLL.addView()
+                        if (images.length() != 0) {
+
+                            for (i in 0 until images.length()) {
+                                var tmpImg = images.getJSONObject(i)
+                                val img_uri = Utils.getString(tmpImg, "img_uri")
+                                val image = Config.url + img_uri
+
+                                images_path!!.add(img_uri)
+
+                                var imgView = View.inflate(context, R.layout.item_addgoods, null)
+                                ImageLoader.getInstance().displayImage(image, imgView.addedImgIV, Utils.UILoptionsProfile)
+                                addPicturesLL?.addView(imgView)
+                            }
                         }
                     }
                 }
@@ -346,13 +369,13 @@ class AddGoodsActivity : RootActivity() {
                         var add_file = Utils.getImage(context.contentResolver, str)
 
                         var imageView = View.inflate(context, R.layout.item_addgoods, null)
-                        val imageIV :ImageView = imageView.findViewById(R.id.addedImgIV)
-                        val delIV :ImageView = imageView.findViewById(R.id.delIV)
+                        val imageIV: ImageView = imageView.findViewById(R.id.addedImgIV)
+                        val delIV: ImageView = imageView.findViewById(R.id.delIV)
                         imageIV.setImageBitmap(add_file)
                         addPicturesLL?.addView(imageView)
 
                         delIV.setOnClickListener {
-                            if (addPicturesLL != null){
+                            if (addPicturesLL != null) {
                                 addPicturesLL!!.removeView(imageView)
                             }
                         }
@@ -587,41 +610,41 @@ class AddGoodsActivity : RootActivity() {
                     val tradetype = response.getJSONArray("tradetype")
                     val region = response.getJSONArray("region")
 
-                    todayCount = Utils.getInt(response,"today")
-                    monthCount = Utils.getInt(response,"month")
+                    todayCount = Utils.getInt(response, "today")
+                    monthCount = Utils.getInt(response, "month")
 
                     if (producttype.length() > 0 && producttype != null) {
                         for (i in 0 until producttype.length()) {
                             productData.add(producttype.get(i) as JSONObject)
-                            productData.get(i).put("isSelectedOp",false)
+                            productData.get(i).put("isSelectedOp", false)
                         }
                     }
 
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
                             categoryData.add(category.get(i) as JSONObject)
-                            categoryData[i].put("isSelectedOp",false)
+                            categoryData[i].put("isSelectedOp", false)
                         }
                     }
 
                     if (productcategory.length() > 0 && productcategory != null) {
                         for (i in 0 until productcategory.length()) {
                             productCategoryData.add(productcategory.get(i) as JSONObject)
-                            productCategoryData.get(i).put("isSelectedOp",false)
+                            productCategoryData.get(i).put("isSelectedOp", false)
                         }
                     }
 
                     if (tradetype.length() > 0 && tradetype != null) {
                         for (i in 0 until tradetype.length()) {
                             tradeTypeData.add(tradetype.get(i) as JSONObject)
-                            tradeTypeData.get(i).put("isSelectedOp",false)
+                            tradeTypeData.get(i).put("isSelectedOp", false)
                         }
                     }
 
                     if (region.length() > 0 && region != null) {
                         for (i in 0 until region.length()) {
                             regionData.add(region.get(i) as JSONObject)
-                            regionData.get(i).put("isSelectedOp",false)
+                            regionData.get(i).put("isSelectedOp", false)
                         }
                     }
 
@@ -634,14 +657,14 @@ class AddGoodsActivity : RootActivity() {
         })
     }
 
-    fun register_product(){
+    fun register_product() {
 
-        if (todayCount >= 5 ){
+        if (todayCount >= 5) {
             Toast.makeText(context, "하루에 5개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
-        } else if (monthCount >= 40){
+        } else if (monthCount >= 40) {
             Toast.makeText(context, "한달에 40개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
-            when(delivery_typeRG.checkedRadioButtonId){
+            when (delivery_typeRG.checkedRadioButtonId) {
                 R.id.seller_payRB -> {
                     deliv_way = "판매자 부담"
                 }
@@ -651,7 +674,7 @@ class AddGoodsActivity : RootActivity() {
             }
 
             val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
             params.put("title", Utils.getString(titleTV))
             params.put("product_type", prod_type)
             params.put("form", prod_form)
@@ -662,9 +685,9 @@ class AddGoodsActivity : RootActivity() {
             params.put("deliv_pay", deliv_way)
             params.put("phone", Utils.getString(sellerPhoneNumTV))
             params.put("description", Utils.getString(descriptionET))
-            params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+            params.put("nick", PrefUtils.getStringPreference(context, "login_nick"))
 
-        //이미지
+            //이미지
 //        var seq = 0
 //        if (addPicturesLL != null){
 //            for (i in 0 until addPicturesLL!!.childCount) {
@@ -678,23 +701,25 @@ class AddGoodsActivity : RootActivity() {
 //            }
 //        }
 
-            if (images_path != null){
-                if (images_path!!.size != 0){
-                    for (i in 0..images_path!!.size - 1){
+            if (images_path != null) {
+                if (images_path!!.size != 0) {
+                    for (i in 0..images_path!!.size - 1) {
+
                         var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
-                        params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
+
                     }
                 }
             }
 
             //println(params)
 
-            MarketAction.add_market_product(params, object : JsonHttpResponseHandler(){
+            MarketAction.add_market_product(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
                     val result = response!!.getString("result")
-                    if (result == "ok"){
+                    if (result == "ok") {
                         //Utils.alert(context,"상품이 성공적으로 등록되었습니다.")
                         finish()
                     }
@@ -711,6 +736,36 @@ class AddGoodsActivity : RootActivity() {
         }
 
 
+    }
+
+    fun modifyProductInform() {
+        val params = RequestParams()
+        params.put("product_id", modified_product_id)
+        params.put("title", Utils.getString(titleTV))
+        params.put("product_type", prod_type)
+        params.put("form", prod_form)
+        params.put("brand", prod_brand)
+        params.put("price", Utils.getString(priceTV))
+        params.put("region", prod_regoin)
+        params.put("trade_way", trade_type)
+        params.put("deliv_pay", deliv_way)
+        params.put("description", Utils.getString(descriptionET))
+
+        if (images_path != null) {
+            if (images_path!!.size != 0) {
+                for (i in 0..images_path!!.size - 1) {
+                    /*if (images_path!!.get(i).substring(2, 6) == "data") {
+                        continue
+                    } else {*/
+                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+
+                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
+                    //}
+                }
+            }
+        }
+
+        MarketAction
     }
 
 }

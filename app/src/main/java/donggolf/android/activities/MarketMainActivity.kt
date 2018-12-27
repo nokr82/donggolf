@@ -109,18 +109,17 @@ class MarketMainActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val allClassif = response.getJSONArray("allClassif")
-                    val allType = response.getJSONArray("allType")
-                    val allBrand = response.getJSONArray("allBrand")
+
 
                     for (i in 0 until allClassif.length()){
-                        assortData.add(allType[i] as JSONObject)
+                        //assortData.add(allType[i] as JSONObject)
                         classifData.add(allClassif[i] as JSONObject)
-                        brandData.add(allBrand[i] as JSONObject)
+                        //brandData.add(allBrand[i] as JSONObject)
                     }
 
                     adapterData.clear()
-                    for (i in 0 until assortData.size) {
-                        adapterData.add(assortData[i])
+                    for (i in 0 until classifData.size) {
+                        adapterData.add(classifData[i])
                     }
                     adapter.notifyDataSetChanged()
                 }

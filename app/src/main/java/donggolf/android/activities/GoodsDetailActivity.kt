@@ -114,7 +114,7 @@ class GoodsDetailActivity : RootActivity() {
 
     fun popupDialogView(){
 
-        //if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
+        if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
 
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
@@ -134,7 +134,15 @@ class GoodsDetailActivity : RootActivity() {
                 intent.putExtra("product_id", product_id)
                 startActivityForResult(intent,PRODUCT_MODIFY)
             }
-        //}
+
+            dialogView.dlg_prod_delTV.setOnClickListener {
+                //삭제 액션
+            }
+
+            dialogView.dlg_pull_LL.setOnClickListener {
+                //끌올
+            }
+        }
     }
 
     fun MoveSellerActivity(){
@@ -206,6 +214,7 @@ class GoodsDetailActivity : RootActivity() {
                     prodImgAdapter.notifyDataSetChanged()
                     imageCountTV.text = "1/${_Images.size}"
 
+                    reportTV.text = "신고하기(${response.getString("reportcount")})"
                 }
             }
 
