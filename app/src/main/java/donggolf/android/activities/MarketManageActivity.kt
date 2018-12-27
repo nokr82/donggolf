@@ -41,6 +41,12 @@ class MarketManageActivity : RootActivity() {
             startActivity(intent)
         }
 
+        marketruleLL.setOnClickListener {
+            val intent = Intent(this, PersonalInfoTernsActivity::class.java)
+            intent.putExtra("rule","rule")
+            startActivity(intent)
+        }
+
         get_content_cnt()
     }
 

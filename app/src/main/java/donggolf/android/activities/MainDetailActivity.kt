@@ -316,7 +316,6 @@ class MainDetailActivity : RootActivity() {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->{
                        x = event.x
-                        "---------down"
                     }
 
                     MotionEvent.ACTION_CANCEL->{
@@ -324,9 +323,13 @@ class MainDetailActivity : RootActivity() {
                     }
 
                     MotionEvent.ACTION_UP -> {
-
-                        println("---------up $x ---- ${event.x}")
-                        if (x == event.x){
+                        var difference = 0
+                        if (x >= event.x){
+                            difference = x.toInt() - event.x.toInt()
+                        } else {
+                            difference = event.x.toInt() - x.toInt()
+                        }
+                        if (difference < 10){
                             val pressDuration = System.currentTimeMillis() - pressStartTime!!
                             if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
                             }
