@@ -64,7 +64,13 @@ open class ReportAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
         val content = Utils.getString(list,"content")
         val nick = Utils.getString(member,"nick")
 
-        item.nameTV.text = "신고자 " + nick
+        var tmpnick = ""
+
+        for (i in 0 until nick.length){
+            tmpnick += "*"
+        }
+
+        item.nameTV.text = "신고자 " + tmpnick
         item.dateTV.text = created
         item.contentTV.text = content
 

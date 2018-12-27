@@ -664,6 +664,38 @@ class AddGoodsActivity : RootActivity() {
         } else if (monthCount >= 40) {
             Toast.makeText(context, "한달에 40개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
+            val title = titleTV.text.toString()
+            if (title == "" || title == null){
+                Toast.makeText(context, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (prod_type == ""){
+                Toast.makeText(context, "제품종류는 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (prod_brand == ""){
+                Toast.makeText(context, "브랜드는 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val price = priceTV.text.toString()
+            if (price == "" || price == null){
+                Toast.makeText(context, "가격을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (prod_regoin == "" || prod_regoin == null){
+                Toast.makeText(context, "지역은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (trade_type == "" || trade_type == null){
+                Toast.makeText(context, "거래방법은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             when (delivery_typeRG.checkedRadioButtonId) {
                 R.id.seller_payRB -> {
                     deliv_way = "판매자 부담"

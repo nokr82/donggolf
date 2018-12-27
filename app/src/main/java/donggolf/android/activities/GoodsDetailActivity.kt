@@ -220,7 +220,13 @@ class GoodsDetailActivity : RootActivity() {
                         _Images.add(Config.url + Utils.getString(data,"img_uri"))
                     }
                     prodImgAdapter.notifyDataSetChanged()
-                    imageCountTV.text = "1/${_Images.size}"
+                    if (_Images.size == 0){
+                        imageCountTV.text = "0/${_Images.size}"
+
+                    } else {
+                        imageCountTV.text = "1/${_Images.size}"
+
+                    }
 
                     reportTV.text = "신고하기(${response.getString("reportcount")})"
                 }

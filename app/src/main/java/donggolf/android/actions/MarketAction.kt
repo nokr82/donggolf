@@ -38,4 +38,15 @@ object MarketAction {
         HttpClient.post("/market/get_my_market_item.json", params, handler)
     }
 
+
+
+    fun modify_item_info(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/update_market_item.json", params, handler)
+    }
+
+    fun delete_market_item(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/delete_market_item.json", params, handler)
+    }//params : product_id, type == del
+
+
 }
