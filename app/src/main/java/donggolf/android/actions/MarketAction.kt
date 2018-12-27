@@ -13,6 +13,14 @@ object MarketAction {
     fun add_market_product(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/market/add_market_item.json", params, handler)
     }
+    fun modify_item_info(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/update_market_item.json", params, handler)
+    }
+
+    fun delete_market_item(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/delete_market_item.json", params, handler)
+    }//params : product_id, type == del
+
 
     fun get_market_product(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/market/get_second_hand_market_item.json", params, handler)
