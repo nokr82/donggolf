@@ -22,4 +22,16 @@ object MarketAction {
         HttpClient.post("/market/get_product_detail.json", params, handler)
     }
 
+    fun get_market_report(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_market_report.json", params, handler)
+    }
+
+    fun add_report(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/add_report.json", params, handler)
+    }
+
+    fun get_content_cnt(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_content_cnt.json", params, handler)
+    }
+
 }

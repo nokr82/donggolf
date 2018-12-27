@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager
 import android.telephony.SmsManager
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -42,6 +43,8 @@ class GoodsDetailActivity : RootActivity() {
     var product_id = 0
     var seller_phone = ""
     var tmp_member_phone = ""
+
+    var member_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +139,7 @@ class GoodsDetailActivity : RootActivity() {
         }
 
         reportTV.setOnClickListener {
-            MoveReportActivity()
+            MoveReportActivity(member_id)
         }
 
         contact_sellerLL.setOnClickListener {
@@ -154,9 +157,16 @@ class GoodsDetailActivity : RootActivity() {
         startActivity(intent)
     }
 
-    fun MoveReportActivity(){
-        var intent = Intent(this, ReportActivity::class.java)
-        startActivity(intent)
+    fun MoveReportActivity(member_id : Int){
+
+        if (member_id == PrefUtils.getIntPreference(context, "member_id")){
+            Toast.makeText(this, "자신의 게시물은 신고하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+        } else {
+            var intent = Intent(this, ReportActivity::class.java)
+            intent.putExtra("member_id", member_id)
+            startActivity(intent)
+        }
+
     }
 
     fun getProductData(){
@@ -190,10 +200,11 @@ class GoodsDetailActivity : RootActivity() {
                     seller_phone = Utils.getString(market,"phone")
 
 
-
                     val seller = response.getJSONObject("seller")
                     val member = seller.getJSONObject("Member")
                     nickTV.text = Utils.getString(member,"nick")
+
+                    member_id = Utils.getInt(member,"id")
 
                     val img_uri = Utils.getString(member,"profile_img")
                     val image = Config.url + img_uri

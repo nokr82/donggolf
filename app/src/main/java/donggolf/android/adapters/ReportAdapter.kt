@@ -28,7 +28,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class ReportAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
@@ -57,29 +57,16 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         }
 
         var json = data.get(position)
-        var Content = json.getJSONObject("Content")
-        val member_id = Utils.getString(Content,"member_id")
-        val title = Utils.getString(Content,"title")
-        val text = Utils.getString(Content,"text")
-        val content_id = Utils.getString(Content,"id")
-        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
-        val look_cnt = Utils.getString(Content,"look_cnt")
-        val like_cnt = Utils.getString(Content,"like_cnt")
-        val cmt_cnt = Utils.getString(Content,"cmt_cnt")
+        var list = json.getJSONObject("MarketReport")
         var member = json.getJSONObject("Member")
-        var nick = Utils.getString(member,"nick")
-        var created = Utils.getString(Content,"created")
 
-        val since = Utils.since(created)
+        val created = Utils.getString(list,"created")
+        val content = Utils.getString(list,"content")
+        val nick = Utils.getString(member,"nick")
 
-        item.main_item_title.text = title.toString()
-        item.main_item_content.text = text.toString()
-        item.main_item_view_count.text = look_cnt.toString()
-        item.main_item_like_count.text = like_cnt.toString()
-        item.main_item_nickname.text = nick.toString()
-        item.main_item_comment_count.text = cmt_cnt.toString()
-        item.main_item_lately.text = since.toString()
-
+        item.nameTV.text = "신고자 " + nick
+        item.dateTV.text = created
+        item.contentTV.text = content
 
         return retView
     }
@@ -106,24 +93,15 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
     class ViewHolder(v: View) {
 
-        var main_item_title : TextView
-        var main_item_content : TextView
-
-        var main_item_nickname : TextView
-        var main_item_lately : TextView
-        var main_item_view_count : TextView
-        var main_item_comment_count : TextView
-        var main_item_like_count : TextView
+        var nameTV : TextView
+        var dateTV : TextView
+        var contentTV : TextView
 
         init {
 
-            main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
-            main_item_content = v.findViewById<View>(R.id.main_item_content) as TextView
-            main_item_nickname = v.findViewById<View>(R.id.main_item_nickname) as TextView
-            main_item_lately = v.findViewById<View>(R.id.main_item_lately) as TextView
-            main_item_view_count = v.findViewById<View>(R.id.main_item_view_count) as TextView
-            main_item_comment_count = v.findViewById<View>(R.id.main_item_comment_count) as TextView
-            main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
+            nameTV = v.findViewById<View>(R.id.nameTV) as TextView
+            dateTV = v.findViewById<View>(R.id.dateTV) as TextView
+            contentTV = v.findViewById<View>(R.id.contentTV) as TextView
 
         }
 
