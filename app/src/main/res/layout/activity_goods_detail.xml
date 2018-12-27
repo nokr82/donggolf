@@ -125,7 +125,7 @@
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/box_img_number"
                         android:gravity="center"
-                        android:text="1/8"
+                        android:text="0/0"
                         android:textColor="#ffffff"
                         android:textSize="20dp" />
                 </RelativeLayout>

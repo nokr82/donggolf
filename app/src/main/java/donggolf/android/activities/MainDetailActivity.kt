@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.AlertDialog
 import android.content.*
 import android.graphics.Paint
+import android.graphics.PointF
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
@@ -27,6 +28,7 @@ import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
 import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
+import kotlinx.android.synthetic.main.dlg_post_menu.view.*
 import kotlinx.android.synthetic.main.item_chat_member_list.view.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -73,6 +75,8 @@ class MainDetailActivity : RootActivity() {
     var commentParent = ""
     var blockYN = ""
 
+    var x = 0.0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
@@ -96,7 +100,6 @@ class MainDetailActivity : RootActivity() {
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
 
             var commenter = commentList[position].getInt("cmt_wrt_id")
-
 
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
@@ -291,9 +294,11 @@ class MainDetailActivity : RootActivity() {
                 adPosition = position
             }
 
-            override fun onPageSelected(position: Int) {}
+            override fun onPageSelected(position: Int) {
+            }
 
             override fun onPageScrollStateChanged(state: Int) {
+
                 circleLL.removeAllViews()
                 for (i in adverImagePaths.indices) {
                     if (i == adPosition) {
@@ -307,45 +312,34 @@ class MainDetailActivity : RootActivity() {
 
         pagerVP.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
                 when (event?.action) {
-
                     MotionEvent.ACTION_DOWN ->{
-
-                        pressStartTime = System.currentTimeMillis()
-                        pressedX = event.x
-                        pressedY = event.y
-                        stayedWithinClickDistance = true
-
-                        println("OnTouch : ACTION_DOWN")
-
-                        return true
+                       x = event.x
+                        "---------down"
                     }
 
                     MotionEvent.ACTION_CANCEL->{
-
-                        if (stayedWithinClickDistance!! && distance(pressedX!!, pressedY!!, event.x, event.y) > MAX_CLICK_DISTANCE) {
-                            stayedWithinClickDistance = false
-                        }
-                        return true
 
                     }
 
                     MotionEvent.ACTION_UP -> {
 
-                        val pressDuration = System.currentTimeMillis() - pressStartTime!!
-                        if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
-                        }
-
-                        if (intent.hasExtra("id")) {
-                            val id = intent.getStringExtra("id")
-                            var intent = Intent(context, PictureDetailActivity::class.java)
-                            intent.putExtra("id", id)
-                            if (adverImagePaths != null){
-                                intent.putExtra("paths",adverImagePaths)
+                        println("---------up $x ---- ${event.x}")
+                        if (x == event.x){
+                            val pressDuration = System.currentTimeMillis() - pressStartTime!!
+                            if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
                             }
-                            startActivityForResult(intent, PICTURE_DETAIL)
 
-                            return true
+                            if (intent.hasExtra("id")) {
+                                val id = intent.getStringExtra("id")
+                                var intent = Intent(context, PictureDetailActivity::class.java)
+                                intent.putExtra("id", id)
+                                if (adverImagePaths != null){
+                                    intent.putExtra("paths",adverImagePaths)
+                                }
+                                startActivityForResult(intent, PICTURE_DETAIL)
+                            }
                         }
 
                     }
@@ -361,16 +355,17 @@ class MainDetailActivity : RootActivity() {
         }
 
         main_detail_gofindpicture.setOnClickListener {
-            MoveFindPictureActivity()
+//            MoveFindPictureActivity()
         }
 
         plusBT.setOnClickListener {
-            relativ_RL.visibility = View.VISIBLE
-
+//            relativ_RL.visibility = View.VISIBLE
+            visibleMenu()
         }
 
         goneRL.setOnClickListener {
-            relativ_RL.visibility = View.GONE
+//            relativ_RL.visibility = View.GONE
+            visibleMenu()
         }
 
         reportTV.setOnClickListener {
@@ -795,5 +790,153 @@ class MainDetailActivity : RootActivity() {
             }
         })
     }
+
+
+    fun visibleMenu(){
+        if (writer.toInt() == PrefUtils.getIntPreference(context,"member_id")) {
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_post_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView) // custom xml과 alertDialogBuilder를 붙임
+            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
+
+            alert.show()
+
+            dialogView.modifyTV.visibility = View.VISIBLE
+            dialogView.deleteTV.visibility = View.VISIBLE
+
+            dialogView.modifyTV.setOnClickListener {
+                modify()
+                alert.dismiss()
+            }
+
+            dialogView.deleteTV.setOnClickListener {
+                delete()
+                alert.dismiss()
+            }
+
+        } else {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_post_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView) // custom xml과 alertDialogBuilder를 붙임
+            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
+
+            alert.show()
+
+            dialogView.addfavoriteTV.visibility = View.VISIBLE
+            dialogView.reportTV.visibility = View.VISIBLE
+            dialogView.addFriendTV.visibility =View.VISIBLE
+
+            dialogView.addfavoriteTV.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                            if (intent.getStringExtra("id") != null) {
+                                val content_id = intent.getStringExtra("id")
+
+                                var params = RequestParams()
+                                params.put("content_id", content_id)
+                                params.put("member_id", login_id)
+
+                                PostAction.add_favorite_content(params, object : JsonHttpResponseHandler() {
+                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                        val result = response!!.getString("result")
+                                        if (result == "yes") {
+                                            Toast.makeText(context, "이미 추가하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        }else {
+                                            Toast.makeText(context, "추가 완료.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                    }
+                                })
+
+                            }
+                            alert.dismiss()
+                        })
+
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }
+
+            dialogView.reportTV.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                            if (intent.getStringExtra("id") != null) {
+                                val content_id = intent.getStringExtra("id")
+
+                                var params = RequestParams()
+                                params.put("content_id", content_id)
+                                params.put("member_id", login_id)
+
+                                PostAction.add_report(params, object : JsonHttpResponseHandler() {
+                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                        val result = response!!.getString("result")
+                                        if (result == "yes") {
+                                            Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        }else {
+                                            Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                    }
+                                })
+
+                            }
+                            alert.dismiss()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }
+
+            dialogView.addFriendTV.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                            if (intent.getStringExtra("id") != null) {
+                                val content_id = intent.getStringExtra("id")
+
+                                var params = RequestParams()
+                                params.put("content_id", content_id)
+                                params.put("mate_id", writer)
+                                params.put("member_id", login_id)
+                                params.put("category_id",0)
+                                params.put("status","w")
+
+                                PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                        val result = response!!.getString("result")
+                                        if (result == "yes") {
+                                            Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        }else {
+                                            Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                    }
+                                })
+
+                            }
+                            alert.dismiss()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }
+        }
+    }
+
 
 }
