@@ -172,7 +172,7 @@ class GoodsDetailActivity : RootActivity() {
         params.put("type", type)
         params.put("product_id", product_id)
 
-        MarketAction.delete_market_item(params,object :JsonHttpResponseHandler(){
+        MarketAction.delete_market_item(params, object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 println(response)
                 val result = response!!.getString("result")
