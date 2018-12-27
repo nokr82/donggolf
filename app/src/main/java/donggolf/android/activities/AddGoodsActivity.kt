@@ -34,7 +34,6 @@ import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.util.ArrayList
-import kotlin.coroutines.experimental.coroutineContext
 
 class AddGoodsActivity : RootActivity() {
 
@@ -75,6 +74,9 @@ class AddGoodsActivity : RootActivity() {
     var deliv_way = ""
 
     var modified_product_id = 0
+
+    var todayCount = 0
+    var monthCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -552,7 +554,7 @@ class AddGoodsActivity : RootActivity() {
 
     fun getCategory() {
         val params = RequestParams()
-        params.put("all", 1)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         if (categoryData != null) {
             categoryData.clear()
@@ -584,6 +586,9 @@ class AddGoodsActivity : RootActivity() {
                     val productcategory = response.getJSONArray("productcategory")
                     val tradetype = response.getJSONArray("tradetype")
                     val region = response.getJSONArray("region")
+
+                    todayCount = Utils.getInt(response,"today")
+                    monthCount = Utils.getInt(response,"month")
 
                     if (producttype.length() > 0 && producttype != null) {
                         for (i in 0 until producttype.length()) {
@@ -631,28 +636,33 @@ class AddGoodsActivity : RootActivity() {
 
     fun register_product(){
 
-        when(delivery_typeRG.checkedRadioButtonId){
-            R.id.seller_payRB -> {
-                deliv_way = "판매자 부담"
+        if (todayCount >= 5 ){
+            Toast.makeText(context, "하루에 5개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
+        } else if (monthCount >= 40){
+            Toast.makeText(context, "한달에 40개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            when(delivery_typeRG.checkedRadioButtonId){
+                R.id.seller_payRB -> {
+                    deliv_way = "판매자 부담"
+                }
+                R.id.buyer_payRB -> {
+                    deliv_way = "구매자 부담"
+                }
             }
-            R.id.buyer_payRB -> {
-                deliv_way = "구매자 부담"
-            }
-        }
 
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("title", Utils.getString(titleTV))
-        params.put("product_type", prod_type)
-        params.put("form", prod_form)
-        params.put("brand", prod_brand)
-        params.put("price", Utils.getString(priceTV))
-        params.put("region", prod_regoin)
-        params.put("trade_way", trade_type)
-        params.put("deliv_pay", deliv_way)
-        params.put("phone", Utils.getString(sellerPhoneNumTV))
-        params.put("description", Utils.getString(descriptionET))
-        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+            params.put("title", Utils.getString(titleTV))
+            params.put("product_type", prod_type)
+            params.put("form", prod_form)
+            params.put("brand", prod_brand)
+            params.put("price", Utils.getString(priceTV))
+            params.put("region", prod_regoin)
+            params.put("trade_way", trade_type)
+            params.put("deliv_pay", deliv_way)
+            params.put("phone", Utils.getString(sellerPhoneNumTV))
+            params.put("description", Utils.getString(descriptionET))
+            params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
 
         //이미지
 //        var seq = 0
@@ -668,35 +678,38 @@ class AddGoodsActivity : RootActivity() {
 //            }
 //        }
 
-        if (images_path != null){
-            if (images_path!!.size != 0){
-                for (i in 0..images_path!!.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+            if (images_path != null){
+                if (images_path!!.size != 0){
+                    for (i in 0..images_path!!.size - 1){
+                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
-                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+                        params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+                    }
                 }
             }
+
+            //println(params)
+
+            MarketAction.add_market_product(params, object : JsonHttpResponseHandler(){
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok"){
+                        //Utils.alert(context,"상품이 성공적으로 등록되었습니다.")
+                        finish()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    println(responseString)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                    println(errorResponse)
+                }
+            })
         }
 
-        //println(params)
-
-        MarketAction.add_market_product(params, object : JsonHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
-                val result = response!!.getString("result")
-                if (result == "ok"){
-                    //Utils.alert(context,"상품이 성공적으로 등록되었습니다.")
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
-            }
-        })
 
     }
 
