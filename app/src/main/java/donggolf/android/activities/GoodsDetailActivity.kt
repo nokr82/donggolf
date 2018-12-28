@@ -354,11 +354,9 @@ class GoodsDetailActivity : RootActivity() {
                     }
                     prodImgAdapter.notifyDataSetChanged()
                     if (_Images.size == 0){
-                        imageCountTV.text = "0/${_Images.size}"
-
-                    } else {
                         imageCountTV.text = "이미지가 없는 게시글입니다"
-
+                    } else {
+                        imageCountTV.text = "1/${_Images.size}"
                     }
 
                     reportTV.text = "신고하기(${response.getString("reportcount")})"
