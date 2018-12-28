@@ -456,10 +456,10 @@ class FriendSearchActivity : RootActivity() {
                     cursor.moveToFirst()
                     var phoneIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                     var phoneNum = cursor.getString(phoneIdx)
-
                     //println("You got the phone number ::::::::::::::: $phoneNum")
+
                     val smsMng = SmsManager.getDefault()
-                    smsMng.sendTextMessage(phoneNum, "나", "보낼 내용", null, null)
+                    smsMng.sendTextMessage(phoneNum, "010-1234-8765", "보낼 내용", null, null)
 
                 } catch (e : Exception) {
                     e.printStackTrace()

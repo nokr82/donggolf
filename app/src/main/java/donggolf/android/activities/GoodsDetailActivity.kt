@@ -40,7 +40,7 @@ class GoodsDetailActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    var _Images: ArrayList<String> = ArrayList<String>()
+    var _Images = ArrayList<String>()
     private lateinit var prodImgAdapter: FullScreenImageAdapter
     var pressStartTime: Long?  = 0
     var pressedX: Float? = 0F
@@ -58,7 +58,6 @@ class GoodsDetailActivity : RootActivity() {
     var seller_phone = ""
     var seller_id = 0
     var tmp_prod_status = ""
-
     var member_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -346,7 +345,7 @@ class GoodsDetailActivity : RootActivity() {
                         imageCountTV.text = "0/${_Images.size}"
 
                     } else {
-                        imageCountTV.text = "1/${_Images.size}"
+                        imageCountTV.text = "이미지가 없는 게시글입니다"
 
                     }
 

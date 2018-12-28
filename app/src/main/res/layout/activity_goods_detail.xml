@@ -477,7 +477,7 @@
                         android:layout_marginRight="20dp"
                         android:background="@drawable/btn_report_red"
                         android:gravity="center"
-                        android:text="신고하기(10)"
+                        android:text="신고하기(0)"
                         android:textColor="#ffffff" />
                 </RelativeLayout>
 

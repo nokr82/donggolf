@@ -357,7 +357,9 @@ class AddGoodsActivity : RootActivity() {
             when (requestCode) {
 
                 SELECT_PICTURE -> {
+
                     println("onActivityResult로 돌아와서")
+
                     var item = data?.getStringArrayExtra("images")//photoPath
                     //var name = data?.getStringArrayExtra("displayname")
 
