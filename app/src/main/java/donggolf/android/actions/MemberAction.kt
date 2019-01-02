@@ -75,4 +75,8 @@ object MemberAction {
         HttpClient.post("/member/inquire.json", params, handler)
     }
 
+    fun regist_token(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/regist_token.json", params, handler)
+    }
+
 }

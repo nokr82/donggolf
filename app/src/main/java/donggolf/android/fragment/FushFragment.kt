@@ -7,16 +7,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
-import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
-import donggolf.android.activities.ChatDetailActivity
 import donggolf.android.activities.SetNoticeActivity
-import donggolf.android.adapters.ChatFragAdapter
 import donggolf.android.adapters.FushFragAdapter
 import org.json.JSONObject
 
@@ -33,9 +29,6 @@ class FushFragment : Fragment(){
     lateinit var settingLV : LinearLayout
     lateinit var noticeLV : ListView
 
-
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
 
@@ -48,7 +41,6 @@ class FushFragment : Fragment(){
         val currentUser = mAuth!!.getCurrentUser()
 
         val db = FirebaseFirestore.getInstance()
-
 
         return LayoutInflater.from(inflater.context).inflate(R.layout.activity_notice2,container, false)
     }

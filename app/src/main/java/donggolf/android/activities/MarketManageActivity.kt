@@ -47,6 +47,11 @@ class MarketManageActivity : RootActivity() {
             startActivity(intent)
         }
 
+        noticeLL.setOnClickListener {
+            val intent = Intent(this, NoticeActivity::class.java)
+            startActivity(intent)
+        }
+
         get_content_cnt()
     }
 

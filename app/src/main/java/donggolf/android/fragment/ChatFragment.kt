@@ -12,11 +12,8 @@ import android.widget.ListView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import donggolf.android.activities.ChatDetailActivity
 import donggolf.android.R
-import donggolf.android.activities.AddDongChatActivity
-import donggolf.android.activities.DongChatDetailActivity
-import donggolf.android.activities.DongchatProfileActivity
+import donggolf.android.activities.*
 import donggolf.android.adapters.ChatFragAdapter
 import kotlinx.android.synthetic.main.fragment_chat.*
 import org.json.JSONObject
@@ -96,6 +93,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 startActivity(intent)
             }
 
+        }
+
+        addmychatIV.setOnClickListener {
+            var intent = Intent(activity, SelectMemberActivity::class.java)
+            startActivity(intent)
         }
 
         //new section

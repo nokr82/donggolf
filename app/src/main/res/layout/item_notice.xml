@@ -13,6 +13,7 @@
             android:layout_marginLeft="13dp"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/keywordTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="키워드 1"
@@ -21,10 +22,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="전체 게시판"
-                android:textSize="15dp"/>
+                android:textSize="13dp"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/removeLL"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

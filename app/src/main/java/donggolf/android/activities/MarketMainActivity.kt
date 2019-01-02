@@ -31,7 +31,6 @@ class MarketMainActivity : RootActivity() {
     lateinit var categoryAdapter: GoodsCategoryAdapter//brand
 
     private  var adapterData = ArrayList<JSONObject>()
-    //var imgPathStr = ArrayList<String>()
     var productData = ArrayList<JSONObject>()//type 종류
     var brandData = ArrayList<JSONObject>() // 브랜드
     var formData = ArrayList<JSONObject>() // 분류
@@ -109,6 +108,8 @@ class MarketMainActivity : RootActivity() {
             dialogView.dlg_btn_okTV.setOnClickListener {
                 alert.dismiss()
             }
+
+
         }
 
         //브랜드전체(brand)
@@ -116,11 +117,37 @@ class MarketMainActivity : RootActivity() {
             init_menu()
             entireBrandTV.setTextColor(Color.parseColor("#0EDA2F"))
 
-            adapterData.clear()
-            for (i in 0 until brandData.size) {
-                adapterData.add(brandData[i])
+            val builder = android.app.AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlg_titleTV.text = "브랜드 선택"
+            dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.visibility = View.VISIBLE
+            dialogView.dlg_exitIV.visibility = View.VISIBLE
+            dialogView.dlg_titleTV.visibility = View.VISIBLE
+            dialogView.dlg_marketLV.adapter = categoryAdapter
+            dialogView.dlg_exitIV.setOnClickListener {
+                alert.dismiss()
             }
-            adapter.notifyDataSetChanged()
+
+            dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                var json = categoryAdapter.getItem(position)
+                var type = json.getJSONObject("GoodsCategory")
+                val title = Utils.getString(type, "title")
+                entireBrandTV.text = title
+                values = title
+                brandData[position].put("isSelectedOp", true)
+                categoryAdapter.notifyDataSetChanged()
+
+                alert.dismiss()
+            }
+
+            dialogView.dlg_btn_okTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+
         }
 
         //종류전체(type)
@@ -162,6 +189,8 @@ class MarketMainActivity : RootActivity() {
         market_mngIV.setOnClickListener {
             startActivity(Intent(context,MarketManageActivity::class.java))
         }
+
+        getCategory()
 
     }
 

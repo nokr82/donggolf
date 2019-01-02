@@ -522,11 +522,13 @@
             android:orientation="horizontal">
 
             <EditText
-                android:layout_width="wrap_content"
+                android:id="@+id/commentET"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="6"
                 android:background="@null"
-                android:hint="                                     댓글을 남겨주세요"
+                android:gravity="center"
+                android:hint="댓글을 남겨주세요"
                 android:singleLine="true"
                 android:textSize="13dp" />
 
@@ -536,9 +538,10 @@
                 android:background="#c9c9c9" />
 
             <TextView
+                android:id="@+id/addcommentTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:gravity="center"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

@@ -23,6 +23,9 @@ class IntroActivity : RootActivity() {
 
     private var progressDialog: ProgressDialog? = null
 
+    private var market_id:String = ""
+    private var is_push:Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
@@ -40,24 +43,32 @@ class IntroActivity : RootActivity() {
         println("user : ${user?.metadata}")
         println("user : ${user?.uid}")
 
+        this.context = this
+        progressDialog = ProgressDialog(context)
 
-        if(user == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-        } else {
-            val autoLogin = PrefUtils.getBooleanPreference(context, "auto_login")
-            if(autoLogin) {
-                LoginActivity.setLoginData(context, user)
-                println("autoLogin =============== intro $autoLogin")
-                startActivity(Intent(this, MainActivity::class.java))
-            } else {
-
-                FirebaseAuth.getInstance().signOut()
-
-                startActivity(Intent(this, LoginActivity::class.java))
+        val buldle = intent.extras
+        if (buldle != null) {
+            try {
+                market_id = buldle.getString("market_id")
+                is_push = buldle.getBoolean("FROM_PUSH")
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
-
         }
+
+
+        val autoLogin = PrefUtils.getBooleanPreference(context, "auto_login")
+        if(autoLogin) {
+            LoginActivity.setLoginData(context, user)
+            println("autoLogin =============== intro $autoLogin")
+            startActivity(Intent(this, MainActivity::class.java))
+        } else {
+//                FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
+
     }
 
 

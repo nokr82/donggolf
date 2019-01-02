@@ -120,7 +120,10 @@ class InfoFragment : Fragment(){
                     val result = response.getString("result")
 
                     if (result == "ok") {
-                        friendCountTV.text = response.getString("friendCount")
+                        val friendCount = response.getString("friendCount")
+                        val contentCount = response.getString("contentCount")
+                        friendCountTV.text = friendCount
+                        postcountTV.text = contentCount
 
                         val member = response.getJSONObject("Member")
 
@@ -247,8 +250,8 @@ class InfoFragment : Fragment(){
         }
 
         btn_go_frd_mng.setOnClickListener {
-            val goIt = Intent(activity, FriendManageActivity::class.java)
-            startActivity(goIt)
+            val intent = Intent(activity, FriendManageActivity::class.java)
+            startActivity(intent)
         }
 
     }
@@ -338,7 +341,6 @@ class InfoFragment : Fragment(){
                 }
             }
         }
-
 
     }
 

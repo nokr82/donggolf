@@ -46,5 +46,36 @@ object MarketAction {
         HttpClient.post("/market/get_my_market_item.json", params, handler)
     }
 
+    fun add_market_looker(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/add_market_looker.json", params, handler)
+    }
+
+    fun add_keyword(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/add_keyword.json", params, handler)
+    }
+
+    fun get_keyword(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_keyword.json", params, handler)
+    }
+
+    fun delete_keyword(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/delete_keyword.json", params, handler)
+    }
+
+    fun add_market_comment(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/add_market_comment.json", params, handler)
+    }
+
+    fun get_market_comment(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/get_market_comment.json", params, handler)
+    }
+
+    fun delete_market_comment(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/delete_market_comment.json", params, handler)
+    }
+
+    fun market_block_commenter(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/market/market_block_commenter.json", params, handler)
+    }
 
 }

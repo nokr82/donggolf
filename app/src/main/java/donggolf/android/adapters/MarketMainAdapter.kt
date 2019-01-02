@@ -64,6 +64,8 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             val img_uri = Utils.getString(marketImg[0] as JSONObject, "img_small")
             val image = Config.url + img_uri
             ImageLoader.getInstance().displayImage(image, item.imageIV, Utils.UILoptionsProfile)
+        } else {
+            ImageLoader.getInstance().displayImage(Config.url, item.imageIV, Utils.UILoptionsProfile)
         }
 
         return retView

@@ -21,4 +21,6 @@ object CommentAction {
     fun content_commenter_ben(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/comment/block_commenter.json", params, handler)
     }
+
+
 }

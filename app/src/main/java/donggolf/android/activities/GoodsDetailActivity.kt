@@ -3,9 +3,7 @@ package donggolf.android.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +22,8 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.FullScreenImageAdapter
+import donggolf.android.adapters.GoodsComAdapter
+import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_goods_detail.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import kotlinx.android.synthetic.main.dlg_simple_radio_option.view.*
+import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.ArrayList
@@ -61,6 +62,14 @@ class GoodsDetailActivity : RootActivity() {
     var tmp_prod_status = ""
     var member_id = 0
 
+    var commentType = ""
+    var commentParent = ""
+    var writer = ""
+    var blockYN = ""
+
+    private  lateinit var  commentAdapter : GoodsComAdapter
+    private  var commentList:ArrayList<JSONObject> = ArrayList<JSONObject>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goods_detail)
@@ -68,7 +77,13 @@ class GoodsDetailActivity : RootActivity() {
         context = this
         product_id = intent.getIntExtra("product_id",0)
 
+        commentAdapter = GoodsComAdapter(context,R.layout.main_detail_listview_item,commentList)
+
+        market_commentLV.adapter = commentAdapter
+        market_commentLV.isExpanded = true
+
         getProductData()
+        getcomment()
 
         //이미지 관련 어댑터
         prodImgAdapter = FullScreenImageAdapter(this@GoodsDetailActivity, _Images)
@@ -111,6 +126,10 @@ class GoodsDetailActivity : RootActivity() {
 
         reportTV.setOnClickListener {
             MoveReportActivity(member_id)
+        }
+
+        addcommentTV.setOnClickListener {
+            addcomment()
         }
 
         change_prod_stateLL.setOnClickListener {
@@ -200,6 +219,141 @@ class GoodsDetailActivity : RootActivity() {
         findBT.setOnClickListener {
             val find = findET.text.toString()
 //            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://thecheat.co.kr/")))
+        }
+
+        getLooker()
+
+        market_commentLV.setOnItemLongClickListener { parent, view, position, id ->
+            var commenter = commentList[position].getInt("cmt_wrt_id")
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlg_comment_delTV.visibility = View.GONE
+            dialogView.dlg_comment_blockTV.visibility = View.GONE
+
+            member_id = PrefUtils.getIntPreference(context,"member_id")
+
+            //댓삭
+            if (commenter == member_id){
+                dialogView.dlg_comment_delTV.visibility = View.VISIBLE
+                dialogView.dlg_comment_delTV.setOnClickListener {
+                    val params = RequestParams()
+                    params.put("market_id", product_id)
+                    params.put("commenter", commenter)
+                    params.put("market_id", commentList[position].getInt("market_id"))
+
+                    MarketAction.delete_market_comment(params, object :JsonHttpResponseHandler(){
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            println(response)
+
+                            val result = response!!.getString("result")
+                            if (result == "ok"){
+                                //할일 : 리스트뷰에서 아이템을 지운다
+
+                                commentAdapter.removeItem(position)
+                                commentAdapter.notifyDataSetChanged()
+
+                                alert.dismiss()
+                            }
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                            println(errorResponse)
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                            println(responseString)
+                        }
+                    })
+                }
+            }
+
+            //댓글복사
+            dialogView.dlg_comment_copyTV.setOnClickListener {
+
+                //클립보드 사용 코드
+                val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("Golf", commentList[position].getString("comment_content")) //클립보드에 ID라는 이름표로 id 값을 복사하여 저장
+                clipboardManager.primaryClip = clipData
+
+                Toast.makeText(context, "댓글이 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show()
+
+                alert.dismiss()
+            }
+
+
+            if (member_id.toString() == seller_id.toString()){
+                dialogView.dlg_comment_blockTV.visibility = View.VISIBLE
+
+                val json = commentList[position].getJSONObject("MarketComment")
+                val blocked_yn = Utils.getString(json,"block_yn")
+
+                if (blocked_yn == "Y"){
+                    dialogView.dlg_comment_blockTV.text = "차단해제"
+                    blockYN = "unblock"
+                } else {
+                    dialogView.dlg_comment_blockTV.text = "차단하기"
+                    blockYN = "block"
+                }
+
+                //댓글 작성자 게시글에 차단
+                dialogView.dlg_comment_blockTV.setOnClickListener {
+                    /*val json = commentList.get(position)
+                    val data = json.getJSONObject("")*/
+                    var cmt_wrt_id = commentList[position].getInt("cmt_wrt_id")
+
+                    val params = RequestParams()
+                    params.put("market_id", product_id)
+                    params.put("writer", seller_id)
+                    params.put("commenter", cmt_wrt_id)
+                    params.put("status", blockYN)
+
+                    MarketAction.market_block_commenter(params, object : JsonHttpResponseHandler(){
+                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                            try {
+                                println(response)
+                                //차단 성공하면 표시하고 토스트
+                                val result = response!!.getString("result")
+                                if (result == "ok") {
+                                    //아이고 의미없다
+                                    /*var message = response.getString("message")
+                                    if (message == "registerd") {
+                                        commentList[position].put("changedBlockYN", "Y")
+                                        commentList[position].put("block_yn", "Y")
+                                        commentAdapter.notifyDataSetChanged()
+                                    } else {
+                                        commentList[position].put("changedBlockYN", "Y")
+                                        commentList[position].put("block_yn", "N")
+                                        commentAdapter.notifyDataSetChanged()
+                                    }*/
+                                    commentList.clear()
+                                    getcomment()
+
+                                } else {
+                                    commentList[position].put("changedBlockYN", "N")
+                                }
+                            }catch (e : JSONException){
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                            println(errorResponse)
+                        }
+
+                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                            println(responseString)
+                        }
+                    })
+
+                    alert.dismiss()
+                }
+            }
+
+            true
         }
 
     }
@@ -360,6 +514,12 @@ class GoodsDetailActivity : RootActivity() {
                     }
 
                     reportTV.text = "신고하기(${response.getString("reportcount")})"
+                    val lookers = response.getString("lookers")
+                    main_item_view_count.setText(lookers)
+
+                    val commentCount = response.getString("commentCount")
+                    main_item_comment_count.setText(commentCount)
+
                 }
             }
 
@@ -393,6 +553,105 @@ class GoodsDetailActivity : RootActivity() {
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                 println(errorResponse)
+            }
+        })
+    }
+
+
+    fun getLooker(){
+        product_id = intent.getIntExtra("product_id",0)
+        val member_id = PrefUtils.getIntPreference(context, "member_id")
+
+        var params = RequestParams()
+        params.put("market_id",product_id)
+        params.put("member_id",member_id)
+
+        MarketAction.add_market_looker(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                println("result ----- $result")
+                if (result == "ok" || result == "yes") {
+                    val Looker = response.getJSONArray("Looker")
+                    main_item_view_count.setText(Looker.length().toString())
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
+    }
+
+    fun addcomment(){
+        var comment = Utils.getString(commentET)
+
+        if (comment == null || comment == ""){
+            Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("market_id", product_id)
+        params.put("comment", comment)
+        params.put("parent", commentParent)
+        params.put("type", commentType)
+
+        MarketAction.add_market_comment(params,object :JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    commentET.setText("")
+                    val comments = response.getJSONObject("comments")
+                    commentList.add(comments)
+                    commentAdapter.notifyDataSetChanged()
+                    Utils.hideKeyboard(this@GoodsDetailActivity)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+        })
+
+    }
+
+    fun getcomment(){
+        val params = RequestParams()
+        params.put("market_id", product_id)
+
+        MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                    val comments = response.getJSONArray("comments")
+
+                    if (comments != null && comments.length() > 0){
+                        for (i in 0 until comments.length()){
+                            commentList.add(comments.get(i) as JSONObject)
+                        }
+                    }
+
+                    commentAdapter.notifyDataSetChanged()
+
+                    Utils.hideKeyboard(this@GoodsDetailActivity)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
             }
         })
     }
