@@ -108,7 +108,7 @@ class FriendCategoryDetailActivity : RootActivity() {
         }
 
         //설정
-        categoryManagementIV.setOnClickListener {
+        categorySettingLL.setOnClickListener {
             if (type == "block"){
                 val itt = Intent(context, FriendGrpDetailSettingActivity::class.java)
                 itt.putExtra("groupTitle", "차단목록")
