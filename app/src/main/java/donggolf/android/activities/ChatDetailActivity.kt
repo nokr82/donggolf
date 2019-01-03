@@ -21,7 +21,7 @@ class ChatDetailActivity : RootActivity() {
 
     lateinit var context: Context
 
-    var member_id = ""
+    var member_id = 0
     var mate_id: ArrayList<String> = ArrayList<String>()
     var mate_nick:ArrayList<String> = ArrayList<String>()
     var division = 0
@@ -37,7 +37,7 @@ class ChatDetailActivity : RootActivity() {
         val intent = getIntent()
 
         division = intent.getIntExtra("division",0)
-        member_id = intent.getStringExtra("member_id")
+        member_id = PrefUtils.getIntPreference(context,"member_id")
         mate_id = intent.getStringArrayListExtra("mate_id")
         mate_nick = intent.getStringArrayListExtra("mate_nick")
 

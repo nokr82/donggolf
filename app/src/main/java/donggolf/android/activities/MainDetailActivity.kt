@@ -69,7 +69,7 @@ class MainDetailActivity : RootActivity() {
     //lateinit var activity: MainDetailActivity
 
     var login_id = 0
-    var writer = ""
+    var writer = "0"
     var content_id = 0
     var commentType = ""
     var commentParent = ""

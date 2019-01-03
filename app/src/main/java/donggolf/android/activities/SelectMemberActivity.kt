@@ -81,7 +81,7 @@ class SelectMemberActivity : RootActivity() {
                             mate_ids.add(mate_id)
                             mate_nicks.add(mate_nick)
                         }
-                    }
+                }
 
 
                     val intent = Intent(context, ChatDetailActivity::class.java)
