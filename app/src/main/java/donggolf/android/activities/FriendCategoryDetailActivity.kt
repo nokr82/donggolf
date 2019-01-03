@@ -225,6 +225,7 @@ class FriendCategoryDetailActivity : RootActivity() {
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("status", status)
         params.put("category_id", category_id)
+        params.put("division",1)
 
         MateAction.mateList(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

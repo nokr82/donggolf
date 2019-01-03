@@ -41,7 +41,7 @@ class RequestFriendActivity : RootActivity() {
 
         val type = intent.getStringExtra("type")
         if (type == "waiting") {
-            println(type)
+            println("type----$type")
             getFriendList("w", 0)
         }/* else if (type == "block") {
 
@@ -218,9 +218,10 @@ class RequestFriendActivity : RootActivity() {
                 mateList.add(mateRequestList.get(i).getInt("mate_id"))
             }
         }
+
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id", mateList)
+        params.put("mate_id", mateList.get(0))
         params.put("category_id", category_id)
         params.put("status", "m")
 

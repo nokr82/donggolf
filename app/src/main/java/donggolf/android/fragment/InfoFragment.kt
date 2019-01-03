@@ -120,10 +120,6 @@ class InfoFragment : Fragment(){
                     val result = response.getString("result")
 
                     if (result == "ok") {
-                        val friendCount = response.getString("friendCount")
-                        val contentCount = response.getString("contentCount")
-                        friendCountTV.text = friendCount
-                        postcountTV.text = contentCount
 
                         val member = response.getJSONObject("Member")
 

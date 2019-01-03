@@ -36,8 +36,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var chat_list : ListView
     lateinit var viewpagerChat : ViewPager
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -50,8 +48,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
         val currentUser = mAuth!!.getCurrentUser()
 
         val db = FirebaseFirestore.getInstance()
-
-
 
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
@@ -120,5 +116,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
         // TODO: Actually do something with the context
         this.ctx = context
     }
+
+
+    fun getmychat(){
+
+    }
+
 
 }

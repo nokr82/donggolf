@@ -35,14 +35,16 @@
             android:layout_weight="8"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/countTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
                 android:textSize="13dp"
                 android:textColor="#0ED92F"
-                android:text="3"/>
+                android:text="0"/>
             <TextView
+                android:id="@+id/addchatTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
