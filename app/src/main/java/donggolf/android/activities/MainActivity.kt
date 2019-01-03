@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -46,6 +47,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     private var progressDialog: ProgressDialog? = null
 
     private val SELECT_PICTURE: Int = 101
+
+    private val BACK_PRESSED_TERM:Long = 1000 * 2
+    private var backPressedTime: Long = -1
 
     val user = HashMap<String, Any>()
 
@@ -357,6 +361,15 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             startActivity(intent)
         }
 
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - backPressedTime < BACK_PRESSED_TERM) {
+            finish()
+        } else {
+            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+            backPressedTime = System.currentTimeMillis()
+        }
     }
 
 }
