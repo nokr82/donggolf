@@ -72,20 +72,27 @@
 
 
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical">
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:id="@+id/chatCont"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="7">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp">
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true">
                     <EditText
+                        android:id="@+id/contentET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -95,6 +102,7 @@
                         android:hint="입력"/>
 
                     <TextView
+                        android:id="@+id/addchattingTV"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="등록"
@@ -104,7 +112,7 @@
                         android:gravity="center"/>
 
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
         <!--여기까지 채팅창-->

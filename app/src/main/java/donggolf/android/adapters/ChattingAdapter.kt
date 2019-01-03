@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
 
 
-open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
@@ -39,19 +41,9 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var json = data.get(position)
 
-        var room = json.getJSONObject("Chatroom")
-        val writernick = Utils.getString(room,"writernick")
-        val friend = Utils.getInt(room,"friend")
+        val myId = PrefUtils.getIntPreference(context, "member_id")
 
-        if (friend == 0){
-            item.nofriendIV.visibility = View.VISIBLE
-            item.firstIV.visibility = View.GONE
-        } else {
-            item.nofriendIV.visibility = View.GONE
-            item.firstIV.visibility = View.VISIBLE
-        }
 
-        item.nickTV.setText(writernick)
 
         return retView
 
@@ -79,22 +71,24 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
     class ViewHolder(v: View) {
 
-        var profPhoto : ImageView
-        var isOnLine : ImageView
-        var nickTV : TextView
-        var firstIV : ImageView
-        var timeTV : TextView
-        var chatcontentTV : TextView
-        var nofriendIV: ImageView
+        var myLL : LinearLayout
+        var userLL : LinearLayout
+        var readTV : TextView
+        var mycontentTV : TextView
+        var userprofileIV : ImageView
+        var usernickTV : TextView
+        var usercontentTV: TextView
+        var userdateTV: TextView
 
         init {
-            profPhoto = v.findViewById<View>(R.id.profPhoto) as ImageView
-            isOnLine = v.findViewById<View>(R.id.isOnLine) as ImageView
-            nickTV = v.findViewById<View>(R.id.nickTV) as TextView
-            firstIV = v.findViewById<View>(R.id.firstIV) as ImageView
-            timeTV = v.findViewById<View>(R.id.timeTV) as TextView
-            chatcontentTV = v.findViewById<View>(R.id.chatcontentTV) as TextView
-            nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
+            myLL = v.findViewById<View>(R.id.myLL) as LinearLayout
+            userLL = v.findViewById<View>(R.id.userLL) as LinearLayout
+            readTV = v.findViewById<View>(R.id.readTV) as TextView
+            mycontentTV = v.findViewById<View>(R.id.mycontentTV) as TextView
+            userprofileIV = v.findViewById<View>(R.id.userprofileIV) as ImageView
+            usernickTV = v.findViewById<View>(R.id.usernickTV) as TextView
+            usercontentTV = v.findViewById<View>(R.id.usercontentTV) as TextView
+            userdateTV = v.findViewById<View>(R.id.userdateTV) as TextView
 
         }
     }

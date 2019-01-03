@@ -52,9 +52,16 @@
                 android:layout_marginRight="3dp"/>
             <ImageView
                 android:id="@+id/firstIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="13dp"
                 android:src="@drawable/icon_first"
+                android:layout_marginRight="3dp"/>
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/nofriendIV"
+                android:layout_width="25dp"
+                android:layout_height="13dp"
+                android:src="@drawable/icon_second"
                 android:layout_marginRight="3dp"/>
             <ImageView
                 android:layout_width="12dp"

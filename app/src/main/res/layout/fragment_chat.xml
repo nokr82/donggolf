@@ -22,15 +22,38 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="155dp"
                 android:src="@mipmap/btn_my_chat_on"/>
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:textSize="13dp"
-                android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:text="내 채팅(999)"/>
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text="내 채팅("/>
+                <TextView
+                    android:id="@+id/chatcountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text="0"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text=")"/>
+            </LinearLayout>
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18sp"

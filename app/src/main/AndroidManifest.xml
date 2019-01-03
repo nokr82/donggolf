@@ -203,7 +203,8 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.ChatDetailActivity"
-            android:theme="@style/NoTitleDialog" />
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".activities.Notice2Activity"
             android:theme="@style/NoTitleDialog" />
