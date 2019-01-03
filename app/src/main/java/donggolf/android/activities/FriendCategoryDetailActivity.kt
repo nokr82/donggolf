@@ -29,6 +29,8 @@ class FriendCategoryDetailActivity : RootActivity() {
     val MOVEtoCATEGORY = 102
     var category_id = 0
 
+    val CATEGORY_SETTING = 301
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_category_detail)
@@ -115,7 +117,7 @@ class FriendCategoryDetailActivity : RootActivity() {
                 val itt = Intent(context, FriendGrpDetailSettingActivity::class.java)
                 itt.putExtra("groupTitle", intent.getStringExtra("category_title"))
                 itt.putExtra("cate_id", category_id)
-                startActivity(itt)
+                startActivityForResult(itt,CATEGORY_SETTING)
             }
         }
 
@@ -167,10 +169,20 @@ class FriendCategoryDetailActivity : RootActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == MOVEtoCATEGORY) {
-            val selCateg = data!!.getIntExtra("CategoryID", 1)
-            //println("category id : $selCateg")
-            moveMateOtherCategory(selCateg)
+        if(resultCode == Activity.RESULT_OK) {
+            when(requestCode) {
+                MOVEtoCATEGORY -> {
+                    val selCateg = data!!.getIntExtra("CategoryID", 1)
+                    //println("category id : $selCateg")
+                    moveMateOtherCategory(selCateg)
+                }
+
+                CATEGORY_SETTING -> {
+                    var title = data!!.getStringExtra("title")
+                    titleFrdCateTV.text = title
+                }
+
+            }
         }
     }
 
@@ -230,7 +242,6 @@ class FriendCategoryDetailActivity : RootActivity() {
         MateAction.mateList(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         val mates = response.getJSONArray("mates")

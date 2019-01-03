@@ -30,6 +30,10 @@ object MateAction {
         HttpClient.post("/mate/category_info.json", params, handler)
     }
 
+    fun category_detail(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/mate/category_detail.json", params, handler)
+    }
+
     fun rejectMateRequest(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/mate/reject_mate.json", params, handler)
     }
