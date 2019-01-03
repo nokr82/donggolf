@@ -59,22 +59,6 @@ class LoginActivity : RootActivity() {
 
         //PrefUtils.clear(context)
 
-        autoLogin = PrefUtils.getBooleanPreference(context, "auto")
-
-        println("autoLogin========$autoLogin")
-        if (autoLogin){
-            //autologinCB.isChecked = true
-            if (progressDialog != null) {
-                progressDialog!!.setMessage("loading...")
-                progressDialog!!.show()
-            }
-            login()
-
-        } else {
-            PrefUtils.clear(context)
-        }
-
-
         btn_login.setOnClickListener {
             login()
         }
@@ -116,39 +100,18 @@ class LoginActivity : RootActivity() {
 
     }
 
-    //login_hdr
-    internal var loginHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            login()
-        }
-    }
-
     private fun login() {
 
-        if (PrefUtils.getBooleanPreference(context, "auto") == null){
+        email = Utils.getString(emailET)
+        if (email.isEmpty()) {
+            Utils.alert(context, "아이디는 필수 입력입니다.")
+            return
+        }
 
-            email = Utils.getString(emailET)
-            password = Utils.getString(passwordET)
-
-        } else if (PrefUtils.getBooleanPreference(context,"auto")){
-
-            email = PrefUtils.getStringPreference(context, "email")
-            password = PrefUtils.getStringPreference(context, "pass")
-
-        } else {
-
-            //PrefUtils.clear(context)
-            email = Utils.getString(emailET)
-            if (email.isEmpty()) {
-                Utils.alert(context, "아이디는 필수 입력입니다.")
-                return
-            }
-
-            password = Utils.getString(passwordET)
-            if (password.isEmpty()) {
-                Utils.alert(context, "비밀번호는 필수 입력입니다.")
-                return
-            }
+        password = Utils.getString(passwordET)
+        if (password.isEmpty()) {
+            Utils.alert(context, "비밀번호는 필수 입력입니다.")
+            return
         }
 
         val params = RequestParams()
@@ -212,8 +175,6 @@ class LoginActivity : RootActivity() {
         })
 
     }
-
-
 
     fun nomemberlogin() {
         val email = emailET.text.toString()

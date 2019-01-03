@@ -41,6 +41,10 @@ object MemberAction {
         HttpClient.post("/member/member_info.json", params, handler)
     }
 
+    fun m_update_info(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/update_info.json", params, handler)
+    }
+
     //이미지만 가져오기
     fun get_member_img_history(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/get_member_prfimg_history.json", params, handler)
@@ -77,6 +81,11 @@ object MemberAction {
 
     fun regist_token(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/regist_token.json", params, handler)
+    }
+
+    // 내 알림 목록
+    fun alarms(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/alarms.json", params, handler)
     }
 
 }

@@ -42,7 +42,7 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
 
         var check = json.getBoolean("check")//임의로 따로 넣어준 변수값
 
-        val mateMember = json.getJSONObject("Member")
+        val mateMember = json.getJSONObject("MateMember")
 
         item.mates_nickTV.text = Utils.getString(mateMember,"nick")
         item.mates_status_msgTV.text = Utils.getString(mateMember,"status_msg")
