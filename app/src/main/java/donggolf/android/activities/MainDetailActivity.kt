@@ -15,13 +15,16 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
 import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.actions.*
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
@@ -366,10 +369,10 @@ class MainDetailActivity : RootActivity() {
             visibleMenu()
         }
 
-        goneRL.setOnClickListener {
-//            relativ_RL.visibility = View.GONE
-            visibleMenu()
-        }
+//        goneRL.setOnClickListener {
+////            relativ_RL.visibility = View.GONE
+//            visibleMenu()
+//        }
 
         reportTV.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -487,7 +490,7 @@ class MainDetailActivity : RootActivity() {
             alert.show()
         }
 
-        likeIV.setOnClickListener {
+        likeLL.setOnClickListener {
             if (intent.getStringExtra("id") != null) {
                 val content_id = intent.getStringExtra("id")
 
@@ -498,17 +501,51 @@ class MainDetailActivity : RootActivity() {
                 PostAction.add_like(params, object : JsonHttpResponseHandler() {
                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                         val result = response!!.getString("result")
+                        var LikeCount = response.getInt("LikeCount")
+
                         if (result == "yes") {
-                            likeIV.setImageDrawable(resources.getDrawable(R.drawable.icon_like))
-                            val likes = response.getJSONObject("Like")
-                            heartcountTV.text = likes.length().toString()
-                            likecountTV.text = likes.length().toString() + "명이 좋아합니다"
-                        } else {
-                            likeIV.setImageDrawable(resources.getDrawable(R.drawable.btn_cancel_like))
-                            val likes = response.getJSONObject("Like")
-                            heartcountTV.text = likes.length().toString()
-                            likecountTV.text = likes.length().toString() + "명이 좋아합니다"
+
+                            var like_id = response.getInt("like_id")
+
+                            var remove_idx = -1
+
+                            for(i in 0 until likeMembersLL.childCount) {
+                                var view:View = likeMembersLL.getChildAt(i)
+
+                                var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
+                                var tag_like_id:Int = profileIV.tag as Int
+
+                                if(tag_like_id == like_id) {
+                                    remove_idx = i;
+                                }
+
+                            }
+
+                            if(remove_idx > -1) {
+                                likeMembersLL.removeViewAt(remove_idx)
+                            }
+
+                            likeIV.setImageResource(R.mipmap.icon_like)
+
+                        } else if("ok" == result) {
+
+                            var json = response.getJSONObject("like")
+                            var like = json.getJSONObject("Like")
+                            var member = json.getJSONObject("Member")
+
+                            var view:View = View.inflate(context, R.layout.item_profile, null)
+                            var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
+                            profileIV.tag = Utils.getInt(like, "id")
+
+                            var image = Config.url + Utils.getString(member, "profile_img")
+                            ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+                            likeMembersLL.addView(view)
+
+                            likeIV.setImageResource(R.mipmap.btn_cancel_like)
+
                         }
+                        likecountTV.text = LikeCount.toString() + "명이 좋아합니다"
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
@@ -516,6 +553,10 @@ class MainDetailActivity : RootActivity() {
                     }
                 })
             }
+        }
+
+        likesMoreLL.setOnClickListener {
+
         }
 
         getPost()
@@ -667,6 +708,8 @@ class MainDetailActivity : RootActivity() {
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
+                            } else {
+                                imageRL.visibility = View.GONE
                             }
 
                             dateTV.text = created
@@ -690,42 +733,52 @@ class MainDetailActivity : RootActivity() {
                                 cmtET.visibility = View.GONE
                             }
 
-                            val params = RequestParams()
-                            params.put("member_id", member_id)
+                            val member = response.getJSONObject("Member")
 
-                            MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                    println("success==========")
-                                    val result = response!!.getString("result")
-                                    if (result == "ok") {
-                                        val member = response.getJSONObject("Member")
+                            val id = Utils.getString(member,"id")
+                            val nick = Utils.getString(member, "nick")
+                            val status_msg = Utils.getString(member, "status_msg")
+                            val profile_img = Utils.getString(member, "profile_img")
 
-                                        val id = Utils.getString(member,"id")
-                                        val nick = Utils.getString(member, "nick")
-                                        val status_msg = Utils.getString(member, "status_msg")
+                            nickNameTV.text = nick
+                            statusmsgTV.text = status_msg
 
-                                        println("nick ------$nick")
+                            if (login_id == id.toInt()){
+                                reportTV.visibility = View.GONE
+                                addFriendTV.visibility = View.GONE
+                                addfavoriteTV.visibility = View.GONE
+                            } else {
+                                modifyTV.visibility = View.GONE
+                                deleteTV.visibility = View.GONE
+                            }
 
-                                        nickNameTV.text = nick
-                                        statusmsgTV.text = status_msg
+                            ImageLoader.getInstance().displayImage(Config.url + profile_img, profileIV, Utils.UILoptionsUserProfile)
 
-                                        if (login_id == id.toInt()){
-                                            reportTV.visibility = View.GONE
-                                            addFriendTV.visibility = View.GONE
-                                            addfavoriteTV.visibility = View.GONE
-                                        } else {
-                                            modifyTV.visibility = View.GONE
-                                            deleteTV.visibility = View.GONE
-                                        }
+                            var likes = response.getJSONArray("Like")
+                            if(likes.length() < 5) {
+                                likesMoreLL.visibility = View.GONE
+                            } else {
+                                likesMoreLL.visibility = View.VISIBLE
+                            }
 
-                                        getComments()
-                                    }
-                                }
+                            for (i in 0 until likes.length()) {
 
-                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                                    println("---------fail")
-                                }
-                            })
+                                var json:JSONObject = likes.get(i) as JSONObject
+                                var like = json.getJSONObject("Like")
+                                var likeMember = json.getJSONObject("Member")
+
+                                var view = View.inflate(context, R.layout.item_profile,null)
+                                var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
+                                profileIV.tag = Utils.getInt(like, "id")
+
+                                var image = Config.url + Utils.getString(likeMember, "profile_img")
+
+                                ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsProfile)
+
+                                likeMembersLL.addView(view)
+                            }
+
+                            getComments()
 
                         }
                     } catch (e: JSONException) {
