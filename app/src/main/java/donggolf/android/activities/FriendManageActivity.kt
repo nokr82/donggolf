@@ -125,6 +125,10 @@ class FriendManageActivity : RootActivity() {
                         friendCategoryData.add(categories[i] as JSONObject)
                     }
                     frdMngAdapter.notifyDataSetChanged()
+                    val waitcount = response!!.getString("waitcount")
+                    friend_request_cnt.setText(waitcount)
+                    val blockcount = response!!.getString("blockcount")
+                    friend_block_cnt.setText(blockcount)
                 }
             }
 

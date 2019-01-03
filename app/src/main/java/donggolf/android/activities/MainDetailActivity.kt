@@ -461,7 +461,7 @@ class MainDetailActivity : RootActivity() {
                             params.put("content_id", content_id)
                             params.put("mate_id", writer)
                             params.put("member_id", login_id)
-                            params.put("category_id",0)
+                            params.put("category_id",-1)
                             params.put("status","w")
 
                             PostAction.add_friend(params, object : JsonHttpResponseHandler() {

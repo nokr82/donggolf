@@ -45,18 +45,29 @@ open class SelectMemberAdapter(context: Context, view:Int, data:ArrayList<JSONOb
 
         var json = data.get(position)
 
-        var category = json.getJSONObject("Member")
+        var member = json.getJSONObject("MateMember")
 
-        var nick:String = Utils.getString(category,"nick")
+        var nick:String = Utils.getString(member,"nick")
+
         item.friend_name.text = nick
 
-//        var isSel = json.getBoolean("isSelectedOp")
-//        if (isSel){
-//            item.item_option_checkIV.visibility = View.VISIBLE
-//        } else {
-//            item.item_option_checkIV.visibility = View.INVISIBLE
-//        }
+        var isSel = json.getBoolean("isSelectedOp")
 
+        if (isSel){
+            item.check_add_mem.visibility = View.VISIBLE
+            item.check_sel_mem.visibility = View.GONE
+        } else {
+            item.check_sel_mem.visibility = View.VISIBLE
+            item.check_add_mem.visibility = View.GONE
+        }
+
+//        item.check_sel_mem.setOnClickListener {
+//            isSel = !isSel
+//
+//            json.put("check", isSel)
+//
+//            notifyDataSetChanged()
+//        }
 
         return retView
     }
@@ -84,13 +95,15 @@ open class SelectMemberAdapter(context: Context, view:Int, data:ArrayList<JSONOb
     class ViewHolder(v: View) {
 
         var check_sel_mem : ImageView
+        var check_add_mem : ImageView
         var friends_profile : ImageView
         var friend_name : TextView
         var relation : ImageView
 
         init {
-            check_sel_mem = v.findViewById<View>(R.id.relation) as ImageView
-            friends_profile = v.findViewById<View>(R.id.relation) as ImageView
+            check_sel_mem = v.findViewById<View>(R.id.check_sel_mem) as ImageView
+            check_add_mem = v.findViewById<View>(R.id.check_add_mem) as ImageView
+            friends_profile = v.findViewById<View>(R.id.friends_profile) as ImageView
             friend_name = v.findViewById<View>(R.id.friend_name) as TextView
             relation = v.findViewById<View>(R.id.relation) as ImageView
         }
