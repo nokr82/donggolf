@@ -753,11 +753,7 @@ class AddGoodsActivity : RootActivity() {
             MarketAction.add_market_product(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        //Utils.alert(context,"상품이 성공적으로 등록되었습니다.")
-                        finish()
-                    }
+                    finish()
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
