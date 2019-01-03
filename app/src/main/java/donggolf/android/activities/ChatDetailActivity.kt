@@ -4,13 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceActivity
 import android.view.View
+import android.widget.AbsListView
+import android.widget.BaseAdapter
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
+import donggolf.android.adapters.ChattingAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -19,7 +21,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-class ChatDetailActivity : RootActivity() {
+class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
+
+    private var userScrolled: Boolean = false
+    private var lastItemVisibleFlag: Boolean = false
 
     lateinit var context: Context
 
@@ -37,16 +42,15 @@ class ChatDetailActivity : RootActivity() {
 
     private  var memberList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  var chattingList:ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private lateinit var adapter: ChattingAdapter
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
-
+            chatting()
         }
     }
 
     private var timer: Timer? = null
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +63,11 @@ class ChatDetailActivity : RootActivity() {
         division = intent.getIntExtra("division",0)
         member_id = PrefUtils.getIntPreference(context,"member_id")
         chattitleTV.setText(chatTitle)
+
+        adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
+
+        chatLV.adapter = adapter
+        chatLV.setOnScrollListener(this)
 
         if (division == 0 ){        //0 신규생성
             mate_id = intent.getStringArrayListExtra("mate_id")
@@ -78,8 +87,7 @@ class ChatDetailActivity : RootActivity() {
             addchat()
         } else if (division == 1){        //1 기존
             room_id = intent.getStringExtra("id")
-
-            detailchat()
+            timerStart()
         }
 
         var author = intent.getStringExtra("Author")
@@ -94,12 +102,10 @@ class ChatDetailActivity : RootActivity() {
         }
 
         btn_opMenu.setOnClickListener {
-
             drawerMenu.openDrawer(chat_right_menu)
-
         }
 
-        chatCont.setOnItemClickListener { parent, view, position, id ->
+        chatLV.setOnItemClickListener { parent, view, position, id ->
             drawerMenu.closeDrawer(chat_right_menu)
         }
 
@@ -149,25 +155,65 @@ class ChatDetailActivity : RootActivity() {
 
     }
 
-    fun detailchat(){
+    fun chatting(){
+
+        if (first_id < 1) {
+            if (chattingList.size > 0) {
+                try {
+                    try {
+                        val lastMSG = chattingList.get(chattingList.size - 1)
+                        val chatting = lastMSG.getJSONObject("Chatting")
+                        last_id = Utils.getInt(chatting, "id")
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                } catch (e: NumberFormatException) {
+
+                }
+
+            }
+        }
 
         val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("first_id", first_id)
+        params.put("last_id", last_id)
         params.put("room_id", room_id)
 
-        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
+        ChattingAction.chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    val room = response!!.getJSONObject("chatroom")
+                    val list = response.getJSONArray("list")
+                    val room = response.getJSONObject("chatroom")
                     val roomtitle = Utils.getString(room,"title")
                     chattitleTV.setText(roomtitle)
 
-                    val members = response!!.getJSONArray("chatmember")
-                    if (members.length() > 0 && members != null){
-                        for (i in 0 until members.length()){
-                            memberList.add(members.get(i) as JSONObject)
-
+                    if (first_id > 0) {
+                        for (i in 0 until list.length()) {
+                            val data = list.get(i) as JSONObject
+                            chattingList.add(0, data)
                         }
+
+                    } else {
+                        for (i in 0 until list.length()) {
+                            val data = list.get(i) as JSONObject
+
+                            chattingList.add(data)
+                        }
+                    }
+
+                    if (chattingList.size > 0) {
+                        val data = chattingList[chattingList.size - 1]
+                        val chatting = data.getJSONObject("Chatting")
+                        last_id = Utils.getInt(chatting, "id")
+                    }
+
+                    println("chattingList.size ${chattingList.size}")
+
+                    if (list.length() > 0) {
+                        (adapter as BaseAdapter).notifyDataSetChanged()
                     }
                 }
             }
@@ -189,7 +235,8 @@ class ChatDetailActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("room_id", room_id)
-        params.put("member_id",PrefUtils.getStringPreference(context,"member_id"))
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
         params.put("img","")
 
@@ -218,7 +265,6 @@ class ChatDetailActivity : RootActivity() {
             }
         }
 
-
         timer = Timer()
         timer!!.schedule(task, 0, 2000)
 
@@ -232,4 +278,103 @@ class ChatDetailActivity : RootActivity() {
         }
     }
 
+
+    override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+
+        if (firstVisibleItem == 0 && firstVisibleItem + visibleItemCount < totalItemCount) {
+            if (chattingList.size > 0) {
+                try {
+                    val firstMSG = chattingList[0]
+                    val chatting = firstMSG.getJSONObject("Chatting")
+                    first_id = Utils.getInt(chatting, "id")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+                last_id = -1
+            } else {
+                first_id = -1
+                if (chattingList.size > 0) {
+                    try {
+                        val lastMSG = chattingList[chattingList.size - 1]
+                        val chatting = lastMSG.getJSONObject("Chatting")
+                        last_id = Utils.getInt(chatting, "id")
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                } else {
+                    last_id = -1
+                }
+
+            }
+        } else {
+            first_id = -1
+            if (chattingList.size > 0) {
+                try {
+                    val lastMSG = chattingList[chattingList.size - 1]
+                    val chatting = lastMSG.getJSONObject("Chatting")
+                    last_id = Utils.getInt(chatting, "id")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            } else {
+                last_id = -1
+            }
+        }
+    }
+
+    override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            userScrolled = true
+            if (timer != null) {
+                timer!!.cancel()
+            }
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+            if (timer != null) {
+                timer!!.cancel()
+            }
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            if (lastItemVisibleFlag) {
+                if (chattingList.size > 0) {
+                    val lastMSG = chattingList[chattingList.size - 1]
+                    first_id = -1
+                    try {
+                        val chatting = lastMSG.getJSONObject("Chatting")
+                        last_id = Utils.getInt(chatting, "id")
+                    } catch (e: NumberFormatException) {
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            } else {
+                /*
+                if (first_id > 0) {
+                    loadData();
+                }
+                */
+            }
+
+            if (chattingList.size > 0) {
+                if (timer != null) {
+                    timer!!.cancel()
+                }
+
+                val task = object : TimerTask() {
+                    override fun run() {
+                        loadDataHandler.sendEmptyMessage(0)
+                    }
+                }
+
+                timer = Timer()
+                timer!!.schedule(task, 1000, 2000)
+            }
+
+        } else {
+        }
+    }
 }

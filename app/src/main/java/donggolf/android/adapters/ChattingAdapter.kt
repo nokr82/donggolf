@@ -13,6 +13,8 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
@@ -41,9 +43,31 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var json = data.get(position)
 
+        val chatting = json.getJSONObject("Chatting")
+        val member = json.getJSONObject("Member")
+
         val myId = PrefUtils.getIntPreference(context, "member_id")
+        val send_member_id = Utils.getInt(chatting,"member_id")
+        val content = Utils.getString(chatting,"content")
+        val content_image = Utils.getString(chatting, "image")
+        val member_nick = Utils.getString(member,"nick")
+        var messageCreated = Utils.getString(chatting,"created")
 
+        var formatter = SimpleDateFormat("HH:mm", java.util.Locale.KOREA)
+        var split = messageCreated.split(" ")
+        println("split -=---- $split")
 
+        if (send_member_id == myId) {
+            item.myLL.visibility = View.VISIBLE
+            item.userLL.visibility = View.GONE
+            item.mycontentTV.setText(content)
+        } else {
+            item.myLL.visibility = View.GONE
+            item.userLL.visibility = View.VISIBLE
+            item.usernickTV.setText(member_nick)
+            item.usercontentTV.setText(content)
+            item.userdateTV.setText(split.get(1))
+        }
 
         return retView
 
