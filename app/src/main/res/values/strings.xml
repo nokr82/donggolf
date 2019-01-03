@@ -22,4 +22,6 @@
     <string name="kakao_scheme">kakao0ece568bf9a6e79d99947fe2a29a4881</string>
     <string name="kakaolink_host">market://details?id=donggolf.android</string>
 
+    <string name="default_notification_channel_id">donggolf</string>
+
 </resources>

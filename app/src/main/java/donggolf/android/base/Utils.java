@@ -1016,6 +1016,14 @@ public class Utils {
             // .delayBeforeLoading(100)
         .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
 
+    public static DisplayImageOptions UILoptionsUserProfile = new DisplayImageOptions.Builder()
+        // .displayer(new RoundedBitmapDisplayer(2))
+             .showImageOnLoading(R.drawable.icon_profile)
+            .showImageForEmptyUri(R.drawable.icon_profile)
+//             .showImageOnFail(R.mipmap.box_picture)
+            // .delayBeforeLoading(100)
+        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+
     public static String fullDateTime(String created) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월 dd일 EEE요일 a h시 mm분", java.util.Locale.KOREA);

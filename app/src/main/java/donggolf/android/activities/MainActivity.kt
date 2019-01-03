@@ -57,11 +57,26 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     private var mAuth: FirebaseAuth? = null
 
+    var is_push = false
+    var market_id = -1
+    var content_id = -1
+    var friend_id = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//
+        this.context = this
+
+        is_push = intent.getBooleanExtra("is_push", false)
+        market_id = intent.getIntExtra("market_id", -1)
+        content_id = intent.getIntExtra("content_id", -1)
+        friend_id = intent.getIntExtra("friend_id", -1)
+
+        if(is_push) {
+            handlePush()
+        }
+
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
         frags.adapter = pagerAdapter
         pagerAdapter.notifyDataSetChanged()
@@ -88,9 +103,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
 
 
-        context = this
-
-
 
         homeRL.setOnClickListener {
             frags.currentItem = 0
@@ -101,11 +113,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
         noticeRV.setOnClickListener {
-            frags.currentItem = 2
+//            frags.currentItem = 2
+            var intent = Intent(context, AlarmActivity::class.java)
+            startActivity(intent)
         }
 
         infoRL.setOnClickListener {
-            frags.currentItem = 3
+            frags.currentItem = 2
         }
 
         areaLL.setOnClickListener {
@@ -158,8 +172,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {
-
-
 //        mAuth!!.signInWithCustomToken(mCustomToken)
 //                .addOnCompleteListener(this) { task ->
 //                    if (task.isSuccessful) {
@@ -196,11 +208,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
                     return fragment
                 }
-                2 -> {
-                    fragment = FushFragment()
-                    fragment.arguments = args
-                    return fragment
-                }
+//                2 -> {
+//                    fragment = FushFragment()
+//                    fragment.arguments = args
+//                    return fragment
+//                }
                 else -> {
                     fragment = InfoFragment()
                     fragment.arguments = args
@@ -210,7 +222,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
         override fun getCount(): Int {
-            return 4
+            return 3
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
@@ -327,5 +339,24 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 //        progressDialog!!.dismiss()
     }
 
+    fun handlePush() {
+
+        if(content_id > 0) {
+            // 게시글 관련 푸쉬
+            var intent = Intent(context, MainDetailActivity::class.java)
+            intent.putExtra("id", content_id.toString())
+            startActivity(intent)
+        } else if (market_id > 0) {
+            // 마켓 관련 푸쉬
+            var intent = Intent(context, GoodsDetailActivity::class.java)
+            intent.putExtra("product_id", market_id)
+            startActivity(intent)
+        } else if (friend_id > 0) {
+            var intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","waiting")
+            startActivity(intent)
+        }
+
+    }
 
 }

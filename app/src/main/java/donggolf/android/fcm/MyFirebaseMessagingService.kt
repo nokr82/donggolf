@@ -1,12 +1,17 @@
 package donggolf.android.fcm
 
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.media.RingtoneManager
+import android.os.Build
 import android.os.Handler
+import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -43,27 +48,69 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val title = data["title"]
         val body = data["body"]
+        val channelId = getString(R.string.default_notification_channel_id)
+        val group = channelId
 
         val intent = Intent(this, IntroActivity::class.java)
         // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("market_id", data["market_id"])
+        intent.putExtra("chatting_member_id", data["chatting_member_id"])
+        intent.putExtra("content_id", data["content_id"])
+        intent.putExtra("friend_id", data["friend_id"])
         intent.putExtra("FROM_PUSH", true)
 
         val pendingIntent = PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, 0)
 
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setAutoCancel(true)
-            .setVibrate(longArrayOf(1000, 1000))
-            .setContentIntent(pendingIntent)
+
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.mipmap.dongne_golf_logo)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setAutoCancel(true)
+                .setGroup(group)
+                .setVibrate(longArrayOf(1000, 1000))
+                .setContentIntent(pendingIntent)
 
         notificationBuilder.setSound(defaultSoundUri)
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel(notificationManager, channelId, title, body)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val gnotificationBuilder = NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.mipmap.dongne_golf_logo)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.dongne_golf_logo))
+                    .setGroup(group)
+                    .setGroupSummary(true)
+                    .setAutoCancel(true)
+
+            notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+            notificationManager.notify(group, 0, gnotificationBuilder.build())
+        } else {
+            notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun createChannel(
+            notificationManager: NotificationManager,
+            channelId: String,
+            title: String?,
+            body: String?
+    ) {
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+
+        val mChannel = NotificationChannel(channelId, title, importance)
+        mChannel.description = body
+        mChannel.enableLights(true)
+        mChannel.lightColor = Color.BLUE
+        notificationManager.createNotificationChannel(mChannel)
+
     }
 
     companion object {
