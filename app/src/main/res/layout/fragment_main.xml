@@ -85,7 +85,8 @@
         <LinearLayout
             android:id="@+id/main_listview_search"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:visibility="gone"

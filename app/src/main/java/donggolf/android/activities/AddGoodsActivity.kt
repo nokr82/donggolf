@@ -16,6 +16,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.joooonho.SelectableRoundedImageView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -101,8 +103,9 @@ class AddGoodsActivity : RootActivity() {
         getCategory()
 
         addpictureLL.setOnClickListener {
-            var intent = Intent(context, FindPictureGridActivity::class.java)
-            startActivityForResult(intent, SELECT_PICTURE)
+
+            permission()
+
         }
 
         finishLL.setOnClickListener {
@@ -348,6 +351,30 @@ class AddGoodsActivity : RootActivity() {
                 }
             })
         }
+
+    }
+
+    private fun permission() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+
+                var intent = Intent(context, FindPictureGridActivity::class.java)
+                startActivityForResult(intent, SELECT_PICTURE)
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
 
     }
 
@@ -753,6 +780,12 @@ class AddGoodsActivity : RootActivity() {
             MarketAction.add_market_product(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
+                    println("response :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+
+                    var intent = Intent()
+                    intent.action = "GOODS_ADD"
+                    sendBroadcast(intent)
+
                     finish()
                 }
 

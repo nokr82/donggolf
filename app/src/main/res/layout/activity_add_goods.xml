@@ -402,7 +402,7 @@
                                     android:layout_margin="5dp"
                                     android:background="@null"
                                     android:hint="상품금액을 입력해 주세요."
-                                    android:inputType="textEmailAddress"
+                                    android:inputType="number"
                                     android:singleLine="true"
                                     android:textSize="12dp" />
 

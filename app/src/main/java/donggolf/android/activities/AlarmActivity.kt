@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.AbsListView
 import com.google.firebase.auth.FirebaseAuth
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_notice2.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-class AlarmActivity : RootActivity() {
+class AlarmActivity : RootActivity(), AbsListView.OnScrollListener {
 
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
@@ -27,6 +28,15 @@ class AlarmActivity : RootActivity() {
     private var member_id = -1;
     private var page = 1;
     private var totalPage = 1;
+
+    private var userScrolled = false
+    private var lastItemVisibleFlag = false
+    private var totalItemCountScroll = 0
+    private val itemCount = 0
+    private val totalItemCount = 0
+    private var lastcount = 0
+    private val visibleThreshold = 10
+
 
     private var adapterData = ArrayList<JSONObject>()
     private lateinit var adapter : FushFragAdapter;
@@ -53,6 +63,7 @@ class AlarmActivity : RootActivity() {
 
         adapter = FushFragAdapter(context, R.layout.item_fushfrag, adapterData)
         noticeLV.adapter = adapter
+        noticeLV.setOnScrollListener(this)
         noticeLV.setOnItemClickListener { parent, view, position, id ->
 
             var data = adapterData.get(position)
@@ -108,6 +119,10 @@ class AlarmActivity : RootActivity() {
 
                     page = Utils.getInt(response, "page")
                     totalPage = Utils.getInt(response, "totalPage")
+
+                    if(page == 1) {
+                        adapterData.clear()
+                    }
 
                     var list = response.getJSONArray("list")
 
@@ -185,4 +200,39 @@ class AlarmActivity : RootActivity() {
         progressDialog = null
 
     }
+
+
+    override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
+        // 현재 가장 처음에 보이는 셀번호와 보여지는 셀번호를 더한값이
+        // 전체의 숫자와 동일해지면 가장 아래로 스크롤 되었다고 가정합니다.
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            userScrolled = true
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
+            userScrolled = false
+            //화면이 바닥에 닿았을때
+            if (totalItemCount > itemCount) {
+                page++
+                lastcount = totalItemCountScroll
+                loadData()
+            }
+        }
+
+    }
+
+    override fun onScroll(view: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+        if (userScrolled && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold && itemCount < this.totalItemCount && this.totalItemCount > 0) {
+            if (this.totalItemCount > itemCount) {
+                //                page++;
+                //                adapterData.clear();
+                //                searchList();
+            }
+        }
+
+        //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem)
+        // + 현재 화면에 보이는 리스트 아이템의갯수(visibleItemCount)가
+        // 리스트 전체의 갯수(totalOtemCount)-1 보다 크거나 같을때
+        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+        totalItemCountScroll = totalItemCount
+    }
+
 }

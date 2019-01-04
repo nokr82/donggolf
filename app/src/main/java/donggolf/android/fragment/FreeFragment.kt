@@ -157,6 +157,14 @@ open class FreeFragment : Fragment() {
         main_edit_listview.adapter = editadapter
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
+
+            Utils.hideKeyboard(context)
+
+            if(main_listview_search.visibility == View.VISIBLE) {
+                main_listview_search.visibility = View.GONE
+                return@setOnItemClickListener
+            }
+
             val data = adapter.getItem(position)
             val content = data.getJSONObject("Content")
             var id = Utils.getInt(content,"id")
@@ -187,7 +195,9 @@ open class FreeFragment : Fragment() {
                     resetList(srchWd)
                 }
                 main_listview_search.visibility = View.GONE
-                main_edit_search.setText("")
+
+                Utils.hideKeyboard(context)
+//                main_edit_search.setText("")
             } else {
             }
             false
@@ -198,7 +208,14 @@ open class FreeFragment : Fragment() {
         }
 
         btn_del_searchWord.setOnClickListener {
+            Utils.hideKeyboard(context)
 
+            if(Utils.getString(main_edit_search) == "") {
+                return@setOnClickListener
+            }
+
+            main_edit_search.setText("")
+            resetList("")
         }
 
         main_edit_listview.setOnItemClickListener { parent, view, position, id ->

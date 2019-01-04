@@ -994,5 +994,9 @@ class MainDetailActivity : RootActivity() {
         }
     }
 
+    override fun finish() {
+        super.finish()
+        Utils.hideKeyboard(context)
+    }
 
 }

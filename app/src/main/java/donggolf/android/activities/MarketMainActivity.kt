@@ -1,10 +1,13 @@
 package donggolf.android.activities
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.AbsListView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -21,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_market_main.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
 import org.json.JSONObject
 
-class MarketMainActivity : RootActivity() {
+class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
     private lateinit var context: Context
 
@@ -37,12 +40,33 @@ class MarketMainActivity : RootActivity() {
 
     var values = ""
 
+    var page = 1
+    var totalPage = 1
+    private var userScrolled = false
+    private var lastItemVisibleFlag = false
+    private var totalItemCountScroll = 0
+    private val itemCount = 0
+    private val totalItemCount = 0
+    private var lastcount = 0
+    private val visibleThreshold = 10
+
+    internal var reLoadDataReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all")
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_market_main)
 
         context = this
 
+        var filter1 = IntentFilter("GOODS_ADD")
+        registerReceiver(reLoadDataReceiver, filter1)
 
         finishmLL.setOnClickListener {
             finish()
@@ -61,7 +85,7 @@ class MarketMainActivity : RootActivity() {
         //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
         maingridGV.adapter = adapter
-
+        maingridGV.setOnScrollListener(this)
         maingridGV.setOnItemClickListener { parent, view, position, id ->
             val product_id = adapterData[position].getInt("prodId")
             var intent = Intent(this, GoodsDetailActivity::class.java)
@@ -253,6 +277,7 @@ class MarketMainActivity : RootActivity() {
         val params = RequestParams()
         params.put("type", type)
         params.put("value", values)
+        params.put("page", page)
 
         MarketAction.get_market_product(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -261,6 +286,12 @@ class MarketMainActivity : RootActivity() {
                 if (result == "ok"){
                     val marketItems = response.getJSONArray("marketItems")
 
+                    page = response.getInt("page")
+                    totalPage = response.getInt("totalPage")
+
+                    if(page == 1) {
+                        adapterData.clear()
+                    }
 
                     for (i in 0 until marketItems.length()){
                         adapterData.add(marketItems[i] as JSONObject)
@@ -284,5 +315,34 @@ class MarketMainActivity : RootActivity() {
         entireClassificationTV.setTextColor(Color.parseColor("#000000"))
         entireBrandTV.setTextColor(Color.parseColor("#000000"))
         entireTypeTV.setTextColor(Color.parseColor("#000000"))
+    }
+
+    override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            userScrolled = true
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
+            userScrolled = false
+
+            //화면이 바닥에 닿았을때
+            if (totalPage > page) {
+                page++
+                lastcount = totalItemCountScroll
+
+                getSecondHandMarketItems("all")
+            }
+        }
+    }
+
+    override fun onScroll(view: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+        if (userScrolled && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold && itemCount < this.totalItemCount && this.totalItemCount > 0) {
+            if (totalPage > page) {
+            }
+        }
+
+        //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem)
+        // + 현재 화면에 보이는 리스트 아이템의갯수(visibleItemCount)가
+        // 리스트 전체의 갯수(totalOtemCount)-1 보다 크거나 같을때
+        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+        totalItemCountScroll = totalItemCount
     }
 }
