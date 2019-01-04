@@ -52,10 +52,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val content_image = Utils.getString(chatting, "image")
         val member_nick = Utils.getString(member,"nick")
         var messageCreated = Utils.getString(chatting,"created")
-
-        var formatter = SimpleDateFormat("HH:mm", java.util.Locale.KOREA)
         var split = messageCreated.split(" ")
-        println("split -=---- $split")
 
         if (send_member_id == myId) {
             item.myLL.visibility = View.VISIBLE
@@ -66,7 +63,15 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.userLL.visibility = View.VISIBLE
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
-            item.userdateTV.setText(split.get(1))
+
+            var timesplit = split.get(1).split(":")
+            var noon = "오전"
+            if (timesplit.get(0).toInt() >= 12){
+                noon = "오후"
+            }
+            var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+            item.userdateTV.setText(time)
+
         }
 
         return retView
