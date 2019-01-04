@@ -85,9 +85,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             addchat()
+            detail_chatting()
         } else if (division == 1){        //1 기존
             room_id = intent.getStringExtra("id")
             timerStart()
+            detail_chatting()
         }
 
         var author = intent.getStringExtra("Author")
@@ -122,6 +124,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             add_chatting()
         }
 
+        addChatMemberLL.setOnClickListener {
+
+        }
+
 
     }
 
@@ -140,7 +146,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-
+                    timerStart()
                 }
             }
 
@@ -210,7 +216,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    println("chattingList.size ${chattingList.size}")
 
                     if (list.length() > 0) {
                         (adapter as BaseAdapter).notifyDataSetChanged()
@@ -236,6 +241,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("room_id", room_id)
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
         params.put("img","")
@@ -376,5 +382,38 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         } else {
         }
+    }
+
+    fun detail_chatting(){
+        val params = RequestParams()
+        params.put("room_id", room_id)
+
+        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    if (mate_id != null){
+                        mate_id.clear()
+                    }
+                    val members = response!!.getJSONArray("chatmember")
+                    if (members != null && members.length() > 0){
+                        for (i in 0 until members.length()){
+                            val item = members.get(i) as JSONObject
+                            val chatmember = item.getJSONObject("Chatmember")
+                            val id = Utils.getString(chatmember,"id")
+                            mate_id.add(id)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
     }
 }

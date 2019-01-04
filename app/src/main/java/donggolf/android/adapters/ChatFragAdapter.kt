@@ -40,27 +40,36 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
-        println("--------room $room")
 
         val writernick = Utils.getString(room,"writernick")
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
+
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
         }
 
         val created = Utils.getString(room,"created")
+        val today = Utils.todayStr()
         if (created != null && created.length > 0){
             var split = created.split(" ")
+
+
             if (split != null && split.size > 0) {
 
-                var timesplit = split.get(1).split(":")
-                var noon = "오전"
-                if (timesplit.get(0).toInt() >= 12){
-                    noon = "오후"
+                if (split.get(0) == today){
+                    var timesplit = split.get(1).split(":")
+                    var noon = "오전"
+                    if (timesplit.get(0).toInt() >= 12){
+                        noon = "오후"
+                    }
+                    var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+                    item.timeTV.setText(time)
+
+                } else {
+                    val since = Utils.since(created)
+                    item.timeTV.setText(since)
                 }
-                var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
-                item.timeTV.setText(time)
             }
         }
 

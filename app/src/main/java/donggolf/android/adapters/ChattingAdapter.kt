@@ -53,6 +53,18 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val member_nick = Utils.getString(member,"nick")
         var messageCreated = Utils.getString(chatting,"created")
         var split = messageCreated.split(" ")
+        var peoplecount = Utils.getInt(chatting,"peoplecount")
+        var read_count = Utils.getInt(chatting,"read_count")
+        var difference = peoplecount - read_count
+
+        println("difference----- $difference")
+
+
+        if (difference > 0){
+            item.readTV.setText(difference.toString())
+        } else if (difference == 0){
+            item.readTV.setText("")
+        }
 
         if (send_member_id == myId) {
             item.myLL.visibility = View.VISIBLE
@@ -64,13 +76,20 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
 
-            var timesplit = split.get(1).split(":")
-            var noon = "오전"
-            if (timesplit.get(0).toInt() >= 12){
-                noon = "오후"
+            val today = Utils.todayStr()
+
+            if (split.get(0) == today){
+                var timesplit = split.get(1).split(":")
+                var noon = "오전"
+                if (timesplit.get(0).toInt() >= 12){
+                    noon = "오후"
+                }
+                var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+                item.userdateTV.setText(time)
+            } else {
+                val since = Utils.since(messageCreated)
+                item.userdateTV.setText(since)
             }
-            var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
-            item.userdateTV.setText(time)
 
         }
 

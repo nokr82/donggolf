@@ -1036,6 +1036,15 @@ public class Utils {
         return created;
     }
 
+    public static String todayStr() {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.KOREA);
+
+        Date d = new Date();
+        return sdf1.format(d);
+
+    }
+
     public static byte[] getByteArray(InputStream is) {
         try {
             int len;
