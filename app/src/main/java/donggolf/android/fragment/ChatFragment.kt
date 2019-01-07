@@ -88,11 +88,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
             var json = adapterData.get(position)
             var room = json.getJSONObject("Chatroom")
             val id = Utils.getString(room,"id")
+            val founder = Utils.getString(room,"member_id")
 
             if (isMyChat) {
                 var intent = Intent(activity, ChatDetailActivity::class.java)
                 intent.putExtra("division",1)
                 intent.putExtra("id",id)
+                intent.putExtra("founder",founder)
                 startActivity(intent)
             } else {
                 var intent = Intent(activity, DongchatProfileActivity::class.java)
@@ -110,14 +112,14 @@ class ChatFragment : android.support.v4.app.Fragment() {
         myChatOnRL.setOnClickListener {
             myChatOnRL.visibility = View.GONE
             townChatOnRL.visibility = View.VISIBLE
-            getmychat(1)
+            getmychat(2)
         }
 
 
         townChatOnRL.setOnClickListener {
             myChatOnRL.visibility = View.VISIBLE
             townChatOnRL.visibility = View.GONE
-            getmychat(2)
+            getmychat(1)
         }
 
 

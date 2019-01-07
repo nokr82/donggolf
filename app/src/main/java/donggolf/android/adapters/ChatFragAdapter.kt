@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
@@ -41,9 +44,10 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var room = json.getJSONObject("Chatroom")
 
-        val writernick = Utils.getString(room,"writernick")
+        val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
+        val member = json.getJSONObject("Member")
 
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
@@ -81,7 +85,9 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.firstIV.visibility = View.VISIBLE
         }
 
-        item.nickTV.setText(writernick)
+        item.nickTV.setText(title)
+        var image = Config.url + Utils.getString(member, "profile_img")
+        ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
 
         return retView
 
@@ -109,7 +115,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
     class ViewHolder(v: View) {
 
-        var profPhoto : ImageView
+        var profPhoto : CircleImageView
         var isOnLine : ImageView
         var nickTV : TextView
         var firstIV : ImageView
@@ -117,14 +123,17 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var chatcontentTV : TextView
         var nofriendIV: ImageView
 
+
+
         init {
-            profPhoto = v.findViewById<View>(R.id.profPhoto) as ImageView
+            profPhoto = v.findViewById<View>(R.id.profPhoto) as CircleImageView
             isOnLine = v.findViewById<View>(R.id.isOnLine) as ImageView
             nickTV = v.findViewById<View>(R.id.nickTV) as TextView
             firstIV = v.findViewById<View>(R.id.firstIV) as ImageView
             timeTV = v.findViewById<View>(R.id.timeTV) as TextView
             chatcontentTV = v.findViewById<View>(R.id.chatcontentTV) as TextView
             nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
+
 
         }
     }

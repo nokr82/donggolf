@@ -8,7 +8,10 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
@@ -57,8 +60,6 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var read_count = Utils.getInt(chatting,"read_count")
         var difference = peoplecount - read_count
 
-        println("difference----- $difference")
-
 
         if (difference > 0){
             item.readTV.setText(difference.toString())
@@ -90,6 +91,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 val since = Utils.since(messageCreated)
                 item.userdateTV.setText(since)
             }
+
+            var image = Config.url + Utils.getString(member, "profile_img")
+            ImageLoader.getInstance().displayImage(image, item.userprofileIV, Utils.UILoptionsUserProfile)
 
         }
 
@@ -123,7 +127,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var userLL : LinearLayout
         var readTV : TextView
         var mycontentTV : TextView
-        var userprofileIV : ImageView
+        var userprofileIV : CircleImageView
         var usernickTV : TextView
         var usercontentTV: TextView
         var userdateTV: TextView
@@ -133,7 +137,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             userLL = v.findViewById<View>(R.id.userLL) as LinearLayout
             readTV = v.findViewById<View>(R.id.readTV) as TextView
             mycontentTV = v.findViewById<View>(R.id.mycontentTV) as TextView
-            userprofileIV = v.findViewById<View>(R.id.userprofileIV) as ImageView
+            userprofileIV = v.findViewById<View>(R.id.userprofileIV) as CircleImageView
             usernickTV = v.findViewById<View>(R.id.usernickTV) as TextView
             usercontentTV = v.findViewById<View>(R.id.usercontentTV) as TextView
             userdateTV = v.findViewById<View>(R.id.userdateTV) as TextView

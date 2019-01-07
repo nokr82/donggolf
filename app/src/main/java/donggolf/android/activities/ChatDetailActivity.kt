@@ -9,10 +9,13 @@ import android.widget.AbsListView
 import android.widget.BaseAdapter
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
 import donggolf.android.adapters.ChattingAdapter
+import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -34,7 +37,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     var division = 0
 
     var room_id = ""
-
+    var founder = ""
     var chatTitle = ""
 
     var first_id = -1
@@ -64,6 +67,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         member_id = PrefUtils.getIntPreference(context,"member_id")
         chattitleTV.setText(chatTitle)
 
+
+        if (intent.getStringExtra("founder") != null){
+            founder = intent.getStringExtra("founder")
+            if (founder.toInt() != member_id){
+                chatsetLL.visibility = View.GONE
+                chatsizeLL.visibility = View.GONE
+            }
+        }
+
         adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
 
         chatLV.adapter = adapter
@@ -79,12 +91,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         chatTitle += mate_nick.get(i)
                     } else {
                         chatTitle += mate_nick.get(i) + ","
-
                     }
                 }
             }
 
-            addchat()
+//            addchat()
             detail_chatting()
         } else if (division == 1){        //1 기존
             room_id = intent.getStringExtra("id")
@@ -112,8 +123,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         showMoreTV.setOnClickListener {
-            val it = Intent(context, ChatMemberActivity::class.java)
-            startActivity(it)
+            val intent = Intent(context, ChatMemberActivity::class.java)
+            intent.putExtra("founder",founder)
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
         }
 
         finishaLL.setOnClickListener {
@@ -125,6 +138,18 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         addChatMemberLL.setOnClickListener {
+
+        }
+
+        settingmoreRL.setOnClickListener{
+            if (chatsettingLL.visibility == View.VISIBLE){
+                chatsettingLL.visibility = View.GONE
+            } else {
+                chatsettingLL.visibility = View.VISIBLE
+            }
+        }
+
+        allviewLL.setOnClickListener {
 
         }
 
@@ -147,6 +172,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     timerStart()
+                    room_id = response!!.getString("lastid")
                 }
             }
 
@@ -395,15 +421,36 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (mate_id != null){
                         mate_id.clear()
                     }
+
+                    if (memberList != null){
+                        memberList.clear()
+                    }
                     val members = response!!.getJSONArray("chatmember")
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
                             val chatmember = item.getJSONObject("Chatmember")
+                            val chatroom = item.getJSONObject("Chatroom")
+                            val memberinfo = item.getJSONObject("Member")
                             val id = Utils.getString(chatmember,"id")
+                            val title = Utils.getString(chatroom,"title")
+                            chattitleTV.setText(title)
+
+                            var view:View = View.inflate(context, R.layout.item_profile, null)
+                            var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
+
+                            var image = Config.url + Utils.getString(memberinfo, "profile_img")
+                            ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+                            memberlistLL.addView(view)
+
                             mate_id.add(id)
+                            memberList.add(memberinfo)
                         }
+
                     }
+
+                    countTV.setText(memberList.size.toString())
                 }
             }
 

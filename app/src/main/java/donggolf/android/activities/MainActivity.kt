@@ -144,10 +144,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     }
 
-
-
     fun MoveAddPostActivity(){
-
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
         startActivityForResult(intent, SELECT_PICTURE);

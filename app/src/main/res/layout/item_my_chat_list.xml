@@ -17,7 +17,7 @@
     <RelativeLayout
         android:layout_width="60dp"
         android:layout_height="60dp">
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:id="@+id/profPhoto"

@@ -16,9 +16,9 @@
         android:src="@drawable/btn_cancel_add"
         android:visibility="gone"
         android:id="@+id/check_add_mem"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:src="@drawable/icon_profiles"

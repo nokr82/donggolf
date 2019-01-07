@@ -121,6 +121,8 @@
 
         <!--여기부터 오른쪽 메뉴 ; 서랍효과 낼 레이아웃을 DrawerLayout으로 감싼다 -->
         <LinearLayout
+            android:gravity="right"
+            android:layout_gravity="right"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/chat_right_menu"
@@ -153,18 +155,20 @@
 
                                 android:text="대화멤버 "/>
                             <TextView
+                                android:id="@+id/countTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:textSize="12dp"
                                 android:textColor="#0ED92F"
-                                android:text="2"/>
+                                android:text="0"/>
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="7"/>
                         <LinearLayout
+                            android:id="@+id/allviewLL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="right"
@@ -192,7 +196,13 @@
                         android:id="@+id/memberlistLL"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"/>
+                        android:layout_marginLeft="10dp"
+                        android:orientation="horizontal">
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
                     <TextView
                         android:id="@+id/showMoreTV"
                         android:layout_width="wrap_content"
@@ -201,7 +211,11 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:layout_marginRight="20dp"
+                        android:layout_alignParentRight="true"
                         android:text="..."/>
+                    </RelativeLayout>
+
+
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/addChatMemberLL"
@@ -238,26 +252,145 @@
                         android:textSize="13dp"
                         android:textStyle="bold"
                         android:text="대화내용 삭제"/>
-                    <LinearLayout
-                        android:layout_width="190dp"
-                        android:layout_height="wrap_content"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_gravity="right|center_vertical"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:layout_centerInParent="true"
                         android:src="@drawable/icon_depth_menu"/>
+                    </RelativeLayout>
                 </LinearLayout>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/line_1"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:text="대화차단"/>
+                </LinearLayout>
+
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/line_1"/>
+
                 <LinearLayout
+                    android:id="@+id/chatsetLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:text="채팅방 설정"/>
+                    <RelativeLayout
+                        android:id="@+id/settingmoreRL"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/icon_drop_list"
+                            android:layout_centerInParent="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="10dp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/chatsettingLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:padding="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="공개방"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@mipmap/icon_check"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="7dp"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="비공개(노출)"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@mipmap/icon_check"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="7dp"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="비공개(숨김)"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@mipmap/icon_check"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="7dp"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/line_1"/>
+
+                <LinearLayout
+                    android:id="@+id/chatsizeLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"

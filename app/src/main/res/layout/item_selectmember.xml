@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="53dp"
+        android:layout_height="50dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileIV"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/icon_profile" />
+        <ImageView
+            android:id="@+id/deleteIV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_del_region"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+</LinearLayout>
