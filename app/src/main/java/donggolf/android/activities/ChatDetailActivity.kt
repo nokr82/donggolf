@@ -1,6 +1,8 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -46,6 +48,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     private  var memberList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  var chattingList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private lateinit var adapter: ChattingAdapter
+
+
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
@@ -138,7 +142,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         addChatMemberLL.setOnClickListener {
-
+            val intent = Intent(context, SelectMemberActivity::class.java)
+            intent.putExtra("founder",founder)
+            intent.putExtra("room_id",room_id)
+            intent.putExtra("member_count",memberList.size)
+            intent.putExtra("member_ids",mate_id)
+            intent.putExtra("member_nicks",mate_nick)
+            startActivity(intent)
         }
 
         settingmoreRL.setOnClickListener{
@@ -149,8 +159,44 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         }
 
-        allviewLL.setOnClickListener {
+        chatvisibleLL.setOnClickListener {
+            chatvisibleIV.visibility = View.VISIBLE
+            privateIV.visibility = View.GONE
+            private_invisibleIV.visibility = View.GONE
+            set_chatting_setting("1")
+        }
 
+        privateLL.setOnClickListener {
+            chatvisibleIV.visibility = View.GONE
+            privateIV.visibility = View.VISIBLE
+            private_invisibleIV.visibility = View.GONE
+            set_chatting_setting("2")
+        }
+
+        private_invisibleLL.setOnClickListener {
+            chatvisibleIV.visibility = View.GONE
+            privateIV.visibility = View.GONE
+            private_invisibleIV.visibility = View.VISIBLE
+            set_chatting_setting("3")
+        }
+
+        chatblockLL.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("차단하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+
+
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        finish()
+                    })
+
+            val alert = builder.create()
+            alert.show()
         }
 
 
@@ -434,6 +480,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val memberinfo = item.getJSONObject("Member")
                             val id = Utils.getString(chatmember,"id")
                             val title = Utils.getString(chatroom,"title")
+                            val visible = Utils.getString(chatroom,"visible")
+                            val nick = Utils.getString(chatmember,"nick")
                             chattitleTV.setText(title)
 
                             var view:View = View.inflate(context, R.layout.item_profile, null)
@@ -444,13 +492,44 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                             memberlistLL.addView(view)
 
+                            if (visible == "1"){
+
+                            } else if (visible == "2"){
+                                privateIV.visibility = View.VISIBLE
+                            }
+
                             mate_id.add(id)
                             memberList.add(memberinfo)
+                            mate_nick.add(nick)
+
                         }
 
                     }
 
                     countTV.setText(memberList.size.toString())
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_chatting_setting(visible: String){
+        val params = RequestParams()
+        params.put("room_id", room_id)
+        params.put("visible",visible)
+
+        ChattingAction.set_chatting_setting(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
                 }
             }
 

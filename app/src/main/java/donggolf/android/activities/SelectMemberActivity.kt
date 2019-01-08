@@ -217,20 +217,13 @@ class SelectMemberActivity : RootActivity() {
         params.put("mate_id", mate_ids)
         params.put("room_id", PrefUtils.getIntPreference(context, room_id))
 
-        MateAction.mateList(params, object : JsonHttpResponseHandler(){
+        ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val friendList = response!!.getJSONArray("mates")
-                        if (friendList != null && friendList.length() > 0){
-                            for (i in 0 until friendList.length()){
-                                memberList.add(friendList.get(i) as JSONObject)
-                                memberList.get(i).put("isSelectedOp", false)
-                            }
-                        }
-                        memberAdapter.notifyDataSetChanged()
+                       finish()
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()

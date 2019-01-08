@@ -30,5 +30,9 @@ object ChattingAction {
         HttpClient.post("/chatting/add_chat_member.json", params, handler)
     }
 
+    fun set_chatting_setting(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_chatting_setting.json", params, handler)
+    }
+
 
 }

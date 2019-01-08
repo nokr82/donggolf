@@ -123,6 +123,14 @@ class InfoFragment : Fragment(){
 
                         val member = response.getJSONObject("Member")
 
+                        val friendCount = response.getString("friendCount")
+                        val contentCount = response.getString("contentCount")
+                        val chatCount = response.getString("chatCount")
+
+                        chatcountTV.setText(chatCount)
+                        postcountTV.setText(contentCount)
+                        friendCountTV.setText(friendCount)
+
                         textDate.text = Utils.getString(member,"created").substringBefore(" ")
                         txUserName.text = Utils.getString(member,"nick")
 
