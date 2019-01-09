@@ -34,5 +34,21 @@ object ChattingAction {
         HttpClient.post("/chatting/set_chatting_setting.json", params, handler)
     }
 
+    fun set_push(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_push.json", params, handler)
+    }
+
+    fun delete_chat_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/delete_chat_member.json", params, handler)
+    }
+
+    fun set_text_size(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_text_size.json", params, handler)
+    }
+
+    fun set_block(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_block.json", params, handler)
+    }
+
 
 }

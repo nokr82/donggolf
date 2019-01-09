@@ -55,6 +55,7 @@
                     android:text=")"/>
             </LinearLayout>
             <ImageView
+                android:id="@+id/chatsettingIV"
                 android:layout_width="18dp"
                 android:layout_height="18sp"
                 android:layout_centerVertical="true"

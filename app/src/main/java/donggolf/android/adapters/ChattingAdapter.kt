@@ -2,6 +2,7 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.media.Image
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -60,6 +61,20 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var read_count = Utils.getInt(chatting,"read_count")
         var difference = peoplecount - read_count
 
+        var text_size = Utils.getString(json,"text_size")
+        if (text_size == "1"){
+            item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
+            item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
+        } else if (text_size == "2"){
+            item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
+            item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
+        } else if (text_size == "3"){
+            item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
+            item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
+        } else if (text_size == "4"){
+            item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
+            item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
+        }
 
         if (difference > 0){
             item.readTV.setText(difference.toString())

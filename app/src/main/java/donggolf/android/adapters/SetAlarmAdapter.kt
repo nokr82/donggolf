@@ -16,7 +16,7 @@ import donggolf.android.models.PictureCategory
 import org.json.JSONObject
 
 
-open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
@@ -52,48 +52,26 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val push_yn = Utils.getString(chatmember,"push_yn")
 
         if (push_yn == "Y"){
-            item.pushonIV.visibility = View.VISIBLE
-            item.pushoffIV.visibility = View.GONE
+            item.chatpushonIV.visibility = View.VISIBLE
+            item.chatpushoffIV.visibility = View.GONE
+            item.txOnOff.setText("켜짐")
         } else {
-            item.pushonIV.visibility = View.GONE
-            item.pushoffIV.visibility = View.VISIBLE
+            item.chatpushonIV.visibility = View.GONE
+            item.chatpushoffIV.visibility = View.VISIBLE
+            item.txOnOff.setText("꺼짐")
         }
 
 
         if (content != null && content.length > 0){
-            item.chatcontentTV.setText(content)
-        }
-
-        val created = Utils.getString(room,"created")
-        val today = Utils.todayStr()
-        if (created != null && created.length > 0){
-            var split = created.split(" ")
-
-
-            if (split != null && split.size > 0) {
-
-                if (split.get(0) == today){
-                    var timesplit = split.get(1).split(":")
-                    var noon = "오전"
-                    if (timesplit.get(0).toInt() >= 12){
-                        noon = "오후"
-                    }
-                    var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
-                    item.timeTV.setText(time)
-
-                } else {
-                    val since = Utils.since(created)
-                    item.timeTV.setText(since)
-                }
-            }
+            item.contentTV.setText(content)
         }
 
         if (friend == 0){
             item.nofriendIV.visibility = View.VISIBLE
-            item.firstIV.visibility = View.GONE
+            item.friendIV.visibility = View.GONE
         } else {
             item.nofriendIV.visibility = View.GONE
-            item.firstIV.visibility = View.VISIBLE
+            item.friendIV.visibility = View.VISIBLE
         }
 
         item.nickTV.setText(title)
@@ -129,23 +107,23 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var profPhoto : CircleImageView
         var isOnLine : ImageView
         var nickTV : TextView
-        var firstIV : ImageView
-        var timeTV : TextView
-        var chatcontentTV : TextView
+        var contentTV : TextView
+        var txOnOff : TextView
+        var friendIV :ImageView
         var nofriendIV: ImageView
-        var pushoffIV : ImageView
-        var pushonIV : ImageView
+        var chatpushoffIV : ImageView
+        var chatpushonIV : ImageView
 
         init {
             profPhoto = v.findViewById<View>(R.id.profPhoto) as CircleImageView
             isOnLine = v.findViewById<View>(R.id.isOnLine) as ImageView
             nickTV = v.findViewById<View>(R.id.nickTV) as TextView
-            firstIV = v.findViewById<View>(R.id.firstIV) as ImageView
-            timeTV = v.findViewById<View>(R.id.timeTV) as TextView
-            chatcontentTV = v.findViewById<View>(R.id.chatcontentTV) as TextView
+            contentTV = v.findViewById<View>(R.id.contentTV) as TextView
+            txOnOff = v.findViewById<View>(R.id.txOnOff) as TextView
+            friendIV = v.findViewById<View>(R.id.friendIV) as ImageView
             nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
-            pushoffIV = v.findViewById<View>(R.id.pushoffIV) as ImageView
-            pushonIV = v.findViewById<View>(R.id.pushonIV) as ImageView
+            chatpushoffIV = v.findViewById<View>(R.id.chatpushoffIV) as ImageView
+            chatpushonIV = v.findViewById<View>(R.id.chatpushonIV) as ImageView
 
 
         }

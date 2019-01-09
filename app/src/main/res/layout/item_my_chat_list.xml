@@ -65,9 +65,16 @@
                 android:src="@drawable/icon_second"
                 android:layout_marginRight="3dp"/>
             <ImageView
+                android:visibility="gone"
+                android:id="@+id/pushoffIV"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:src="@drawable/icon_off_alarm"/>
+            <ImageView
+                android:id="@+id/pushonIV"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/img_alarm_off"/>
             <TextView
                 android:id="@+id/timeTV"
                 android:layout_width="match_parent"

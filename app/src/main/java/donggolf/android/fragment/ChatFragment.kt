@@ -122,6 +122,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             getmychat(1)
         }
 
+        chatsettingIV.setOnClickListener {
+            var intent = Intent(activity, SetAlarmActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 

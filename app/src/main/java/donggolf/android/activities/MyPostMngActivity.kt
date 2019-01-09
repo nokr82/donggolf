@@ -16,7 +16,6 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_my_post_mng.*
-import kotlinx.android.synthetic.main.item_my_post_manage.*
 import kotlinx.android.synthetic.main.item_my_post_manage.view.*
 import org.json.JSONArray
 import org.json.JSONException

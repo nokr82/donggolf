@@ -54,7 +54,7 @@ class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObject
         item.item_nickNameTV.setText(nick)
 
         if (founder == member_id){
-            item.item_authorizationTV.setText("개설자")
+//            item.item_authorizationTV.setText("개설자")
         } else {
             item.item_authorizationTV.setText("")
         }

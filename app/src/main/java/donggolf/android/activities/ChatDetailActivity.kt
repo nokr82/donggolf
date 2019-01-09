@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -22,6 +23,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_chat_detail.*
+import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -49,7 +51,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     private  var chattingList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private lateinit var adapter: ChattingAdapter
 
-
+    var text_size = ""
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
@@ -71,6 +73,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         member_id = PrefUtils.getIntPreference(context,"member_id")
         chattitleTV.setText(chatTitle)
 
+        adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
+
+        chatLV.adapter = adapter
+        chatLV.setOnScrollListener(this)
+
 
         if (intent.getStringExtra("founder") != null){
             founder = intent.getStringExtra("founder")
@@ -80,10 +87,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         }
 
-        adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
-
-        chatLV.adapter = adapter
-        chatLV.setOnScrollListener(this)
 
         if (division == 0 ){        //0 신규생성
             mate_id = intent.getStringArrayListExtra("mate_id")
@@ -110,10 +113,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         var author = intent.getStringExtra("Author")
         author = "개설자"
         if (author.equals("개설자")) {
-            chatListRemoveLL.visibility = View.GONE
+            chatListRemoveLL.visibility = View.VISIBLE
 
         } else if (author.equals("권한자")) {
-            chatListRemoveLL.visibility = View.GONE
+            chatListRemoveLL.visibility = View.VISIBLE
         } else {
             chatListRemoveLL.visibility = View.VISIBLE
         }
@@ -187,17 +190,132 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-
-
+                        set_block()
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-                        finish()
                     })
 
             val alert = builder.create()
             alert.show()
         }
+
+        pushoffIV.setOnClickListener {
+            pushoffIV.visibility = View.GONE
+            pushonIV.visibility = View.VISIBLE
+            set_push("Y")
+        }
+
+        pushonIV.setOnClickListener {
+            pushonIV.visibility = View.GONE
+            pushoffIV.visibility = View.VISIBLE
+            set_push("N")
+        }
+
+        outchatIV.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("채팅방에서 나가시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        val lastMSG = chattingList.get(chattingList.size - 1)
+                        val chatting = lastMSG.getJSONObject("Chatting")
+                        val last_id = Utils.getInt(chatting, "id")
+                        delete_chat_member(last_id)
+                        finish()
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+
+            val alert = builder.create()
+            alert.show()
+        }
+
+        chatListRemoveLL.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("대화내용을 삭제하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        val lastMSG = chattingList.get(chattingList.size - 1)
+                        val chatting = lastMSG.getJSONObject("Chatting")
+                        val last_id = Utils.getInt(chatting, "id")
+                        delete_chat_member(last_id)
+                        finish()
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+
+            val alert = builder.create()
+            alert.show()
+        }
+
+        chatsizeLL.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_set_text_size, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            if (text_size == "1"){
+                dialogView.dlg_smallIV.setImageResource(R.drawable.btn_radio_on)
+            } else if (text_size == "2"){
+                dialogView.dlg_usuallyIV.setImageResource(R.drawable.btn_radio_on)
+            } else if (text_size == "3"){
+                dialogView.dlg_bigIV.setImageResource(R.drawable.btn_radio_on)
+            } else if (text_size == "4"){
+                dialogView.dlg_mostIV.setImageResource(R.drawable.btn_radio_on)
+            }
+
+            dialogView.dlg_smallLL.setOnClickListener {
+                set_text_size("1")
+                alert.dismiss()
+                text_size = "1"
+                textsizeTV.setText("작게")
+                for (i in 0 until chattingList.size){
+                    chattingList.get(i).put("text_size",text_size)
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            dialogView.dlg_usuallyLL.setOnClickListener {
+                set_text_size("2")
+                alert.dismiss()
+                text_size = "2"
+                textsizeTV.setText("보통")
+                for (i in 0 until chattingList.size){
+                    chattingList.get(i).put("text_size",text_size)
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            dialogView.dlg_bigLL.setOnClickListener {
+                set_text_size("3")
+                alert.dismiss()
+                text_size = "3"
+                textsizeTV.setText("크게")
+                for (i in 0 until chattingList.size){
+                    chattingList.get(i).put("text_size",text_size)
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            dialogView.dlg_mostLL.setOnClickListener {
+                set_text_size("4")
+                alert.dismiss()
+                text_size = "4"
+                textsizeTV.setText("아주 크게")
+                for (i in 0 until chattingList.size){
+                    chattingList.get(i).put("text_size",text_size)
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+        }
+
 
 
     }
@@ -272,13 +390,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
                             chattingList.add(0, data)
+                            chattingList.get(i).put("text_size",text_size)
                         }
 
                     } else {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-
                             chattingList.add(data)
+                            chattingList.get(i).put("text_size",text_size)
+                            chatLV.setSelection(adapter.count - 1)
                         }
                     }
 
@@ -321,8 +441,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         ChattingAction.add_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                if (result == "ok") {
-
+                if (result == "block") {
+                    Toast.makeText(context,"차단당한 게시물 입니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -453,12 +573,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
         } else {
+
         }
     }
 
     fun detail_chatting(){
         val params = RequestParams()
         params.put("room_id", room_id)
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -471,6 +593,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (memberList != null){
                         memberList.clear()
                     }
+
                     val members = response!!.getJSONArray("chatmember")
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
@@ -478,7 +601,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val chatmember = item.getJSONObject("Chatmember")
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
-                            val id = Utils.getString(chatmember,"id")
+                            val id = Utils.getString(chatmember,"member_id")
                             val title = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
                             val nick = Utils.getString(chatmember,"nick")
@@ -496,6 +619,28 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                             } else if (visible == "2"){
                                 privateIV.visibility = View.VISIBLE
+                            }
+
+                            if (PrefUtils.getIntPreference(context,"member_id") == id.toInt()){
+                                val push_yn = Utils.getString(chatmember,"push_yn")
+                                text_size = Utils.getString(chatmember,"text_size")
+                                if (push_yn == "Y"){
+                                    pushoffIV.visibility = View.GONE
+                                    pushonIV.visibility = View.VISIBLE
+                                } else {
+                                    pushoffIV.visibility = View.VISIBLE
+                                    pushonIV.visibility = View.GONE
+                                }
+
+                                if (text_size == "1"){
+                                    textsizeTV.setText("작게")
+                                } else if (text_size == "2"){
+                                    textsizeTV.setText("보통")
+                                } else if (text_size == "3"){
+                                    textsizeTV.setText("크게")
+                                } else if (text_size == "4"){
+                                    textsizeTV.setText("아주 크게")
+                                }
                             }
 
                             mate_id.add(id)
@@ -542,4 +687,102 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         })
     }
+
+    fun set_push(push:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("push_yn",push)
+
+        ChattingAction.set_push(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun delete_chat_member(last_id:Int){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("last_id",last_id)
+
+        ChattingAction.delete_chat_member(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_text_size(text_size:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("text_size",text_size)
+
+        ChattingAction.set_text_size(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_block(){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("block_yn","Y")
+
+        ChattingAction.set_block(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "block") {
+                    Toast.makeText(context,"이미 차단한 대화방 입니다.",Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+
 }
