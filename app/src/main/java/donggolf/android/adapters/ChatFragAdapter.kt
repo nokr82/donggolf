@@ -62,6 +62,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
+        } else if(content == ""){
+            item.chatcontentTV.setText("")
         }
 
         val created = Utils.getString(room,"created")
