@@ -21,16 +21,13 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.PostAction
-import donggolf.android.actions.SearchAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
-import donggolf.android.models.Search
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
