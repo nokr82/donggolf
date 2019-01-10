@@ -1,5 +1,6 @@
 package donggolf.android.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -21,6 +23,7 @@ import donggolf.android.activities.*
 import donggolf.android.adapters.ChatFragAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import org.json.JSONObject
 
@@ -90,18 +93,79 @@ class ChatFragment : android.support.v4.app.Fragment() {
             val id = Utils.getString(room,"id")
             val founder = Utils.getString(room,"member_id")
             val type = Utils.getString(room,"type")
+            val block_code = Utils.getString(room,"block_code")
 
-            if (type == "1") {
-                var intent = Intent(activity, ChatDetailActivity::class.java)
-                intent.putExtra("division",1)
-                intent.putExtra("id",id)
-                intent.putExtra("founder",founder)
-                startActivity(intent)
+            if (founder.toInt() == PrefUtils.getIntPreference(context,"member_id")){
+                if (type == "1") {
+                    var intent = Intent(activity, ChatDetailActivity::class.java)
+                    intent.putExtra("division",1)
+                    intent.putExtra("id",id)
+                    intent.putExtra("founder",founder)
+                    startActivity(intent)
+                } else {
+                    var intent = Intent(activity, DongchatProfileActivity::class.java)
+                    intent.putExtra("room_id",id)
+                    startActivity(intent)
+                }
             } else {
-                var intent = Intent(activity, DongchatProfileActivity::class.java)
-                intent.putExtra("room_id",id)
-                startActivity(intent)
+                if (block_code != null && block_code.length > 0){
+                    val builder = AlertDialog.Builder(ctx!!)
+                    val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+                    builder.setView(dialogView)
+                    val alert = builder.show()
+
+                    dialogView.dlgTitle.setText("비공개 코드 입력")
+                    dialogView.codevisibleLL.visibility = View.GONE
+
+                    dialogView.btn_title_clear.setOnClickListener {
+                        dialogView.blockcodeTV.setText("")
+                    }
+
+                    dialogView.cancleTV.setOnClickListener {
+                        alert.dismiss()
+                    }
+
+                    dialogView.okTV.setOnClickListener {
+                        val code = dialogView.categoryTitleET.text.toString()
+                        if (code == null || code == ""){
+                            Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+
+                        if (code == block_code){
+                            if (type == "1") {
+                                var intent = Intent(activity, ChatDetailActivity::class.java)
+                                intent.putExtra("division",1)
+                                intent.putExtra("id",id)
+                                intent.putExtra("founder",founder)
+                                startActivity(intent)
+                            } else {
+                                var intent = Intent(activity, DongchatProfileActivity::class.java)
+                                intent.putExtra("room_id",id)
+                                startActivity(intent)
+                            }
+                        } else {
+                            Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+
+                        alert.dismiss()
+                    }
+                } else {
+                    if (type == "1") {
+                        var intent = Intent(activity, ChatDetailActivity::class.java)
+                        intent.putExtra("division",1)
+                        intent.putExtra("id",id)
+                        intent.putExtra("founder",founder)
+                        startActivity(intent)
+                    } else {
+                        var intent = Intent(activity, DongchatProfileActivity::class.java)
+                        intent.putExtra("room_id",id)
+                        startActivity(intent)
+                    }
+                }
             }
+
 
         }
 

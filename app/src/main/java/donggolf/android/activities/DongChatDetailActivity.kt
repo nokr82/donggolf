@@ -23,6 +23,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_dong_chat_detail.*
+import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -50,6 +51,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
     private lateinit var adapter: ChattingAdapter
     var max_count = 0
     var people_count = 0
+    var block_code = ""
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
@@ -79,13 +81,39 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         publicLL.setOnClickListener {
             radio_public.setImageResource(R.drawable.btn_radio_on)
             radio_secret.setImageResource(R.drawable.btn_radio_off)
+            block_code = ""
             set_chatting_setting("1")
         }
 
         secretLL.setOnClickListener {
-            radio_public.setImageResource(R.drawable.btn_radio_off)
-            radio_secret.setImageResource(R.drawable.btn_radio_on)
-            set_chatting_setting("2")
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlgtextTV.visibility = View.GONE
+            dialogView.blockcodeTV.setText(block_code)
+
+            dialogView.btn_title_clear.setOnClickListener {
+                dialogView.blockcodeTV.setText("")
+            }
+
+            dialogView.cancleTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.okTV.setOnClickListener {
+                val code = dialogView.categoryTitleET.text.toString()
+                if (code == null || code == ""){
+                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                radio_public.setImageResource(R.drawable.btn_radio_off)
+                radio_secret.setImageResource(R.drawable.btn_radio_on)
+                block_code = code
+                set_chatting_setting("1")
+                alert.dismiss()
+            }
         }
 
         detail_chatting()
@@ -248,6 +276,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             val memberinfo = item.getJSONObject("Member")
                             val title = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
+                            block_code = Utils.getString(chatroom,"block_code")
+
                             val notice = Utils.getString(chatmember,"noticeTV")
                             val id = Utils.getString(chatmember,"member_id")
                             val nick = Utils.getString(chatmember,"nick")
@@ -266,6 +296,10 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             if (visible == "1"){
                                 radio_public.setImageResource(R.drawable.btn_radio_on)
                                 radio_secret.setImageResource(R.drawable.btn_radio_off)
+                                if (block_code != ""){
+                                    radio_public.setImageResource(R.drawable.btn_radio_off)
+                                    radio_secret.setImageResource(R.drawable.btn_radio_on)
+                                }
                             } else if (visible == "2"){
                                 radio_public.setImageResource(R.drawable.btn_radio_off)
                                 radio_secret.setImageResource(R.drawable.btn_radio_on)
@@ -279,11 +313,10 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
                             memberlistLL.addView(view)
 
-                            if (PrefUtils.getIntPreference(context,"member_id") != id.toInt()){
+                            if (PrefUtils.getIntPreference(context,"member_id") != Utils.getInt(chatroom,"member_id")){
                                 chatSettingLL.visibility = View.GONE
                                 chatSettingmemberLL.visibility  = View.GONE
                                 chatvisibleLL.visibility = View.GONE
-
                             } else {
                                 chatReportLL.visibility = View.GONE
                                 val push_yn = Utils.getString(chatmember,"push_yn")
@@ -582,6 +615,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         val params = RequestParams()
         params.put("room_id", room_id)
         params.put("visible",visible)
+        params.put("block_code",block_code)
 
         ChattingAction.set_chatting_setting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
