@@ -954,6 +954,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -1005,7 +1006,7 @@ class AddPostActivity : RootActivity() {
     val user = HashMap<String, Any>()
     var userid: String? = null
     var tmpContent: TmpContent = TmpContent()
-
+    var delids = ArrayList<Int>()
     var tmpImagesPath: ArrayList<ImagesPath> = ArrayList<ImagesPath>()
 
     var member_id = 0
@@ -1303,6 +1304,15 @@ class AddPostActivity : RootActivity() {
         }
 
 
+        if (delids!=null){
+            Log.d("삭제",delids.toString())
+            if (delids.size != 0){
+                for (i in 0..delids.size - 1){
+                    params.put("del_ids["+i+"]",  delids[i])
+                }
+            }
+        }
+
         if (modi_path != null){
             Log.d("수정",modi_path.toString())
             if (modi_path.size != 0){
@@ -1510,6 +1520,13 @@ class AddPostActivity : RootActivity() {
         imageIV.setImageBitmap(add_file)
         delIV.tag = i
 
+        delIV.setOnClickListener {
+            addPicturesLL!!.removeView(v)
+            delids.add(i)
+            Log.d("아이디값",delids.toString())
+
+        }
+
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
@@ -1541,7 +1558,13 @@ class AddPostActivity : RootActivity() {
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         ImageLoader.getInstance().displayImage(str,imageIV, Utils.UILoptionsUserProfile)
         delIV.tag = i
+        delIV.setOnClickListener {
+            addPicturesLL!!.removeView(v)
+            delids.add(i)
+            Log.d("아이디값",delids.toString())
 
+            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
+        }
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
@@ -1607,9 +1630,10 @@ class AddPostActivity : RootActivity() {
 
                                     var contentFile = json.getJSONObject("contentFile")
                                     var type = Utils.getInt(contentFile,"type")
+                                    var id = Utils.getInt(contentFile,"id")
                                     if (type == 1) {
                                         var path = Config.url + Utils.getString(contentFile, "image_uri")
-                                        reset2(path,i)
+                                        reset2(path,id)
                                         Log.d("이미지",path)
                                         imagePaths.add(path)
                                         modi_path!!.add(Utils.getString(contentFile, "image"))
@@ -1781,10 +1805,12 @@ class AddPostActivity : RootActivity() {
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
-                    addPicturesLL!!.removeAllViews()
+                    addPicturesLL!!.removeView(v)
                     images!!.clear()
                     val tag = v.tag as Int
-                    images_path!!.removeAt(tag)
+                    if (images_path!=null){
+                        images_path!!.removeAt(tag)
+                    }
 
                     for (k in images_url!!.indices) {
                         val vv = View.inflate(context, R.layout.item_add_image, null)
