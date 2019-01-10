@@ -11,7 +11,7 @@ import donggolf.android.base.Utils
 import donggolf.android.models.MutualFriendData
 import org.json.JSONObject
 
-class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
+class DlgGugunAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<JSONObject> = data

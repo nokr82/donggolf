@@ -89,8 +89,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
             var room = json.getJSONObject("Chatroom")
             val id = Utils.getString(room,"id")
             val founder = Utils.getString(room,"member_id")
+            val type = Utils.getString(room,"type")
 
-            if (isMyChat) {
+            if (type == "1") {
                 var intent = Intent(activity, ChatDetailActivity::class.java)
                 intent.putExtra("division",1)
                 intent.putExtra("id",id)
@@ -98,6 +99,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 startActivity(intent)
             } else {
                 var intent = Intent(activity, DongchatProfileActivity::class.java)
+                intent.putExtra("room_id",id)
                 startActivity(intent)
             }
 
@@ -124,6 +126,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         chatsettingIV.setOnClickListener {
             var intent = Intent(activity, SetAlarmActivity::class.java)
+            startActivity(intent)
+        }
+
+        adddongchatIV.setOnClickListener {
+            var intent = Intent(activity, AddDongChatActivity::class.java)
             startActivity(intent)
         }
 
@@ -157,7 +164,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
 
-                    chatcountTV.setText(adapterData.size.toString())
+                    if (type == 1) {
+                        chatcountTV.setText(adapterData.size.toString())
+                    } else {
+                        dongcountTV.setText(adapterData.size.toString())
+                    }
 
                     adapter.notifyDataSetChanged()
                 }

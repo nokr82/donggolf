@@ -342,7 +342,6 @@ class AreaRangeActivity : RootActivity() {
     fun getBigCity(){
 
         val params = RequestParams()
-        params.put("member_id",1)
 
         RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
 

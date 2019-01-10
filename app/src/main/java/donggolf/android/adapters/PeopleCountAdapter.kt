@@ -5,16 +5,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.R.id.main_edit_listitem_title
+import donggolf.android.actions.PostAction
+import donggolf.android.actions.SearchAction
 import donggolf.android.base.Utils
-import donggolf.android.models.MutualFriendData
+import donggolf.android.fragment.FreeFragment
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
-class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
+
+open class PeopleCountAdapter(context: Context, view:Int, data:ArrayList<String>) : ArrayAdapter<String>(context,view, data){
+
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var data:ArrayList<String> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -34,28 +45,14 @@ class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<JSONObject>)
             }
         }
 
-        var json = data.get(position)
+        var position = data.get(position)
 
-        var type = json.getJSONObject("Regions")
-
-        var name:String = Utils.getString(type,"name")
-        item.itemTV.text = name
-
-        var isSel = json.getBoolean("isSelectedOp")
-        if (isSel){
-            item.itemRdoon.visibility = View.VISIBLE
-            item.itemRdooff.visibility = View.GONE
-        } else {
-            item.itemRdooff.visibility = View.VISIBLE
-            item.itemRdoon.visibility = View.GONE
-        }
-
-        //item.item_relationIV.setImageResource(R.drawable.icon_second)
+        item.countTV.text = position
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
+    override fun getItem(position: Int): String {
 
         return data.get(position)
     }
@@ -77,13 +74,11 @@ class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<JSONObject>)
 
     class ViewHolder(v: View) {
 
-        var itemTV : TextView
-        var itemRdoon : ImageView
-        var itemRdooff : ImageView
+
+        var countTV : TextView
+
         init {
-            itemTV = v.findViewById(R.id.itemTV)
-            itemRdoon = v.findViewById(R.id.itemRdoon)
-            itemRdooff = v.findViewById(R.id.itemRdooff)
+            countTV = v.findViewById<View>(R.id.countTV) as TextView
         }
     }
 }

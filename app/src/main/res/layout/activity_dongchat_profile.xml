@@ -15,11 +15,17 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="540dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:src="@drawable/btn_cancel"/>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/backgroundVP"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
+        />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,19 +39,15 @@
                 android:textSize="15dp"
                 android:text="시작일"/>
             <TextView
+                android:id="@+id/roomcreatedTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13dp"
                 android:textColor="#C9C9C9"
                 android:text="2018년 12월 12일"/>
-        </LinearLayout>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="400dp"
-            /><!--배경사진-->
-        <ImageView
+        </LinearLayout><!--배경사진-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileIV"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/icon_profile_l"
@@ -58,7 +60,7 @@
             android:src="@drawable/icon_camera"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="400dp"
+            android:layout_marginBottom="380dp"
             android:layout_marginRight="10dp"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,6 +70,7 @@
             android:layout_marginBottom="360dp"
             android:gravity="center">
             <TextView
+                android:id="@+id/roomtitleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
@@ -86,7 +89,8 @@
             android:layout_marginBottom="290dp"
             android:orientation="horizontal"
             android:padding="10dp">
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/founderIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/icon_profiles"/>
@@ -96,19 +100,49 @@
                 android:padding="5dp"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/nickTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="13dp"
                     android:textStyle="bold"
                     android:text="닉네임일곱글자"
                     android:maxLength="7" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="개설일 2018 10 18 멤버 33/100"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:textColor="#CDCDCD"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="개설일 "
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:textColor="#CDCDCD"/>
+                    <TextView
+                        android:id="@+id/createdTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2018 10 18"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:textColor="#CDCDCD"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" 멤버 "
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:textColor="#CDCDCD"/>
+
+                    <TextView
+                        android:id="@+id/membercountTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="33/100"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:textColor="#CDCDCD"/>
+                </LinearLayout>
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
@@ -135,6 +169,7 @@
                 android:textStyle="bold"
                 android:text="채팅방 소개" />
             <TextView
+                android:id="@+id/introduceTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -158,7 +193,8 @@
                 android:layout_height="30dp"
                 android:src="@drawable/icon_notice_green"/>
             <TextView
-                android:layout_width="290dp"
+                android:id="@+id/noticeTV"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="채팅방에 공지가 없습니다"
