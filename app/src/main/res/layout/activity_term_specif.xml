@@ -36,11 +36,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/line_0"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:textSize="13dp"
-        android:text="이용 약관에 대한 텍스트를 이곳에 입력해주세요.\n\n\n\n\n\n\n\n\n\n\n\n\n\n"/>
+   <WebView
+       android:id="@+id/specWV"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"></WebView>
 
 </LinearLayout>

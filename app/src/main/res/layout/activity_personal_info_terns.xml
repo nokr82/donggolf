@@ -37,6 +37,7 @@
         android:background="@drawable/line_0"/>
 
     <WebView
+        android:id="@+id/personalWV"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
