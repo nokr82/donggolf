@@ -1313,16 +1313,6 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (modi_path != null){
-            Log.d("수정",modi_path.toString())
-            if (modi_path.size != 0){
-                for (i in 0..modi_path.size - 1){
-                    params.put("files[" + i + "]",  modi_path[i])
-                }
-            }
-        }
-
-
         if (images_path != null){
             Log.d("수정",images_path.toString())
             if (images_path.size != 0){
@@ -1520,12 +1510,12 @@ class AddPostActivity : RootActivity() {
         imageIV.setImageBitmap(add_file)
         delIV.tag = i
 
-        delIV.setOnClickListener {
+       /* delIV.setOnClickListener {
             addPicturesLL!!.removeView(v)
             delids.add(i)
             Log.d("아이디값",delids.toString())
 
-        }
+        }*/
 
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
