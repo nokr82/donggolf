@@ -42,7 +42,7 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
         var content = json.getJSONObject("Content")
 
         json.put("cmt_wrt_id", Utils.getInt(content,""))
-
+        var content_id =  Utils.getString(content,"id")
         val member_id = Utils.getString(content,"member_id")
         val title = Utils.getString(content,"title")
         val text = Utils.getString(content,"text")
