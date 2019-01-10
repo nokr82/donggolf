@@ -971,6 +971,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.R.layout.tag
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.PostAction
@@ -1510,12 +1511,13 @@ class AddPostActivity : RootActivity() {
         imageIV.setImageBitmap(add_file)
         delIV.tag = i
 
-       /* delIV.setOnClickListener {
+        delIV.setOnClickListener {
             addPicturesLL!!.removeView(v)
-            delids.add(i)
-            Log.d("아이디값",delids.toString())
+            if (images_path!=null){
+                images_path!!.removeAt(i)
+            }
 
-        }*/
+        }
 
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
@@ -1795,12 +1797,13 @@ class AddPostActivity : RootActivity() {
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
-                    addPicturesLL!!.removeView(v)
+                    addPicturesLL!!.removeAllViews()
                     images!!.clear()
                     val tag = v.tag as Int
                     if (images_path!=null){
                         images_path!!.removeAt(tag)
                     }
+
 
                     for (k in images_url!!.indices) {
                         val vv = View.inflate(context, R.layout.item_add_image, null)
