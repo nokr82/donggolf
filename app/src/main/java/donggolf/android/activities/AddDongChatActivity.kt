@@ -11,6 +11,7 @@ import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_add_dong_chat.*
 import kotlinx.android.synthetic.main.dlg_select_chat_region.*
 import kotlinx.android.synthetic.main.dlg_select_chat_region.view.*
+import java.util.*
 
 class AddDongChatActivity : RootActivity() {
 
