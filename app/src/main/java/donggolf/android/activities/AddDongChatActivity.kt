@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.support.v7.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.widget.Adapter
@@ -53,8 +52,8 @@ class AddDongChatActivity : RootActivity() {
     private val PROFILE = 1
     private val BACKGROUND = 2
 
-    var profile: Bitmap? = null
-    var background:Bitmap? = null
+    var profile: Uri? = null
+    var background:Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -226,11 +225,13 @@ class AddDongChatActivity : RootActivity() {
         params.put("introduce", content)
         params.put("regions", region_id)
         if (profile != null){
-            params.put("intro", profile)
+            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, profile)
+            params.put("intro", ByteArrayInputStream(Utils.getByteArray(profileBitmap)))
         }
 
         if (background != null){
-            params.put("background", background)
+            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, background)
+            params.put("background", ByteArrayInputStream(Utils.getByteArray(backgroundBitmap)))
         }
         params.put("type", "2")
         params.put("division",0)
@@ -360,13 +361,14 @@ class AddDongChatActivity : RootActivity() {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
                         //content://media/external/images/media/1200
-
+                        profile = contentURI
+                        profileIV.setImageResource(0)
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
                             val resized = Utils.resizeBitmap(thumbnail, 100)
-                            profile = thumbnail
+//                            profile = thumbnail
                             profileIV.setImageBitmap(resized)
                             basicIV.visibility = View.GONE
                             profiledtIV.visibility = View.VISIBLE
@@ -391,13 +393,14 @@ class AddDongChatActivity : RootActivity() {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
                         //content://media/external/images/media/1200
-
+                        background = contentURI
+                        backgroundIV.setImageResource(0)
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
                             val resized = Utils.resizeBitmap(thumbnail, 100)
-                            background = thumbnail
+//                            background = thumbnail
                             backgroundIV.setImageBitmap(resized)
                             backbasicIV.visibility = View.GONE
                             backgrounddtIV.visibility = View.VISIBLE
