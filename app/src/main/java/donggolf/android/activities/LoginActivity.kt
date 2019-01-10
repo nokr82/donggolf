@@ -161,6 +161,8 @@ class LoginActivity : RootActivity() {
                             Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
 
+                    }else{
+                        Toast.makeText(context,"일치하는 회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
