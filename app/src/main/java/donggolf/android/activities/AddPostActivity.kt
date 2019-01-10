@@ -360,6 +360,9 @@ class AddPostActivity : RootActivity() {
             }
         }
 
+
+
+
         if (images_path != null){
             Log.d("수정",images_path.toString())
             if (images_path.size != 0){
@@ -695,6 +698,9 @@ class AddPostActivity : RootActivity() {
 
         }
     }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -822,7 +828,7 @@ class AddPostActivity : RootActivity() {
 
     fun clickMethod(v: View) {
         val builder = AlertDialog.Builder(context)
-        builder.setMessage("삭제하시겠습니깝숑 ? ").setCancelable(false)
+        builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
                     addPicturesLL!!.removeAllViews()
