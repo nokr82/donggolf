@@ -43,6 +43,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
+        var profileimg = Utils.getString(room,"profileimg")
         var room_type = Utils.getString(room,"type")
 
         val title = Utils.getString(room,"title")
@@ -100,7 +101,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         item.nickTV.setText(title)
         if (room_type == "1") {
-            var image = Config.url + Utils.getString(member, "profile_img")
+            var image = Config.url + profileimg
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
         } else {
             var image = Config.url + Utils.getString(room, "intro")
