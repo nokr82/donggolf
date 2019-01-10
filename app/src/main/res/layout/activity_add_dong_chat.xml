@@ -259,7 +259,8 @@
                             android:id="@+id/profileIV"
                             android:layout_width="wrap_content"
                             android:layout_height="105dp"
-                            android:src="@drawable/btn_add_picture"/>
+                            android:background="@drawable/btn_add_picture"
+                            android:scaleType="centerCrop"/>
                         <ImageView
                             android:id="@+id/basicIV"
                             android:layout_width="wrap_content"
@@ -289,18 +290,23 @@
                         android:textSize="13dp"
                         android:text="대문/배경 사진"/>
                     <RelativeLayout
+                        android:id="@+id/backgroundRV"
                         android:layout_width="105dp"
                         android:layout_height="wrap_content">
                         <ImageView
+                            android:id="@+id/backgroundIV"
                             android:layout_width="wrap_content"
                             android:layout_height="105dp"
-                            android:src="@drawable/btn_add_picture"/>
+                            android:background="@drawable/btn_add_picture"
+                            android:scaleType="centerCrop"/>
                         <ImageView
+                            android:id="@+id/backbasicIV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/icon_camera"
                             android:layout_centerInParent="true"/>
                         <ImageView
+                            android:id="@+id/backgrounddtIV"
                             android:visibility="gone"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -346,6 +352,7 @@
                 android:background="@drawable/line_1"/>
 
             <TextView
+                android:id="@+id/adddongchatTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"

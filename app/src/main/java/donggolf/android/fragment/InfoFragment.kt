@@ -304,7 +304,7 @@ class InfoFragment : Fragment(){
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
-                            val resized = Utils.resizeBitmap(thumbnail, 4000)
+                            val resized = Utils.resizeBitmap(thumbnail, 100)
                             imgProfile.setImageBitmap(resized)
 
                             //전송하기 위한 전처리

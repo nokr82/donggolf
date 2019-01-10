@@ -43,6 +43,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
+        var room_type = Utils.getString(room,"type")
 
         val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
@@ -71,7 +72,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (created != null && created.length > 0){
             var split = created.split(" ")
 
-
             if (split != null && split.size > 0) {
 
                 if (split.get(0) == today){
@@ -99,8 +99,14 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         item.nickTV.setText(title)
-        var image = Config.url + Utils.getString(member, "profile_img")
-        ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+        if (room_type == "1") {
+            var image = Config.url + Utils.getString(member, "profile_img")
+            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+        } else {
+            var image = Config.url + Utils.getString(room, "intro")
+            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+        }
+
 
         return retView
 
