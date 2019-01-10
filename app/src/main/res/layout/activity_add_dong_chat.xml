@@ -61,12 +61,13 @@
                     android:layout_weight="2"
                     android:layout_marginRight="10dp">
                     <TextView
+                        android:id="@+id/leftregionTV"
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
                         android:layout_weight="1"
                         android:textSize="15dp"
                         android:paddingLeft="10dp"
-                        android:text="경기"
+                        android:text="경기도"
                         android:background="@drawable/box_region"/>
                     <ImageView
                         android:layout_width="wrap_content"
@@ -78,16 +79,18 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/region2TV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2">
                     <TextView
+                        android:id="@+id/rightregionTV"
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
                         android:layout_weight="1"
                         android:textSize="15dp"
                         android:paddingLeft="10dp"
-                        android:text="인천"
+                        android:text="부천시"
                         android:background="@drawable/box_region"/>
                     <ImageView
                         android:layout_width="wrap_content"
@@ -111,6 +114,7 @@
                     android:textSize="13dp"
                     android:text="방제"/>
                 <EditText
+                    android:id="@+id/titleET"
                     android:layout_width="match_parent"
                     android:layout_height="25dp"
                     android:layout_weight="1"
@@ -133,24 +137,31 @@
                     android:textSize="13dp"
                     android:text="인원"/>
                 <RelativeLayout
+                    android:id="@+id/moreRL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
                     <TextView
+                        android:id="@+id/peoplecountTV"
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
                         android:background="@drawable/box_region"
                         android:paddingLeft="10dp"
                         android:textSize="13dp"
-                        android:text="100"
+                        android:text="2"
                         android:gravity="center_vertical"/>
-                    <ImageView
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="25dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:src="@drawable/icon_drop_list"/>
+                        android:gravity="center"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/icon_drop_list"/>
+                    </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
 
@@ -167,6 +178,7 @@
                     android:textStyle="bold"
                     android:text="소개" />
                 <EditText
+                    android:id="@+id/contentET"
                     android:layout_width="match_parent"
                     android:layout_height="170dp"
                     android:padding="10dp"
@@ -181,83 +193,43 @@
                 android:padding="15dp">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textStyle="bold"
                     android:textSize="13dp"
+                    android:gravity="center"
                     android:text="채팅방 설정"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:gravity="center_vertical">
-                    <ImageView
+                    <RadioGroup
+                        android:id="@+id/radio_gender"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_radio_off"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="공개"
-                        android:textSize="13dp"/>
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/visibleRB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="12dp"
+                            android:text="공개"
+                            android:buttonTint="#0EDA2F"
+                            android:checked="true"
+                            android:defaultFocusHighlightEnabled="true"/>
+
+                        <RadioButton
+                            android:id="@+id/invisibleRB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="25dp"
+                            android:textSize="12dp"
+                            android:text="비공개"
+                            android:buttonTint="#0EDA2F" />
+                    </RadioGroup>
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_radio_off"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="비공개"
-                        android:textSize="13dp"/>
-                </LinearLayout>
-            </LinearLayout>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/line_1"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="18"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:text="운영정책[보기]"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="13dp"
-                    android:text="동의"/>
-                <RelativeLayout
-                    android:id="@+id/agreeCB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:src="@drawable/box_check"/>
-                    <ImageView
-                        android:id="@+id/checkYN"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/icon_check"
-                        android:visibility="invisible"/>
-                </RelativeLayout>
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
@@ -280,18 +252,23 @@
                         android:textSize="13dp"
                         android:text="프로필 사진"/>
                     <RelativeLayout
+                        android:id="@+id/profileRL"
                         android:layout_width="105dp"
                         android:layout_height="wrap_content">
                         <ImageView
+                            android:id="@+id/profileIV"
                             android:layout_width="wrap_content"
                             android:layout_height="105dp"
                             android:src="@drawable/btn_add_picture"/>
                         <ImageView
+                            android:id="@+id/basicIV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/icon_camera"
                             android:layout_centerInParent="true"/>
                         <ImageView
+                            android:id="@+id/profiledtIV"
+                            android:visibility="gone"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentRight="true"
@@ -324,12 +301,44 @@
                             android:src="@drawable/icon_camera"
                             android:layout_centerInParent="true"/>
                         <ImageView
+                            android:visibility="gone"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentRight="true"
                             android:src="@drawable/btn_del_tag_word"/>
                     </RelativeLayout>
                 </LinearLayout>
+            </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/line_1"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="18"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:text="운영정책[보기]"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textSize="13dp"
+                    android:text="동의"/>
+                <CheckBox
+                    android:id="@+id/agreeCB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
+                    android:buttonTint="#0EDA2F" />
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"

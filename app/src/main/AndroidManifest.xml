@@ -255,7 +255,8 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.AddDongChatActivity"
-            android:theme="@style/NoTitleDialog" />
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.DongchatProfileActivity"
             android:theme="@style/NoTitleDialog" />

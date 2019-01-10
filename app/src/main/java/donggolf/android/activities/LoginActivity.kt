@@ -40,7 +40,7 @@ class LoginActivity : RootActivity() {
 
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
-    private lateinit var mAuth: FirebaseAuth
+//    private lateinit var mAuth: FirebaseAuth
 
     var autoLogin = false
     var email = ""
@@ -55,7 +55,7 @@ class LoginActivity : RootActivity() {
 
         //getKeyHash(context)
 
-        mAuth = FirebaseAuth.getInstance()
+//        mAuth = FirebaseAuth.getInstance()
 
         //PrefUtils.clear(context)
 

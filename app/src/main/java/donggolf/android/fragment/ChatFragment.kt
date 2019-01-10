@@ -127,6 +127,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             startActivity(intent)
         }
 
+        adddongchatIV.setOnClickListener {
+            var intent = Intent(activity, AddDongChatActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 
