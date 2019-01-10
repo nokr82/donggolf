@@ -20,10 +20,13 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.joooonho.SelectableRoundedImageView
+import com.kakao.kakaostory.StringSet.likes
+import com.kakao.kakaostory.StringSet.writer
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
@@ -52,7 +55,6 @@ class AddPostActivity : RootActivity() {
     private val SELECT_PICTURE: Int = 101
     private val SELECT_VIDEO: Int = 102
     private val SELECT_HASHTAG: Int = 103
-
     var result: ArrayList<String> = ArrayList<String>()
     private var displaynamePaths: ArrayList<String> = ArrayList<String>()
     private var videoPaths: ArrayList<String> = ArrayList<String>()
@@ -71,7 +73,8 @@ class AddPostActivity : RootActivity() {
     private val imgSeq = 0
 
     var pk : String? = null
-    var images_path: ArrayList<String>? = null
+    var images_path: ArrayList<String> = ArrayList<String>()
+    var modi_path: ArrayList<String> = ArrayList<String>()
     var images: ArrayList<Bitmap>? = null
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
@@ -83,11 +86,11 @@ class AddPostActivity : RootActivity() {
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance()
+//        mAuth = FirebaseAuth.getInstance()
 
         val dbManager = DataBaseHelper(context)
 
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         val dataList: Array<String> = arrayOf("*");
 
         val one = 1
@@ -96,7 +99,7 @@ class AddPostActivity : RootActivity() {
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
-        images_path = ArrayList();
+//        images_path = ArrayList();
         images = ArrayList()
         images_url = ArrayList()
 
@@ -108,7 +111,7 @@ class AddPostActivity : RootActivity() {
             contentET.setText(setContent.texts)
         }
 
-        loadData(dbManager,member_id.toString())
+//        loadData(dbManager,member_id.toString())
 
         permission()
 
@@ -119,6 +122,7 @@ class AddPostActivity : RootActivity() {
         if (category == 2) {
             addpostTV.text = "수정하기"
             val id = intent.getStringExtra("id")
+            getPost()
         }
 
         finishaBT.setOnClickListener {
@@ -233,6 +237,8 @@ class AddPostActivity : RootActivity() {
 
     }
 
+
+
     private fun loadData(dbManager: DataBaseHelper , userid: String) {
 
         //임시저장 데이터 불러오기
@@ -305,40 +311,16 @@ class AddPostActivity : RootActivity() {
         titleET.setText(tmpcontent.title)
         contentET.setText(tmpcontent.texts)
 
+
         getPost()
-
     }
 
-    private fun moveMyPicture() {
-        var intent = Intent(context, FindPictureGridActivity::class.java);
-        startActivityForResult(intent, SELECT_PICTURE);
-    }
 
-    private fun moveMyVideo() {
-        var intent = Intent(context, FindVideoActivity::class.java);
-        startActivityForResult(intent, SELECT_VIDEO);
-    }
 
-    private fun permission() {
 
-        val permissionlistener = object : PermissionListener {
-            override fun onPermissionGranted() {
 
-            }
 
-            override fun onPermissionDenied(deniedPermissions: List<String>) {
 
-            }
-
-        }
-
-        TedPermission.with(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
-                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                .check();
-
-    }
 
     private fun modify(id: String) {
         val title = Utils.getString(titleET)
@@ -379,9 +361,11 @@ class AddPostActivity : RootActivity() {
         }
 
         if (images_path != null){
-            if (images_path!!.size != 0){
-                for (i in 0..images_path!!.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+            Log.d("수정",images_path.toString())
+            if (images_path.size != 0){
+                for (i in 0..images_path.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path.get(i))
+
 
                     params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
                 }
@@ -441,6 +425,7 @@ class AddPostActivity : RootActivity() {
         }
 
         if (images_path != null){
+            Log.d("작성",images_path.toString())
             if (images_path!!.size != 0){
                 for (i in 0..images_path!!.size - 1){
                     var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
@@ -506,6 +491,210 @@ class AddPostActivity : RootActivity() {
 
     }
 
+
+
+
+
+
+
+
+    private fun moveMyPicture() {
+        var intent = Intent(context, FindPictureGridActivity::class.java);
+        startActivityForResult(intent, SELECT_PICTURE);
+    }
+
+    private fun moveMyVideo() {
+        var intent = Intent(context, FindVideoActivity::class.java);
+        startActivityForResult(intent, SELECT_VIDEO);
+    }
+
+    private fun permission() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
+
+
+
+    fun reset(str: String, i: Int) {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(str, options)
+        options.inJustDecodeBounds = false
+        options.inSampleSize = 1
+        if (options.outWidth > 96) {
+            val ws = options.outWidth / 96 + 1
+            if (ws > options.inSampleSize) {
+                options.inSampleSize = ws
+            }
+        }
+        if (options.outHeight > 96) {
+            val hs = options.outHeight / 96 + 1
+            if (hs > options.inSampleSize) {
+                options.inSampleSize = hs
+            }
+        }
+        var add_file = Utils.getImage(context.contentResolver, str)
+        val bitmap = BitmapFactory.decodeFile(str)
+        val v = View.inflate(context, R.layout.item_add_image, null)
+        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
+        imageIV.setImageBitmap(add_file)
+        delIV.tag = i
+
+        if (imgSeq == 0) {
+            addPicturesLL!!.addView(v)
+        }
+
+    }
+
+    fun reset2(str: String, i: Int) {
+//        val options = BitmapFactory.Options()
+//        options.inJustDecodeBounds = true
+//        BitmapFactory.decodeFile(str, options)
+//        options.inJustDecodeBounds = false
+//        options.inSampleSize = 1
+//        if (options.outWidth > 96) {
+//            val ws = options.outWidth / 96 + 1
+//            if (ws > options.inSampleSize) {
+//                options.inSampleSize = ws
+//            }
+//        }
+//        if (options.outHeight > 96) {
+//            val hs = options.outHeight / 96 + 1
+//            if (hs > options.inSampleSize) {
+//                options.inSampleSize = hs
+//            }
+//        }
+        var add_file = Utils.getImage(context.contentResolver, str)
+        val bitmap = BitmapFactory.decodeFile(str)
+        val v = View.inflate(context, R.layout.item_add_image, null)
+        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
+        ImageLoader.getInstance().displayImage(str,imageIV, Utils.UILoptionsUserProfile)
+        delIV.tag = i
+
+        if (imgSeq == 0) {
+            addPicturesLL!!.addView(v)
+        }
+
+    }
+    fun getPost(){
+        //게시글 불러오기
+        if (intent.getStringExtra("id") != null){
+            val id = intent.getStringExtra("id")
+            val login_id = PrefUtils.getIntPreference(context, "member_id")
+
+            var params = RequestParams()
+            params.put("id",id)
+            params.put("member_id",login_id)
+
+            PostAction.get_post(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+
+                            val data = response.getJSONObject("Content")
+
+                            val title = Utils.getString(data,"title")
+                            val text = Utils.getString(data,"text")
+                            val member_id = Utils.getString(data,"member_id")
+                            val cht_yn = Utils.getString(data,"cht_yn")
+                            val cmt_yn = Utils.getString(data,"cmt_yn")
+
+                            val tags = response.getJSONArray("tags")
+                            val imageDatas = response.getJSONArray("ContentImgs")
+
+
+
+
+
+                            if (tags != null && tags.length() > 0 ){
+                                var hashtags: String = ""
+
+                                for (i in 0 until tags.length()){
+                                    var json = tags.get(i) as JSONObject
+                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    val division = Utils.getString(MemberTags,"division")
+
+                                    if (division == "1"){
+                                        val tag = Utils.getString(MemberTags,"tag")
+                                        hashtags += "#"+tag + "  "
+                                        hashtag.add(tag)
+                                    }
+                                }
+
+                            }
+
+                            if (hashtag != null){
+
+                            }
+
+                            if (imageDatas != null && imageDatas.length() > 0){
+                                var imagePaths: java.util.ArrayList<String> = java.util.ArrayList<String>()
+
+                                for (i in 0 until imageDatas.length()){
+                                    var json = imageDatas.get(i) as JSONObject
+
+                                    var contentFile = json.getJSONObject("contentFile")
+                                    var type = Utils.getInt(contentFile,"type")
+                                    if (type == 1) {
+                                        var path = Config.url + Utils.getString(contentFile, "image_uri")
+                                        reset2(path,i)
+                                        Log.d("이미지",path)
+                                        imagePaths.add(path)
+                                        modi_path!!.add(path)
+                                    }
+                                }
+                            }
+
+                            if (images_path != null){
+
+                            }
+                            titleET.setText(title)
+                            contentET.setText(text)
+
+                            if (cht_yn  == "Y"){
+                                chatableCB.isChecked = true
+                            } else {
+                                chatableCB.isChecked = false
+                            }
+
+                            if (cmt_yn == "Y"){
+                                replyableCB.isChecked = true
+                            } else {
+                                replyableCB.isChecked = false
+                            }
+
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
+
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -629,136 +818,11 @@ class AddPostActivity : RootActivity() {
         }
     }
 
-    fun getPost(){
-        //게시글 불러오기
-        if (intent.getStringExtra("id") != null){
-            val id = intent.getStringExtra("id")
-            val login_id = PrefUtils.getIntPreference(context, "member_id")
 
-            var params = RequestParams()
-            params.put("id",id)
-            params.put("member_id",login_id)
-
-            PostAction.get_post(params, object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    try {
-                        val result = response!!.getString("result")
-                        if (result == "ok") {
-
-                            val data = response.getJSONObject("Content")
-
-                            val title = Utils.getString(data,"title")
-                            val text = Utils.getString(data,"text")
-                            val member_id = Utils.getString(data,"member_id")
-                            val cht_yn = Utils.getString(data,"cht_yn")
-                            val cmt_yn = Utils.getString(data,"cmt_yn")
-
-                            val tags = response.getJSONArray("tags")
-                            val imageDatas = response.getJSONArray("ContentImgs")
-
-                            if (tags != null && tags.length() > 0 ){
-                                var hashtags: String = ""
-
-                                for (i in 0 until tags.length()){
-                                    var json = tags.get(i) as JSONObject
-                                    var MemberTags = json.getJSONObject("MemberTags")
-                                    val division = Utils.getString(MemberTags,"division")
-
-                                    if (division == "1"){
-                                        val tag = Utils.getString(MemberTags,"tag")
-                                        hashtags += "#"+tag + "  "
-                                        hashtag.add(tag)
-                                    }
-                                }
-
-                            }
-
-                            if (hashtag != null){
-
-                            }
-
-                            if (imageDatas != null && imageDatas.length() > 0){
-                                var imagePaths: java.util.ArrayList<String> = java.util.ArrayList<String>()
-
-                                for (i in 0 until imageDatas.length()){
-                                    var json = imageDatas.get(i) as JSONObject
-
-                                    var contentFile = json.getJSONObject("contentFile")
-                                    var type = Utils.getInt(contentFile,"type")
-                                    if (type == 1) {
-                                        val path = Utils.getString(contentFile, "image_uri")
-                                        imagePaths.add(path)
-                                        images_path!!.add(path)
-                                    }
-                                }
-                            }
-
-                            if (images_path != null){
-
-                            }
-                            titleET.setText(title)
-                            contentET.setText(text)
-
-                            if (cht_yn  == "Y"){
-                                chatableCB.isChecked = true
-                            } else {
-                                chatableCB.isChecked = false
-                            }
-
-                            if (cmt_yn == "Y"){
-                                replyableCB.isChecked = true
-                            } else {
-                                replyableCB.isChecked = false
-                            }
-
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-                }
-            })
-
-        }
-    }
-
-    fun reset(str: String, i: Int) {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(str, options)
-        options.inJustDecodeBounds = false
-        options.inSampleSize = 1
-        if (options.outWidth > 96) {
-            val ws = options.outWidth / 96 + 1
-            if (ws > options.inSampleSize) {
-                options.inSampleSize = ws
-            }
-        }
-        if (options.outHeight > 96) {
-            val hs = options.outHeight / 96 + 1
-            if (hs > options.inSampleSize) {
-                options.inSampleSize = hs
-            }
-        }
-        val bitmap = BitmapFactory.decodeFile(str)
-        val v = View.inflate(context, R.layout.item_add_image, null)
-        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
-        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
-        imageIV.setImageBitmap(bitmap)
-        delIV.tag = i
-
-        if (imgSeq == 0) {
-            addPicturesLL!!.addView(v)
-        }
-
-    }
 
     fun clickMethod(v: View) {
         val builder = AlertDialog.Builder(context)
-        builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
+        builder.setMessage("삭제하시겠습니깝숑 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
                     addPicturesLL!!.removeAllViews()
@@ -774,7 +838,7 @@ class AddPostActivity : RootActivity() {
                         val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
                         del2IV.visibility = View.VISIBLE
                         del2IV.tag = k
-                        ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
+//                        ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
                         ImageLoader.getInstance().displayImage(images_url!!.get(k), imageIV, Utils.UILoptions)
                         if (imgSeq == 0) {
                             addPicturesLL!!.addView(vv)
@@ -796,7 +860,7 @@ class AddPostActivity : RootActivity() {
                                 images!!.add(add_file)
                             }
                         }
-                        reset(images_path!!.get(j), j)
+                        reset2(images_path!!.get(j), j)
                     }
                 })
                 .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
