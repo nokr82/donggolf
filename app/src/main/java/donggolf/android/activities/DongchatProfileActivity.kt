@@ -18,6 +18,7 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.activity_dongchat_profile.*
+import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
 
@@ -32,6 +33,8 @@ class DongchatProfileActivity : RootActivity() {
 
     private lateinit var backgroundAdapter: FullScreenImageAdapter
 
+    var founder_id = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +43,10 @@ class DongchatProfileActivity : RootActivity() {
         context = this
 
         joinDongChatRL.setOnClickListener {
-            val itt = Intent(context, DongChatDetailActivity::class.java)
-            startActivity(itt)
+            val intent = Intent(context, DongChatDetailActivity::class.java)
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
+
         }
 
         room_id = intent.getStringExtra("room_id")
@@ -50,6 +55,7 @@ class DongchatProfileActivity : RootActivity() {
 
         backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
         backgroundVP.adapter = backgroundAdapter
+
 
     }
     fun detail_chatting(){
@@ -84,7 +90,7 @@ class DongchatProfileActivity : RootActivity() {
                             if (notice != null && notice.length > 0){
                                 noticeTV.setText(notice)
                             }
-                            membercountTV.setText(peoplecount + "/" + max_count)
+                            membercountTV.setText("("+peoplecount + "/" + max_count+")")
                             if (background != null && background.length > 0){
                                 Image_path.add(Config.url + Utils.getString(chatroom,"background"))
                             }
@@ -93,8 +99,7 @@ class DongchatProfileActivity : RootActivity() {
 
                             ImageLoader.getInstance().displayImage(introimage, profileIV, Utils.UILoptionsProfile)
 
-                            val nick = Utils.getString(memberinfo,"nick")
-                            nickTV.setText(nick)
+                            founder_id = Utils.getString(chatroom,"id")
 
                             val createdsplit = created.split(" ")
                             createdTV.setText(createdsplit.get(0))
@@ -103,10 +108,6 @@ class DongchatProfileActivity : RootActivity() {
                             roomtitleTV.setText(title)
                             introduceTV.setText(introduce)
 
-                            var founderIV: CircleImageView = findViewById(R.id.founderIV)
-                            var image = Config.url + Utils.getString(memberinfo, "profile_img")
-                            ImageLoader.getInstance().displayImage(image, founderIV, Utils.UILoptionsUserProfile)
-
 
                             if (visible == "1"){
 
@@ -114,7 +115,18 @@ class DongchatProfileActivity : RootActivity() {
 //                                privateIV.visibility = View.VISIBLE
                             }
 
+                            if (PrefUtils.getIntPreference(context,"member_id") != Utils.getInt(chatroom,"member_id")){
+                                setnoticeTV.visibility = View.GONE
+                                setroomtitleTV.visibility = View.GONE
+                            }
 
+                            if (Utils.getInt(chatroom,"member_id") == Utils.getInt(memberinfo,"id")){
+                                var founderIV: CircleImageView = findViewById(R.id.founderIV)
+                                var image = Config.url + Utils.getString(memberinfo, "profile_img")
+                                ImageLoader.getInstance().displayImage(image, founderIV, Utils.UILoptionsUserProfile)
+                                val nick = Utils.getString(memberinfo,"nick")
+                                nickTV.setText(nick)
+                            }
 
                         }
 
@@ -133,5 +145,33 @@ class DongchatProfileActivity : RootActivity() {
         })
     }
 
+
+    fun add_chat_member(){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", PrefUtils.getIntPreference(context, room_id))
+
+        ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        finish()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
 
 }

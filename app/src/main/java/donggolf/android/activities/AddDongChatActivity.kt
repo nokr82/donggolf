@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.ChattingAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.DlgGugunAdapter
@@ -48,7 +50,11 @@ class AddDongChatActivity : RootActivity() {
     private  lateinit var  gugunadapter : DlgGugunAdapter
     var region_id = "48"
 
-    private val GALLERY = 1
+    private val PROFILE = 1
+    private val BACKGROUND = 2
+
+    var profile: Bitmap? = null
+    var background:Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -167,13 +173,29 @@ class AddDongChatActivity : RootActivity() {
         }
 
         profileRL.setOnClickListener {
-            choosePhotoFromGallary()
+            chooseProfile()
         }
 
         profiledtIV.setOnClickListener {
-            profileIV.setBackgroundResource(R.drawable.btn_add_picture)
+            profileIV.setImageResource(0)
             basicIV.visibility = View.VISIBLE
             profiledtIV.visibility = View.GONE
+            profile = null
+        }
+
+        backgroundRV.setOnClickListener {
+            chooseBackground()
+        }
+
+        backgrounddtIV.setOnClickListener {
+            backgroundIV.setImageResource(0)
+            backbasicIV.visibility = View.VISIBLE
+            backgrounddtIV.visibility = View.GONE
+            background = null
+        }
+
+        adddongchatTV.setOnClickListener {
+            adddongchat()
         }
 
 
@@ -198,6 +220,37 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("title", title)
+        params.put("introduce", content)
+        params.put("regions", region_id)
+        if (profile != null){
+            params.put("intro", profile)
+        }
+
+        if (background != null){
+            params.put("background", background)
+        }
+        params.put("type", "2")
+        params.put("division",0)
+
+        ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    finish()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
 
     }
 
@@ -281,11 +334,18 @@ class AddDongChatActivity : RootActivity() {
         })
     }
 
-    private fun choosePhotoFromGallary() {
+    private fun chooseProfile() {
         val galleryIntent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
-        startActivityForResult(galleryIntent, GALLERY)
+        startActivityForResult(galleryIntent, PROFILE)
+    }
+
+    private fun chooseBackground() {
+        val galleryIntent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        startActivityForResult(galleryIntent, BACKGROUND)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -294,7 +354,7 @@ class AddDongChatActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                GALLERY -> {
+                PROFILE -> {
                     if (data != null)
                     {
                         val contentURI = data.data
@@ -305,7 +365,8 @@ class AddDongChatActivity : RootActivity() {
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            val resized = Utils.resizeBitmap(thumbnail, 4000)
+                            val resized = Utils.resizeBitmap(thumbnail, 100)
+                            profile = thumbnail
                             profileIV.setImageBitmap(resized)
                             basicIV.visibility = View.GONE
                             profiledtIV.visibility = View.VISIBLE
@@ -323,10 +384,42 @@ class AddDongChatActivity : RootActivity() {
 
                     }
                 }
+
+                BACKGROUND ->{
+                    if (data != null)
+                    {
+                        val contentURI = data.data
+                        Log.d("uri",contentURI.toString())
+                        //content://media/external/images/media/1200
+
+                        try
+                        {
+                            //갤러리에서 가져온 이미지를 프로필에 세팅
+                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            val resized = Utils.resizeBitmap(thumbnail, 100)
+                            background = thumbnail
+                            backgroundIV.setImageBitmap(resized)
+                            backbasicIV.visibility = View.GONE
+                            backgrounddtIV.visibility = View.VISIBLE
+
+                            //전송하기 위한 전처리
+                            //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
+                            val bitmap = backgroundIV.drawable as BitmapDrawable
+                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                            Toast.makeText(context, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                }
             }
         }
 
     }
+
 
 
 

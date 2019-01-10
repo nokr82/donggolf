@@ -151,6 +151,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             intent.putExtra("member_count",memberList.size)
             intent.putExtra("member_ids",mate_id)
             intent.putExtra("member_nicks",mate_nick)
+            intent.putExtra("division","0")
             startActivity(intent)
         }
 

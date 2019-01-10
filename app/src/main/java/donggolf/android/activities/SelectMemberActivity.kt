@@ -38,8 +38,12 @@ class SelectMemberActivity : RootActivity() {
     var founder = ""
     var room_id = ""
     var member_count = 0
+    var max_count = 0
+    var people_count = 0
 
     var chatTitle = ""
+
+    var division = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +63,11 @@ class SelectMemberActivity : RootActivity() {
             member_count = intent.getIntExtra("member_count",0)
             mate_ids = intent.getStringArrayListExtra("member_ids")
             mate_nicks = intent.getStringArrayListExtra("member_nicks")
+            division = intent.getStringExtra("division")
+            if (intent.getIntExtra("max_count",0) != null){
+                max_count = intent.getIntExtra("max_count",0)
+                people_count = intent.getIntExtra("people_count",0)
+            }
         }
 
         getFriendList("m")
@@ -119,50 +128,74 @@ class SelectMemberActivity : RootActivity() {
         }
 
         addchatTV.setOnClickListener {
+            if (mate_ids != null){
+                mate_ids.clear()
+            }
+
+            for (i in 0 until memberList.size){
+                val item = memberList.get(i)
+                var member = item.getJSONObject("MateMember")
+                var member_id = Utils.getString(member,"id")
+                var isSel = item.getBoolean("isSelectedOp")
+                if (isSel){
+                    mate_ids.add(member_id)
+                }
+
+            }
             val count = countTV.text.toString().toInt()
             if (count > 0 ){
                 if (memberList.size > 0 && memberList != null){
-                    var count = 0
-                    for (i in 0 until memberList.size){
-                        val json =  memberList.get(i)
-                        var chk = Utils.getBoolen(json,"isSelectedOp")
-                        if (chk == true){
-                            var member = json.getJSONObject("MateMember")
-                            var mate_id = Utils.getString(member,"id")
-                            var mate_nick = Utils.getString(member,"nick")
-                            var chkData = false
 
-                            for (j in 0 until mate_ids.size){
-                                if (mate_ids.get(j) == mate_id){
-                                    chkData = true
+                    if (division == "0") {
+                        var count = 0
+                        for (i in 0 until memberList.size) {
+                            val json = memberList.get(i)
+                            var chk = Utils.getBoolen(json, "isSelectedOp")
+                            if (chk == true) {
+                                var member = json.getJSONObject("MateMember")
+                                var mate_id = Utils.getString(member, "id")
+                                var mate_nick = Utils.getString(member, "nick")
+                                var chkData = false
+
+                                for (j in 0 until mate_ids.size) {
+                                    if (mate_ids.get(j) == mate_id) {
+                                        chkData = true
+                                    }
                                 }
-                            }
 
-                            if (chkData == false){
-                                mate_ids.add(mate_id)
+                                if (chkData == false) {
+                                    mate_ids.add(mate_id)
+                                }
+                                mate_nicks.add(mate_nick)
                             }
-                            mate_nicks.add(mate_nick)
                         }
-                }
-                 if (room_id != ""){
-                     for (i in 0 until mate_nicks.size){
-                         chatTitle += mate_nicks.get(i) + " "
-                     }
-                     addchat()
-                     finish()
-                 } else if (member_count == 2){
-                     for (i in 0 until mate_nicks.size){
-                         chatTitle += mate_nicks.get(i) + " "
-                     }
-                     addchat()
-                     finish()
-                 } else {
-                     for (i in 0 until mate_nicks.size){
-                         chatTitle += mate_nicks.get(i) + " "
-                     }
-                    add_chat_member()
-                     finish()
-                 }
+                        if (room_id != "") {
+                            for (i in 0 until mate_nicks.size) {
+                                chatTitle += mate_nicks.get(i) + " "
+                            }
+                            addchat()
+                            finish()
+                        } else if (member_count == 2) {
+                            for (i in 0 until mate_nicks.size) {
+                                chatTitle += mate_nicks.get(i) + " "
+                            }
+                            addchat()
+                            finish()
+                        } else {
+                            for (i in 0 until mate_nicks.size) {
+                                chatTitle += mate_nicks.get(i) + " "
+                            }
+                            add_chat_member()
+                            finish()
+                        }
+                    } else {
+                        println("--------add mate_ids${mate_ids.size} ---- $people_count ----- $max_count")
+                        if (max_count < people_count + mate_ids.size){
+                            Toast.makeText(context,"정원초과 입니다.",Toast.LENGTH_SHORT).show()
+                        } else {
+                            add_chat_member()
+                        }
+                    }
 
                 }
             } else {
@@ -215,7 +248,7 @@ class SelectMemberActivity : RootActivity() {
     fun add_chat_member(){
         val params = RequestParams()
         params.put("mate_id", mate_ids)
-        params.put("room_id", PrefUtils.getIntPreference(context, room_id))
+        params.put("room_id", room_id)
 
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
