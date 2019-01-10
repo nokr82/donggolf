@@ -10,9 +10,9 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.FirebaseUser
+//import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
 import donggolf.android.actions.InfoAction
 import donggolf.android.base.PrefUtils
@@ -21,7 +21,6 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_login.*
 import android.provider.SyncStateContract.Helpers.update
 import android.content.pm.PackageManager
-import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.content.pm.PackageInfo
 import android.util.Base64
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -156,11 +155,14 @@ class LoginActivity : RootActivity() {
                             startActivity(Intent(context, MainActivity::class.java))
 
                             finish()
-                        } else {
+                        }
+                        else {
                             PrefUtils.setPreference(context,"isActiveAccount", "i")
                             Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
 
+                    }else{
+                        Toast.makeText(context,"일치하는 회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -197,7 +199,7 @@ class LoginActivity : RootActivity() {
         println("moveRegister()")
         startActivity(Intent(this, RegisterActivity::class.java))
     }
-
+/*
     companion object {
         fun setLoginData(context: Context, user: FirebaseUser?) {
             println("loginActivity user : $user")
@@ -223,7 +225,7 @@ class LoginActivity : RootActivity() {
             PrefUtils.setPreference(context, "nick", nick)
 
         }
-    }
+    }*/
 
     fun getKeyHash(context: Context) : String? {
         try {

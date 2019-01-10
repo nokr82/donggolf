@@ -1,12 +1,15 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
@@ -99,6 +102,17 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myPostLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
+
+            MoveMainDetailActivity(content_id)
+        }
+
+
+
+
 
         myCommentTab.setOnClickListener {
             //뷰
@@ -148,7 +162,13 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myCommentLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myCommentPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
 
+            MoveMainDetailActivity(content_id)
+        }
         myStorePostTab.setOnClickListener {
             //뷰
             setTabInit()
@@ -195,7 +215,13 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myStorePostLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myStoredPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
 
+            MoveMainDetailActivity(content_id)
+        }
         //보관글 지우기
         myStorePostLV.setOnItemLongClickListener { parent, view, position, id ->
             myStoredPostList[position].put("willDel",true)
@@ -282,6 +308,17 @@ class MyPostMngActivity : RootActivity() {
 
         })
     }
+
+
+
+    fun MoveMainDetailActivity(id : String){
+        var intent: Intent = Intent(context, MainDetailActivity::class.java)
+        intent.putExtra("id",id)
+        startActivity(intent)
+    }
+
+
+
 
     fun setTabInit() {
         myPost_myPostTV.setTextColor(Color.parseColor("#000000"))
