@@ -1387,6 +1387,9 @@ class AddPostActivity : RootActivity() {
         }
         params.put("cmt_yn",cmt_yn)
 
+        var region_id = PrefUtils.getStringPreference(context,"region_id")
+        params.put("region_id",region_id)
+
         if (hashtag != null){
             for (i in 0 .. hashtag.size - 1){
                 params.put("tag[" + i + "]",  hashtag.get(i))
@@ -1444,7 +1447,7 @@ class AddPostActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+//                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
             }
 
         })
