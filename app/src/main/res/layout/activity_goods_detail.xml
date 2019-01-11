@@ -428,6 +428,7 @@
                             android:background="@mipmap/register" />
 
                         <LinearLayout
+                            android:id="@+id/findLL"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
