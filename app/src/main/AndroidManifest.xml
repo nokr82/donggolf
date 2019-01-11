@@ -98,6 +98,10 @@
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
+            android:name=".activities.AreaMyRangeActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
             android:name=".activities.MainDetailActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />

@@ -147,9 +147,9 @@ class InfoFragment : Fragment(){
                             region += Utils.getString(member,"region3")
                         }
 
-                        if (region.substring(region.length-1) == ","){
+                 /*       if (region.substring(region.length-1) == ","){
                             region = region.substring(0, region.length-2)
-                        }
+                        }*/
                         txUserRegion.text = region
 
                         //상메
@@ -243,7 +243,7 @@ class InfoFragment : Fragment(){
         }
 
         setRegion.setOnClickListener {
-            var intent = Intent(activity, AreaRangeActivity::class.java)
+            var intent = Intent(activity, AreaMyRangeActivity::class.java)
             intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
@@ -399,7 +399,8 @@ class InfoFragment : Fragment(){
                                 txUserName.text = newNick
                             }
                             "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-2)
+                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-1)
+
                             }
                             "tag" -> {
                                 var taglist = ""
