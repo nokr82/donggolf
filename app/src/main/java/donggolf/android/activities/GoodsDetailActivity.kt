@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.*
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Messenger
 import android.support.v4.view.ViewPager
@@ -215,10 +214,12 @@ class GoodsDetailActivity : RootActivity() {
             }
 
         }
-
-        findBT.setOnClickListener {
-            val find = findET.text.toString()
-//            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://thecheat.co.kr/")))
+        findET.setFocusableInTouchMode(false);
+        findET.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://cyberbureau.police.go.kr/mobile/sub/sub_02.jsp")))
+        }
+        findLL.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://cyberbureau.police.go.kr/mobile/sub/sub_02.jsp")))
         }
 
         getLooker()
