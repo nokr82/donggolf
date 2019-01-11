@@ -78,9 +78,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
 
-
-
-
+        sidotype = PrefUtils.getStringPreference(context, "sidotype")
+        goguntype  =PrefUtils.getStringPreference(context, "goguntype")
         if (sidotype==""&&goguntype==""){
             areaTV.text ="지역을 설정해주세요."
         }else{

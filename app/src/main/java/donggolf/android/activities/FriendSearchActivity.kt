@@ -294,6 +294,7 @@ class FriendSearchActivity : RootActivity() {
     fun friendSearchWords(keyWord : String) {
         val params = RequestParams()
         params.put("keyword", keyWord)
+        params.put("goguntype", goguntype)
 
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
