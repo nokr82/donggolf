@@ -104,6 +104,7 @@
         <activity
             android:name=".activities.MainDetailActivity"
             android:theme="@style/NoTitleDialog"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.PictureDetailActivity"

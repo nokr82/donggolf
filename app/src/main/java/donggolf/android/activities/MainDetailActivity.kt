@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.*
 import android.graphics.Paint
 import android.graphics.PointF
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -14,9 +15,11 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
+import android.widget.MediaController
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -99,6 +102,11 @@ class MainDetailActivity : RootActivity() {
         commentListLV.isExpanded = true
 
         commentAdapter.notifyDataSetChanged()
+
+        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+        var mediaController: MediaController = MediaController(this);
+        videoVV.setMediaController(mediaController)
+
 
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
@@ -702,9 +710,10 @@ class MainDetailActivity : RootActivity() {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         println("path ----- $path")
                                         videoVV.visibility = View.VISIBLE
-                                        val uri = Uri.parse(path)
+                                        val uri = Uri.parse(Config.url + path)
+                                        videoVV.start()
                                         videoVV.setVideoURI(uri)
-                                        videoVV.requestFocus()
+                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
                                     }
                                 }
 
