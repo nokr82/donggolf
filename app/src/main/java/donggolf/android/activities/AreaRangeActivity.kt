@@ -442,11 +442,10 @@ class AreaRangeActivity : RootActivity() {
         arealistLV.setOnItemClickListener { parent, view, position, id ->
             val item = bigcitylist.get(position)
             var type = item.getJSONObject("Regions")
-            region_id = Utils.getString(type,"id")
+            var id  = Utils.getString(type,"id")
              sidotype = Utils.getString(type,"name")
 
-
-            getGugun(region_id.toInt())
+            getGugun(id.toInt())
             arealistLV.visibility = View.GONE
             gridGV.visibility = View.VISIBLE
         }
@@ -457,9 +456,11 @@ class AreaRangeActivity : RootActivity() {
             val item = gugunList.get(position)
             var type = item.getJSONObject("Regions")
             var name:String = Utils.getString(type,"name")
+            region_id = Utils.getString(type,"id")
             goguntype = name
             var index = areaCnt.text.toString().toInt()
             var nowIndex = index + 1
+            println("region_id $region_id")
 
             var intent = Intent();
             intent.putExtra("sidotype", sidotype)

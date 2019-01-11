@@ -301,6 +301,8 @@ open class FreeFragment : Fragment() {
         params.put("sidotype",sidotype)
         params.put("region_id",region_id)
 
+        println("region_id------------------ $region_id")
+
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {

@@ -223,6 +223,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     goguntype =  data!!.getStringExtra("goguntype")
                     PrefUtils.setPreference(context, "goguntype", goguntype)
                     region_id = data!!.getStringExtra("region_id")
+                    PrefUtils.setPreference(context, "region_id", region_id)
                     Log.d("시도",sidotype)
 
                     sidotype = PrefUtils.getStringPreference(context, "sidotype")
