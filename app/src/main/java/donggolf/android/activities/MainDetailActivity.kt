@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.*
 import android.graphics.Paint
 import android.graphics.PointF
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
@@ -385,6 +386,7 @@ class MainDetailActivity : RootActivity() {
                             var params = RequestParams()
                             params.put("content_id", content_id)
                             params.put("member_id", login_id)
+                            params.put("type", 1)
 
                             PostAction.add_report(params, object : JsonHttpResponseHandler() {
                                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -696,6 +698,13 @@ class MainDetailActivity : RootActivity() {
                                     if (type == 1) {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
+                                    } else {
+                                        val path = Utils.getString(contentFile, "image_uri")
+                                        println("path ----- $path")
+                                        videoVV.visibility = View.VISIBLE
+                                        val uri = Uri.parse(path)
+                                        videoVV.setVideoURI(uri)
+                                        videoVV.requestFocus()
                                     }
                                 }
 

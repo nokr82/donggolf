@@ -225,6 +225,7 @@
                                 android:layout_height="match_parent" />
 
                             <VideoView
+                                android:id="@+id/videoVV"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:visibility="gone" />

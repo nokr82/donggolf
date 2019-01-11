@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -51,8 +52,7 @@ class SelectMemberActivity : RootActivity() {
     var division = ""
 
     var block = "nomal"
-
-
+    var searchKeyword = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -287,6 +287,34 @@ class SelectMemberActivity : RootActivity() {
         btnBack.setOnClickListener {
             finish()
         }
+
+        searchTV.setOnClickListener {
+            val keyword = searchET.text.toString()
+            if (keyword == "" || keyword == null){
+                Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            searchKeyword = keyword
+
+            if (block == "nomal"){
+                getFriendList("m")
+            } else {
+                getChatMember()
+            }
+        }
+
+        removesearchLL.setOnClickListener {
+            Utils.hideKeyboard(context!!)
+
+            if(Utils.getString(searchTV) == "") {
+                return@setOnClickListener
+            }
+
+            searchET.setText("")
+
+            searchKeyword = ""
+        }
     }
 
     fun getFriendList(status : String) {
@@ -296,12 +324,19 @@ class SelectMemberActivity : RootActivity() {
         params.put("status", status)
         params.put("division",0)
 
+        if (searchKeyword != "" && searchKeyword.length > 0){
+            params.put("searchKeyword", searchKeyword)
+        }
+
         MateAction.mateList(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
+                        if (memberList != null){
+                            memberList.clear()
+                        }
                         val friendList = response!!.getJSONArray("mates")
                         if (friendList != null && friendList.length() > 0){
                             for (i in 0 until friendList.length()){
@@ -309,6 +344,7 @@ class SelectMemberActivity : RootActivity() {
                                 memberList.get(i).put("isSelectedOp", false)
                             }
                         }
+                        searchKeyword = ""
                         memberAdapter.notifyDataSetChanged()
                     }
                 } catch (e: JSONException) {
@@ -388,19 +424,36 @@ class SelectMemberActivity : RootActivity() {
         val params = RequestParams()
         params.put("room_id", room_id)
 
+        if (searchKeyword != "" && searchKeyword.length > 0){
+            params.put("searchKeyword", searchKeyword)
+        }
+
         ChattingAction.get_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
+                        if (blockMemberList != null){
+                            blockMemberList.clear()
+                        }
                         val friendList = response!!.getJSONArray("chatmember")
                         if (friendList != null && friendList.length() > 0){
                             for (i in 0 until friendList.length()){
-                                blockMemberList.add(friendList.get(i) as JSONObject)
-                                blockMemberList.get(i).put("isSelectedOp", false)
+                                val item = friendList.get(i) as JSONObject
+                                val Chatroom = item.getJSONObject("Chatroom")
+                                val room_member_id = Utils.getString(Chatroom,"member_id")
+
+                                val Member = item.getJSONObject("Member")
+                                val member_id = Utils.getString(Member,"id")
+
+                                if (room_member_id != member_id) {
+                                    blockMemberList.add(friendList.get(i) as JSONObject)
+                                    blockMemberList.get(i).put("isSelectedOp", false)
+                                }
                             }
                         }
+                        searchKeyword = ""
                         blockMemberAdapter.notifyDataSetChanged()
                     }
                 } catch (e: JSONException) {
@@ -451,5 +504,6 @@ class SelectMemberActivity : RootActivity() {
             }
         })
     }
+
 
 }

@@ -1325,6 +1325,22 @@ class AddPostActivity : RootActivity() {
             }
         }
 
+
+        if (videoPaths != null){
+            if (videoPaths.size != 0){
+                for (i in 0..videoPaths.size - 1){
+
+                    val file = File(videoPaths.get(i))
+                    var bytes = file.readBytes()
+
+                    var n: Int
+                    val baos = ByteArrayOutputStream()
+                    val videoBytes = baos.toByteArray()
+
+                    params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+                }
+            }
+        }
         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1393,19 +1409,24 @@ class AddPostActivity : RootActivity() {
                 for (i in 0..videoPaths.size - 1){
 
                     val file = File(videoPaths.get(i))
-                    val size = file.length() as Int
-                    val bytes = ByteArray(size)
+                    println("----------videoPath ${videoPaths.get(i)}")
+                    println("file ---- ${file.length()}")
+//                    val size = file.length() as Int
+//                    println("size ---- $size")
+//                    val bytes = ByteArray(size)
+                    var bytes = file.readBytes()
+                    println("bytes ---- $bytes")
 
-                    try {
-                        val buf = BufferedInputStream( FileInputStream(file));
-                        buf.read(bytes, 0, bytes.size);
-                        buf.close();
-                        videofile = Utils.getByteArray(buf)
-                    } catch (e:FileNotFoundException){
-
-                    } catch (e:IOException){
-
-                    }
+//                    try {
+//                        val buf = BufferedInputStream( FileInputStream(file));
+//                        buf.read(bytes, 0, bytes.size);
+//                        buf.close();
+//                        bytes = Utils.getByteArray(buf)
+//                    } catch (e:FileNotFoundException){
+//
+//                    } catch (e:IOException){
+//
+//                    }
                     var n: Int
                     val baos = ByteArrayOutputStream()
                     val videoBytes = baos.toByteArray()
@@ -1631,6 +1652,9 @@ class AddPostActivity : RootActivity() {
                                         Log.d("이미지",path)
                                         imagePaths.add(path)
                                         modi_path!!.add(Utils.getString(contentFile, "image"))
+                                    } else {
+                                        var path = Utils.getString(contentFile, "image_uri")
+                                        videoPaths.add(path)
                                     }
                                 }
                             }
@@ -1731,29 +1755,32 @@ class AddPostActivity : RootActivity() {
                     var item = data?.getStringArrayExtra("videos")
                     var name = data?.getStringArrayExtra("displayname")
 
-                    for (i in item!!.indices) {
-                        val str = item[i]
-
-                        videoPaths?.add(str)
-
-                        val add_file = Utils.getImage(context.contentResolver, str, 10)
-
-                        if (videos?.size == 0) {
-                            videos?.add(add_file)
-                        } else {
-                            try {
-                                videos?.set(videos!!.size, add_file)
-                            } catch (e: IndexOutOfBoundsException) {
-                                videos?.add(add_file)
-                            }
-
-                        }
-
-                    }
+//                    for (i in item!!.indices) {
+//                        val str = item[i]
+//
+//                        videoPaths?.add(str)
+//
+//                        val add_file = Utils.getImage(context.contentResolver, str, 10)
+//
+//                        if (videos?.size == 0) {
+//                            videos?.add(add_file)
+//                        } else {
+//                            try {
+//                                videos?.set(videos!!.size, add_file)
+//                            } catch (e: IndexOutOfBoundsException) {
+//                                videos?.add(add_file)
+//                            }
+//
+//                        }
+//
+//                    }
+//                    for (i in 0 until item.size) {
+//                        println("item----${item.get(i)}")
+//                    }
 
                     videoPaths.clear()
-                    for (i in 0..(name!!.size - 1)) {
-                        val str = name[i]
+                    for (i in 0..(item!!.size - 1)) {
+                        val str = item[i]
 
                         if (videoPaths != null) {
                             videoPaths.add(str)
@@ -1764,8 +1791,6 @@ class AddPostActivity : RootActivity() {
                     }
 
                     var intent = Intent();
-
-                    Log.d("yjs", "Video : " + item?.size.toString() + "name : " + videoPaths.toString())
 
                     setResult(RESULT_OK, intent);
 

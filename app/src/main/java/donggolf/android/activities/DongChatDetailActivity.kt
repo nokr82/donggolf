@@ -18,6 +18,7 @@ import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.ChattingAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -289,7 +290,30 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             startActivity(intent)
         }
 
+        chatReportLL.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("신고하시겠습니까 ?")
 
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        add_repot()
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        finish()
+                    })
+
+            val alert = builder.create()
+            alert.show()
+        }
+
+        chatListRemoveLL.setOnClickListener {
+            val intent = Intent(context, DongchatProfileActivity::class.java)
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
+            finish()
+        }
 
     }
 
@@ -751,6 +775,28 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                 println(errorResponse)
+            }
+        })
+    }
+
+    fun add_repot(){
+        var params = RequestParams()
+        params.put("content_id", room_id)
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type", 2)
+
+        PostAction.add_report(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "yes") {
+                    Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                }else {
+                    Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
             }
         })
     }

@@ -61,6 +61,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var sidotype = ""
     var goguntype = ""
     var membercnt = ""
+    var region_id = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -221,10 +222,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     PrefUtils.setPreference(context, "sidotype", sidotype)
                     goguntype =  data!!.getStringExtra("goguntype")
                     PrefUtils.setPreference(context, "goguntype", goguntype)
+                    region_id = data!!.getStringExtra("region_id")
                     Log.d("시도",sidotype)
 
                     sidotype = PrefUtils.getStringPreference(context, "sidotype")
                     goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+                    region_id = PrefUtils.getStringPreference(context,"region_id")
                     member_cnt()
                     var intent = Intent()
                     intent.action = "MSG_NEXT"
