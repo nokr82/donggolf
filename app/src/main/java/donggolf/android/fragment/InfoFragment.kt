@@ -89,110 +89,11 @@ class InfoFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //프로필 세팅
-        var member_id = PrefUtils.getIntPreference(context, "member_id")
-        ////
+        member_info()
 
-        /*val defaultOptions = DisplayImageOptions.Builder()
-                .cacheOnDisc(true).cacheInMemory(true)
-                .imageScaleType(ImageScaleType.EXACTLY)
-                .displayer(object : FadeInBitmapDisplayer(300){}).build()
-
-        val config = ImageLoaderConfiguration.Builder(
-                context)
-                .defaultDisplayImageOptions(defaultOptions)
-                .memoryCache(object : WeakMemoryCache(){})
-                .discCacheSize(100 * 1024 * 1024).build()
-*/
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(ctx))
 
 
-        ////
-
-        //Action 으로 정보 가져오기
-        val params = RequestParams()
-        params.put("member_id", member_id)
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
-                try {
-                    println("InfoFrag :: $response")
-                    val result = response.getString("result")
-
-                    if (result == "ok") {
-
-                        val member = response.getJSONObject("Member")
-
-                        val friendCount = response.getString("friendCount")
-                        val contentCount = response.getString("contentCount")
-                        val chatCount = response.getString("chatCount")
-
-                        chatcountTV.setText(chatCount)
-                        postcountTV.setText(contentCount)
-                        friendCountTV.setText(friendCount)
-
-                        textDate.text = Utils.getString(member,"created").substringBefore(" ")
-                        txUserName.text = Utils.getString(member,"nick")
-
-                        //지역
-                        var region = ""
-
-                        if (Utils.getString(member,"region1") != null) {
-                            region += Utils.getString(member,"region1") + ","
-                        }
-                        if (Utils.getString(member,"region2") != null) {
-                            region += Utils.getString(member,"region2") + ","
-                        }
-                        if (Utils.getString(member,"region3") != null) {
-                            region += Utils.getString(member,"region3")
-                        }
-
-                 /*       if (region.substring(region.length-1) == ","){
-                            region = region.substring(0, region.length-2)
-                        }*/
-                        txUserRegion.text = region
-
-                        //상메
-                        var statusMessage = Utils.getString(member,"status_msg")
-                        if (statusMessage != null) {
-                            infoStatusMsg.text = statusMessage
-                        }
-
-                        knowTogether.visibility = View.GONE
-
-                        //해시태그
-                        val data = response.getJSONArray("MemberTags")
-                        if (data != null) {
-                            var string_tag = ""
-                            for (i in 0 until data.length()) {
-                                var json = data[i] as JSONObject
-                                val memberTag = json.getJSONObject("MemberTag")
-
-                                string_tag += "#" + Utils.getString(memberTag, "tag") + " "
-                            }
-                            hashtagTV.text = string_tag
-                        }
-
-                        //프로필 이미지
-                        val imgData = response.getJSONArray("MemberImgs")
-                        mngTXPhotoCnt.text = imgData.length().toString()
-
-                        //val tmpProfileImage = imgData.getJSONObject(0)
-                        val img_uri = Utils.getString(member,"profile_img")//small_uri
-                        val image = Config.url + img_uri
-
-                        ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
-
-                    }
-                } catch (e : JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
-            }
-        })
 
 
         //메뉴버튼
@@ -213,7 +114,7 @@ class InfoFragment : Fragment(){
 
         imgProfile.setOnClickListener {
             var intent = Intent(activity, ViewProfileListActivity::class.java)
-            intent.putExtra("viewAlbumUser", member_id)
+            intent.putExtra("viewAlbumUser", PrefUtils.getIntPreference(context, "member_id"))
             startActivity(intent)
         }
 
@@ -268,7 +169,92 @@ class InfoFragment : Fragment(){
         startActivityForResult(galleryIntent, GALLERY)
     }
 
+fun member_info(){
+    val params = RequestParams()
+    params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
+    MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
+            try {
+                println("InfoFrag :: $response")
+                val result = response.getString("result")
+
+                if (result == "ok") {
+
+                    val member = response.getJSONObject("Member")
+
+                    val friendCount = response.getString("friendCount")
+                    val contentCount = response.getString("contentCount")
+                    val chatCount = response.getString("chatCount")
+
+                    chatcountTV.setText(chatCount)
+                    postcountTV.setText(contentCount)
+                    friendCountTV.setText(friendCount)
+
+                    textDate.text = Utils.getString(member,"created").substringBefore(" ")
+                    txUserName.text = Utils.getString(member,"nick")
+
+                    //지역
+                    var region = ""
+
+                    if (Utils.getString(member,"region1") != null) {
+                        region += Utils.getString(member,"region1") + ","
+                    }
+                    if (Utils.getString(member,"region2") != null) {
+                        region += Utils.getString(member,"region2") + ","
+                    }
+                    if (Utils.getString(member,"region3") != null) {
+                        region += Utils.getString(member,"region3")
+                    }
+
+                    /*       if (region.substring(region.length-1) == ","){
+                               region = region.substring(0, region.length-2)
+                           }*/
+                    txUserRegion.text = region
+
+                    //상메
+                    var statusMessage = Utils.getString(member,"status_msg")
+                    if (statusMessage != null) {
+                        infoStatusMsg.text = statusMessage
+                    }
+
+                    knowTogether.visibility = View.GONE
+
+                    //해시태그
+                    val data = response.getJSONArray("MemberTags")
+                    if (data != null) {
+                        var string_tag = ""
+                        for (i in 0 until data.length()) {
+                            var json = data[i] as JSONObject
+                            val memberTag = json.getJSONObject("MemberTag")
+
+                            string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+                        }
+                        hashtagTV.text = string_tag
+                    }
+
+                    //프로필 이미지
+                    val imgData = response.getJSONArray("MemberImgs")
+                    mngTXPhotoCnt.text = imgData.length().toString()
+
+                    //val tmpProfileImage = imgData.getJSONObject(0)
+                    val img_uri = Utils.getString(member,"profile_img")//small_uri
+                    val image = Config.url + img_uri
+
+                    ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
+
+                }
+            } catch (e : JSONException) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
+            println(errorResponse.toString())
+        }
+    })
+
+}
 
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -305,12 +291,12 @@ class InfoFragment : Fragment(){
                             //갤러리에서 가져온 이미지를 프로필에 세팅
                             var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
                             val resized = Utils.resizeBitmap(thumbnail, 100)
-                            imgProfile.setImageBitmap(resized)
+//                            imgProfile.setImageBitmap(resized)
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                            val bitmap = imgProfile.drawable as BitmapDrawable
-                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+                            val bitmap = resized
+                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap))
 
                             //이미지 전송
                             val params = RequestParams()
@@ -321,7 +307,8 @@ class InfoFragment : Fragment(){
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                     //getTempUserInformation("image")
-                                    println(response)
+                                    member_info()
+
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
