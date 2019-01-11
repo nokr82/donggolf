@@ -83,6 +83,12 @@ object MemberAction {
         HttpClient.post("/member/regist_token.json", params, handler)
     }
 
+    // 지역설정
+    fun membercnt(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/membercnt.json", params, handler)
+    }
+
+
     // 내 알림 목록
     fun alarms(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/alarms.json", params, handler)

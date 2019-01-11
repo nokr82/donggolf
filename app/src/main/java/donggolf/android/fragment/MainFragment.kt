@@ -74,6 +74,8 @@ open class MainFragment : Fragment() {
     private val SELECT_PICTURE: Int = 101
 
 
+    var member_cnt = ""
+
     lateinit var pagerAdapter: PagerAdapter
 
     lateinit var vpPage: ViewPager

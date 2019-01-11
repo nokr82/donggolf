@@ -60,6 +60,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var AREA_OK = 101
     var sidotype = ""
     var goguntype = ""
+    var membercnt = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -142,10 +143,48 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             //intent.putExtra("tUser", user)
             startActivity(intent)
         }
-
+        member_cnt()
         updateToken()
 
     }
+
+
+
+    //지역별멤버수
+    fun member_cnt() {
+        val params = RequestParams()
+        params.put("sidotype", sidotype)
+        params.put("goguntype", goguntype)
+
+        MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+
+                    if (result == "ok") {
+                        membercnt = response!!.getString("membercnt")
+                        areaCntTV.text = membercnt
+
+
+                    }
+
+
+                }catch (e:JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+
 
     fun MoveAddPostActivity(){
         var intent = Intent(context, AddPostActivity::class.java);
@@ -184,7 +223,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
                     sidotype = PrefUtils.getStringPreference(context, "sidotype")
                     goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-
+                    member_cnt()
 
                     areaTV.text = sidotype+"/"+goguntype
                 }
@@ -193,9 +232,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     }
 
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
-    }
+
 
     private fun updateUI(currentUser: FirebaseUser?) {
 //        mAuth!!.signInWithCustomToken(mCustomToken)

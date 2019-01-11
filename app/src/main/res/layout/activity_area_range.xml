@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="지역 범위 설정 ("
+            android:text="지역 범위 설정"
             android:textSize="15dp"
             android:textColor="#000000" />
         <TextView
@@ -34,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:visibility="gone"
             android:text="0"
             android:textSize="15dp"
             android:textColor="#000000" />
@@ -41,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:visibility="gone"
             android:text="/3)"
             android:textSize="15dp"
             android:textColor="#000000" />
