@@ -304,6 +304,9 @@ class FriendSearchActivity : RootActivity() {
                     friendData.clear()
                     if (result == "ok") {
                         val members = response.getJSONArray("members")
+                        if (members.length()==0){
+                            Toast.makeText(context,"친구를 찾을수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
                         for (i in 0 until members.length()) {
                             val member = members[i] as JSONObject
                             friendData.add(member)
