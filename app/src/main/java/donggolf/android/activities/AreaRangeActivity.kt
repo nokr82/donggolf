@@ -469,7 +469,7 @@ class AreaRangeActivity : RootActivity() {
         }
 
         finishLL.setOnClickListener {
-            if(arealistLV.visibility == View.VISIBLE){
+        /*    if(arealistLV.visibility == View.VISIBLE){
                 //여기에 db 데이터 업데이트
                 val params = RequestParams()
                 params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
@@ -504,8 +504,8 @@ class AreaRangeActivity : RootActivity() {
             if(gridGV.visibility == View.VISIBLE){
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
-            }
-
+            }*/
+finish()
 
         }
 

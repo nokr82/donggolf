@@ -122,8 +122,8 @@ class AreaMyRangeActivity : RootActivity() {
         finishLL.setOnClickListener {
             if(arealistLV.visibility == View.VISIBLE){
                 //여기에 db 데이터 업데이트
-                update_info()
-
+//                update_info()
+                finish()
             }
 
             if(gridGV.visibility == View.VISIBLE){

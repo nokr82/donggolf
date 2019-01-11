@@ -69,6 +69,9 @@ class FriendSearchActivity : RootActivity() {
 
     lateinit var user : HashMap<String,Any>
 
+    var membercnt = ""
+    var sidotype = ""
+    var goguntype = ""
     //초대
     private var callback: SessionCallback? = null
 
@@ -78,9 +81,18 @@ class FriendSearchActivity : RootActivity() {
 
         context = this
 
-        val intent:Intent = intent
+        var intent:Intent = intent
 
         callback = SessionCallback()
+
+
+        intent = getIntent()
+        membercnt = intent.getStringExtra("membercnt")
+        sidotype = PrefUtils.getStringPreference(context, "sidotype")
+        goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+        member_cntTV.text = "골퍼 "+membercnt+"명"
+        areaTV.text = sidotype+"/"+goguntype
+
 
         //main list view setting
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
