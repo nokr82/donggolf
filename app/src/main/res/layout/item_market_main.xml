@@ -10,15 +10,11 @@
         android:layout_margin="5dp"
         android:background="@mipmap/box_product_list_left">
 
-        <TextView
-            android:id="@+id/divisionTV"
-            android:visibility="gone"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="거래중"
-            android:background="@mipmap/box_sold_out"
-            android:textColor="#ffffff"
-            android:gravity="center"/>
+
+
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +24,8 @@
                 android:id="@+id/imageIV"
                 android:layout_width="match_parent"
                 android:scaleType="centerCrop"
-                android:layout_height="159dp" />
+                android:layout_height="159dp"
+                />
             <TextView
                 android:id="@+id/contentTV"
                 android:layout_width="wrap_content"
@@ -82,6 +79,15 @@
 
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/divisionTV"
+            android:visibility="gone"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="거래중"
+            android:background="@mipmap/box_sold_out"
+            android:textColor="#ffffff"
+            android:gravity="center"/>
     </RelativeLayout>
 
 </LinearLayout>

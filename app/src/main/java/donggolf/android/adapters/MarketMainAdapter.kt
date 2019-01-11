@@ -48,8 +48,9 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         val created = Utils.getString(market,"created")
         val nick = Utils.getString(market,"nick")
         val status = Utils.getString(market,"status")
+        val com_cnt = Utils.getString(market,"com_cnt")
 
-        item.contentTV.text = title
+        item.contentTV.text = title +"("+com_cnt+")"
         item.nicknameTV.text = nick
         item.timeTV.text = created.substringBefore(" ")
         item.priceTV.text = price
