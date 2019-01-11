@@ -1,9 +1,11 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
 import android.graphics.Paint
 import android.graphics.PointF
+import android.graphics.drawable.BitmapDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -40,6 +42,7 @@ import kotlinx.android.synthetic.main.item_chat_member_list.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,7 +85,11 @@ class MainDetailActivity : RootActivity() {
     var commentParent = ""
     var blockYN = ""
 
+    var MODIFY = 100
+
     var x = 0.0f
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +113,6 @@ class MainDetailActivity : RootActivity() {
         videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
         var mediaController: MediaController = MediaController(this);
         videoVV.setMediaController(mediaController)
-
 
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
@@ -584,7 +590,7 @@ class MainDetailActivity : RootActivity() {
             val intent = Intent(this, AddPostActivity::class.java)
             intent.putExtra("category",2)
             intent.putExtra("id",id)
-            startActivity(intent)
+            startActivityForResult(intent,MODIFY)
         }
     }
 
@@ -1015,6 +1021,21 @@ class MainDetailActivity : RootActivity() {
     override fun finish() {
         super.finish()
         Utils.hideKeyboard(context)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                MODIFY -> {
+                    if (data!!.getStringExtra("reset") != null) {
+                        println("-----modiftyyyyy")
+                        videoVV.visibility = View.GONE
+                        getPost()
+                    }
+                }
+            }
+        }
     }
 
 }

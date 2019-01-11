@@ -949,11 +949,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.MediaController
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -1021,7 +1023,11 @@ class AddPostActivity : RootActivity() {
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
 
+    var video_image:ArrayList<String> = ArrayList<String>()
+
     lateinit var videofile:ByteArray
+
+    var MODIFY = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1052,6 +1058,17 @@ class AddPostActivity : RootActivity() {
         if (setContent != null) {
             titleET.setText(setContent.title)
             contentET.setText(setContent.texts)
+        }
+
+        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+        var mediaController: MediaController = MediaController(this);
+        videoVV.setMediaController(mediaController)
+
+        removeIV.setOnClickListener {
+            videoVV.visibility = View.GONE
+            removeIV.visibility = View.GONE
+            videoPaths.clear()
+            video_image.clear()
         }
 
 //        loadData(dbManager,member_id.toString())
@@ -1259,12 +1276,6 @@ class AddPostActivity : RootActivity() {
     }
 
 
-
-
-
-
-
-
     private fun modify(id: String) {
         val title = Utils.getString(titleET)
         if (title.isEmpty()) {
@@ -1313,42 +1324,52 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (images_path != null){
-            Log.d("수정",images_path.toString())
-            if (images_path.size != 0){
-                for (i in 0..images_path.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path.get(i))
-
-
-                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+        var seq = 0
+        if (addPicturesLL != null){
+            for (i in 0 until addPicturesLL!!.childCount) {
+                val v = addPicturesLL?.getChildAt(i)
+                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+                if (imageIV is ImageView) {
+                    val bitmap = imageIV.drawable as BitmapDrawable
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    seq++
                 }
             }
         }
 
 
-        if (videoPaths != null){
-            if (videoPaths.size != 0){
-                for (i in 0..videoPaths.size - 1){
+        if (video_image.size > 0){
+            params.put("video_delete", "delete")
+         } else {
+            if (videoPaths != null){
+                if (videoPaths.size != 0){
+                    for (i in 0..videoPaths.size - 1){
 
-                    val file = File(videoPaths.get(i))
-                    var bytes = file.readBytes()
+                        val file = File(videoPaths.get(i))
+                        var bytes = file.readBytes()
 
-                    var n: Int
-                    val baos = ByteArrayOutputStream()
-                    val videoBytes = baos.toByteArray()
+                        var n: Int
+                        val baos = ByteArrayOutputStream()
+                        val videoBytes = baos.toByteArray()
 
-                    params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+                        params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+                    }
                 }
             }
         }
+
         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var intent = Intent()
+                intent.putExtra("reset", "reset")
+                intent.putExtra("id", intent.getStringExtra("id"))
+                setResult(RESULT_OK, intent);
                 finish()
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+//                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
             }
 
         })
@@ -1615,10 +1636,6 @@ class AddPostActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
-
-
-
-
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
 
@@ -1652,12 +1669,22 @@ class AddPostActivity : RootActivity() {
                                     if (type == 1) {
                                         var path = Config.url + Utils.getString(contentFile, "image_uri")
                                         reset2(path,id)
-                                        Log.d("이미지",path)
+                                        println("getimage------$path")
                                         imagePaths.add(path)
+//                                        modi_path!!.add(Utils.getString(contentFile, "image"))
                                         modi_path!!.add(Utils.getString(contentFile, "image"))
                                     } else {
-                                        var path = Utils.getString(contentFile, "image_uri")
+                                        val path = Utils.getString(contentFile, "image_uri")
+                                        val image = Utils.getString(contentFile, "image")
+                                        println("path ----- $path")
+                                        removeIV.visibility = View.VISIBLE
+                                        videoVV.visibility = View.VISIBLE
+                                        val uri = Uri.parse(Config.url + path)
+                                        videoVV.start()
+                                        videoVV.setVideoURI(uri)
+                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
                                         videoPaths.add(path)
+                                        video_image.add(image)
                                     }
                                 }
                             }
@@ -1749,9 +1776,9 @@ class AddPostActivity : RootActivity() {
 
                     }
 
-                    var intent = Intent();
+//                    var intent = Intent();
 
-                    setResult(RESULT_OK, intent);
+//                    setResult(RESULT_OK, intent);
 
                 }
                 SELECT_VIDEO -> {
@@ -1782,6 +1809,7 @@ class AddPostActivity : RootActivity() {
 //                    }
 
                     videoPaths.clear()
+                    video_image.clear()
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
@@ -1795,7 +1823,15 @@ class AddPostActivity : RootActivity() {
 
                     var intent = Intent();
 
-                    setResult(RESULT_OK, intent);
+                    println("path ----- ${videoPaths.get(0)}")
+                    videoVV.visibility = View.VISIBLE
+                    removeIV.visibility = View.VISIBLE
+                    val uri = Uri.parse(videoPaths.get(0))
+                    videoVV.start()
+                    videoVV.setVideoURI(uri)
+                    videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+
+//                    setResult(RESULT_OK, intent);
 
                 }
 

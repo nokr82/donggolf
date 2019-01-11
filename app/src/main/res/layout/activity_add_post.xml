@@ -69,15 +69,45 @@
                     android:layout_height="1dp"
                     android:background="@drawable/img_line_1" />
 
+
+
                 <EditText
                     android:id="@+id/contentET"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:layout_margin="10dp"
                     android:background="@null"
                     android:gravity="left"
                     android:hint="내용을 입력해주세요"
                     android:textSize="16dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <VideoView
+                            android:visibility="gone"
+                            android:id="@+id/videoVV"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerInParent="true"/>
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/removeIV"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/btn_del_searchword"
+                            android:layout_alignParentRight="true"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/pictureLL"
