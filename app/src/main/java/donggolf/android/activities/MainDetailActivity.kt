@@ -85,7 +85,7 @@ class MainDetailActivity : RootActivity() {
     var commentParent = ""
     var blockYN = ""
 
-    var MODIFY = 100
+    var MODIFYS = 70
 
     var x = 0.0f
 
@@ -590,7 +590,7 @@ class MainDetailActivity : RootActivity() {
             val intent = Intent(this, AddPostActivity::class.java)
             intent.putExtra("category",2)
             intent.putExtra("id",id)
-            startActivityForResult(intent,MODIFY)
+            startActivityForResult(intent,MODIFYS)
         }
     }
 
@@ -1027,12 +1027,16 @@ class MainDetailActivity : RootActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                MODIFY -> {
-                    if (data!!.getStringExtra("reset") != null) {
-                        println("-----modiftyyyyy")
-                        videoVV.visibility = View.GONE
-                        getPost()
-                    }
+                MODIFYS -> {
+
+//                    val selCateg = data!!.getIntExtra("CategoryID", 1)
+
+                    videoVV.visibility = View.GONE
+                    getPost()
+//                    if (data!!.getStringExtra("reset") != null) {
+                    println("-----modiftyyyyy")
+
+//                    }
                 }
             }
         }

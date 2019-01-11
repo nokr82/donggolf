@@ -1027,7 +1027,7 @@ class AddPostActivity : RootActivity() {
 
     lateinit var videofile:ByteArray
 
-    var MODIFY = 100
+    var MODIFYY = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1172,9 +1172,8 @@ class AddPostActivity : RootActivity() {
                             addContent()
                         } else {
                             val id = intent.getStringExtra("id")
+                            println("iod ----- $id")
                             modify(id)
-
-                            finish()
 
                         }
 
@@ -1361,11 +1360,14 @@ class AddPostActivity : RootActivity() {
         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                var intent = Intent()
-                intent.putExtra("reset", "reset")
-                intent.putExtra("id", intent.getStringExtra("id"))
-                setResult(RESULT_OK, intent);
-                finish()
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("reset", "reset")
+                    intent.putExtra("id", intent.getStringExtra("id"))
+                    setResult(RESULT_OK, intent);
+                    finish()
+                }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -1373,6 +1375,7 @@ class AddPostActivity : RootActivity() {
             }
 
         })
+
 
     }
 
