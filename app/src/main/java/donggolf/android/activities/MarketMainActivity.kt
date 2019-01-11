@@ -40,11 +40,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var formData = ArrayList<JSONObject>() // 분류
 
     var values = ""
-
     var product_type = ""
-
     var form  = ""
-
     var brand = ""
 
 
@@ -283,6 +280,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                             productData.get(i).put("isSelectedOp", false)
                         }
                     }
+
 
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
