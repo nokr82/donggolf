@@ -57,6 +57,16 @@ open class FreeFragment : Fragment() {
     private val SELECT_PICTURE: Int = 101
 
     lateinit var vpPage: ViewPager
+    internal var MsgReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                mainData()
+            }
+        }
+    }
+
+
 
     internal var ResetPostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -140,6 +150,11 @@ open class FreeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity = getActivity() as MainActivity
+
+
+        //메시지보내기
+        var filter = IntentFilter("MSG_NEXT")
+        activity.registerReceiver(MsgReceiver, filter)
 
         val filter1 = IntentFilter("SAVE_POST")
         activity.registerReceiver(ResetPostReceiver, filter1)
@@ -440,7 +455,9 @@ open class FreeFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-
+        if (MsgReceiver != null) {
+            context!!.unregisterReceiver(MsgReceiver)
+        }
         if (ResetPostReceiver != null) {
             context!!.unregisterReceiver(ResetPostReceiver)
         }
