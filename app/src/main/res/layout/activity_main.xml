@@ -20,6 +20,7 @@
                 android:background="@drawable/icon_area"
                 android:layout_margin="10dp"/>
             <TextView
+                android:id="@+id/areaTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"

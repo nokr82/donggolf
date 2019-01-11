@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -11,29 +12,20 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.iid.FirebaseInstanceId
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
-import donggolf.android.adapters.MainAdapter
-import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.fragment.ChatFragment
 import donggolf.android.fragment.FreeFragment
-import donggolf.android.fragment.FushFragment
 import donggolf.android.fragment.InfoFragment
-import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -65,7 +57,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var market_id = -1
     var content_id = -1
     var friend_id = -1
-
+    var AREA_OK = 101
+    var sidotype = ""
+    var goguntype = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -80,6 +74,15 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         if(is_push) {
             handlePush()
         }
+
+
+
+        if (sidotype==""&&goguntype==""){
+            areaTV.text ="지역을 설정해주세요."
+        }else{
+            areaTV.text =sidotype  +"/"+ goguntype
+        }
+
 
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
         frags.adapter = pagerAdapter
@@ -159,7 +162,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     fun MoveAreaRangeActivity(){
         var intent: Intent = Intent(this, AreaRangeActivity::class.java)
         intent.putExtra("region_type", "content_filter")
-        startActivity(intent)
+        startActivityForResult(intent,AREA_OK)
     }
 
     fun MoveMarketMainActivity(){
@@ -167,6 +170,28 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         startActivity(intent)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when(requestCode) {
+            AREA_OK -> {
+                if(resultCode == Activity.RESULT_OK) {
+                    sidotype  = data!!.getStringExtra("sidotype")
+                    PrefUtils.setPreference(context, "sidotype", sidotype)
+                    goguntype =  data!!.getStringExtra("goguntype")
+                    PrefUtils.setPreference(context, "goguntype", goguntype)
+                    Log.d("시도",sidotype)
+
+                    sidotype = PrefUtils.getStringPreference(context, "sidotype")
+                    goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+
+
+                    areaTV.text = sidotype+"/"+goguntype
+                }
+            }
+        }
+
+    }
 
     fun logout() {
         FirebaseAuth.getInstance().signOut()
