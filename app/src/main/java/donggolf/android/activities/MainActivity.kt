@@ -77,6 +77,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             handlePush()
         }
 
+        if (PrefUtils.getStringPreference(context, "sidotype") != null){
+            sidotype = PrefUtils.getStringPreference(context, "sidotype")
+            goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+            areaTV.text = sidotype+"/"+goguntype
+        }
+
 
 
 
