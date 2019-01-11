@@ -25,18 +25,14 @@
         android:roundIcon="@mipmap/dongne_golf_logo"
         android:supportsRtl="true"
         android:theme="@style/NoTitleDialog">
-
-        <service
-            android:name=".fcm.MyFirebaseMessagingService">
+        <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".fcm.MyFirebaseInstanceIDService">
+        <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
@@ -208,7 +204,7 @@
         <activity
             android:name=".activities.ChatDetailActivity"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.Notice2Activity"
             android:theme="@style/NoTitleDialog" />
@@ -250,9 +246,9 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.DongChatDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.AddDongChatActivity"
             android:theme="@style/NoTitleDialog"
@@ -261,6 +257,9 @@
             android:name=".activities.DongchatProfileActivity"
             android:theme="@style/NoTitleDialog" />
         <activity android:name=".activities.ViewAlbumActivity" />
+        <activity android:name=".activities.NoticeManageActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" ></activity>
     </application>
 
 </manifest>

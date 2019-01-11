@@ -1,9 +1,11 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -18,6 +20,7 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.activity_dongchat_profile.*
+import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
@@ -34,7 +37,7 @@ class DongchatProfileActivity : RootActivity() {
     private lateinit var backgroundAdapter: FullScreenImageAdapter
 
     var founder_id = ""
-
+    var notice = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +49,6 @@ class DongchatProfileActivity : RootActivity() {
             val intent = Intent(context, DongChatDetailActivity::class.java)
             intent.putExtra("room_id",room_id)
             startActivity(intent)
-
         }
 
         room_id = intent.getStringExtra("room_id")
@@ -55,6 +57,44 @@ class DongchatProfileActivity : RootActivity() {
 
         backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
         backgroundVP.adapter = backgroundAdapter
+
+        setnoticeTV.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlgtextTV.setText("변경할 공지사항을 입력하세요")
+            dialogView.dlgTitle.setText("공지사항 입력")
+            dialogView.blockcodeTV.setText("")
+
+            dialogView.btn_title_clear.setOnClickListener {
+                dialogView.blockcodeTV.setText(notice)
+            }
+
+            dialogView.cancleTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.okTV.setOnClickListener {
+                val code = dialogView.categoryTitleET.text.toString()
+                if (code == null || code == ""){
+                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                notice = code
+                alert.dismiss()
+                noticeTV.setText(code)
+                set_notice(code)
+            }
+
+        }
+
+        setnoticeTV.setOnClickListener {
+            val intent = Intent(context, NoticeManageActivity::class.java)
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
+        }
 
 
     }
@@ -86,9 +126,10 @@ class DongchatProfileActivity : RootActivity() {
                             val background = Utils.getString(chatroom,"background")
                             val peoplecount = Utils.getString(chatroom,"peoplecount")
                             val max_count = Utils.getString(chatroom,"max_count")
-                            val notice = Utils.getString(chatroom,"notice")
-                            if (notice != null && notice.length > 0){
+                            val getnotice = Utils.getString(chatroom,"notice")
+                            if (getnotice != null && getnotice.length > 0){
                                 noticeTV.setText(notice)
+                                notice = getnotice
                             }
                             membercountTV.setText("("+peoplecount + "/" + max_count+")")
                             if (background != null && background.length > 0){
@@ -158,6 +199,34 @@ class DongchatProfileActivity : RootActivity() {
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         finish()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_notice(notice: String){
+        val params = RequestParams()
+        params.put("room_id", room_id)
+        params.put("notice", notice)
+
+        ChattingAction.set_notice(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()

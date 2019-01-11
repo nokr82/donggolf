@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -28,6 +29,7 @@ import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
@@ -52,6 +54,9 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
     var max_count = 0
     var people_count = 0
     var block_code = ""
+    var SET_NOTICE = 100
+
+    var block_member_ids:ArrayList<String> = ArrayList<String>()
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
@@ -251,9 +256,40 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             intent.putExtra("division","1")
             intent.putExtra("max_count",max_count)
             intent.putExtra("people_count",people_count)
-            println("put---------$max_count-----$people_count")
             startActivity(intent)
         }
+
+        downcancleLL.setOnClickListener {
+            downnoticevisibleLL.visibility = View.GONE
+        }
+
+        noticevisibleLL.setOnClickListener {
+            val intent = Intent(context, NoticeManageActivity::class.java)
+            intent.putExtra("room_id",room_id)
+            startActivityForResult(intent,SET_NOTICE)
+        }
+
+        downnoticevisibleLL.setOnClickListener {
+            val intent = Intent(context, NoticeManageActivity::class.java)
+            intent.putExtra("room_id",room_id)
+            startActivityForResult(intent,SET_NOTICE)
+        }
+
+        chatSettingLL.setOnClickListener {
+            val intent = Intent(context, SelectMemberActivity::class.java)
+            intent.putExtra("block","block")
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
+        }
+
+        chatSettingmemberLL.setOnClickListener {
+            val intent = Intent(context, SelectMemberActivity::class.java)
+            intent.putExtra("block","block")
+            intent.putExtra("room_id",room_id)
+            startActivity(intent)
+        }
+
+
 
     }
 
@@ -276,9 +312,10 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             val memberinfo = item.getJSONObject("Member")
                             val title = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
+                            val top_yn = Utils.getString(chatroom,"top_yn")
                             block_code = Utils.getString(chatroom,"block_code")
 
-                            val notice = Utils.getString(chatmember,"noticeTV")
+                            val notice = Utils.getString(chatroom,"notice")
                             val id = Utils.getString(chatmember,"member_id")
                             val nick = Utils.getString(chatmember,"nick")
                             max_count = Utils.getInt(chatroom,"max_count")
@@ -286,8 +323,18 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
                             if (notice != null && notice.length > 0){
                                 noticeTV.setText(notice)
+                                downnoticeTV.setText(notice)
                             } else {
                                 noticeTV.setText("공지사항이 없습니다.")
+                                downnoticeTV.setText("공지사항이 없습니다.")
+                            }
+
+                            if (top_yn == "Y"){
+                                downnoticevisibleLL.visibility = View.GONE
+                                noticevisibleLL.visibility = View.VISIBLE
+                            } else {
+                                downnoticevisibleLL.visibility = View.VISIBLE
+                                noticevisibleLL.visibility = View.GONE
                             }
 
                             nicknameTV.setText(title)
@@ -683,6 +730,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         })
     }
 
+
+
     fun delete_chatting_room(){
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
@@ -704,6 +753,32 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                 println(errorResponse)
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+              SET_NOTICE -> {
+                  if (data!!.getStringExtra("reset") != null) {
+                      if (mate_id != null){
+                          mate_id.clear()
+                      }
+
+                      if (memberList != null){
+                          memberList.clear()
+                      }
+
+                      if (mate_nick != null){
+                          mate_nick.clear()
+                      }
+                      memberlistLL.removeAllViews()
+
+                      detail_chatting()
+                  }
+              }
+            }
+        }
     }
 
 }
