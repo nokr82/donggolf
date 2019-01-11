@@ -147,9 +147,9 @@ class InfoFragment : Fragment(){
                             region += Utils.getString(member,"region3")
                         }
 
-                        if (region.substring(region.length-1) == ","){
+                 /*       if (region.substring(region.length-1) == ","){
                             region = region.substring(0, region.length-2)
-                        }
+                        }*/
                         txUserRegion.text = region
 
                         //상메
@@ -399,7 +399,8 @@ class InfoFragment : Fragment(){
                                 txUserName.text = newNick
                             }
                             "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-2)
+                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-1)
+
                             }
                             "tag" -> {
                                 var taglist = ""
