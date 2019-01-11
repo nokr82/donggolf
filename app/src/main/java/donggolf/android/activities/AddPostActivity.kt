@@ -981,10 +981,7 @@ import kotlinx.android.synthetic.main.activity_add_post.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
+import java.io.*
 import java.lang.reflect.Member
 import java.util.*
 import kotlin.collections.ArrayList
@@ -1023,6 +1020,8 @@ class AddPostActivity : RootActivity() {
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
+
+    lateinit var videofile:ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1393,23 +1392,26 @@ class AddPostActivity : RootActivity() {
             if (videoPaths.size != 0){
                 for (i in 0..videoPaths.size - 1){
 
+                    val file = File(videoPaths.get(i))
+                    val size = file.length() as Int
+                    val bytes = ByteArray(size)
 
+                    try {
+                        val buf = BufferedInputStream( FileInputStream(file));
+                        buf.read(bytes, 0, bytes.size);
+                        buf.close();
+                        videofile = Utils.getByteArray(buf)
+                    } catch (e:FileNotFoundException){
+
+                    } catch (e:IOException){
+
+                    }
+                    var n: Int
                     val baos = ByteArrayOutputStream()
+                    val videoBytes = baos.toByteArray()
 
-//                    val fis = FileInputStream(File(videoPaths.get(i)))
-//                    val buf = ByteArray(1024)
-//                    var n: Int
-//                    while ((bytesRead = inputStream.read(b)) != -1)
-//                    {
-//                        bos.write(b, 0, bytesRead);
-//                    }
-//
-//                    videoBytes = baos.toByteArray()
-//
-//                    var bt: Bitmap = Utils.getImage(context.contentResolver, videoPaths.get(i), 800)
-//
-//                    params.put("videos[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
-
+//                    params.put("videos[" + i + "]",  ByteArrayInputStream(videofile))
+                    params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
                 }
             }
         }

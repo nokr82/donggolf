@@ -366,17 +366,18 @@ class AddDongChatActivity : RootActivity() {
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
-                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
-                            profileIV.setImageBitmap(resized)
+                            profileIV.setImageBitmap(thumbnail)
                             basicIV.visibility = View.GONE
                             profiledtIV.visibility = View.VISIBLE
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                            val bitmap = profileIV.drawable as BitmapDrawable
-                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+//                            val bitmap = profileIV.drawable as BitmapDrawable
+//                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
                         }
                         catch (e: IOException) {

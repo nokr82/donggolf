@@ -115,42 +115,74 @@
                     </LinearLayout>
                 <ListView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:id="@+id/chatCont"
                     android:transcriptMode="alwaysScroll"
                     android:divider="@null"/>
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/downnoticevisibleLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#ffffff">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/icon_notice_green"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"/>
+                    <TextView
+                        android:id="@+id/downnoticeTV"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="공지사항"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="10dp"/>
+                    <LinearLayout
+                        android:id="@+id/downcancleLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/btn_cancel"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="7">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_alignParentBottom="true">
-                        <EditText
-                            android:id="@+id/contentET"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:gravity="center"
-                            android:textSize="13dp"
-                            android:hint="입력"/>
 
-                        <TextView
-                            android:id="@+id/addchattingTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="등록"
-                            android:textColor="#0ED92F"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:gravity="center"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_alignParentBottom="true">
+                            <EditText
+                                android:id="@+id/contentET"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="center"
+                                android:textSize="13dp"
+                                android:hint="입력"/>
 
-                    </LinearLayout>
-                </RelativeLayout>
+                            <TextView
+                                android:id="@+id/addchattingTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="등록"
+                                android:textColor="#0ED92F"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:gravity="center"/>
+
+                        </LinearLayout>
+                </LinearLayout>
+
+
             </RelativeLayout>
 
 

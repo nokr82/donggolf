@@ -201,12 +201,16 @@
                 android:text="채팅방에 공지가 없습니다"
                 android:textStyle="bold"
                 android:textSize="15dp"/>
-            <ImageView
+            <LinearLayout
                 android:id="@+id/setnoticeTV"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/btn_change_region"/>
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/btn_change_region"/>
+            </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout
