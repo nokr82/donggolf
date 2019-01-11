@@ -294,6 +294,7 @@ class FriendSearchActivity : RootActivity() {
     fun friendSearchWords(keyWord : String) {
         val params = RequestParams()
         params.put("keyword", keyWord)
+        params.put("goguntype", goguntype)
 
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -303,6 +304,9 @@ class FriendSearchActivity : RootActivity() {
                     friendData.clear()
                     if (result == "ok") {
                         val members = response.getJSONArray("members")
+                        if (members.length()==0){
+                            Toast.makeText(context,"친구를 찾을수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
                         for (i in 0 until members.length()) {
                             val member = members[i] as JSONObject
                             friendData.add(member)
