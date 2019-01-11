@@ -40,7 +40,9 @@ class LoginActivity : RootActivity() {
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
 //    private lateinit var mAuth: FirebaseAuth
-
+    var sidotype = ""
+    var goguntype = ""
+    var region_id = ""
     var autoLogin = false
     var email = ""
     var password = ""
@@ -51,6 +53,12 @@ class LoginActivity : RootActivity() {
 
         context = this
         progressDialog = ProgressDialog(context)
+
+        PrefUtils.setPreference(context, "sidotype", sidotype)
+        PrefUtils.setPreference(context, "goguntype", goguntype)
+        PrefUtils.setPreference(context, "region_id", region_id)
+
+
 
         //getKeyHash(context)
 
