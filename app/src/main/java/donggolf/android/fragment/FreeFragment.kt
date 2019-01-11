@@ -277,7 +277,12 @@ open class FreeFragment : Fragment() {
 
     fun mainData() {
         val params = RequestParams()
+       var sidotype = PrefUtils.getStringPreference(context, "sidotype")
+       var goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+
         params.put("member_id",member_id)
+        params.put("goguntype",goguntype)
+        params.put("sidotype",sidotype)
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
 
