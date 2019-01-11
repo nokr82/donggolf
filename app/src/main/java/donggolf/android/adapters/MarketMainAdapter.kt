@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -53,7 +52,11 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         item.contentTV.text = title +"("+com_cnt+")"
         item.nicknameTV.text = nick
         item.timeTV.text = created.substringBefore(" ")
-        item.priceTV.text = price
+        if (status.equals("판매완료")){
+            item.priceTV.text = "******원"
+        }else{
+            item.priceTV.text = Utils._comma(price)+"원"
+        }
         item.moreTV.text = region
         item.divisionTV.text = status
         if (status != null){
