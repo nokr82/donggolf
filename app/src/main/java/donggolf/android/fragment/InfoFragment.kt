@@ -243,7 +243,7 @@ class InfoFragment : Fragment(){
         }
 
         setRegion.setOnClickListener {
-            var intent = Intent(activity, AreaRangeActivity::class.java)
+            var intent = Intent(activity, AreaMyRangeActivity::class.java)
             intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
