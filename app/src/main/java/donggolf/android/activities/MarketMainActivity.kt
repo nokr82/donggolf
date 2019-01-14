@@ -63,6 +63,14 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         }
     }
+    internal var pullupReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all")
+            }
+        }
+    }
     internal var deleteReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
@@ -81,6 +89,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         registerReceiver(reLoadDataReceiver, filter1)
         var filter2 = IntentFilter("DELETE_OK")
         registerReceiver(deleteReciver, filter2)
+        var filter3 = IntentFilter("PULL_UP")
+        registerReceiver(pullupReceiver, filter3)
 
         finishmLL.setOnClickListener {
             finish()

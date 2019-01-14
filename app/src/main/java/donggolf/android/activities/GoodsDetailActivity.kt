@@ -435,6 +435,9 @@ class GoodsDetailActivity : RootActivity() {
                         finish()
                     } else if (message == "pullup"){
                         Utils.alert(context,"게시글을 끌어올렸습니다.")
+                        var intent = Intent()
+                        intent.action = "PULL_UP"
+                        sendBroadcast(intent)
                     } else if (message == "already pulled-up content"){
                         Utils.alert(context,"오늘 이미 끌어올리기를 사용한 게시글입니다.\n더이상 게시글을 끌어올릴 수 없습니다.\n내일 다시 시도해주시길 바랍니다.")
                     }
