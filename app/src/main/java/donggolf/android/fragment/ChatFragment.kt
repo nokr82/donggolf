@@ -199,9 +199,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         //new section
         myChatOnRL.setOnClickListener {
-            myChatOnRL.visibility = View.GONE
-            townChatOnRL.visibility = View.VISIBLE
-            getmychat(2)
+            if (PrefUtils.getStringPreference(context,"region_id") != null) {
+                myChatOnRL.visibility = View.GONE
+                townChatOnRL.visibility = View.VISIBLE
+                getmychat(2)
+            } else {
+                Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
 
 
@@ -235,6 +239,15 @@ class ChatFragment : android.support.v4.app.Fragment() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("type", type)
+
+        if (type == 2){
+            if (PrefUtils.getStringPreference(context,"region_id") != null) {
+                var region_id = PrefUtils.getStringPreference(context, "region_id")
+                params.put("region", region_id)
+            } else {
+                Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         ChattingAction.load_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

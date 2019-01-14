@@ -52,8 +52,8 @@ class AddDongChatActivity : RootActivity() {
     private val PROFILE = 1
     private val BACKGROUND = 2
 
-    var profile: Uri? = null
-    var background:Uri? = null
+    var profile: Bitmap? = null
+    var background:Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -225,13 +225,13 @@ class AddDongChatActivity : RootActivity() {
         params.put("introduce", content)
         params.put("regions", region_id)
         if (profile != null){
-            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, profile)
-            params.put("intro", ByteArrayInputStream(Utils.getByteArray(profileBitmap)))
+//            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, profile)
+            params.put("intro", ByteArrayInputStream(Utils.getByteArray(profile)))
         }
 
         if (background != null){
-            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, background)
-            params.put("background", ByteArrayInputStream(Utils.getByteArray(backgroundBitmap)))
+//            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, background)
+            params.put("background", ByteArrayInputStream(Utils.getByteArray(background)))
         }
         params.put("type", "2")
         params.put("division",0)
@@ -360,23 +360,32 @@ class AddDongChatActivity : RootActivity() {
                     {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
-                        profile = contentURI
+//                        profile = contentURI
                         //content://media/external/images/media/1200
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                profile = Utils.getImage(context.contentResolver,picturePath.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
-                            basicIV.visibility = View.GONE
+                                basicIV.visibility = View.GONE
 //                            profileIV.setImageURI(contentURI)
-                            profileIV.setImageBitmap(thumbnail)
-                            profiledtIV.visibility = View.VISIBLE
+                                profileIV.setImageBitmap(profile)
+                                profiledtIV.visibility = View.VISIBLE
 
+                            }
 //                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
-
-
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
@@ -398,7 +407,7 @@ class AddDongChatActivity : RootActivity() {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
                         //content://media/external/images/media/1200
-                        background = contentURI
+//                        background = contentURI
                         backgroundIV.setImageResource(0)
                         try
                         {
@@ -407,14 +416,34 @@ class AddDongChatActivity : RootActivity() {
                             var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            background = thumbnail
-                            backgroundIV.setImageURI(contentURI)
-                            backbasicIV.visibility = View.GONE
-                            backgrounddtIV.visibility = View.VISIBLE
+//                            backgroundIV.setImageURI(contentURI)
+//                            backbasicIV.visibility = View.GONE
+//                            backgrounddtIV.visibility = View.VISIBLE
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                background = Utils.getImage(context.contentResolver,picturePath.toString())
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            profile = thumbnail
+                                backbasicIV.visibility = View.GONE
+//                            profileIV.setImageURI(contentURI)
+                                backgroundIV.setImageBitmap(background)
+                                backgrounddtIV.visibility = View.VISIBLE
+                            }
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
 //                            val bitmap = backgroundIV.drawable as BitmapDrawable
 //                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+
+
 
                         }
                         catch (e: IOException) {

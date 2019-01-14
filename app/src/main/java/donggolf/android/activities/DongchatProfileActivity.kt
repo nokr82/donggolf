@@ -234,7 +234,6 @@ class DongchatProfileActivity : RootActivity() {
                             roomtitleTV.setText(title)
                             introduceTV.setText(introduce)
 
-
                             if (visible == "1"){
 
                             } else if (visible == "2"){
@@ -244,6 +243,7 @@ class DongchatProfileActivity : RootActivity() {
                             if (PrefUtils.getIntPreference(context,"member_id") != Utils.getInt(chatroom,"member_id")){
                                 setnoticeTV.visibility = View.GONE
                                 setroomtitleTV.visibility = View.GONE
+                                setimageIV.visibility = View.GONE
                             }
 
                             if (Utils.getInt(chatroom,"member_id") == Utils.getInt(memberinfo,"id")){
