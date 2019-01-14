@@ -1364,7 +1364,6 @@ class AddPostActivity : RootActivity() {
 
         })
 
-
     }
 
     private fun addContent() {
