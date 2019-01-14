@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -371,14 +372,14 @@ class DongchatProfileActivity : RootActivity() {
         })
     }
 
-    fun set_image(type: String,image : Uri){
+    fun set_image(type: String,image : Bitmap){
         val params = RequestParams()
         if (type == "intro"){
-            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
-            params.put("intro", ByteArrayInputStream(Utils.getByteArray(profileBitmap)))
+//            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
+            params.put("intro", ByteArrayInputStream(Utils.getByteArray(image)))
         } else {
-            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
-            params.put("background", ByteArrayInputStream(Utils.getByteArray(backgroundBitmap)))
+//            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
+            params.put("background", ByteArrayInputStream(Utils.getByteArray(image)))
         }
 
         params.put("room_id", room_id)
@@ -429,7 +430,29 @@ class DongchatProfileActivity : RootActivity() {
 //                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
 
                             ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
-                            set_image("intro",contentURI)
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                val prof = Utils.getImage(context.contentResolver, picturePath.toString())
+
+
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            profile = thumbnail
+//                            profileIV.setImageURI(contentURI)
+//                                profileIV.setImageBitmap(prof)
+                                set_image("intro",prof)
+                            }
+
+
+
+
+
                         }
                         catch (e: IOException) {
                             e.printStackTrace()
@@ -443,22 +466,35 @@ class DongchatProfileActivity : RootActivity() {
                     {
                         val contentURI = data.data
 
-                        try
-                        {
+                        try {
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+                            var thumbnail = Utils.getImage(context.contentResolver, contentURI.toString())
 
-                            if (Image_path != null){
-                                Image_path.clear()
-                            }
+                            ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 
-                            Image_path.add(contentURI.toString())
-                            backgroundAdapter.notifyDataSetChanged()
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                val prof = Utils.getImage(context.contentResolver, picturePath.toString())
+
+
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            profile = thumbnail
+//                            profileIV.setImageURI(contentURI)
+//                                profileIV.setImageBitmap(prof)
+                                set_image("background", prof)
+
+
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 
 //                            val bitmap = resized
 //                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
-                            set_image("background",contentURI)
+                            }
                         }
                         catch (e: IOException) {
                             e.printStackTrace()

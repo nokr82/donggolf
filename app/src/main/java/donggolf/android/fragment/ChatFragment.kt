@@ -25,6 +25,7 @@ import donggolf.android.R
 import donggolf.android.actions.ChattingAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.ChatFragAdapter
+import donggolf.android.adapters.DongChatAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
@@ -38,7 +39,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
     private var mAuth: FirebaseAuth? = null
 
     private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private  var dongAdapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+
     private  lateinit var  adapter : ChatFragAdapter
+    private  lateinit var  dongAdapter : DongChatAdapter
 
     lateinit var tabMyChat : ImageView
     lateinit var tabTownChat : ImageView
@@ -98,6 +102,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         ctx = context
 
         adapter = ChatFragAdapter(ctx!!,R.layout.item_my_chat_list,adapterData)
+        dongAdapter = DongChatAdapter(ctx!!,R.layout.item_my_chat_list,dongAdapterData)
 
         chat_list.adapter = adapter
 
@@ -105,90 +110,169 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         getmychat(1)
 
-
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
-            var json = adapterData.get(position)
-            var room = json.getJSONObject("Chatroom")
-            val id = Utils.getString(room,"id")
-            val founder = Utils.getString(room,"member_id")
-            val type = Utils.getString(room,"type")
-            val block_code = Utils.getString(room,"block_code")
+            if (myChatOnRL.visibility == View.VISIBLE) {
+                var json = adapterData.get(position)
+                var room = json.getJSONObject("Chatroom")
+                val id = Utils.getString(room, "id")
+                val founder = Utils.getString(room, "member_id")
+                val type = Utils.getString(room, "type")
+                val block_code = Utils.getString(room, "block_code")
 
-            if (founder.toInt() == PrefUtils.getIntPreference(context,"member_id")){
-                if (type == "1") {
-                    var intent = Intent(activity, ChatDetailActivity::class.java)
-                    intent.putExtra("division",1)
-                    intent.putExtra("id",id)
-                    intent.putExtra("founder",founder)
-                    startActivityForResult(intent,RESET)
-                } else {
-                    var intent = Intent(activity, DongchatProfileActivity::class.java)
-                    intent.putExtra("room_id",id)
-                    startActivityForResult(intent,RESET)
-                }
-            } else {
-                if (block_code != null && block_code.length > 0){
-                    val builder = AlertDialog.Builder(ctx!!)
-                    val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
-                    builder.setView(dialogView)
-                    val alert = builder.show()
-
-                    dialogView.dlgTitle.setText("비공개 코드 입력")
-                    dialogView.codevisibleLL.visibility = View.GONE
-
-                    dialogView.btn_title_clear.setOnClickListener {
-                        dialogView.blockcodeTV.setText("")
-                    }
-
-                    dialogView.cancleTV.setOnClickListener {
-                        alert.dismiss()
-                    }
-
-                    dialogView.okTV.setOnClickListener {
-                        val code = dialogView.categoryTitleET.text.toString()
-                        if (code == null || code == ""){
-                            Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
-                            return@setOnClickListener
-                        }
-
-                        if (code == block_code){
-                            if (type == "1") {
-                                var intent = Intent(activity, ChatDetailActivity::class.java)
-                                intent.putExtra("division",1)
-                                intent.putExtra("id",id)
-                                intent.putExtra("founder",founder)
-                                startActivity(intent)
-                            } else {
-                                var intent = Intent(activity, DongchatProfileActivity::class.java)
-                                intent.putExtra("room_id",id)
-                                startActivity(intent)
-                            }
-                        } else {
-                            Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
-                            return@setOnClickListener
-                        }
-
-                        alert.dismiss()
-                    }
-                } else {
+                if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
                     if (type == "1") {
                         var intent = Intent(activity, ChatDetailActivity::class.java)
-                        intent.putExtra("division",1)
-                        intent.putExtra("id",id)
-                        intent.putExtra("founder",founder)
-                        startActivity(intent)
+                        intent.putExtra("division", 1)
+                        intent.putExtra("id", id)
+                        intent.putExtra("founder", founder)
+                        startActivityForResult(intent, RESET)
                     } else {
                         var intent = Intent(activity, DongchatProfileActivity::class.java)
-                        intent.putExtra("room_id",id)
-                        startActivity(intent)
+                        intent.putExtra("room_id", id)
+                        startActivityForResult(intent, RESET)
+                    }
+                } else {
+                    if (block_code != null && block_code.length > 0) {
+                        val builder = AlertDialog.Builder(ctx!!)
+                        val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+                        builder.setView(dialogView)
+                        val alert = builder.show()
+
+                        dialogView.dlgTitle.setText("비공개 코드 입력")
+                        dialogView.codevisibleLL.visibility = View.GONE
+
+                        dialogView.btn_title_clear.setOnClickListener {
+                            dialogView.blockcodeTV.setText("")
+                        }
+
+                        dialogView.cancleTV.setOnClickListener {
+                            alert.dismiss()
+                        }
+
+                        dialogView.okTV.setOnClickListener {
+                            val code = dialogView.categoryTitleET.text.toString()
+                            if (code == null || code == "") {
+                                Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            if (code == block_code) {
+                                if (type == "1") {
+                                    var intent = Intent(activity, ChatDetailActivity::class.java)
+                                    intent.putExtra("division", 1)
+                                    intent.putExtra("id", id)
+                                    intent.putExtra("founder", founder)
+                                    startActivity(intent)
+                                } else {
+                                    var intent = Intent(activity, DongchatProfileActivity::class.java)
+                                    intent.putExtra("room_id", id)
+                                    startActivity(intent)
+                                }
+                            } else {
+                                Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            alert.dismiss()
+                        }
+                    } else {
+                        if (type == "1") {
+                            var intent = Intent(activity, ChatDetailActivity::class.java)
+                            intent.putExtra("division", 1)
+                            intent.putExtra("id", id)
+                            intent.putExtra("founder", founder)
+                            startActivity(intent)
+                        } else {
+                            var intent = Intent(activity, DongchatProfileActivity::class.java)
+                            intent.putExtra("room_id", id)
+                            startActivity(intent)
+                        }
+                    }
+                }
+
+
+            } else {
+                var json = dongAdapterData.get(position)
+                var room = json.getJSONObject("Chatroom")
+                val id = Utils.getString(room, "id")
+                val founder = Utils.getString(room, "member_id")
+                val type = Utils.getString(room, "type")
+                val block_code = Utils.getString(room, "block_code")
+
+                if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
+                    if (type == "1") {
+                        var intent = Intent(activity, ChatDetailActivity::class.java)
+                        intent.putExtra("division", 1)
+                        intent.putExtra("id", id)
+                        intent.putExtra("founder", founder)
+                        startActivityForResult(intent, RESET)
+                    } else {
+                        var intent = Intent(activity, DongchatProfileActivity::class.java)
+                        intent.putExtra("room_id", id)
+                        startActivityForResult(intent, RESET)
+                    }
+                } else {
+                    if (block_code != null && block_code.length > 0) {
+                        val builder = AlertDialog.Builder(ctx!!)
+                        val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+                        builder.setView(dialogView)
+                        val alert = builder.show()
+
+                        dialogView.dlgTitle.setText("비공개 코드 입력")
+                        dialogView.codevisibleLL.visibility = View.GONE
+
+                        dialogView.btn_title_clear.setOnClickListener {
+                            dialogView.blockcodeTV.setText("")
+                        }
+
+                        dialogView.cancleTV.setOnClickListener {
+                            alert.dismiss()
+                        }
+
+                        dialogView.okTV.setOnClickListener {
+                            val code = dialogView.categoryTitleET.text.toString()
+                            if (code == null || code == "") {
+                                Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            if (code == block_code) {
+                                if (type == "1") {
+                                    var intent = Intent(activity, ChatDetailActivity::class.java)
+                                    intent.putExtra("division", 1)
+                                    intent.putExtra("id", id)
+                                    intent.putExtra("founder", founder)
+                                    startActivity(intent)
+                                } else {
+                                    var intent = Intent(activity, DongchatProfileActivity::class.java)
+                                    intent.putExtra("room_id", id)
+                                    startActivity(intent)
+                                }
+                            } else {
+                                Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            alert.dismiss()
+                        }
+                    } else {
+                        if (type == "1") {
+                            var intent = Intent(activity, ChatDetailActivity::class.java)
+                            intent.putExtra("division", 1)
+                            intent.putExtra("id", id)
+                            intent.putExtra("founder", founder)
+                            startActivity(intent)
+                        } else {
+                            var intent = Intent(activity, DongchatProfileActivity::class.java)
+                            intent.putExtra("room_id", id)
+                            startActivity(intent)
+                        }
                     }
                 }
             }
-
-
         }
 
         addmychatIV.setOnClickListener {
@@ -254,23 +338,38 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
 
-                    if (adapterData != null){
-                        adapterData.clear()
-                    }
-                    val chatlist = response!!.getJSONArray("chatlist")
-                    if (chatlist.length() > 0 && chatlist != null){
-                        for (i in 0 until chatlist.length()){
-                            adapterData.add(chatlist.get(i) as JSONObject)
-                        }
-                    }
-
                     if (type == 1) {
-                        chatcountTV.setText(adapterData.size.toString())
-                    } else {
-                        dongcountTV.setText(adapterData.size.toString())
-                    }
+                        if (adapterData != null) {
+                            adapterData.clear()
+                        }
+                        val chatlist = response!!.getJSONArray("chatlist")
+                        if (chatlist.length() > 0 && chatlist != null) {
+                            for (i in 0 until chatlist.length()) {
+                                adapterData.add(chatlist.get(i) as JSONObject)
+                            }
+                        }
 
-                    adapter.notifyDataSetChanged()
+                        if (type == 1) {
+                            chatcountTV.setText(adapterData.size.toString())
+                        } else {
+                            dongcountTV.setText(adapterData.size.toString())
+                        }
+                        chat_list.adapter = adapter
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        if (dongAdapterData != null){
+                            dongAdapterData.clear()
+                            val chatlist = response!!.getJSONArray("chatlist")
+                            if (chatlist.length() > 0 && chatlist != null) {
+                                for (i in 0 until chatlist.length()) {
+                                    dongAdapterData.add(chatlist.get(i) as JSONObject)
+                                }
+                            }
+                            dongcountTV.setText(dongAdapterData.size.toString())
+                        }
+                        chat_list.adapter = dongAdapter
+                        dongAdapter.notifyDataSetChanged()
+                    }
                 }
             }
 
@@ -312,6 +411,5 @@ class ChatFragment : android.support.v4.app.Fragment() {
             context!!.unregisterReceiver(resetChattingReciver)
         }
     }
-
 
 }

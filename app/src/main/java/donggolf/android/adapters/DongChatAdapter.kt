@@ -17,7 +17,7 @@ import donggolf.android.models.PictureCategory
 import org.json.JSONObject
 
 
-open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
@@ -44,38 +44,13 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
-        var profileimg = Utils.getString(room,"profileimg")
-        var room_type = Utils.getString(room,"type")
-        var max_count = Utils.getString(room,"max_count")
 
         val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
         val member = json.getJSONObject("Member")
-        val chatmember = room.getJSONArray("Chatmember")
+        val chatmember = json.getJSONArray("Chatmember")
         var nick = ""
-
-        for (i in 0 until chatmember.length()){
-            var roomitem = chatmember.get(i) as JSONObject
-            val push_yn = Utils.getString(roomitem,"push_yn")
-            val member = roomitem.getJSONObject("Member")
-            val member_nick = Utils.getString(member,"nick")
-            val member_id = Utils.getString(member,"id")
-
-            if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
-                if (push_yn == "Y"){
-                    item.pushonIV.visibility = View.VISIBLE
-                    item.pushoffIV.visibility = View.GONE
-                } else {
-                    item.pushonIV.visibility = View.GONE
-                    item.pushoffIV.visibility = View.VISIBLE
-                }
-
-            } else {
-                nick += member_nick + " "
-            }
-
-        }
 
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
@@ -106,41 +81,24 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
-        if (chatmember.length() == 2){
-            if (friend == 0){
-                item.nofriendIV.visibility = View.VISIBLE
-                item.firstIV.visibility = View.GONE
-            } else {
-                item.nofriendIV.visibility = View.GONE
-                item.firstIV.visibility = View.VISIBLE
-            }
-        } else {
-            item.nofriendIV.visibility = View.GONE
-            item.firstIV.visibility = View.GONE
-            item.countTV.visibility = View.VISIBLE
-            item.countTV.setText("("+chatmember.length().toString()+")")
-        }
+//        if (friend == 0){
+//            item.nofriendIV.visibility = View.VISIBLE
+//            item.firstIV.visibility = View.GONE
+//        } else {
+//            item.nofriendIV.visibility = View.GONE
+//            item.firstIV.visibility = View.VISIBLE
+//        }
 
-        if (title != null && title.length > 0) {
-            item.nickTV.setText(title)
-        } else {
-            item.nickTV.setText(nick)
-        }
+        item.firstIV.visibility = View.GONE
+        item.nofriendIV.visibility = View.GONE
 
-        if (room_type == "1") {
-            var image = Config.url + profileimg
-            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
-        } else {
-            var image = Config.url + Utils.getString(room, "intro")
-            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
-            item.nofriendIV.visibility = View.GONE
-            item.firstIV.visibility = View.GONE
-            item.countTV.visibility = View.VISIBLE
-            item.countTV.setText("("+chatmember.length().toString()+")")
+        item.nickTV.setText(title)
 
+        var image = Config.url + Utils.getString(room, "intro")
+        ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
 
-
-        }
+        item.countTV.visibility = View.VISIBLE
+        item.countTV.setText("("+chatmember.length().toString()+")")
 
         return retView
 
