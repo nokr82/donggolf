@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -100,6 +101,8 @@ class RegisterActivity : RootActivity() {
                         if (result == "overlap") {
                             emailET.setText("")
                             Utils.alert(context, response!!.getString("result"))
+                        }else{
+                            finish()
                         }
                     } catch (e : JSONException) {
                         e.printStackTrace()
@@ -189,9 +192,18 @@ class RegisterActivity : RootActivity() {
         MemberAction.join_member(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val message  = Utils.getString(response,"message")
 
-                Utils.alert(context, response!!.getString("message"))
-                finish()
+                if (message.equals("이미 가입된 휴대폰 번호가 있습니다.")){
+                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+
+
+
+
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -200,65 +212,7 @@ class RegisterActivity : RootActivity() {
 
         })
 
-        /* mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    val user = mAuth.currentUser
-                    if(user != null) {
-                        val uid = user.uid
 
-                        val info = Info(phone = phone, nick = nickName, sex = (if (gender == 0) "M" else "F"), agree = true)
-                        JoinAction.join(uid, info) {
-
-                            println("it : $it")
-
-                            if(it) {
-                                InfoAction.getInfo(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                                    if(success) {
-                                        println("data : $data")
-
-                                        var newbie = user?.uid
-                                        //println("newbie uid============================$newbie 가입 성공")
-
-                                        var imgl = ""
-                                        var imgs = ""
-                                        var lastN = 0L
-                                        var nick = nickName
-                                        var sex = (if (gender == 0) "M" else "F")
-                                        var sTag:ArrayList<String> = ArrayList<String>()
-                                        sTag.add("")
-                                        var statusMessage = ""
-
-                                        val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
-
-                                        FirebaseFirestoreUtils.save("users", uid, item) {
-                                            if (it) {
-                                                println("성공적으로 가입되었습니다")
-                                                finish()
-                                            } else {
-
-                                            }
-                                        }
-
-                                        LoginActivity.setInfoData(context, data)
-
-
-                                        finish()
-
-                                    } else {
-
-                                    }
-                                }
-                            } else {
-
-                            }
-
-                        }
-                    }
-                }
-                .addOnFailureListener {
-                    println("fa : $it")
-                    it.printStackTrace()
-                }*/
 
     }
 }
