@@ -116,6 +116,7 @@ class GoodsDetailActivity : RootActivity() {
 
         show_mng_dlgLL.setOnClickListener {
             popupDialogView()
+
         }
 
         finish_goods_dtlLL.setOnClickListener {
@@ -428,6 +429,9 @@ class GoodsDetailActivity : RootActivity() {
                     var message = response.getString("message")
                     if (message == "delete"){
                         Toast.makeText(context,"게시물이 삭제되었습니다",Toast.LENGTH_SHORT).show()
+                        var intent = Intent()
+                        intent.action = "DELETE_OK"
+                        sendBroadcast(intent)
                         finish()
                     } else if (message == "pullup"){
                         Utils.alert(context,"게시글을 끌어올렸습니다.")
