@@ -3,12 +3,14 @@ package donggolf.android.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import donggolf.android.R
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_profile_tag_change.*
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -23,6 +25,7 @@ import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.tag.view.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
 
 
 class ProfileTagChangeActivity : RootActivity() {
@@ -53,31 +56,7 @@ class ProfileTagChangeActivity : RootActivity() {
 
         tagList.adapter = adapter
 
-        /*val db = FirebaseFirestore.getInstance()
 
-        var uid = PrefUtils.getStringPreference(context, "uid")
-        //println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-
-            if (success){
-                if (data != null) {
-                    statusMessage = data!!.get("state_msg") as String
-                    imgl = data!!.get("imgl") as String
-                    imgs = data!!.get("imgs") as String
-                    lastN = data!!.get("last") as Long
-                    nick = data!!.get("nick") as String
-                    sex = data!!.get("sex") as String
-                    sTag = data!!.get("sharpTag") as ArrayList<String>
-
-                    for (i in 0..(sTag.size-1)) {
-                        adapterData.add("#"+sTag.get(i))
-
-                    }
-                        adapter.notifyDataSetChanged()
-
-                }
-            }
-        }*/
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
@@ -111,13 +90,11 @@ class ProfileTagChangeActivity : RootActivity() {
         tagList.setOnItemClickListener { parent, view, position, id ->
             view.removeIV.setOnClickListener {
 
-                val taglist = adapterData.get(position) as JSONObject
-                val tags = taglist.getJSONObject("MemberTag")
-                val oldTagID = Utils.getInt(tags, "id")
-                delList.add(oldTagID)
+                val taglist = adapterData.get(position)
+//                delList.add(oldTagID)
 
                 adapter.removeItem(position)
-                adapterData.removeAt(position)
+                adapterData.remove(taglist)
 
             }
         }
@@ -125,6 +102,34 @@ class ProfileTagChangeActivity : RootActivity() {
         confirmRL.setOnClickListener {
 
             Utils.hideKeyboard(context!!)
+
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
+//            params.put("update", adapterData)//추가할거
+            if (adapterData != null){
+                Log.d("작성",adapterData.toString())
+                if (adapterData!!.size != 0){
+                    for (i in 0..adapterData!!.size - 1){
+
+                        params.put("update[" + i + "]",adapterData.get(i))
+                    }
+                }
+            }
+            //params.put("del_tag", delList) //지울거
+            params.put("type", "tags") //태그를 건드릴것이다
+
+            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    setResult(RESULT_OK,intent)
+
+                    finish()
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
+
 
             if (intent.getStringExtra("type") != null){
                 val type = intent.getStringExtra("type")
@@ -136,23 +141,7 @@ class ProfileTagChangeActivity : RootActivity() {
                     setResult(Activity.RESULT_OK, intent)
                     finish()
                 } else {
-                    val params = RequestParams()
-                    params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
-                    params.put("update", adapterData)//추가할거
-                    //params.put("del_tag", delList) //지울거
-                    params.put("type", "tags") //태그를 건드릴것이다
 
-                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            setResult(RESULT_OK,intent)
-
-                            finish()
-                        }
-
-                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-                        }
-                    })
                 }
             }
 
