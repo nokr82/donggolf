@@ -288,20 +288,20 @@ fun member_info(){
 
             when (requestCode) {
                 SELECT_PROFILE -> {
-                    getTempUserInformation("image")
+                    member_info()
                 }
                 SELECT_STATUS -> {
-                    getTempUserInformation("status_msg")
+                    member_info()
                 }
                 MODIFY_NAME -> {
-                    getTempUserInformation("nick")
+                    member_info()
                 }
                 MODIFY_TAG -> {
-                    getTempUserInformation("tag")
+                    member_info()
 
                 }
                 REGION_CHANGE -> {
-                    getTempUserInformation("region")
+                    member_info()
                 }
                 GALLERY -> {
                     if (data != null)
@@ -417,7 +417,7 @@ fun member_info(){
                                 var taglist = ""
                                 for (i in 0..memberTags.length()-1){
                                     val data = memberTags[i] as JSONObject
-                                    taglist += "#${Utils.getString(data,"tag")} "
+                                    taglist += "#"+Utils.getString(data,"tag")
                                     println(taglist)
                                 }
                                 hashtagTV.text = taglist
