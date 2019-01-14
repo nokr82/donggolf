@@ -81,7 +81,6 @@ class InfoFragment : Fragment(){
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
         this.myContext = container!!.context
@@ -94,14 +93,10 @@ class InfoFragment : Fragment(){
         return inflater.inflate(R.layout.activity_profile_manage, container, false)
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -117,7 +112,6 @@ class InfoFragment : Fragment(){
 
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
-
         mychatFL.setOnClickListener {
             var intent = Intent()
             intent.action = "MY_CHATTING"
@@ -126,15 +120,12 @@ class InfoFragment : Fragment(){
 
         //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
-
             var intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }
 
         addProfImg.setOnClickListener {
-
             choosePhotoFromGallary()
-
         }
 
         imgProfile.setOnClickListener {
@@ -184,7 +175,6 @@ class InfoFragment : Fragment(){
             startActivity(intent)
         }
     }
-
 
     override fun onPause() {
         super.onPause()

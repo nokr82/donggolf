@@ -1010,8 +1010,7 @@ class AddPostActivity : RootActivity() {
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
-    var selectedImageViewList = ArrayList<String>()
-
+    var selectedImageViewList:ArrayList<String> = ArrayList<String>()
 
     var video_image:ArrayList<String> = ArrayList<String>()
 
@@ -1024,8 +1023,6 @@ class AddPostActivity : RootActivity() {
         setContentView(R.layout.activity_add_post)
 
         context = this
-
-
 
 //        mAuth = FirebaseAuth.getInstance()
 
@@ -1047,6 +1044,9 @@ class AddPostActivity : RootActivity() {
 
         }*/
 
+        if (intent.getStringArrayListExtra("image_uri") != null){
+            selectedImageViewList = intent.getStringArrayListExtra("image_uri")
+        }
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
@@ -1197,8 +1197,6 @@ class AddPostActivity : RootActivity() {
         }
 
     }
-
-
 
     private fun loadData(dbManager: DataBaseHelper , userid: String) {
 
@@ -1503,13 +1501,6 @@ class AddPostActivity : RootActivity() {
         }
 
     }
-
-
-
-
-
-
-
 
     private fun moveMyPicture() {
         var intent = Intent(context, FindPictureGridActivity::class.java);

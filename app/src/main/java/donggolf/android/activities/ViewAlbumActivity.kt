@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
@@ -43,6 +44,12 @@ class ViewAlbumActivity : RootActivity() {
     var selectedImageList = ArrayList<String>()
     var selectedImageViewList = ArrayList<String>()
     var selImgViewPositions = ArrayList<Int>()
+
+    var ADD_POST = 1000
+
+    var SELECT_PICTURE = 100
+
+    var images_path: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,10 +105,14 @@ class ViewAlbumActivity : RootActivity() {
                         }
                         R.id.menu_add_img -> {
                             if (login_id == tmp_member_id) {
-                                val galleryIntent = Intent(Intent.ACTION_PICK,
-                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//                                val galleryIntent = Intent(Intent.ACTION_PICK,
+//                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//
+//                                startActivityForResult(galleryIntent, GALLERY)
 
-                                startActivityForResult(galleryIntent, GALLERY)
+                                var intent = Intent(context, FindPictureGridActivity::class.java);
+                                startActivityForResult(intent, SELECT_PICTURE);
+
 
                             } else {
 
@@ -109,11 +120,11 @@ class ViewAlbumActivity : RootActivity() {
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_posting -> {
-
                             val intent = Intent(context, AddPostActivity::class.java)
                             intent.putExtra("category",1)
-                            intent.putStringArrayListExtra("image_uri", selectedImageViewList)
-                            startActivity(intent)
+                            intent.putExtra("image_uri", selectedImageViewList)
+                            println("selectedimage======$selectedImageViewList")
+                            startActivityForResult(intent,ADD_POST)
 
                             return@setOnMenuItemClickListener true
                         }
@@ -161,54 +172,72 @@ class ViewAlbumActivity : RootActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && resultCode == GALLERY) {
-            if (data != null)
-            {
-                val contentURI = data.data
-                Log.d("갤러리",contentURI.toString())
-                //content://media/external/images/media/1200
+//        if (resultCode == Activity.RESULT_OK && resultCode == GALLERY) {
+//            if (data != null)
+//            {
+//                val contentURI = data.data
+//                Log.d("갤러리",contentURI.toString())
+//                //content://media/external/images/media/1200
+//
+//                try
+//                {
+//                    //갤러리에서 가져온 이미지를 프로필에 세팅
+//                    var thumbnail = MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
+//                    val resized = Utils.resizeBitmap(thumbnail, 100)
+////                            imgProfile.setImageBitmap(resized)
+//
+//                    //전송하기 위한 전처리
+//                    //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
+//                    val bitmap = resized
+//                    val img = ByteArrayInputStream(Utils.getByteArray(bitmap))
+//
+//                    //이미지 전송
+//                    val params = RequestParams()
+//                    params.put("files", img)
+//                    params.put("type", "image")
+//                    params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+//
+//                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+//                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+//                            //getTempUserInformation("image")
+//                            getProfilImageList()
+//                        }
+//
+//                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+//                            println(responseString)
+//                        }
+//
+//                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+//                            if (errorResponse != null)
+//                                println(errorResponse.getString("message"))
+//                        }
+//                    })
+//
+//
+//                }
+//                catch (e: IOException) {
+//                    e.printStackTrace()
+//                    Toast.makeText(context, "실패", Toast.LENGTH_SHORT).show()
+//                }
+//
+//            }
+//        }
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                SELECT_PICTURE -> {
+                    var item = data?.getStringArrayExtra("images")
+                    var name = data?.getStringArrayExtra("displayname")
 
-                try
-                {
-                    //갤러리에서 가져온 이미지를 프로필에 세팅
-                    var thumbnail = MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
-                    val resized = Utils.resizeBitmap(thumbnail, 100)
-//                            imgProfile.setImageBitmap(resized)
+                    for (i in 0..(item!!.size - 1)) {
+                        val str = item[i]
+                        images_path!!.add(str)
+                    }
 
-                    //전송하기 위한 전처리
-                    //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                    val bitmap = resized
-                    val img = ByteArrayInputStream(Utils.getByteArray(bitmap))
-
-                    //이미지 전송
-                    val params = RequestParams()
-                    params.put("files", img)
-                    params.put("type", "image")
-                    params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-
-                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            //getTempUserInformation("image")
-                            getProfilImageList()
-                        }
-
-                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
-                        }
-
-                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            if (errorResponse != null)
-                                println(errorResponse.getString("message"))
-                        }
-                    })
-
+                    if (images_path != null){
+                        add_img_in_album()
+                    }
 
                 }
-                catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(context, "실패", Toast.LENGTH_SHORT).show()
-                }
-
             }
         }
     }
@@ -291,6 +320,43 @@ class ViewAlbumActivity : RootActivity() {
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
                 println(responseString)
+            }
+        })
+    }
+
+    fun add_img_in_album(){
+        val params = RequestParams()
+        params.put("member_id", tmp_member_id)
+
+        if (images_path != null){
+            if (images_path!!.size != 0){
+                for (i in 0..images_path!!.size - 1){
+                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+
+                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+                }
+            }
+        }
+
+        MemberAction.add_img_in_album(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        images_path.clear()
+                        getProfilImageList()
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
             }
         })
     }
