@@ -3,9 +3,7 @@ package donggolf.android.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -64,8 +62,9 @@ import java.io.IOException
 import java.lang.Exception
 
 class InfoFragment : Fragment(){
+    lateinit var myContext: Context
+    private var progressDialog: ProgressDialog? = null
 
-    var ctx: Context? = null
 
     val SELECT_PROFILE = 104
     val SELECT_STATUS = 105
@@ -74,25 +73,49 @@ class InfoFragment : Fragment(){
     val REGION_CHANGE = 108
 
     private val GALLERY = 1
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                member_info()
+            }
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
-
-        val ctx = context
-        if (null != ctx) {
-            doSomethingWithContext(ctx)
+        this.myContext = container!!.context
+        progressDialog = ProgressDialog(myContext)
+        if (null != myContext) {
+            doSomethingWithContext(myContext)
         }
 
 
         return inflater.inflate(R.layout.activity_profile_manage, container, false)
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+    }
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        var filter1 = IntentFilter("REGION_CHANGE")
+        myContext.registerReceiver(reloadReciver, filter1)
+
+        var filter2 = IntentFilter("DELETE_IMG")
+        myContext.registerReceiver(reloadReciver, filter2)
+
+
         member_info()
 
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(ctx))
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
 
         mychatFL.setOnClickListener {
@@ -112,9 +135,6 @@ class InfoFragment : Fragment(){
 
             choosePhotoFromGallary()
 
-            /*var intent = Intent(activity, SelectProfileImgActivity::class.java)
-            //var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, SELECT_PROFILE)*/
         }
 
         imgProfile.setOnClickListener {
@@ -163,9 +183,7 @@ class InfoFragment : Fragment(){
             val intent = Intent(activity, FriendManageActivity::class.java)
             startActivity(intent)
         }
-
     }
-
 
     private fun choosePhotoFromGallary() {
         val galleryIntent = Intent(Intent.ACTION_PICK,
@@ -294,7 +312,7 @@ fun member_info(){
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
-                            var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
+                            var thumbnail = MediaStore.Images.Media.getBitmap(myContext!!.contentResolver, contentURI)
                             val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            imgProfile.setImageBitmap(resized)
 
@@ -330,7 +348,7 @@ fun member_info(){
                         }
                         catch (e: IOException) {
                             e.printStackTrace()
-                            Toast.makeText(ctx, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(myContext, "바꾸기실패", Toast.LENGTH_SHORT).show()
                         }
 
                     }
@@ -422,7 +440,7 @@ fun member_info(){
                                 val image = Config.url + img_uri
 
                                 val uri = Uri.parse(image)
-                                val inputStream = ctx!!.contentResolver.openInputStream(uri)
+                                val inputStream = myContext!!.contentResolver.openInputStream(uri)
                                 val btm = BitmapFactory.decodeStream(inputStream)
                                 val resized = Utils.resizeBitmap(btm, 100)
                                 imgProfile.setImageBitmap(resized)
@@ -453,7 +471,7 @@ fun member_info(){
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context
-        this.ctx = context
+        this.myContext = context
     }
 
 
