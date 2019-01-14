@@ -332,11 +332,13 @@ class AddGoodsActivity : RootActivity() {
                                 val img_uri = Utils.getString(tmpImg, "img_uri")
                                 val image = Config.url + img_uri
 
-                                images_path!!.add(img_uri)
+                                reset2(image,i)
 
-                                var imgView = View.inflate(context, R.layout.item_addgoods, null)
-                                ImageLoader.getInstance().displayImage(image, imgView.addedImgIV, Utils.UILoptionsProfile)
-                                addPicturesLL?.addView(imgView)
+//                                images_path!!.add(img_uri)
+//
+//                                var imgView = View.inflate(context, R.layout.item_addgoods, null)
+//                                ImageLoader.getInstance().displayImage(image, imgView.addedImgIV, Utils.UILoptionsProfile)
+//                                addPicturesLL?.addView(imgView)
                             }
                         }
                     }
@@ -382,10 +384,6 @@ class AddGoodsActivity : RootActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-
-
-
-
 
                 SELECT_PICTURE -> {
 
@@ -499,12 +497,51 @@ class AddGoodsActivity : RootActivity() {
             }
         }
         val bitmap = BitmapFactory.decodeFile(str)
-        val v = View.inflate(context, R.layout.item_add_image, null)
-        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val v = View.inflate(context, R.layout.item_addgoods, null)
+        val imageIV = v.findViewById<View>(R.id.addedImgIV) as ImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         imageIV.setImageBitmap(bitmap)
         delIV.tag = i
 
+        if (imgSeq == 0) {
+            addPicturesLL!!.addView(v)
+        }
+
+    }
+
+    fun reset2(str: String, i: Int) {
+//        val options = BitmapFactory.Options()
+//        options.inJustDecodeBounds = true
+//        BitmapFactory.decodeFile(str, options)
+//        options.inJustDecodeBounds = false
+//        options.inSampleSize = 1
+//        if (options.outWidth > 96) {
+//            val ws = options.outWidth / 96 + 1
+//            if (ws > options.inSampleSize) {
+//                options.inSampleSize = ws
+//            }
+//        }
+//        if (options.outHeight > 96) {
+//            val hs = options.outHeight / 96 + 1
+//            if (hs > options.inSampleSize) {
+//                options.inSampleSize = hs
+//            }
+//        }
+        println("------imagespath ---- $str")
+//        images_path.add(str)
+        var add_file = Utils.getImage(context.contentResolver, str)
+        val bitmap = BitmapFactory.decodeFile(str)
+        var v = View.inflate(context, R.layout.item_addgoods, null)
+//        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
+        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
+        ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
+        delIV.tag = i
+        delIV.setOnClickListener {
+            addPicturesLL!!.removeView(v)
+//            Log.d("아이디값",delids.toString())
+
+//            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
+        }
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
@@ -522,8 +559,8 @@ class AddGoodsActivity : RootActivity() {
                     images_path!!.removeAt(tag)
 
                     for (k in images_url!!.indices) {
-                        val vv = View.inflate(context, R.layout.item_add_image, null)
-                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val vv = View.inflate(context, R.layout.item_addgoods, null)
+                        val imageIV = vv.findViewById<View>(R.id.addedImgIV) as ImageView
                         val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
                         delIV.visibility = View.GONE
                         val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
@@ -571,8 +608,8 @@ class AddGoodsActivity : RootActivity() {
                     images_id!!.removeAt(tag)
 
                     for (k in images_url!!.indices) {
-                        val vv = View.inflate(context, R.layout.item_add_image, null)
-                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val vv = View.inflate(context, R.layout.item_addgoods, null)
+                        val imageIV = vv.findViewById<View>(R.id.addedImgIV) as ImageView
                         val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
                         delIV.visibility = View.GONE
                         val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView

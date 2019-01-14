@@ -155,7 +155,6 @@ open class FreeFragment : Fragment() {
 
         activity = getActivity() as MainActivity
 
-
         //메시지보내기
         var filter = IntentFilter("MSG_NEXT")
         activity.registerReceiver(MsgReceiver, filter)

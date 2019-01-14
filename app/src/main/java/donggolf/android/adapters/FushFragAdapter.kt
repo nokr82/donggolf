@@ -42,6 +42,8 @@ open class FushFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var data: JSONObject = getItem(position)
         val alarm = data.getJSONObject("Alarm")
+        val created = Utils.getString(alarm,"created")
+        item.timeTV.setText(Utils.since(created))
         val sender = data.getJSONObject("Sender")
 
         item.contentTV.text = Utils.getString(alarm, "contents")
