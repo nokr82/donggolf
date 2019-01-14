@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -40,9 +41,10 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
 
         val json = data.get(position)
 
+        Log.d("wklwkd",json.toString())
         var check = json.getBoolean("check")//임의로 따로 넣어준 변수값
 
-        val member = json.getJSONObject("Member")
+        val member = json.getJSONObject("MateMember")
 
         item.mates_nickTV.text = Utils.getString(member,"nick")
         item.mates_status_msgTV.text = Utils.getString(member,"status_msg")

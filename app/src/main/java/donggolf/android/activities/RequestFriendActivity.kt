@@ -3,7 +3,9 @@ package donggolf.android.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -17,6 +19,7 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_request_friend.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
 
 class RequestFriendActivity : RootActivity() {
 
@@ -43,14 +46,7 @@ class RequestFriendActivity : RootActivity() {
         if (type == "waiting") {
             println("type----$type")
             getFriendList("w", 0)
-        }/* else if (type == "block") {
-
-        } else if (type == "first") {
-            getFriendList("m",1)
-        } else {
-            var cateID = intent.getIntExtra("category_id", 0)
-            getFriendList("m", cateID)
-        }*/
+        }
 
         //전체선택버튼
         frdReq_check_all.setOnClickListener {
@@ -59,14 +55,6 @@ class RequestFriendActivity : RootActivity() {
                 checkIcon.visibility = View.VISIBLE
 
 
-//                matesRequestAdapter.isCheckedMate = true
-//
-//                for (i in 0 until mateRequestList.size) {
-//                    matesRequestAdapter.isCheckedMate = true
-//
-//                }
-//
-//                matesRequestAdapter.notifyDataSetChanged()
 
             } else {
                 mateList.clear()
@@ -220,14 +208,24 @@ class RequestFriendActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id", mateList.get(0))
+//        params.put("mate_id", mateList)
+        Log.d("메이트",mateList.toString())
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id",  mateList.get(0))
+   /*     if (mateList != null){
+            if (mateList!!.size != 0){
+                for (i in 0..mateList!!.size - 1){
+                    params.put("mate_id[" + i + "]",  mateList.get(i))
+//                    params.put("mate_id[" + i + "]",  mateList.get(i))
+                }
+            }
+        }*/
         params.put("category_id", category_id)
         params.put("status", "m")
 
         MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+              Log.d("리스븐",response.toString())
                 getFriendList("w",0)
             }
 
