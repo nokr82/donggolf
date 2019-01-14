@@ -29,8 +29,7 @@ import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.kakaotalk.callback.TalkResponseCallback
 import com.kakao.kakaotalk.response.KakaoTalkProfile
 import com.kakao.kakaotalk.v2.KakaoTalkService
-import com.kakao.message.template.LinkObject
-import com.kakao.message.template.TextTemplate
+import com.kakao.message.template.*
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.kakao.usermgmt.UserManagement
@@ -45,6 +44,7 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.FriendSearchAdapter
+import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_main_detail.*
@@ -187,6 +187,21 @@ class FriendSearchActivity : RootActivity() {
 
             Utils.hideKeyboard(it.context)
 
+            try {
+                val info = context.packageManager.getPackageInfo("donggolf.android", PackageManager.GET_SIGNATURES)
+                for (signature in info.signatures) {
+                    val md = MessageDigest.getInstance("SHA")
+                    md.update(signature.toByteArray())
+                    Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                }
+
+            } catch (e: PackageManager.NameNotFoundException) {
+
+            } catch (e: NoSuchAlgorithmException) {
+
+            }
+
+
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_invite_frd, null) //사용자 정의 다이얼로그 xml 붙이기
             builder.setView(dialogView) // custom xml과 alertDialogBuilder를 붙임
@@ -216,33 +231,52 @@ class FriendSearchActivity : RootActivity() {
 
     }
 
-    //카카오톡 공유
-    fun shareKakao() {
 
-        val params = TextTemplate.newBuilder("동네골프",
-                LinkObject.newBuilder().setWebUrl("market://details?id=donggolf.android").setMobileWebUrl("market://details?id=donggolf.android").build()) //본체
-                .setButtonTitle("동네골프 멤버 되기") //버튼 String
-                .build()
-
-        val serverCallbackArgs = HashMap<String, String>()
-        serverCallbackArgs.put("user_id", "$user")
-        //serverCallbackArgs.put("product_id", "$shared_product_id")
+   fun shareKakao() {
+       getKeyHash(context)
+       val url = "market://details?id=donggolf.android"
+       val imgBuilder = ContentObject.newBuilder("동네골프",
+               Config.url + "/data/member/5c1cbbaf-e0b0-4ff7-85fe-67b1ac1f19c8",
+               LinkObject.newBuilder().setWebUrl(url).setMobileWebUrl(url).build())
+               .setDescrption("동네골프")
+               .build()
 
 
-        KakaoLinkService.getInstance().sendDefault(this, params, object : ResponseCallback<KakaoLinkResponse>() {
-            override fun onFailure(errorResult: ErrorResult) {
-                Logger.e(errorResult.toString())
-            }
+       val builder = FeedTemplate.newBuilder(imgBuilder)
+       builder.addButton(ButtonObject("동네골프 멤버 되기", LinkObject.newBuilder()
+               .setWebUrl(url)
+               .setMobileWebUrl(url)
+               .build()))
 
-            override fun onSuccess(result: KakaoLinkResponse) {
+       val params = builder.build()
 
-            }
-        })
+       KakaoLinkService.getInstance().sendDefault(this@FriendSearchActivity, params, object : ResponseCallback<KakaoLinkResponse>() {
+           override fun onFailure(errorResult: ErrorResult) {
+               Logger.e(errorResult.toString())
+           }
+
+           override fun onSuccess(result: KakaoLinkResponse) {
+
+           }
+       })
+
+       /*
+            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+
+                KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+                kakaoTalkLinkMessageBuilder.addText("우리 동네 할인 식품 알림 서비스\n\n회원가입 없이 위치 기반으로 우리 동네 할인 식품을 만나보세요!");
+//                    kakaoTalkLinkMessageBuilder.addAppButton("식세끼 바로가기");
+                kakaoTalkLinkMessageBuilder.addWebButton("식세끼 바로가기", "http://eat-master.co.kr/market/open?id=-1");
+//                    kakaoTalkLinkMessageBuilder.addWebLink("http://eat-master.co.kr/market/open?id=-1");
+                kakaoTalkLinkMessageBuilder.addImage("http://13.124.13.37/data/ad/recommend_img", 934, 501);
+                kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, context);
+                */
+
+   }
 
 
-    }
 
-    fun getKeyHash(context: Context): String? {
+   fun getKeyHash(context: Context): String? {
         val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES.toString())
 
         if (packageInfo == null) {
