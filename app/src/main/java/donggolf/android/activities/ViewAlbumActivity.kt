@@ -41,6 +41,7 @@ class ViewAlbumActivity : RootActivity() {
 
     var clickedItmeCnt = 0
     var selectedImageList = ArrayList<String>()
+    var selectedImageViewList = ArrayList<String>()
     var selImgViewPositions = ArrayList<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,9 +85,14 @@ class ViewAlbumActivity : RootActivity() {
                                 alert.dismiss()
                             }
 
-                            dialogView.dlg_noTV.setOnClickListener { alert.dismiss() }
+                            dialogView.dlg_noTV.setOnClickListener {
 
-                            dialogView.dlg_closeIV.setOnClickListener { alert.dismiss() }
+                                alert.dismiss()
+                            }
+
+                            dialogView.dlg_closeIV.setOnClickListener {
+                                alert.dismiss()
+                            }
 
                             return@setOnMenuItemClickListener true
                         }
@@ -96,6 +102,7 @@ class ViewAlbumActivity : RootActivity() {
                                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
                                 startActivityForResult(galleryIntent, GALLERY)
+
                             } else {
 
                             }
@@ -131,6 +138,8 @@ class ViewAlbumActivity : RootActivity() {
                     clickedItmeCnt++
                     albumList[position].put("select_album_img_cnt", clickedItmeCnt)
                     selectedImageList.add(albumList[position].getString("image_id"))
+                    selectedImageViewList.add(albumList[position].getString("image_uri"))
+                    Log.d("이미지배열",selectedImageViewList.toString())
                     selImgViewPositions.add(position)
                 }
 
@@ -151,55 +160,31 @@ class ViewAlbumActivity : RootActivity() {
             if (data != null)
             {
                 val contentURI = data.data
-                Log.d("uri",contentURI.toString())
+                Log.d("갤러리",contentURI.toString())
                 //content://media/external/images/media/1200
 
                 try
                 {
-                    //갤러리에서 가져온 이미지를 메뉴에 잠깐 세팅
-                    var thumbnail = MediaStore.Images.Media.getBitmap(this!!.contentResolver, contentURI)
-                    val resized = Utils.resizeBitmap(thumbnail, 4000)
-                    albumMenuIV.setImageBitmap(resized)
+                    //갤러리에서 가져온 이미지를 프로필에 세팅
+                    var thumbnail = MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
+                    val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            imgProfile.setImageBitmap(resized)
 
                     //전송하기 위한 전처리
                     //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                    val bitmap = albumMenuIV.drawable as BitmapDrawable
-                    val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+                    val bitmap = resized
+                    val img = ByteArrayInputStream(Utils.getByteArray(bitmap))
 
                     //이미지 전송
                     val params = RequestParams()
                     params.put("files", img)
-                    params.put("member_id", tmp_member_id)
+                    params.put("type", "image")
+                    params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
 
-                    albumMenuIV.setImageResource(R.mipmap.btn_chat_option)//이 부분만 좀 어떻게 해결되면 가능
-
-                    MemberAction.add_img_in_album(params, object : JsonHttpResponseHandler() {
+                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            println(response)
-                            try {
-                                val result = response!!.getString("result")
-                                if (result == "ok") {
-                                    /*
-                                    {
-                                        "result": "ok",
-                                        "newAddedImg": {
-                                            "MemberImg": {
-                                                "id": "91",
-                                                "member_id": "2",
-                                                "image": "5c208e65-c730-4b21-a7af-1036ac1f19c8",
-                                                "image_uri": "\/data\/member\/5c208e65-c730-4b21-a7af-1036ac1f19c8",
-                                                "small_uri": "\/data\/member\/5c208e65-c730-4b21-a7af-1036ac1f19c8_small"
-                                            }
-                                        }
-                                    }
-                                    */
-                                    albumList.add(0, response.getJSONObject("newAddedImg"))
-                                    //eachViewAdapter.addItem(response.getJSONObject("newAddedImg"))
-                                }
-                                eachViewAdapter.notifyDataSetChanged()
-                            } catch (e : JSONException){
-                                e.printStackTrace()
-                            }
+                            //getTempUserInformation("image")
+                            getProfilImageList()
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -212,10 +197,11 @@ class ViewAlbumActivity : RootActivity() {
                         }
                     })
 
+
                 }
                 catch (e: IOException) {
                     e.printStackTrace()
-                    Toast.makeText(context, "추가 실패", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "실패", Toast.LENGTH_SHORT).show()
                 }
 
             }
@@ -283,6 +269,9 @@ class ViewAlbumActivity : RootActivity() {
                     selImgViewPositions.clear()
                     selImgViewPositions.sort()
                     getProfilImageList()
+                    var intent = Intent()
+                    intent.action = "DELETE_IMG"
+                    sendBroadcast(intent)
 
                     eachViewAdapter.notifyDataSetChanged()
 

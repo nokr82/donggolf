@@ -39,6 +39,7 @@ class ViewAlbumAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         val memberImg = json.getJSONObject("MemberImg")
 
         json.put("image_id", Utils.getString(memberImg,"id"))
+        json.put("image_uri", Utils.getString(memberImg,"image_uri"))
         var editMode= json.getBoolean("editMode")
 
         if (editMode) {
