@@ -119,16 +119,19 @@
     </android.support.v4.view.ViewPager-->
 
     <ListView
+        android:scrollbars="none"
         android:id="@+id/myPostLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
     <ListView
+        android:scrollbars="none"
         android:id="@+id/myCommentLV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
     <ListView
+        android:scrollbars="none"
         android:id="@+id/myStorePostLV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

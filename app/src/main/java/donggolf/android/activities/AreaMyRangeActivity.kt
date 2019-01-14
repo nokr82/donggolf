@@ -152,7 +152,12 @@ class AreaMyRangeActivity : RootActivity() {
                     println("AreaRangeActivity save changed data :: $response")
                     if (result == "ok") {
                         Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
+
+
+
                         var intent = Intent()
+                        intent.action = "REGION_CHANGE"
+                        sendBroadcast(intent)
                         setResult(RESULT_OK,intent)
                         finish()
                     }

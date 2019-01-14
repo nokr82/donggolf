@@ -62,6 +62,7 @@
         android:layout_height="4dp"
         android:background="@drawable/line_0" />
     <ListView
+        android:scrollbars="none"
         android:id="@+id/findpictre_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>

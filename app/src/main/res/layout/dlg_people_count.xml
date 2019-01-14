@@ -38,6 +38,7 @@
         </LinearLayout>
     </ScrollView>-->
     <ListView
+        android:scrollbars="none"
         android:id="@+id/dlg_count_LV"
         android:layout_width="match_parent"
         android:layout_height="250dp"/>

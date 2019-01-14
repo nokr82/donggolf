@@ -74,6 +74,7 @@
         android:background="@drawable/line_1"/>
 
     <ListView
+        android:scrollbars="none"
         android:id="@+id/joinMemberLV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

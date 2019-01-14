@@ -2,8 +2,10 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
@@ -62,11 +64,27 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var goguntype = ""
     var membercnt = ""
     var region_id = ""
+
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                member_cnt()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         this.context = this
+
+
+
+
+        var filter1 = IntentFilter("REGION_CHANGE")
+        registerReceiver(reloadReciver, filter1)
+
 
         is_push = intent.getBooleanExtra("is_push", false)
         market_id = intent.getIntExtra("market_id", -1)

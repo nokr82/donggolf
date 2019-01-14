@@ -97,6 +97,7 @@
         android:layout_height="4dp"
         android:background="@drawable/line_0" />
     <ListView
+        android:scrollbars="none"
         android:id="@+id/reportlistLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></ListView>
