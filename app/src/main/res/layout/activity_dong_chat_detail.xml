@@ -156,33 +156,33 @@
                 </LinearLayout>
 
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:layout_alignParentBottom="true">
-                            <EditText
-                                android:id="@+id/contentET"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@null"
-                                android:gravity="center"
-                                android:textSize="13dp"
-                                android:hint="입력"/>
-
-                            <TextView
-                                android:id="@+id/addchattingTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="등록"
-                                android:textColor="#0ED92F"
-                                android:paddingLeft="10dp"
-                                android:paddingRight="10dp"
-                                android:gravity="center"/>
-
-                        </LinearLayout>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true">
+                    <EditText
+                        android:id="@+id/contentET"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:textSize="13dp"
+                        android:hint="입력"/>
+
+                    <TextView
+                        android:id="@+id/addchattingTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="등록"
+                        android:textColor="#0ED92F"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center"/>
+
+                </LinearLayout>
 
             </RelativeLayout>
 
@@ -239,6 +239,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="7"/>
                         <LinearLayout
+                            android:id="@+id/allviewLL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="right"

@@ -57,6 +57,8 @@ class ChatMemberActivity : RootActivity() {
             intent.putExtra("member_count",chatMemberList.size)
             intent.putExtra("member_ids",member_ids)
             intent.putExtra("member_nicks",member_nicks)
+            intent.putExtra("division","0")
+
             startActivity(intent)
         }
 

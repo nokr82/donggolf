@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -58,6 +59,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             chatting()
         }
     }
+
+    var RESET = 100
 
     private var timer: Timer? = null
 
@@ -133,6 +136,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val intent = Intent(context, ChatMemberActivity::class.java)
             intent.putExtra("founder",founder)
             intent.putExtra("room_id",room_id)
+            intent.putExtra("division","0")
+            startActivity(intent)
+        }
+
+        allviewLL.setOnClickListener {
+            val intent = Intent(context, ChatMemberActivity::class.java)
+            intent.putExtra("founder",founder)
+            intent.putExtra("room_id",room_id)
+            intent.putExtra("division","0")
             startActivity(intent)
         }
 
@@ -152,7 +164,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             intent.putExtra("member_ids",mate_id)
             intent.putExtra("member_nicks",mate_nick)
             intent.putExtra("division","0")
-            startActivity(intent)
+            startActivityForResult(intent,RESET)
         }
 
         settingmoreRL.setOnClickListener{
@@ -190,7 +202,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     .setMessage("차단하시겠습니까 ?")
 
                     .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
                         set_block()
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
@@ -220,11 +231,12 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-                        val lastMSG = chattingList.get(chattingList.size - 1)
-                        val chatting = lastMSG.getJSONObject("Chatting")
-                        val last_id = Utils.getInt(chatting, "id")
+                        if (chattingList.size > 0) {
+                            val lastMSG = chattingList.get(chattingList.size - 1)
+                            val chatting = lastMSG.getJSONObject("Chatting")
+                            val last_id = Utils.getInt(chatting, "id")
+                        }
                         delete_chat_member(last_id)
-                        finish()
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
@@ -241,11 +253,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
+                        if (chattingList.size > 0){
                         val lastMSG = chattingList.get(chattingList.size - 1)
                         val chatting = lastMSG.getJSONObject("Chatting")
                         val last_id = Utils.getInt(chatting, "id")
                         delete_chat_member(last_id)
-                        finish()
+                        } else {
+                            Toast.makeText(context,"대화내용이 아무것도 없습니다.", Toast.LENGTH_SHORT).show()
+
+                        }
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
@@ -587,6 +603,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    memberlistLL.removeAllViews()
+                    if (mate_nick != null){
+                        mate_nick.clear()
+                    }
+
                     if (mate_id != null){
                         mate_id.clear()
                     }
@@ -596,6 +617,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     }
 
                     val members = response!!.getJSONArray("chatmember")
+                    var roomtitle = ""
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
@@ -603,10 +625,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
                             val id = Utils.getString(chatmember,"member_id")
-                            val title = Utils.getString(chatroom,"title")
+//                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
-                            val nick = Utils.getString(chatmember,"nick")
-                            chattitleTV.setText(title)
+                            val nick = Utils.getString(memberinfo,"nick")
+//                            chattitleTV.setText(roomtitle)
 
                             var view:View = View.inflate(context, R.layout.item_profile, null)
                             var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
@@ -652,6 +674,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     }
 
+                    if (roomtitle == "") {
+                        for (i in 0 until mate_nick.size) {
+                            roomtitle += mate_nick.get(i) + " "
+                        }
+                    }
+
+                    chattitleTV.setText(roomtitle)
                     countTV.setText(memberList.size.toString())
                 }
             }
@@ -723,7 +752,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    intent.putExtra("division","my")
+                    setResult(RESULT_OK, intent);
+                    finish()
                 }
             }
 
@@ -772,6 +805,12 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 val result = response!!.getString("result")
                 if (result == "block") {
                     Toast.makeText(context,"이미 차단한 대화방 입니다.",Toast.LENGTH_SHORT).show()
+                } else if (result == "ok"){
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    intent.putExtra("division","my")
+                    setResult(RESULT_OK, intent);
+                    finish()
                 }
             }
 
@@ -785,5 +824,22 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                RESET -> {
+                    if (data!!.getStringExtra("reset") != null) {
+                        detail_chatting()
+                    }
+
+                    if (data!!.getStringExtra("finish") != null){
+                        finish()
+                    }
+                }
+            }
+        }
+    }
 
 }

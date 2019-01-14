@@ -40,6 +40,7 @@ class SelectMemberActivity : RootActivity() {
     var mate_ids:ArrayList<String> = ArrayList<String>()
     var mate_nicks:ArrayList<String> = ArrayList<String>()
     var block_member_ids:ArrayList<String> = ArrayList<String>()
+    var get_mate_nicks:ArrayList<String> = ArrayList<String>()
 
     var founder = ""
     var room_id = ""
@@ -65,11 +66,16 @@ class SelectMemberActivity : RootActivity() {
 
         var intent = getIntent()
 
+        if (intent.getStringExtra("new") != null){
+            division = "0"
+        }
+
         if (intent.getStringExtra("room_id") != null && intent.getStringExtra("founder") != null){
             room_id = intent.getStringExtra("room_id")
             founder = intent.getStringExtra("founder")
             member_count = intent.getIntExtra("member_count",0)
             mate_ids = intent.getStringArrayListExtra("member_ids")
+            get_mate_nicks = intent.getStringArrayListExtra("member_ids")
             mate_nicks = intent.getStringArrayListExtra("member_nicks")
             division = intent.getStringExtra("division")
             if (intent.getIntExtra("max_count",0) != null){
@@ -247,25 +253,31 @@ class SelectMemberActivity : RootActivity() {
                                     mate_nicks.add(mate_nick)
                                 }
                             }
-                            if (room_id != "") {
+
+                            println("member_count ----- $member_count")
+
+                            if (room_id == "") {
                                 for (i in 0 until mate_nicks.size) {
                                     chatTitle += mate_nicks.get(i) + " "
                                 }
                                 addchat()
-                                finish()
                             } else if (member_count == 2) {
                                 for (i in 0 until mate_nicks.size) {
                                     chatTitle += mate_nicks.get(i) + " "
                                 }
+
+                                for (i in 0 until get_mate_nicks.size){
+                                    mate_ids.add(get_mate_nicks.get(i))
+                                }
+//                                add_chat_member()
                                 addchat()
-                                finish()
                             } else {
                                 for (i in 0 until mate_nicks.size) {
                                     chatTitle += mate_nicks.get(i) + " "
                                 }
                                 add_chat_member()
-                                finish()
                             }
+
                         } else {
                             println("--------add mate_ids${mate_ids.size} ---- $people_count ----- $max_count")
                             if (max_count < people_count + mate_ids.size) {
@@ -322,7 +334,6 @@ class SelectMemberActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("status", status)
-        params.put("division",0)
 
         if (searchKeyword != "" && searchKeyword.length > 0){
             params.put("searchKeyword", searchKeyword)
@@ -370,10 +381,16 @@ class SelectMemberActivity : RootActivity() {
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                       finish()
+                        var intent = Intent()
+                        intent.putExtra("reset","reset")
+                        intent.action = "RESET_CHATTING"
+                        sendBroadcast(intent)
+                        setResult(RESULT_OK, intent);
+                        finish()
+                    } else if (result == "already"){
+                        Toast.makeText(context,"이미 대화방에 선택하신 멤버가 있습니다.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()
@@ -395,16 +412,21 @@ class SelectMemberActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("mate_id", mate_ids)
-        params.put("title", chatTitle)
+//        params.put("title", chatTitle)
         params.put("regions", "")
         params.put("intro", "")
         params.put("type", "1")
-        params.put("division",0)
 
         ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("finish","finish")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
+                    setResult(RESULT_OK, intent);
+                    finish()
                 }
             }
 

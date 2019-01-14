@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
@@ -50,16 +51,31 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
         val member = json.getJSONObject("Member")
-        val chatmember = json.getJSONObject("Chatmember")
-        val push_yn = Utils.getString(chatmember,"push_yn")
+        val chatmember = room.getJSONArray("Chatmember")
+        var nick = ""
 
-        if (push_yn == "Y"){
-            item.pushonIV.visibility = View.VISIBLE
-            item.pushoffIV.visibility = View.GONE
-        } else {
-            item.pushonIV.visibility = View.GONE
-            item.pushoffIV.visibility = View.VISIBLE
+        for (i in 0 until chatmember.length()){
+            var roomitem = chatmember.get(i) as JSONObject
+            val push_yn = Utils.getString(roomitem,"push_yn")
+            val member = roomitem.getJSONObject("Member")
+            val member_nick = Utils.getString(member,"nick")
+            val member_id = Utils.getString(member,"id")
+
+            if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
+                if (push_yn == "Y"){
+                    item.pushonIV.visibility = View.VISIBLE
+                    item.pushoffIV.visibility = View.GONE
+                } else {
+                    item.pushonIV.visibility = View.GONE
+                    item.pushoffIV.visibility = View.VISIBLE
+                }
+
+            } else {
+                nick += member_nick + " "
+            }
+
         }
+
 
 
         if (content != null && content.length > 0){
@@ -91,15 +107,28 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
-        if (friend == 0){
-            item.nofriendIV.visibility = View.VISIBLE
-            item.firstIV.visibility = View.GONE
+        if (chatmember.length() == 2){
+            if (friend == 0){
+                item.nofriendIV.visibility = View.VISIBLE
+                item.firstIV.visibility = View.GONE
+            } else {
+                item.nofriendIV.visibility = View.GONE
+                item.firstIV.visibility = View.VISIBLE
+            }
         } else {
             item.nofriendIV.visibility = View.GONE
-            item.firstIV.visibility = View.VISIBLE
+            item.firstIV.visibility = View.GONE
+            item.countTV.visibility = View.VISIBLE
+            item.countTV.setText("("+chatmember.length().toString()+")")
+
         }
 
-        item.nickTV.setText(title)
+        if (title != null && title.length > 0) {
+            item.nickTV.setText(title)
+        } else {
+            item.nickTV.setText(nick)
+        }
+
         if (room_type == "1") {
             var image = Config.url + profileimg
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
@@ -140,6 +169,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var nickTV : TextView
         var firstIV : ImageView
         var timeTV : TextView
+        var countTV : TextView
         var chatcontentTV : TextView
         var nofriendIV: ImageView
         var pushoffIV : ImageView
@@ -151,6 +181,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             nickTV = v.findViewById<View>(R.id.nickTV) as TextView
             firstIV = v.findViewById<View>(R.id.firstIV) as ImageView
             timeTV = v.findViewById<View>(R.id.timeTV) as TextView
+            countTV = v.findViewById<View>(R.id.countTV) as TextView
             chatcontentTV = v.findViewById<View>(R.id.chatcontentTV) as TextView
             nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
             pushoffIV = v.findViewById<View>(R.id.pushoffIV) as ImageView

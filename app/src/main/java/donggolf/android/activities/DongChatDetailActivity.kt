@@ -217,7 +217,6 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                         .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
                             delete_chatting_room()
-                            finish()
                         })
                         .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
@@ -248,6 +247,19 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         addChatMemberLL.setOnClickListener {
+            val intent = Intent(context, SelectMemberActivity::class.java)
+            intent.putExtra("founder",founder_id)
+            intent.putExtra("room_id",room_id)
+            intent.putExtra("member_count",memberList.size)
+            intent.putExtra("member_ids",mate_id)
+            intent.putExtra("member_nicks",mate_nick)
+            intent.putExtra("division","1")
+            intent.putExtra("max_count",max_count)
+            intent.putExtra("people_count",people_count)
+            startActivity(intent)
+        }
+
+        allviewLL.setOnClickListener {
             val intent = Intent(context, SelectMemberActivity::class.java)
             intent.putExtra("founder",founder_id)
             intent.putExtra("room_id",room_id)
@@ -765,7 +777,11 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    intent.putExtra("division","dong")
+                    setResult(RESULT_OK, intent);
+                    finish()
                 }
             }
 

@@ -1,9 +1,13 @@
 package donggolf.android.fragment
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +48,20 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var txTownChat : TextView
     lateinit var chat_list : ListView
     lateinit var viewpagerChat : ViewPager
+
+    val RESET = 1000
+
+    internal var resetChattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                if (townChatOnRL.visibility == View.VISIBLE){
+                    getmychat(2)
+                } else {
+                    getmychat(1)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -87,6 +105,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         getmychat(1)
 
+
+        var filter1 = IntentFilter("RESET_CHATTING")
+        ctx!!.registerReceiver(resetChattingReciver, filter1)
+
         chat_list.setOnItemClickListener { parent, view, position, id ->
             var json = adapterData.get(position)
             var room = json.getJSONObject("Chatroom")
@@ -101,11 +123,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     intent.putExtra("division",1)
                     intent.putExtra("id",id)
                     intent.putExtra("founder",founder)
-                    startActivity(intent)
+                    startActivityForResult(intent,RESET)
                 } else {
                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                     intent.putExtra("room_id",id)
-                    startActivity(intent)
+                    startActivityForResult(intent,RESET)
                 }
             } else {
                 if (block_code != null && block_code.length > 0){
@@ -171,6 +193,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         addmychatIV.setOnClickListener {
             var intent = Intent(activity, SelectMemberActivity::class.java)
+            intent.putExtra("new","new")
             startActivity(intent)
         }
 
@@ -246,6 +269,28 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 println(errorResponse)
             }
         })
+    }
+
+    @SuppressLint("NewApi")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            when (requestCode) {
+                RESET -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        var division = data!!.getStringExtra("division")
+                        if (division == "my"){
+                            getmychat(1)
+                        } else {
+                            getmychat(2)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 
