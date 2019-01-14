@@ -63,7 +63,22 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         }
     }
-
+    internal var pullupReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all")
+            }
+        }
+    }
+    internal var deleteReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all")
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_market_main)
@@ -72,6 +87,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         var filter1 = IntentFilter("GOODS_ADD")
         registerReceiver(reLoadDataReceiver, filter1)
+        var filter2 = IntentFilter("DELETE_OK")
+        registerReceiver(deleteReciver, filter2)
+        var filter3 = IntentFilter("PULL_UP")
+        registerReceiver(pullupReceiver, filter3)
 
         finishmLL.setOnClickListener {
             finish()

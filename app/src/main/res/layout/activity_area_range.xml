@@ -55,6 +55,8 @@
 
 
     <HorizontalScrollView
+        android:visibility="gone"
+        android:id="@+id/tmpSV"
         android:layout_width="match_parent"
         android:layout_height="30dp">
         <LinearLayout
@@ -68,12 +70,14 @@
     </HorizontalScrollView>
 
     <ListView
+        android:scrollbars="none"
         android:id="@+id/arealistLV"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
 
     <GridView
+        android:scrollbars="none"
         android:id="@+id/gridGV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -34,6 +34,7 @@
         android:background="@drawable/line_0"/>
 
     <ListView
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/mutualList"/>

@@ -152,7 +152,12 @@ class AreaMyRangeActivity : RootActivity() {
                     println("AreaRangeActivity save changed data :: $response")
                     if (result == "ok") {
                         Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
+
+
+
                         var intent = Intent()
+                        intent.action = "REGION_CHANGE"
+                        sendBroadcast(intent)
                         setResult(RESULT_OK,intent)
                         finish()
                     }
@@ -291,6 +296,8 @@ class AreaMyRangeActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
 
+
+                tmpSV.visibility = View.VISIBLE
                 if (datalist.length() > 0 && datalist != null){
                     for (i in 0 until datalist.length()){
                         gugunList.add(datalist.get(i) as JSONObject)

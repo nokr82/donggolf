@@ -75,6 +75,7 @@
         android:background="@drawable/line_0" />
 
     <GridView
+        android:scrollbars="none"
         android:id="@+id/gridGV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

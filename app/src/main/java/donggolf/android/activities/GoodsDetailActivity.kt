@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Messenger
 import android.support.v4.view.ViewPager
 import android.telephony.SmsManager
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
@@ -54,6 +55,7 @@ class GoodsDetailActivity : RootActivity() {
     var imgPosition = 0
     val PRODUCT_DETAIL = 111
     val PRODUCT_MODIFY = 112
+    var REPORT_OK = 113
 
     var product_id = 0
     var seller_phone = ""
@@ -64,6 +66,7 @@ class GoodsDetailActivity : RootActivity() {
     var commentType = ""
     var commentParent = ""
     var writer = ""
+    var seller_id2 = ""
     var blockYN = ""
 
     private  lateinit var  commentAdapter : GoodsComAdapter
@@ -113,6 +116,7 @@ class GoodsDetailActivity : RootActivity() {
 
         show_mng_dlgLL.setOnClickListener {
             popupDialogView()
+
         }
 
         finish_goods_dtlLL.setOnClickListener {
@@ -132,6 +136,7 @@ class GoodsDetailActivity : RootActivity() {
         }
 
         change_prod_stateLL.setOnClickListener {
+            if (PrefUtils.getIntPreference(context,"member_id").toString()==seller_id2){
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_simple_radio_option, null)
             builder.setView(dialogView)
@@ -170,7 +175,9 @@ class GoodsDetailActivity : RootActivity() {
                 alert.dismiss()
                 updateProductStatus()
             }
-
+            }else{
+                Toast.makeText(context,"다른사람의 판매글입니다.",Toast.LENGTH_SHORT).show()
+            }
         }
 
         contact_sellerLL.setOnClickListener {
@@ -365,6 +372,9 @@ class GoodsDetailActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == PRODUCT_MODIFY){
             getProductData()
         }
+        if (resultCode == Activity.RESULT_OK && requestCode == REPORT_OK){
+            getProductData()
+        }
     }
 
     fun popupDialogView(){
@@ -419,9 +429,15 @@ class GoodsDetailActivity : RootActivity() {
                     var message = response.getString("message")
                     if (message == "delete"){
                         Toast.makeText(context,"게시물이 삭제되었습니다",Toast.LENGTH_SHORT).show()
+                        var intent = Intent()
+                        intent.action = "DELETE_OK"
+                        sendBroadcast(intent)
                         finish()
                     } else if (message == "pullup"){
                         Utils.alert(context,"게시글을 끌어올렸습니다.")
+                        var intent = Intent()
+                        intent.action = "PULL_UP"
+                        sendBroadcast(intent)
                     } else if (message == "already pulled-up content"){
                         Utils.alert(context,"오늘 이미 끌어올리기를 사용한 게시글입니다.\n더이상 게시글을 끌어올릴 수 없습니다.\n내일 다시 시도해주시길 바랍니다.")
                     }
@@ -453,7 +469,7 @@ class GoodsDetailActivity : RootActivity() {
             var intent = Intent(this, ReportActivity::class.java)
             intent.putExtra("member_id", member_id)
             intent.putExtra("market_id",product_id)
-            startActivity(intent)
+            startActivityForResult(intent,REPORT_OK)
         }
 
     }
@@ -469,6 +485,7 @@ class GoodsDetailActivity : RootActivity() {
                 if (result == "ok"){
                     val product = response.getJSONObject("product")
                     val market = product.getJSONObject("Market")
+                    seller_id2 = Utils.getString(market,"member_id")
 
                     categoryTV.text = "[${Utils.getString(market,"form").substringBefore(" ")}형]" +
                             "[${Utils.getString(market,"form").substringAfter(" ")}용]" +

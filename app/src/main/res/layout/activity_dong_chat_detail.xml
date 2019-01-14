@@ -119,6 +119,7 @@
                     android:layout_weight="1"
                     android:id="@+id/chatCont"
                     android:transcriptMode="alwaysScroll"
+                    android:scrollbars="none"
                     android:divider="@null"/>
                 <LinearLayout
                     android:visibility="gone"

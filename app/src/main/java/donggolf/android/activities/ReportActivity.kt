@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -129,6 +130,8 @@ class ReportActivity : RootActivity() {
 
         MarketAction.add_report(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var intent = Intent()
+                setResult(RESULT_OK,intent)
                 finish()
             }
 
