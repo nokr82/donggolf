@@ -58,6 +58,11 @@ class DongchatProfileActivity : RootActivity() {
 
     private var progressDialog: ProgressDialog? = null
 
+    var people_count = 0
+    var max_count = 0
+
+    var chatMemberids:ArrayList<String> = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dongchat_profile)
@@ -69,9 +74,27 @@ class DongchatProfileActivity : RootActivity() {
             doSomethingWithContext(context)
         }
         joinDongChatRL.setOnClickListener {
-            val intent = Intent(context, DongChatDetailActivity::class.java)
-            intent.putExtra("room_id",room_id)
-            startActivity(intent)
+            var chkData = false
+            for (i in 0 until chatMemberids.size){
+                if (chatMemberids.get(i).toInt() == PrefUtils.getIntPreference(context, "member_id")){
+                    chkData = true
+                }
+            }
+
+            if (chkData == true){
+                val intent = Intent(context, DongChatDetailActivity::class.java)
+                intent.putExtra("room_id", room_id)
+                startActivity(intent)
+            } else {
+                if (people_count == max_count) {
+                    Toast.makeText(context,"정원초과 입니다.", Toast.LENGTH_SHORT).show()
+                } else if (people_count < max_count){
+                    val intent = Intent(context, DongChatDetailActivity::class.java)
+                    intent.putExtra("room_id", room_id)
+                    startActivity(intent)
+                }
+            }
+
         }
 
         room_id = intent.getStringExtra("room_id")
@@ -199,9 +222,13 @@ class DongchatProfileActivity : RootActivity() {
 
                     val members = response!!.getJSONArray("chatmember")
                     if (members != null && members.length() > 0){
+                        if (chatMemberids != null){
+                            chatMemberids.clear()
+                        }
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
                             val chatmember = item.getJSONObject("Chatmember")
+                            val member_id = Utils.getString(chatmember,"member_id")
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
                             val title = Utils.getString(chatroom,"title")
@@ -210,14 +237,16 @@ class DongchatProfileActivity : RootActivity() {
                             val created = Utils.getString(chatroom,"created")
                             val intro = Utils.getString(chatroom,"intro")
                             val background = Utils.getString(chatroom,"background")
-                            val peoplecount = Utils.getString(chatroom,"peoplecount")
-                            val max_count = Utils.getString(chatroom,"max_count")
+                            people_count = Utils.getString(chatroom,"peoplecount").toInt()
+                            max_count = Utils.getString(chatroom,"max_count").toInt()
                             val getnotice = Utils.getString(chatroom,"notice")
                             if (getnotice != null && getnotice.length > 0){
                                 noticeTV.setText(notice)
                                 notice = getnotice
                             }
-                            membercountTV.setText("("+peoplecount + "/" + max_count+")")
+
+                            chatMemberids.add(member_id)
+                            membercountTV.setText("("+people_count.toString() + "/" + max_count.toString()+")")
                             if (background != null && background.length > 0){
                                 Image_path.add(Config.url + Utils.getString(chatroom,"background"))
                             }

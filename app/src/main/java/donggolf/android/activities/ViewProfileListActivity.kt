@@ -118,7 +118,9 @@ class ViewProfileListActivity : RootActivity() {
 
                         pagerAdapter.notifyDataSetChanged()
 
-                        albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
+                        if (profileImagePaths.size > 0) {
+                            albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
+                        }
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()

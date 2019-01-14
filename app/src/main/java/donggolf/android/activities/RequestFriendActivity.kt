@@ -33,6 +33,8 @@ class RequestFriendActivity : RootActivity() {
 
     val SELECT_CATEGORY = 101
 
+    var wait = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_friend)
@@ -131,7 +133,7 @@ class RequestFriendActivity : RootActivity() {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        getFriendList("w",0)
+                        getFriendList("b",0)
                     }
                 }
 
@@ -144,6 +146,12 @@ class RequestFriendActivity : RootActivity() {
                 }
             })
         }
+
+        waitTV.setOnClickListener {
+            wait = "wait"
+            getFriendList("w",0)
+
+        }
     }
 
     fun getFriendList(status : String, category_id : Int) {
@@ -152,6 +160,9 @@ class RequestFriendActivity : RootActivity() {
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("status", status)
         params.put("category_id", category_id)
+        if (wait == "wait"){
+            params.put("wait", wait)
+        }
 
         MateAction.get_mates_list(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -161,6 +172,7 @@ class RequestFriendActivity : RootActivity() {
                     if (result == "ok") {
                         val mates = response.getJSONArray("mates")
                         mateRequestList.clear()
+                        wait = ""
                         for (i in 0 until mates.length()) {
                             val mate = mates[i] as JSONObject
 

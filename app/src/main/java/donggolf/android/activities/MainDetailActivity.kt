@@ -89,6 +89,7 @@ class MainDetailActivity : RootActivity() {
 
     var x = 0.0f
 
+    lateinit var video:Uri
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,6 +114,21 @@ class MainDetailActivity : RootActivity() {
         videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
         var mediaController: MediaController = MediaController(this);
         videoVV.setMediaController(mediaController)
+
+        videoviewTV.setOnClickListener {
+            if (videoviewTV.text.toString() == "동영상 보기") {
+                videoVV.visibility = View.VISIBLE
+                videoVV.start()
+                videoVV.setVideoURI(video)
+                videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+                videoviewTV.setText("동영상 숨기기")
+                pagerVP.visibility = View.GONE
+            } else {
+                videoviewTV.setText("동영상 보기")
+                videoVV.visibility = View.GONE
+                pagerVP.visibility = View.VISIBLE
+            }
+        }
 
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
@@ -717,12 +733,13 @@ class MainDetailActivity : RootActivity() {
                                         imagePaths.add(path)
                                     } else {
                                         val path = Utils.getString(contentFile, "image_uri")
-                                        println("path ----- $path")
-                                        videoVV.visibility = View.VISIBLE
-                                        val uri = Uri.parse(Config.url + path)
-                                        videoVV.start()
-                                        videoVV.setVideoURI(uri)
-                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+                                        videoviewTV.visibility = View.VISIBLE
+                                        println("-----------타ㅓㄴ다")
+                                        video = Uri.parse(Config.url + path)
+//                                        videoVV.visibility = View.VISIBLE
+//                                        videoVV.start()
+//                                        videoVV.setVideoURI(video)
+//                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
                                     }
                                 }
 
