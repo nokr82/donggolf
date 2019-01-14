@@ -1,7 +1,9 @@
 package donggolf.android.activities
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -39,6 +41,16 @@ class ViewProfileListActivity : RootActivity() {
     var imgPosition = 0
     var member_id = 0
 
+    internal var resetDataReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                getMyProfile()
+            }
+        }
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_profile_list)
@@ -51,10 +63,35 @@ class ViewProfileListActivity : RootActivity() {
 
         albumVP.adapter = pagerAdapter
 
+        getMyProfile()
+
         closeAlbum.setOnClickListener {
             finish()
         }
 
+        var filter1 = IntentFilter("RESET_DATA")
+        registerReceiver(resetDataReceiver, filter1)
+
+        albumVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                imgPosition = position
+            }
+
+            override fun onPageSelected(position: Int) {}
+
+            override fun onPageScrollStateChanged(state: Int) {
+                albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
+            }
+        })
+
+        showProfImgAlbumIV.setOnClickListener {
+            val intent = Intent(context, ViewAlbumActivity::class.java)
+            intent.putExtra("viewAlbumListUserID", member_id)
+            startActivity(intent)
+        }
+
+    }
+    fun getMyProfile(){
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
@@ -89,26 +126,5 @@ class ViewProfileListActivity : RootActivity() {
 
             }
         })
-
-
-
-        albumVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                imgPosition = position
-            }
-
-            override fun onPageSelected(position: Int) {}
-
-            override fun onPageScrollStateChanged(state: Int) {
-                albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
-            }
-        })
-
-        showProfImgAlbumIV.setOnClickListener {
-            val intent = Intent(context, ViewAlbumActivity::class.java)
-            intent.putExtra("viewAlbumListUserID", member_id)
-            startActivity(intent)
-        }
-
     }
 }

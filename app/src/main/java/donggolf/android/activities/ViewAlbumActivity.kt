@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
 import donggolf.android.adapters.ViewAlbumAdapter
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
 import kotlinx.android.synthetic.main.findpicture_gridview_item.view.*
@@ -42,7 +43,7 @@ class ViewAlbumActivity : RootActivity() {
 
     var clickedItmeCnt = 0
     var selectedImageList = ArrayList<String>()
-    var selectedImageViewList = ArrayList<String>()
+    var selectedImageViewList:ArrayList<String> = ArrayList<String>()
     var selImgViewPositions = ArrayList<Int>()
 
     var ADD_POST = 1000
@@ -123,8 +124,7 @@ class ViewAlbumActivity : RootActivity() {
                             val intent = Intent(context, AddPostActivity::class.java)
                             intent.putExtra("category",1)
                             intent.putExtra("image_uri", selectedImageViewList)
-                            println("selectedimage======$selectedImageViewList")
-                            startActivityForResult(intent,ADD_POST)
+                            startActivity(intent)
 
                             return@setOnMenuItemClickListener true
                         }
@@ -154,7 +154,7 @@ class ViewAlbumActivity : RootActivity() {
                     clickedItmeCnt++
                     albumList[position].put("select_album_img_cnt", clickedItmeCnt)
                     selectedImageList.add(albumList[position].getString("image_id"))
-                    selectedImageViewList.add(albumList[position].getString("image_uri"))
+                    selectedImageViewList.add(Config.url + albumList[position].getString("image_uri"))
                     Log.d("이미지배열",selectedImageViewList.toString())
                     selImgViewPositions.add(position)
                 }
@@ -345,6 +345,9 @@ class ViewAlbumActivity : RootActivity() {
                     if (result == "ok") {
                         images_path.clear()
                         getProfilImageList()
+                        var intent = Intent()
+                        intent.action = "RESET_DATA"
+                        sendBroadcast(intent)
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()

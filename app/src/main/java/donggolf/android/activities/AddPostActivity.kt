@@ -1044,11 +1044,18 @@ class AddPostActivity : RootActivity() {
 
         }*/
 
-        if (intent.getStringArrayListExtra("image_uri") != null){
-            selectedImageViewList = intent.getStringArrayListExtra("image_uri")
-        }
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
+
+        if (intent.getStringArrayListExtra("image_uri") != null){
+            selectedImageViewList = intent.getStringArrayListExtra("image_uri")
+            println("images---------selectimage$selectedImageViewList")
+            if (selectedImageViewList.size > 0){
+                for (i in 0 until selectedImageViewList.size){
+                    reset2(selectedImageViewList.get(i),i)
+                }
+            }
+        }
 
 //        images_path = ArrayList();
         images = ArrayList()
@@ -1326,9 +1333,10 @@ class AddPostActivity : RootActivity() {
         var seq = 0
         if (addPicturesLL != null){
             for (i in 0 until addPicturesLL!!.childCount) {
-                val v = addPicturesLL?.getChildAt(i)
-                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-                if (imageIV is ImageView) {
+                val v = addPicturesLL!!.getChildAt(i)
+//                val imageIV = v?.findViewById<ImageView>(R.id.imageIV)
+                val imageIV = v!!.findViewById(R.id.imageIV) as SelectableRoundedImageView
+                if (imageIV is SelectableRoundedImageView) {
                     val bitmap = imageIV.drawable as BitmapDrawable
                     params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
                     seq++
@@ -1424,16 +1432,32 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (images_path != null){
-            Log.d("작성",images_path.toString())
-            if (images_path!!.size != 0){
-                for (i in 0..images_path!!.size - 1){
-                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
 
-                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+        var seq = 0
+        if (addPicturesLL != null){
+            println("------------------addpicture")
+            for (i in 0 until addPicturesLL!!.childCount) {
+                val v = addPicturesLL!!.getChildAt(i)
+                val imageIV = v!!.findViewById(R.id.imageIV) as SelectableRoundedImageView
+                if (imageIV is SelectableRoundedImageView) {
+                    val bitmap = imageIV.drawable as BitmapDrawable
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    seq++
+                    println("------seq----$seq")
                 }
             }
         }
+
+//        if (images_path != null){
+//            Log.d("작성",images_path.toString())
+//            if (images_path!!.size != 0){
+//                for (i in 0..images_path!!.size - 1){
+//                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
+//
+//                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+//                }
+//            }
+//        }
 
         if (videoPaths != null){
             if (videoPaths.size != 0){
@@ -1556,7 +1580,7 @@ class AddPostActivity : RootActivity() {
         var add_file = Utils.getImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
         val v = View.inflate(context, R.layout.item_add_image, null)
-        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val imageIV = v.findViewById(R.id.imageIV) as SelectableRoundedImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         imageIV.setImageBitmap(add_file)
         delIV.tag = i
@@ -1596,16 +1620,16 @@ class AddPostActivity : RootActivity() {
         var add_file = Utils.getImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
         val v = View.inflate(context, R.layout.item_add_image, null)
-        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val imageIV = v.findViewById(R.id.imageIV) as SelectableRoundedImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         ImageLoader.getInstance().displayImage(str,imageIV, Utils.UILoptionsUserProfile)
         delIV.tag = i
         delIV.setOnClickListener {
             addPicturesLL!!.removeView(v)
             delids.add(i)
-            Log.d("아이디값",delids.toString())
+//            Log.d("아이디값",delids.toString())
 
-            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
         }
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
