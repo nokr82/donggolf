@@ -60,14 +60,14 @@ import java.security.NoSuchAlgorithmException
 class FriendSearchActivity : RootActivity() {
 
     val REQUEST_INVITE = 700
-    lateinit var context : Context
+    lateinit var context: Context
 
-    private  var friendData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  lateinit var  friendAdapter : FriendAdapter
-    private  lateinit var  editadapter : FriendSearchAdapter
-    private  var editadapterData : ArrayList<JSONObject> = ArrayList()
+    private var friendData: ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private lateinit var friendAdapter: FriendAdapter
+    private lateinit var editadapter: FriendSearchAdapter
+    private var editadapterData: ArrayList<JSONObject> = ArrayList()
 
-    lateinit var user : HashMap<String,Any>
+    lateinit var user: HashMap<String, Any>
 
     var membercnt = ""
     var sidotype = ""
@@ -81,7 +81,7 @@ class FriendSearchActivity : RootActivity() {
 
         context = this
 
-        var intent:Intent = intent
+        var intent: Intent = intent
 
         callback = SessionCallback()
 
@@ -89,9 +89,9 @@ class FriendSearchActivity : RootActivity() {
         intent = getIntent()
         membercnt = intent.getStringExtra("membercnt")
         sidotype = PrefUtils.getStringPreference(context, "sidotype")
-        goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-        member_cntTV.text = "골퍼 "+membercnt+"명"
-        areaTV.text = sidotype+"/"+goguntype
+        goguntype = PrefUtils.getStringPreference(context, "goguntype")
+        member_cntTV.text = "골퍼 " + membercnt + "명"
+        areaTV.text = sidotype + "/" + goguntype
 
 
         //main list view setting
@@ -109,9 +109,9 @@ class FriendSearchActivity : RootActivity() {
         frdSearchET.setOnClickListener {
 
             val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-            MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler(){
+            MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     try {
                         println(response)
@@ -127,7 +127,7 @@ class FriendSearchActivity : RootActivity() {
 
                             editadapter.notifyDataSetChanged()
                         }
-                    } catch (e:JSONException) {
+                    } catch (e: JSONException) {
                         e.printStackTrace()
                     }
                 }
@@ -143,12 +143,19 @@ class FriendSearchActivity : RootActivity() {
 
         //엔터키
         frdSearchET.setOnEditorActionListener { v, actionId, event ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 //var searchCond : HashMap<String, String> = HashMap<String,String>()
                 var keyWord = v.frdSearchET.text.toString()
 
                 //println("Search Words : $keyWord in FriendSearchActivity")
-                friendSearchWords(keyWord)
+                if (keyWord.startsWith("#")) {
+                    keyWord = keyWord.replace("#","")
+                    friendSearchhash(keyWord)
+
+                } else {
+                    friendSearchWords(keyWord)
+                }
+//                friendSearchWords(keyWord)
                 true
             } else {
                 false
@@ -158,12 +165,17 @@ class FriendSearchActivity : RootActivity() {
         btn_search_friends.setOnClickListener {
 
             var which = Utils.getString(frdSearchET)
-            if (which.isEmpty()){
+            if (which.isEmpty()) {
                 Utils.alert(context, "검색할 키워드를 입력해주세요")
                 return@setOnClickListener
             }
+            if (which.startsWith("#")) {
+                which = which.replace("#","")
+                friendSearchhash(which)
 
-            friendSearchWords(which)
+            } else {
+                friendSearchWords(which)
+            }
 
         }
 
@@ -194,7 +206,7 @@ class FriendSearchActivity : RootActivity() {
 
                 try {
                     shareKakao()
-                } catch (ke : Exception) {
+                } catch (ke: Exception) {
                     ke.printStackTrace()
                 }
 
@@ -230,19 +242,19 @@ class FriendSearchActivity : RootActivity() {
 
     }
 
-    fun getKeyHash(context: Context) : String? {
+    fun getKeyHash(context: Context): String? {
         val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES.toString())
 
-        if (packageInfo == null){
+        if (packageInfo == null) {
             return null
 
-            for (signature in packageInfo?.signatures!!){
+            for (signature in packageInfo?.signatures!!) {
                 try {
                     getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-                    var md : MessageDigest = MessageDigest.getInstance("SHA")
+                    var md: MessageDigest = MessageDigest.getInstance("SHA")
                     md.update(signature.toByteArray())
                     return Base64.encodeToString(md.digest(), Base64.NO_WRAP)
-                } catch (e : NoSuchAlgorithmException) {
+                } catch (e: NoSuchAlgorithmException) {
                     Log.w("KEY_HASH", "Unable to get MessageDigest. signature===========================$signature", e)
                 }
             }
@@ -251,7 +263,7 @@ class FriendSearchActivity : RootActivity() {
     }
 
     //최근검색목록키워드 저장
-    fun addFriendSearchWords(keywd : String) {
+    fun addFriendSearchWords(keywd: String) {
         //최근 검색한 친구 키워드를 데이터리스트에 추가하고 DB에 save
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
@@ -275,8 +287,8 @@ class FriendSearchActivity : RootActivity() {
                     }
                     main_listview_search.visibility = View.GONE
                     frdSearchET.setText("")
-                } catch (e : JSONException) {
-                    Log.e("JsonError","Add mate search word history Action")
+                } catch (e: JSONException) {
+                    Log.e("JsonError", "Add mate search word history Action")
                 }
             }
 
@@ -291,7 +303,7 @@ class FriendSearchActivity : RootActivity() {
     }
 
     //키워드로 찾음
-    fun friendSearchWords(keyWord : String) {
+    fun friendSearchWords(keyWord: String) {
         val params = RequestParams()
         params.put("keyword", keyWord)
         params.put("goguntype", goguntype)
@@ -304,8 +316,8 @@ class FriendSearchActivity : RootActivity() {
                     friendData.clear()
                     if (result == "ok") {
                         val members = response.getJSONArray("members")
-                        if (members.length()==0){
-                            Toast.makeText(context,"친구를 찾을수 없습니다.",Toast.LENGTH_SHORT).show()
+                        if (members.length() == 0) {
+                            Toast.makeText(context, "친구를 찾을수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
                         for (i in 0 until members.length()) {
                             val member = members[i] as JSONObject
@@ -316,7 +328,7 @@ class FriendSearchActivity : RootActivity() {
 
                     addFriendSearchWords(keyWord)
 
-                }catch (e:JSONException) {
+                } catch (e: JSONException) {
                     e.printStackTrace()
                 }
             }
@@ -331,6 +343,46 @@ class FriendSearchActivity : RootActivity() {
         })
     }
 
+
+    fun friendSearchhash(keyWord: String) {
+        val params = RequestParams()
+        params.put("keyword", keyWord)
+        params.put("goguntype", goguntype)
+
+        MemberAction.search_member(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    println("친구검색 ::: $response")
+                    val result = response!!.getString("result")
+                    friendData.clear()
+                    if (result == "ok") {
+                        val members = response.getJSONArray("members_tag")
+                        if (members.length() == 0) {
+                            Toast.makeText(context, "친구를 찾을수 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        for (i in 0 until members.length()) {
+                            val member = members[i] as JSONObject
+                            friendData.add(member)
+                        }
+                    }
+                    friendAdapter.notifyDataSetChanged()
+
+                    addFriendSearchWords(keyWord)
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+                println(errorResponse)
+            }
+        })
+    }
 
 
     inner class SessionCallback : ISessionCallback {
@@ -461,7 +513,7 @@ class FriendSearchActivity : RootActivity() {
     //문자로 초대메시지 보내기
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_INVITE){
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_INVITE) {
             if (resultCode === Activity.RESULT_OK) {
 
                 try {
@@ -477,7 +529,7 @@ class FriendSearchActivity : RootActivity() {
                     val smsMng = SmsManager.getDefault()
                     smsMng.sendTextMessage(phoneNum, "010-1234-8765", "보낼 내용", null, null)
 
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             } else {
