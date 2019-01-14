@@ -483,6 +483,9 @@ class GoodsDetailActivity : RootActivity() {
                 println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
+                    if (_Images != null){
+                        _Images.clear()
+                    }
                     val product = response.getJSONObject("product")
                     val market = product.getJSONObject("Market")
                     seller_id2 = Utils.getString(market,"member_id")
@@ -673,5 +676,7 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
     }
+
+
 
 }

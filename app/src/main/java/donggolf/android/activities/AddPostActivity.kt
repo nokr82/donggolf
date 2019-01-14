@@ -949,7 +949,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -957,11 +956,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.MediaController
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import com.joooonho.SelectableRoundedImageView
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -1652,7 +1649,7 @@ class AddPostActivity : RootActivity() {
         images_path.add(str)
         var add_file = Utils.getImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
-        var v = View.inflate(context, R.layout.item_add_image, null)
+        var v = View.inflate(context, R.layout.item_addgoods, null)
 //        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
