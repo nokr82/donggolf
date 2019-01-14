@@ -142,6 +142,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         val alert = builder.show()
 
                         dialogView.dlgTitle.setText("비공개 코드 입력")
+                        dialogView.categoryTitleET.setHint("코드를 입력해 주세요.")
                         dialogView.codevisibleLL.visibility = View.GONE
 
                         dialogView.btn_title_clear.setOnClickListener {
@@ -222,6 +223,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         val alert = builder.show()
 
                         dialogView.dlgTitle.setText("비공개 코드 입력")
+                        dialogView.categoryTitleET.setHint("코드를 입력해 주세요.")
                         dialogView.codevisibleLL.visibility = View.GONE
 
                         dialogView.btn_title_clear.setOnClickListener {
