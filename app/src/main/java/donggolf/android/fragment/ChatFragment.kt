@@ -195,6 +195,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
 
 
+
+
+
+
             } else {
                 var json = dongAdapterData.get(position)
                 var room = json.getJSONObject("Chatroom")
