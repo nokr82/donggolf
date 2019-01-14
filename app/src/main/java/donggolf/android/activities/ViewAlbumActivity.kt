@@ -269,17 +269,21 @@ class ViewAlbumActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("deleteImgs",selectedImageList)
-
+        clickedItmeCnt = 0
         MemberAction.delete_profile_imgs(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
+
                     println(response)
-                    selImgViewPositions.sort()
                     println(selImgViewPositions)
-                    for (i in 0 until selImgViewPositions.size) {
+                    /*for (i in 0 until selImgViewPositions.size) {
                         //eachViewAdapter.removeItem(selImgViewPositions[i])
                         albumList.removeAt(selImgViewPositions[i])
-                    }
+                    }*/
+                    selImgViewPositions.clear()
+                    selImgViewPositions.sort()
+                    getProfilImageList()
+
                     eachViewAdapter.notifyDataSetChanged()
 
                 }catch (e:JSONException){
