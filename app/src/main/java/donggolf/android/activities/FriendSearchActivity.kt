@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import donggolf.android.R
@@ -26,6 +27,7 @@ import com.kakao.auth.ErrorCode
 import com.kakao.auth.ISessionCallback
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.kakaostory.StringSet.writer
 import com.kakao.kakaotalk.callback.TalkResponseCallback
 import com.kakao.kakaotalk.response.KakaoTalkProfile
 import com.kakao.kakaotalk.v2.KakaoTalkService
@@ -41,14 +43,18 @@ import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
+import donggolf.android.R.id.frdSearchET
+import donggolf.android.R.id.main_listview_search
 import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.FriendSearchAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
+import kotlinx.android.synthetic.main.dlg_post_menu.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -75,6 +81,11 @@ class FriendSearchActivity : RootActivity() {
     //초대
     private var callback: SessionCallback? = null
 
+
+    var type = ""
+
+    var member_id = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_search)
@@ -98,6 +109,15 @@ class FriendSearchActivity : RootActivity() {
         friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
         frdResultLV.adapter = friendAdapter
 
+        frdResultLV.setOnItemClickListener{ parent, view, position, id ->
+
+                var json = friendAdapter.getItem(position)
+                var member = json.getJSONObject("Member")
+                member_id = Utils.getString(member, "id")
+                visibleMenu()
+                Log.d("멤버디디",member_id)
+
+        }
         editadapter = FriendSearchAdapter(context, R.layout.main_edit_listview_item, editadapterData)
         frd_editLV.adapter = editadapter
 
@@ -150,9 +170,11 @@ class FriendSearchActivity : RootActivity() {
                 //println("Search Words : $keyWord in FriendSearchActivity")
                 if (keyWord.startsWith("#")) {
                     keyWord = keyWord.replace("#","")
+                    type = "1"
                     friendSearchhash(keyWord)
 
                 } else {
+                    type = "2"
                     friendSearchWords(keyWord)
                 }
 //                friendSearchWords(keyWord)
@@ -275,6 +297,44 @@ class FriendSearchActivity : RootActivity() {
    }
 
 
+    fun visibleMenu(){
+
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                    if (member_id != null) {
+
+
+                        var params = RequestParams()
+                        params.put("mate_id", member_id)
+                        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+                        params.put("category_id",0)
+                        params.put("status","w")
+                        PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                val result = response!!.getString("result")
+                                if (result == "yes") {
+                                    Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                }else {
+                                    Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                            }
+                        })
+
+                    }
+
+                })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        val alert = builder.create()
+        alert.show()
+
+
+    }
 
    fun getKeyHash(context: Context): String? {
         val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES.toString())
@@ -355,7 +415,13 @@ class FriendSearchActivity : RootActivity() {
                         }
                         for (i in 0 until members.length()) {
                             val member = members[i] as JSONObject
-                            friendData.add(member)
+                            val member_o = member.getJSONObject("Member")
+                            val member_id = Utils.getInt(member_o,"id")
+                            Log.d("멤버다",member.toString())
+                            if (member_id!=PrefUtils.getIntPreference(context, "member_id")){
+                                friendData.add(member)
+                            }
+
                         }
                     }
                     friendAdapter.notifyDataSetChanged()
@@ -396,7 +462,12 @@ class FriendSearchActivity : RootActivity() {
                         }
                         for (i in 0 until members.length()) {
                             val member = members[i] as JSONObject
-                            friendData.add(member)
+                            val member_o = member.getJSONObject("Member")
+                            val member_id = Utils.getInt(member_o,"id")
+                            Log.d("멤버다",member.toString())
+                            if (member_id!=PrefUtils.getIntPreference(context, "member_id")){
+                                friendData.add(member)
+                            }
                         }
                     }
                     friendAdapter.notifyDataSetChanged()
