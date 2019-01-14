@@ -1010,6 +1010,8 @@ class AddPostActivity : RootActivity() {
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
+    var selectedImageViewList = ArrayList<String>()
+
 
     var video_image:ArrayList<String> = ArrayList<String>()
 
@@ -1023,6 +1025,8 @@ class AddPostActivity : RootActivity() {
 
         context = this
 
+
+
 //        mAuth = FirebaseAuth.getInstance()
 
         val dbManager = DataBaseHelper(context)
@@ -1033,6 +1037,16 @@ class AddPostActivity : RootActivity() {
         val one = 1
 
         val setContent = TmpContent()
+
+      /*  intent = getIntent()
+        selectedImageViewList = intent.getStringArrayListExtra("image_uri")
+        Log.d("선택된이미지",selectedImageViewList.lastIndex.toString())
+        for (i in 0 until selectedImageViewList.lastIndex){
+            var path = Config.url + selectedImageViewList[i]
+            reset2(path,i)
+
+        }*/
+
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 

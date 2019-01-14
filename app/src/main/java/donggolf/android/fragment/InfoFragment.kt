@@ -180,6 +180,11 @@ class InfoFragment : Fragment(){
         }
     }
 
+
+    override fun onPause() {
+        super.onPause()
+    }
+
     private fun choosePhotoFromGallary() {
         val galleryIntent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -205,7 +210,13 @@ fun member_info(){
                     val contentCount = response.getString("contentCount")
                     val chatCount = response.getString("chatCount")
 
-                    chatcountTV.setText(chatCount)
+                    if (chatCount==null){
+                        chatcountTV.setText("0")
+                    }else{
+                        chatcountTV.setText(chatCount)
+
+                    }
+
                     postcountTV.setText(contentCount)
                     friendCountTV.setText(friendCount)
 
