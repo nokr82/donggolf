@@ -1,6 +1,8 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -92,6 +94,8 @@ class ProfileNameModifActivity : RootActivity() {
                     try {
                         val result = response!!.getString("result")
                         if (result == "ok") {
+                            var intent = Intent()
+                            setResult(RESULT_OK,intent)
                             finish()
                         }
                     }catch (e : JSONException) {
