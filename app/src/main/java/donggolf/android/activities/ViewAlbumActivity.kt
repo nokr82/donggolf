@@ -110,6 +110,11 @@ class ViewAlbumActivity : RootActivity() {
                         }
                         R.id.menu_posting -> {
 
+                            val intent = Intent(context, AddPostActivity::class.java)
+                            intent.putExtra("category",1)
+                            intent.putStringArrayListExtra("image_uri", selectedImageViewList)
+                            startActivity(intent)
+
                             return@setOnMenuItemClickListener true
                         }
                         else -> return@setOnMenuItemClickListener false
