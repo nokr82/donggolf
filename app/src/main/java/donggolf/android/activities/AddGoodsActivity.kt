@@ -383,6 +383,10 @@ class AddGoodsActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
 
+
+
+
+
                 SELECT_PICTURE -> {
 
                     println("onActivityResult로 돌아와서")
