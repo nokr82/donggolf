@@ -1459,6 +1459,9 @@ class AddPostActivity : RootActivity() {
         PostAction.add_post(params,object : JsonHttpResponseHandler(){
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var intent = Intent()
+                intent.putExtra("reset","reset")
+                setResult(RESULT_OK, intent);
                 finish()
             }
 

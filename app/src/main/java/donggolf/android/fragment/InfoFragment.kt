@@ -121,7 +121,7 @@ class InfoFragment : Fragment(){
         mychatFL.setOnClickListener {
             var intent = Intent()
             intent.action = "MY_CHATTING"
-            ctx!!.sendBroadcast(intent)
+            myContext!!.sendBroadcast(intent)
         }
 
         //메뉴버튼

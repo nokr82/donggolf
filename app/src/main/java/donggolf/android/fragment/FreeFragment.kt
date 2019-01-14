@@ -1,5 +1,7 @@
 package donggolf.android.fragment
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
@@ -55,6 +57,8 @@ open class FreeFragment : Fragment() {
     var tabType = 1
     var member_id = -1
     private val SELECT_PICTURE: Int = 101
+
+    val RESET_DATA = 1000
 
     lateinit var vpPage: ViewPager
     internal var MsgReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
@@ -271,7 +275,7 @@ open class FreeFragment : Fragment() {
     fun MoveAddPostActivity(){
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
-        startActivityForResult(intent, SELECT_PICTURE);
+        startActivityForResult(intent, RESET_DATA);
     }
 
     fun MoveMainDetailActivity(id : String){
@@ -470,4 +474,22 @@ open class FreeFragment : Fragment() {
         }
     }
 
+
+
+    @SuppressLint("NewApi")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            when (requestCode) {
+                RESET_DATA -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        mainData()
+                    }
+                }
+            }
+        }
+
+    }
 }
