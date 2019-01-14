@@ -245,8 +245,6 @@ class MainDetailActivity : RootActivity() {
                 }
             }
 
-
-
             true
         }
 
@@ -254,6 +252,11 @@ class MainDetailActivity : RootActivity() {
         //댓글 달기
         detail_add_commentTV.setOnClickListener {
             var comment = Utils.getString(cmtET)
+            if (comment == "" || comment == null){
+                Toast.makeText(context,"빈칸은 입력하실 수 없습니다.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
 
             val params = RequestParams()
             params.put("cont_id", content_id)
@@ -1028,15 +1031,17 @@ class MainDetailActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 MODIFYS -> {
+                    if (data!!.getStringExtra("reset") != null) {
 
 //                    val selCateg = data!!.getIntExtra("CategoryID", 1)
 
-                    videoVV.visibility = View.GONE
-                    getPost()
+                        videoVV.visibility = View.GONE
+                        getPost()
 //                    if (data!!.getStringExtra("reset") != null) {
-                    println("-----modiftyyyyy")
+                        println("-----modiftyyyyy")
 
 //                    }
+                    }
                 }
             }
         }
