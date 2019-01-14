@@ -70,4 +70,12 @@ object ChattingAction {
         HttpClient.post("/chatting/set_dongchat_block.json", params, handler)
     }
 
+    fun set_title(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_title.json", params, handler)
+    }
+
+    fun set_dong_image(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_dong_image.json", params, handler)
+    }
+
 }

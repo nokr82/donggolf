@@ -255,11 +255,11 @@
                     <RelativeLayout
                         android:id="@+id/profileRL"
                         android:layout_width="105dp"
-                        android:layout_height="wrap_content">
+                        android:layout_height="105dp">
                         <ImageView
                             android:id="@+id/profileIV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="105dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
                             android:background="@drawable/btn_add_picture"
                             android:scaleType="centerCrop"/>
                         <ImageView
@@ -293,11 +293,11 @@
                     <RelativeLayout
                         android:id="@+id/backgroundRV"
                         android:layout_width="105dp"
-                        android:layout_height="wrap_content">
+                        android:layout_height="105dp">
                         <ImageView
                             android:id="@+id/backgroundIV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="105dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
                             android:background="@drawable/btn_add_picture"
                             android:scaleType="centerCrop"/>
                         <ImageView

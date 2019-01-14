@@ -46,6 +46,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var room = json.getJSONObject("Chatroom")
         var profileimg = Utils.getString(room,"profileimg")
         var room_type = Utils.getString(room,"type")
+        var max_count = Utils.getString(room,"max_count")
 
         val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
@@ -120,7 +121,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.firstIV.visibility = View.GONE
             item.countTV.visibility = View.VISIBLE
             item.countTV.setText("("+chatmember.length().toString()+")")
-
         }
 
         if (title != null && title.length > 0) {
@@ -135,6 +135,11 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         } else {
             var image = Config.url + Utils.getString(room, "intro")
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+            item.nofriendIV.visibility = View.GONE
+            item.firstIV.visibility = View.GONE
+            item.countTV.visibility = View.VISIBLE
+            println("chatmember_size ${chatmember.length()}")
+            item.countTV.setText("("+chatmember.length().toString()+")")
         }
 
 

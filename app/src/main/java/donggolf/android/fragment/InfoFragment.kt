@@ -52,6 +52,7 @@ import donggolf.android.models.Photo
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
 import org.json.JSONException
@@ -117,7 +118,11 @@ class InfoFragment : Fragment(){
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
 
-
+        mychatFL.setOnClickListener {
+            var intent = Intent()
+            intent.action = "MY_CHATTING"
+            ctx!!.sendBroadcast(intent)
+        }
 
         //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {

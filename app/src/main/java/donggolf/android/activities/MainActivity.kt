@@ -73,17 +73,25 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
     }
 
+    internal var mychattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                frags.currentItem = 1
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         this.context = this
 
-
-
-
         var filter1 = IntentFilter("REGION_CHANGE")
         registerReceiver(reloadReciver, filter1)
+
+        var filter2 = IntentFilter("MY_CHATTING")
+        registerReceiver(mychattingReciver, filter2)
 
 
         is_push = intent.getBooleanExtra("is_push", false)
