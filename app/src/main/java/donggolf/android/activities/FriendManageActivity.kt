@@ -152,10 +152,7 @@ class FriendManageActivity : RootActivity() {
                 println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    val newData = response.getJSONObject("categories")
-                    val newCate = newData.getJSONObject("MateCategory")
-                    friendCategoryData.add(newCate)
-                    frdMngAdapter.notifyDataSetChanged()
+                    getCategoryList()
                 }
             }
 

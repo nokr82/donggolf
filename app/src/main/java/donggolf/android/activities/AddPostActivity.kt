@@ -1398,8 +1398,13 @@ class AddPostActivity : RootActivity() {
         }
         params.put("cmt_yn",cmt_yn)
 
-        var region_id = PrefUtils.getStringPreference(context,"region_id")
-        params.put("region_id",region_id)
+        if (PrefUtils.getStringPreference(context,"region_id") != null) {
+            var region_id = PrefUtils.getStringPreference(context, "region_id")
+            params.put("region_id", region_id)
+        } else {
+            var region_id = 1
+            params.put("region_id", region_id)
+        }
 
         if (hashtag != null){
             for (i in 0 .. hashtag.size - 1){
