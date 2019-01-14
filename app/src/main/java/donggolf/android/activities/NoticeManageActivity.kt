@@ -33,7 +33,6 @@ class NoticeManageActivity : RootActivity() {
 
         room_id = intent.getStringExtra("room_id")
 
-
         get_announcement()
 
         resetTV.setOnClickListener {
@@ -62,7 +61,6 @@ class NoticeManageActivity : RootActivity() {
         saveTV.setOnClickListener {
             set_notice()
         }
-
 
     }
 
@@ -116,10 +114,6 @@ class NoticeManageActivity : RootActivity() {
 
                         var image = Config.url + Utils.getString(Member, "profile_img")
                         ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
-
-
-
-
 
                     }
                 } catch (e: JSONException) {

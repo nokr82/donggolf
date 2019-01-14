@@ -1,9 +1,14 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -13,6 +18,7 @@ import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
+import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -21,8 +27,11 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.activity_dongchat_profile.*
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
+import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.util.ArrayList
 
 
@@ -38,13 +47,26 @@ class DongchatProfileActivity : RootActivity() {
 
     var founder_id = ""
     var notice = ""
+    var SET_NOTICE = 1000
+
+    var PROFILE = 100
+    var BACKGROUND = 101
+
+    var profile: Uri? = null
+    var background:Uri? = null
+
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dongchat_profile)
-
         context = this
-
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
+        if (null != context) {
+            doSomethingWithContext(context)
+        }
         joinDongChatRL.setOnClickListener {
             val intent = Intent(context, DongChatDetailActivity::class.java)
             intent.putExtra("room_id",room_id)
@@ -90,10 +112,38 @@ class DongchatProfileActivity : RootActivity() {
 //
 //        }
 
+        setimageIV.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlg_comment_delTV.visibility = View.GONE
+            dialogView.dlg_comment_copyTV.setText("프로필사진")
+            dialogView.dlg_comment_blockTV.setText("배경사진")
+
+            dialogView.dlg_comment_copyTV.setOnClickListener {
+                val galleryIntent = Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+                startActivityForResult(galleryIntent, PROFILE)
+                alert.dismiss()
+            }
+
+            dialogView.dlg_comment_blockTV.setOnClickListener {
+                val galleryIntent = Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+                startActivityForResult(galleryIntent, BACKGROUND)
+                alert.dismiss()
+            }
+
+        }
+
         setnoticeTV.setOnClickListener {
             val intent = Intent(context, NoticeManageActivity::class.java)
             intent.putExtra("room_id",room_id)
-            startActivity(intent)
+            startActivityForResult(intent,SET_NOTICE)
         }
 
         setroomtitleTV.setOnClickListener {
@@ -124,7 +174,7 @@ class DongchatProfileActivity : RootActivity() {
                 }
 
                 set_title(code)
-
+                alert.dismiss()
             }
         }
 
@@ -137,6 +187,9 @@ class DongchatProfileActivity : RootActivity() {
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     if (Image_path != null){
@@ -208,16 +261,31 @@ class DongchatProfileActivity : RootActivity() {
                 }
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
+                // System.out.println(responseString);
+
+                throwable.printStackTrace()
+//                error()
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
             }
         })
     }
-
 
     fun add_chat_member(){
         val params = RequestParams()
@@ -280,7 +348,7 @@ class DongchatProfileActivity : RootActivity() {
         params.put("room_id", room_id)
         params.put("title", title)
 
-        ChattingAction.set_notice(params, object : JsonHttpResponseHandler(){
+        ChattingAction.set_title(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     println(response)
@@ -302,5 +370,114 @@ class DongchatProfileActivity : RootActivity() {
             }
         })
     }
+
+    fun set_image(type: String,image : Uri){
+        val params = RequestParams()
+        if (type == "intro"){
+            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
+            params.put("intro", ByteArrayInputStream(Utils.getByteArray(profileBitmap)))
+        } else {
+            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, image)
+            params.put("background", ByteArrayInputStream(Utils.getByteArray(backgroundBitmap)))
+        }
+
+        params.put("room_id", room_id)
+
+        ChattingAction.set_dong_image(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+//                        detail_chatting()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                SET_NOTICE -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        detail_chatting()
+                    }
+                }
+
+                PROFILE -> {
+                    if (data != null)
+                    {
+                        val contentURI = data.data
+
+                        try
+                        {
+//                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            val bitmap = resized
+//                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
+
+                            ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
+                            set_image("intro",contentURI)
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+                    }
+                }
+
+                BACKGROUND -> {
+                    if (data != null)
+                    {
+                        val contentURI = data.data
+
+                        try
+                        {
+//                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+
+                            if (Image_path != null){
+                                Image_path.clear()
+                            }
+
+                            Image_path.add(contentURI.toString())
+                            backgroundAdapter.notifyDataSetChanged()
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
+
+//                            val bitmap = resized
+//                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
+                            set_image("background",contentURI)
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+
+    fun doSomethingWithContext(context: Context) {
+        this.context = context
+        progressDialog = ProgressDialog(context)
+    }
+
+
+
 
 }

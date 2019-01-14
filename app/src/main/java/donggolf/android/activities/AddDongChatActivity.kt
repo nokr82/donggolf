@@ -360,9 +360,8 @@ class AddDongChatActivity : RootActivity() {
                     {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
-                        //content://media/external/images/media/1200
                         profile = contentURI
-                        profileIV.setImageResource(0)
+                        //content://media/external/images/media/1200
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
@@ -370,9 +369,14 @@ class AddDongChatActivity : RootActivity() {
                             var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
-                            profileIV.setImageBitmap(thumbnail)
                             basicIV.visibility = View.GONE
+//                            profileIV.setImageURI(contentURI)
+                            profileIV.setImageBitmap(thumbnail)
                             profiledtIV.visibility = View.VISIBLE
+
+//                            val img = ByteArrayInputStream(Utils.getByteArray(thumbnail))
+
+
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
@@ -399,17 +403,18 @@ class AddDongChatActivity : RootActivity() {
                         try
                         {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
-                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            val resized = Utils.resizeBitmap(thumbnail, 100)
+//                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
+                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+//                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            background = thumbnail
-                            backgroundIV.setImageBitmap(resized)
+                            backgroundIV.setImageURI(contentURI)
                             backbasicIV.visibility = View.GONE
                             backgrounddtIV.visibility = View.VISIBLE
 
                             //전송하기 위한 전처리
                             //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                            val bitmap = backgroundIV.drawable as BitmapDrawable
-                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+//                            val bitmap = backgroundIV.drawable as BitmapDrawable
+//                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
                         }
                         catch (e: IOException) {

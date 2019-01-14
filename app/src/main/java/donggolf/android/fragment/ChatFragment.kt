@@ -293,5 +293,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (resetChattingReciver != null) {
+            context!!.unregisterReceiver(resetChattingReciver)
+        }
+    }
+
 
 }
