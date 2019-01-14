@@ -258,7 +258,7 @@ class FriendSearchActivity : RootActivity() {
        getKeyHash(context)
        val url = "market://details?id=donggolf.android"
        val imgBuilder = ContentObject.newBuilder("동네골프",
-               Config.url + "/data/member/5c1cbbaf-e0b0-4ff7-85fe-67b1ac1f19c8",
+               Config.url + "/data/member/5c3cb2dc-c8a8-4351-9b29-16b9ac1f19c8",
                LinkObject.newBuilder().setWebUrl(url).setMobileWebUrl(url).build())
                .setDescrption("동네골프")
                .build()
