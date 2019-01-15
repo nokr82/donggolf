@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -118,12 +119,14 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         addgoodsTV.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             var intent = Intent(this, AddGoodsActivity::class.java)
             startActivity(intent)
         }
-
-
-
 
         //분류전체(form)
         entireClassificationTV.setOnClickListener {
@@ -254,15 +257,13 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         }
 
-
-
-
         market_mngIV.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             startActivity(Intent(context,MarketManageActivity::class.java))
         }
-
-
-
 
         getCategory()
 

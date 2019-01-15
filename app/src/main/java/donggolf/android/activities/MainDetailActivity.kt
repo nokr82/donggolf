@@ -133,6 +133,7 @@ class MainDetailActivity : RootActivity() {
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
 
+
             var commenter = commentList[position].getInt("cmt_wrt_id")
 
             val builder = AlertDialog.Builder(this)
@@ -148,6 +149,11 @@ class MainDetailActivity : RootActivity() {
             if (commenter == login_id){
                 dialogView.dlg_comment_delTV.visibility = View.VISIBLE
                 dialogView.dlg_comment_delTV.setOnClickListener {
+                    if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                        Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
                     val params = RequestParams()
                     params.put("cont_id", content_id)
                     params.put("commenter", commenter)
@@ -181,6 +187,11 @@ class MainDetailActivity : RootActivity() {
 
             //댓글복사
             dialogView.dlg_comment_copyTV.setOnClickListener {
+
+                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
 
                 //클립보드 사용 코드
                 val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -267,6 +278,11 @@ class MainDetailActivity : RootActivity() {
 
         //댓글 달기
         detail_add_commentTV.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             var comment = Utils.getString(cmtET)
             if (comment == "" || comment == null){
                 Toast.makeText(context,"빈칸은 입력하실 수 없습니다.",Toast.LENGTH_SHORT).show()
@@ -308,6 +324,11 @@ class MainDetailActivity : RootActivity() {
 
         //대댓글
         commentListLV.setOnItemClickListener { parent, view, position, id ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+
             val data = commentList.get(position).getJSONObject("ContentComment")
 
             var parentType = Utils.getString(data,"type")
@@ -413,6 +434,11 @@ class MainDetailActivity : RootActivity() {
             builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
@@ -448,6 +474,11 @@ class MainDetailActivity : RootActivity() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
 
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
@@ -492,6 +523,11 @@ class MainDetailActivity : RootActivity() {
             builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
@@ -526,6 +562,11 @@ class MainDetailActivity : RootActivity() {
         }
 
         likeLL.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (intent.getStringExtra("id") != null) {
                 val content_id = intent.getStringExtra("id")
 
@@ -932,6 +973,11 @@ class MainDetailActivity : RootActivity() {
                 builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                return@OnClickListener
+                            }
+
                             if (intent.getStringExtra("id") != null) {
                                 val content_id = intent.getStringExtra("id")
 
@@ -969,6 +1015,11 @@ class MainDetailActivity : RootActivity() {
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
                             if (intent.getStringExtra("id") != null) {
+                                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                    return@OnClickListener
+                                }
+
                                 val content_id = intent.getStringExtra("id")
 
                                 var params = RequestParams()
@@ -1002,6 +1053,10 @@ class MainDetailActivity : RootActivity() {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                return@OnClickListener
+                            }
 
                             if (intent.getStringExtra("id") != null) {
                                 val content_id = intent.getStringExtra("id")
@@ -1055,7 +1110,6 @@ class MainDetailActivity : RootActivity() {
                         videoVV.visibility = View.GONE
                         getPost()
 //                    if (data!!.getStringExtra("reset") != null) {
-                        println("-----modiftyyyyy")
 
 //                    }
                     }

@@ -75,6 +75,11 @@ class DongchatProfileActivity : RootActivity() {
         }
         joinDongChatRL.setOnClickListener {
             var chkData = false
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             for (i in 0 until chatMemberids.size){
                 if (chatMemberids.get(i).toInt() == PrefUtils.getIntPreference(context, "member_id")){
                     chkData = true

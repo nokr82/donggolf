@@ -272,6 +272,11 @@ open class FreeFragment : Fragment() {
     }
 
     fun MoveAddPostActivity(){
+        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
         startActivityForResult(intent, RESET_DATA);
@@ -303,8 +308,6 @@ open class FreeFragment : Fragment() {
         params.put("goguntype",goguntype)
         params.put("sidotype",sidotype)
         params.put("region_id",region_id)
-
-        println("region_id------------------ $region_id")
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
 

@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.widget.ImageView
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -93,7 +94,13 @@ class ViewProfileListActivity : RootActivity() {
     }
     fun getMyProfile(){
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        if (PrefUtils.getIntPreference(context, "member_id")!= null){
+            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        } else {
+            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+            return
+        }
+
 
         MemberAction.get_member_img_history(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

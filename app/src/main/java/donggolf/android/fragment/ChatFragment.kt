@@ -193,12 +193,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
-
-
-
-
-
-
             } else {
                 var json = dongAdapterData.get(position)
                 var room = json.getJSONObject("Chatroom")
@@ -327,7 +321,16 @@ class ChatFragment : android.support.v4.app.Fragment() {
     fun getmychat(type : Int){
 
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+        if (type == 1) {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1) {
+                Toast.makeText(context, "비회원은 채팅을 이용하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+
         params.put("type", type)
 
         if (type == 2){
