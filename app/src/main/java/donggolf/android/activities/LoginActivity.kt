@@ -58,8 +58,6 @@ class LoginActivity : RootActivity() {
         PrefUtils.setPreference(context, "goguntype", goguntype)
         PrefUtils.setPreference(context, "region_id", region_id)
 
-
-
         //getKeyHash(context)
 
 //        mAuth = FirebaseAuth.getInstance()
@@ -187,8 +185,7 @@ class LoginActivity : RootActivity() {
     }
 
     fun nomemberlogin() {
-        val email = emailET.text.toString()
-        val password = passwordET.text.toString()
+        startActivity(Intent(context, MainActivity::class.java))
     }
 
     fun movefindid() {
