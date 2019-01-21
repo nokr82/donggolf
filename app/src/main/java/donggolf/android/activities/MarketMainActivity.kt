@@ -60,7 +60,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }
@@ -68,7 +68,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }
@@ -76,7 +76,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }
@@ -105,7 +105,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, brandData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
 
-        getSecondHandMarketItems("all")
+        getSecondHandMarketItems("all",1)
 
         //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
@@ -157,7 +157,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 }
                 form = title
 //                formData[position].put("isSelectedOp", true)
-                getSecondHandMarketItems("form")
+                getSecondHandMarketItems("form",1)
 
 
 
@@ -204,7 +204,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 //                brandData[position].put("isSelectedOp", true)
                 categoryAdapter.notifyDataSetChanged()
 
-                getSecondHandMarketItems("brand")
+                getSecondHandMarketItems("brand",1)
 
                 alert.dismiss()
             }
@@ -248,7 +248,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 //                productData[position].put("isSelectedOp", true)
 
                 productTypeAdapter.notifyDataSetChanged()
-                getSecondHandMarketItems("type")
+                getSecondHandMarketItems("type",1)
                 alert.dismiss()
             }
 
@@ -326,7 +326,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     }
 
     //마켓 목록뽑기
-    fun getSecondHandMarketItems(type : String){
+    fun getSecondHandMarketItems(type : String ,page :Int){
         val params = RequestParams()
         params.put("type", type)
         params.put("value", values)
@@ -343,7 +343,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                     val marketItems = response.getJSONArray("marketItems")
 
                     Log.d("마켓목록",marketItems.toString())
-                    page = response.getInt("page")
+                    this@MarketMainActivity.page = response.getInt("page")
                     totalPage = response.getInt("totalPage")
 
                     if(page == 1) {
@@ -385,7 +385,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 page++
                 lastcount = totalItemCountScroll
 
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }
