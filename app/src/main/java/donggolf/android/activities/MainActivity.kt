@@ -147,11 +147,17 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
 
         homeRL.setOnClickListener {
+            setButtonImage()
             frags.currentItem = 0
+            homeBT.setBackgroundResource(R.drawable.btn_main_on)
+            homeIV.setBackgroundResource(R.drawable.btn_withdrawal)
         }
 
         chatRL.setOnClickListener {
+            setButtonImage()
             frags.currentItem = 1
+            chatBT.setBackgroundResource(R.drawable.btn_chatting_on)
+            chatIV.setBackgroundResource(R.drawable.btn_withdrawal)
         }
 
         noticeRV.setOnClickListener {
@@ -160,7 +166,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+//            setButtonImage()
             var intent = Intent(context, AlarmActivity::class.java)
             startActivity(intent)
         }
@@ -170,6 +176,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            setButtonImage()
+            infoBT.setBackgroundResource(R.drawable.btn_mypage_on)
+            infoIV.setBackgroundResource(R.drawable.btn_withdrawal)
 
             frags.currentItem = 2
         }
@@ -207,7 +216,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
                     if (result == "ok") {
                         membercnt = response!!.getString("membercnt")
-                        areaCntTV.text = membercnt
+                        areaCntTV.text = membercnt + " 명"
 
 
                     }
@@ -283,6 +292,17 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             }
         }
 
+    }
+
+    fun setButtonImage(){
+        homeBT.setBackgroundResource(R.drawable.btn_main_off)
+        homeIV.setBackgroundResource(R.drawable.img_line_1)
+        chatBT.setBackgroundResource(R.drawable.btn_chatting_off)
+        chatIV.setBackgroundResource(R.drawable.img_line_1)
+        noticeBT.setBackgroundResource(R.drawable.btn_notice_off)
+        noticeIV.setBackgroundResource(R.drawable.img_line_1)
+        infoBT.setBackgroundResource(R.drawable.btn_mypage_off)
+        infoIV.setBackgroundResource(R.drawable.img_line_1)
     }
 
 

@@ -84,6 +84,8 @@ class MainDetailActivity : RootActivity() {
     var commentType = ""
     var commentParent = ""
     var blockYN = ""
+    var cht_yn = ""
+    var cmt_yn = ""
 
     var MODIFYS = 70
 
@@ -286,6 +288,11 @@ class MainDetailActivity : RootActivity() {
             var comment = Utils.getString(cmtET)
             if (comment == "" || comment == null){
                 Toast.makeText(context,"빈칸은 입력하실 수 없습니다.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (cmt_yn == "N"){
+                Toast.makeText(context,"댓글이 차단된 게시물 입니다.",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -731,8 +738,9 @@ class MainDetailActivity : RootActivity() {
                             val Looker = response.getJSONArray("Looker")
                             val Like = response.getJSONArray("Like")
                             val Comments = response.getJSONArray("Comments")
-                            val cht_yn = Utils.getString(data,"cht_yn")
-                            val cmt_yn = Utils.getString(data,"cmt_yn")
+                            cht_yn = Utils.getString(data,"cht_yn")
+                            cmt_yn = Utils.getString(data,"cmt_yn")
+
 
                             val likeDiv = response.getString("LikeDiv")
 

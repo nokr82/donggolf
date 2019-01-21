@@ -80,6 +80,7 @@
                     android:layout_margin="10dp"
                     android:background="@null"
                     android:gravity="left"
+                    android:maxLines="5"
                     android:hint="내용을 입력해주세요"
                     android:textSize="16dp" />
 

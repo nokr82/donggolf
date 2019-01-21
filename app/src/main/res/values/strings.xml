@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">donggolf</string>
+    <string name="app_name">동네골프</string>
 
     <!-- date formatter -->
     <string name="interval_day">%1$d일전</string>

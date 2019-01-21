@@ -448,6 +448,24 @@ class AreaRangeActivity : RootActivity() {
             getGugun(id.toInt())
             arealistLV.visibility = View.GONE
             gridGV.visibility = View.VISIBLE
+
+            println("-----id $id")
+
+            if (Utils.getString(type,"name") == "세종특별자치시") {
+                var intent = Intent();
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("goguntype", sidotype)
+                intent.putExtra("region_id", id)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            } else if (Utils.getString(type,"name") == "전국"){
+                var intent = Intent();
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("goguntype", sidotype)
+                intent.putExtra("region_id", id)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
         }
 
         GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, gugunList)

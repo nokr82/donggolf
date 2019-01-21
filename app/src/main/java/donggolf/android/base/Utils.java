@@ -1002,9 +1002,9 @@ public class Utils {
 
     public static DisplayImageOptions UILoptions = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
-        // .showImageOnLoading(R.drawable.background_8041c6fe)
-        // .showImageForEmptyUri(R.drawable.background_8041c6fe)
-            // .showImageOnFail(R.drawable.background_8041c6fe)
+         .showImageOnLoading(R.drawable.noimage)
+         .showImageForEmptyUri(R.drawable.noimage)
+             .showImageOnFail(R.drawable.noimage)
             // .delayBeforeLoading(100)
         .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
 

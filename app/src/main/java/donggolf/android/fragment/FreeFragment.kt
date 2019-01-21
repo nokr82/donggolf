@@ -168,7 +168,7 @@ open class FreeFragment : Fragment() {
         adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
         main_listview.adapter = adapter
 
-        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData)
+        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData,this)
         main_edit_listview.adapter = editadapter
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
@@ -195,6 +195,7 @@ open class FreeFragment : Fragment() {
 
         main_edit_search.setOnClickListener {
             main_listview_search.visibility = View.VISIBLE
+            main_edit_search.isCursorVisible = true
         }
 
         main_edit_search.setOnEditorActionListener() { v, actionId, event ->
@@ -220,7 +221,16 @@ open class FreeFragment : Fragment() {
 
         main_edit_close.setOnClickListener {
             main_listview_search.visibility = View.GONE
+            Utils.hideKeyboard(context)
+            main_edit_search.isCursorVisible = false
         }
+
+        iconsearchIV.setOnClickListener {
+            resetList("")
+            main_listview_search.visibility = View.GONE
+            main_edit_search.isCursorVisible = false
+        }
+
 
         btn_del_searchWord.setOnClickListener {
             Utils.hideKeyboard(context)
@@ -231,33 +241,19 @@ open class FreeFragment : Fragment() {
 
             main_edit_search.setText("")
             resetList("")
+            main_edit_search.isCursorVisible = false
         }
 
         main_edit_listview.setOnItemClickListener { parent, view, position, id ->
-            view.main_edit_listitem_delete.setOnClickListener {
-                var json = editadapterData.get(position)
 
-                var SearchList = json.getJSONObject("SearchList")
-
-                var searchid:String = Utils.getString(SearchList,"id")
-
-                val params = RequestParams()
-                params.put("searchid",searchid)
-
-                PostAction.delete_search(params,object : JsonHttpResponseHandler(){
-
-                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                        if (editadapterData.size > 0) {
-                            editadapterData.removeAt(position)
-                            editadapter.notifyDataSetChanged()
-                        }
-                    }
-
-                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-
-                    }
-                })
-            }
+            val item = editadapterData.get(position)
+            val SearchList = item.getJSONObject("SearchList")
+            val content = Utils.getString(SearchList,"content")
+            println("----content$content")
+            resetList(content)
+            main_edit_search.isCursorVisible = false
+            Utils.hideKeyboard(context)
+            main_edit_search.setText("")
         }
 
         mainData()
@@ -323,8 +319,6 @@ open class FreeFragment : Fragment() {
                     }
 
                     val list = response!!.getJSONArray("content")
-                    println("list.length ${list.length()}")
-                    println("-------------------------")
 
                     for (i in 0..(list.length()-1)){
                         val Content = list.get(i) as JSONObject
@@ -493,5 +487,21 @@ open class FreeFragment : Fragment() {
             }
         }
 
+    }
+
+    fun deleteSearchList(searchid:String){
+        val params = RequestParams()
+        params.put("searchid",searchid)
+
+        PostAction.delete_search(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+        })
     }
 }

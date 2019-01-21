@@ -56,6 +56,10 @@ class ProfileTagChangeActivity : RootActivity() {
 
         tagList.adapter = adapter
 
+        if (intent.getStringExtra("type") != null){
+            titleTV.setText("나의 게시글 #")
+        }
+
 
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))

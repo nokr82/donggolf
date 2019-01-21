@@ -12,10 +12,10 @@
 
 
         <LinearLayout
+            android:id="@+id/finishBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/finishBT"
                 android:layout_width="11dp"
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
@@ -81,7 +81,7 @@
                 android:text="확인"
                 android:gravity="center"
                 android:textColor="#ffffff"
-                android:background="@drawable/btn_guest_selector"/>
+                android:background="@drawable/btn_login"/>
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout

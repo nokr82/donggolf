@@ -23,6 +23,7 @@ import android.provider.SyncStateContract.Helpers.update
 import android.content.pm.PackageManager
 import android.content.pm.PackageInfo
 import android.util.Base64
+import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.squareup.okhttp.internal.Util
@@ -54,9 +55,9 @@ class LoginActivity : RootActivity() {
         context = this
         progressDialog = ProgressDialog(context)
 
-        PrefUtils.setPreference(context, "sidotype", sidotype)
-        PrefUtils.setPreference(context, "goguntype", goguntype)
-        PrefUtils.setPreference(context, "region_id", region_id)
+//        PrefUtils.setPreference(context, "sidotype", sidotype)
+//        PrefUtils.setPreference(context, "goguntype", goguntype)
+//        PrefUtils.setPreference(context, "region_id", region_id)
 
         //getKeyHash(context)
 
@@ -84,6 +85,27 @@ class LoginActivity : RootActivity() {
             movefinPassword()
         }
 
+        autologinRL.setOnClickListener {
+            if (checkIV.visibility == View.GONE) {
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                            checkIV.visibility = View.VISIBLE
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                        })
+                val alert = builder.create()
+                alert.show()
+            } else {
+                checkIV.visibility = View.GONE
+            }
+        }
+
         autologinCB.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder
@@ -99,8 +121,6 @@ class LoginActivity : RootActivity() {
                     })
             val alert = builder.create()
             alert.show()
-
-
         }
 
     }
@@ -146,7 +166,7 @@ class LoginActivity : RootActivity() {
                         val isActive = Utils.getString(member,"status")
                         if (isActive == "a") {
 
-                            if (autologinCB.isChecked) {
+                            if (checkIV.visibility == View.VISIBLE) {
                                 PrefUtils.setPreference(context, "email", email)
                                 PrefUtils.setPreference(context, "pass", password)
                                 PrefUtils.setPreference(context, "auto", true)
