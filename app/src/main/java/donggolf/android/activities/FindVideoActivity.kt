@@ -187,7 +187,7 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
                 }
 
             } else {
-                if (count + selected.size > 1) {
+                if (selected.size  + 1 > 1) {
                     Toast.makeText(context, "동영상은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                     return
                 }

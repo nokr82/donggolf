@@ -3,13 +3,12 @@ package donggolf.android.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
-import android.graphics.drawable.BitmapDrawable
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.MotionEvent
@@ -17,37 +16,24 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.ImageView
 import android.widget.MediaController
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
-import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.actions.*
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
-import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import kotlinx.android.synthetic.main.dlg_post_menu.view.*
-import kotlinx.android.synthetic.main.item_chat_member_list.view.*
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
-import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.IOException
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class MainDetailActivity : RootActivity() {
@@ -91,8 +77,11 @@ class MainDetailActivity : RootActivity() {
 
     var x = 0.0f
 
-    lateinit var video:Uri
+    val GALLERY = 500
 
+    var comment_path: Bitmap? = null
+
+    lateinit var video:Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,6 +119,13 @@ class MainDetailActivity : RootActivity() {
                 videoVV.visibility = View.GONE
                 pagerVP.visibility = View.VISIBLE
             }
+        }
+
+        main_detail_gofindpicture.setOnClickListener {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+            startActivityForResult(galleryIntent, GALLERY)
         }
 
         //댓글 리스트뷰 롱클릭
@@ -305,6 +301,10 @@ class MainDetailActivity : RootActivity() {
             params.put("type", commentType)
             params.put("parent", commentParent)
 
+            if (comment_path != null){
+                params.put("file", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+            }
+
             CommentAction.comment_at_content(params,object :JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
@@ -316,6 +316,7 @@ class MainDetailActivity : RootActivity() {
                         cmtET.setText("")
                         cmtET.hint = ""
                         Utils.hideKeyboard(this@MainDetailActivity)
+                        commentLL.visibility = View.GONE
                     }
                 }
 
@@ -403,6 +404,7 @@ class MainDetailActivity : RootActivity() {
                                 val id = intent.getStringExtra("id")
                                 var intent = Intent(context, PictureDetailActivity::class.java)
                                 intent.putExtra("id", id)
+                                intent.putExtra("adPosition",adPosition)
                                 if (adverImagePaths != null){
                                     intent.putExtra("paths",adverImagePaths)
                                 }
@@ -421,11 +423,6 @@ class MainDetailActivity : RootActivity() {
         finishLL.setOnClickListener {
             finish()
         }
-
-        main_detail_gofindpicture.setOnClickListener {
-//            MoveFindPictureActivity()
-        }
-
         plusBT.setOnClickListener {
 //            relativ_RL.visibility = View.VISIBLE
             visibleMenu()
@@ -642,6 +639,12 @@ class MainDetailActivity : RootActivity() {
 
         }
 
+        delIV.setOnClickListener {
+            addedImgIV.setImageResource(0)
+            commentLL.visibility = View.GONE
+            comment_path = null
+        }
+
         getPost()
         getLooker()
     }
@@ -675,10 +678,17 @@ class MainDetailActivity : RootActivity() {
                         params.put("content_id",id)
                         params.put("deleted","Y")
 
+                        println("------content_id =-====== $id")
+
                         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
                             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                                var intent = Intent()
+                                intent.putExtra("reset", "reset")
+                                setResult(RESULT_OK, intent);
                                 finish()
+
                             }
 
                             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -686,8 +696,6 @@ class MainDetailActivity : RootActivity() {
                             }
 
                         })
-
-                        finish()
 
                     }
 
@@ -832,6 +840,20 @@ class MainDetailActivity : RootActivity() {
                             val nick = Utils.getString(member, "nick")
                             val status_msg = Utils.getString(member, "status_msg")
                             val profile_img = Utils.getString(member, "profile_img")
+                            val sex = Utils.getString(member,"sex")
+                            if (sex == "0"){
+                                nickNameTV.setTextColor(Color.parseColor("#000000"))
+                            }
+
+                            val freind = Utils.getString(member,"freind")
+                            if (freind == "0"){
+                                freindIV.setImageResource(R.drawable.icon_second)
+                            }
+
+
+//                            if (member_id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
+//                                freindIV.visibility = View.GONE
+//                            }
 
                             nickNameTV.text = nick
                             statusmsgTV.text = status_msg
@@ -1120,6 +1142,40 @@ class MainDetailActivity : RootActivity() {
 //                    if (data!!.getStringExtra("reset") != null) {
 
 //                    }
+                    }
+                }
+
+                GALLERY -> {
+                    if (data != null)
+                    {
+
+                        val contentURI = data.data
+
+                        try
+                        {
+                            commentLL.visibility = View.VISIBLE
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
+                                addedImgIV.setImageBitmap(comment_path)
+
+                            }
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+
+
                     }
                 }
             }

@@ -4,7 +4,10 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -37,6 +40,14 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         //val member_info = data.getJSONObject("Member")
         val comment = data.getJSONObject("ContentComment")
 
+        var image_uri = Utils.getString(comment,"image_uri")
+        if (image_uri != "" && image_uri != null){
+            item.itemimageIV.visibility = View.VISIBLE
+            var image = Config.url + image_uri
+            ImageLoader.getInstance().displayImage(image, item.itemimageIV, Utils.UILoptionsUserProfile)
+        }
+
+
         var comment_id = Utils.getInt(comment,"id")
         data.put("comment_id", comment_id)
 
@@ -61,6 +72,22 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
 
         }
 
+        val freind = Utils.getString(comment,"freind")
+
+        if (freind == "0"){
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+        } else {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+        }
+
+        val Member = data.getJSONObject("Member")
+        val profile_img = Utils.getString(Member,"profile_img")
+        if (profile_img != null){
+            var image = Config.url + profile_img
+            ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
+        }
+
+
         var comment_memberID = Utils.getInt(comment,"member_id")
         data.put("cmt_wrt_id", comment_memberID)
 
@@ -73,9 +100,6 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
 
         if (isBlocked == "Y") {
             item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
-            notifyDataSetChanged()
-        } else {
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
             notifyDataSetChanged()
         }
 
@@ -105,12 +129,13 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
     class ViewHolder(v: View) {
 
         var main_detail_comment_typeIV : ImageView
-        var main_detail_comment_profileIV : ImageView
+        var main_detail_comment_profileIV : CircleImageView
         var main_detail_comment_nicknameTV : TextView
         var main_detail_comment_relationIV : ImageView
         var main_detail_comment_conditionTV : TextView
         var main_detail_comment_dateTV : TextView
         var main_detailLV : LinearLayout
+        var itemimageIV :ImageView
 
 
         init {
@@ -121,6 +146,7 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             main_detail_comment_conditionTV = v.findViewById(R.id.main_detail_comment_conditionTV)
             main_detail_comment_dateTV = v.findViewById(R.id.main_detail_comment_dateTV)
             main_detailLV = v.findViewById(R.id.main_detailLV)
+            itemimageIV = v.findViewById(R.id.itemimageIV)
 
         }
     }

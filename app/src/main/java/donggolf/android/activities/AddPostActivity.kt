@@ -1061,7 +1061,6 @@ class AddPostActivity : RootActivity() {
         images_url = ArrayList()
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
-        println("member_id ----- $member_id")
 
         if (setContent != null) {
             titleET.setText(setContent.title)
@@ -1083,8 +1082,6 @@ class AddPostActivity : RootActivity() {
 
         permission()
 
-        println("displayname " + displaynamePaths.size.toString())
-
         val category = intent.getIntExtra("category", 0)
 
         if (category == 2) {
@@ -1100,36 +1097,38 @@ class AddPostActivity : RootActivity() {
 
                     .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-                        val title = Utils.getString(titleET)
-                        val content = Utils.getString(contentET)
+//                        val title = Utils.getString(titleET)
+//                        val content = Utils.getString(contentET)
+//
+//                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
+//
+//                        dbManager.inserttmpcontent(tmpContent)
+//
+//                        if (images_path != null && images_path!!.size > 0 ) {
+//                            for (i in 0 until images_path!!.size){
+//                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+//                                println("imagesPath ${imagesPath.path}")
+//                                dbManager.insertimagespath(imagesPath)
+//                            }
+//                        }
+//
+//                        if (videoPaths != null && videoPaths.size > 0 ) {
+//                            for (i in 0 until videoPaths.size){
+//                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+//                                println("videoPath ${videoPath.path}")
+//                                dbManager.insertimagespath(videoPath)
+//                            }
+//                        }
+//
+//                        if (hashtag != null && hashtag.size > 0 ) {
+//                            for (i in 0 until hashtag.size){
+//                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+//                                println("hastag ${hastag.path}")
+//                                dbManager.insertimagespath(hastag)
+//                            }
+//                        }
 
-                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
-                        dbManager.inserttmpcontent(tmpContent)
-
-                        if (images_path != null && images_path!!.size > 0 ) {
-                            for (i in 0 until images_path!!.size){
-                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
-                                println("imagesPath ${imagesPath.path}")
-                                dbManager.insertimagespath(imagesPath)
-                            }
-                        }
-
-                        if (videoPaths != null && videoPaths.size > 0 ) {
-                            for (i in 0 until videoPaths.size){
-                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
-                                println("videoPath ${videoPath.path}")
-                                dbManager.insertimagespath(videoPath)
-                            }
-                        }
-
-                        if (hashtag != null && hashtag.size > 0 ) {
-                            for (i in 0 until hashtag.size){
-                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
-                                println("hastag ${hastag.path}")
-                                dbManager.insertimagespath(hastag)
-                            }
-                        }
 
                         finish()
 
@@ -1137,20 +1136,20 @@ class AddPostActivity : RootActivity() {
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
-                        loadData(dbManager,member_id.toString())
-
-                        if(tmpContent.id == null){
-                            finish()
-                        }
-
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
-                            dbManager.deleteImagePaths(member_id.toString())
-                        }
-
-                        if(tmpContent.id != null) {
-                            dbManager.deleteTmpContent(tmpContent.id!!)
-                            finish()
-                        }
+//                        loadData(dbManager,member_id.toString())
+//
+//                        if(tmpContent.id == null){
+//                            finish()
+//                        }
+//
+//                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+//                            dbManager.deleteImagePaths(member_id.toString())
+//                        }
+//
+//                        if(tmpContent.id != null) {
+//                            dbManager.deleteTmpContent(tmpContent.id!!)
+//                            finish()
+//                        }
 
 
                     })
@@ -1432,6 +1431,14 @@ class AddPostActivity : RootActivity() {
         } else {
             var region_id = 1
             params.put("region", region_id)
+        }
+
+        if (PrefUtils.getStringPreference(context,"region_id2") != null) {
+            var region_id = PrefUtils.getStringPreference(context, "region_id2")
+            params.put("region2", region_id)
+        } else {
+            var region_id = 1
+            params.put("region2", region_id)
         }
 
         if (hashtag != null){

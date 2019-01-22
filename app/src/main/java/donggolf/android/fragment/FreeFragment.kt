@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
 import org.json.JSONException
 import org.json.JSONObject
 
-open class FreeFragment : Fragment() {
+open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
     var ctx: Context? = null
 
@@ -59,12 +59,23 @@ open class FreeFragment : Fragment() {
     private val SELECT_PICTURE: Int = 101
 
     val RESET_DATA = 1000
+    val DETAIL = 1001
+
+    private var page = 1
+    private var totalPage = 0
+    private val visibleThreshold = 10
+    private var userScrolled = false
+    private var lastItemVisibleFlag = false
+    private var lastcount = 0
+    private var totalItemCountScroll = 0
+
 
     lateinit var vpPage: ViewPager
     internal var MsgReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
 
+                adapterData.clear()
                 mainData()
             }
         }
@@ -155,6 +166,8 @@ open class FreeFragment : Fragment() {
 
         activity = getActivity() as MainActivity
 
+        main_edit_search.isCursorVisible = false
+
         //메시지보내기
         var filter = IntentFilter("MSG_NEXT")
         activity.registerReceiver(MsgReceiver, filter)
@@ -171,6 +184,7 @@ open class FreeFragment : Fragment() {
         editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData,this)
         main_edit_listview.adapter = editadapter
 
+        main_listview.setOnScrollListener(this)
         main_listview.setOnItemClickListener { parent, view, position, id ->
 
             Utils.hideKeyboard(context)
@@ -281,7 +295,7 @@ open class FreeFragment : Fragment() {
     fun MoveMainDetailActivity(id : String){
         var intent: Intent = Intent(activity, MainDetailActivity::class.java)
         intent.putExtra("id",id)
-        startActivity(intent)
+        startActivityForResult(intent, DETAIL);
     }
 
     fun MoveAreaRangeActivity(){
@@ -296,14 +310,20 @@ open class FreeFragment : Fragment() {
 
     fun mainData() {
         val params = RequestParams()
-       var sidotype = PrefUtils.getStringPreference(context, "sidotype")
-       var goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+        var sidotype = PrefUtils.getStringPreference(context, "sidotype")
+        var goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+        var goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
         var region_id = PrefUtils.getStringPreference(context,"region_id")
+        var region_id2 = PrefUtils.getStringPreference(context,"region_id2")
 
         params.put("member_id",member_id)
         params.put("goguntype",goguntype)
         params.put("sidotype",sidotype)
         params.put("region_id",region_id)
+        if (region_id2 != ""){
+            params.put("region_id2", region_id2)
+        }
+        params.put("page", page)
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
 
@@ -314,9 +334,15 @@ open class FreeFragment : Fragment() {
 
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    if (adapterData != null){
-                        adapterData.clear()
-                    }
+//                    if (adapterData != null){
+//                        adapterData.clear()
+//                    }
+
+                    totalPage = response.getInt("totalPage");
+                    page = response.getInt("page");
+
+                    println("-------page $page")
+                    println("-------totalpage $totalPage")
 
                     val list = response!!.getJSONArray("content")
 
@@ -432,6 +458,7 @@ open class FreeFragment : Fragment() {
 
                             if(adapterData != null){
                                 adapterData.clear()
+                                adapter.notifyDataSetChanged()
                             }
 
                             Log.d("리스트",list.toString())
@@ -471,6 +498,42 @@ open class FreeFragment : Fragment() {
     }
 
 
+    override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+
+        if (userScrolled && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold && page < totalPage && totalPage > 0) {
+            if (totalPage > page) {
+                //page++;
+                //threemeals_store_index1();
+            }
+        }
+
+        //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem)
+        // + 현재 화면에 보이는 리스트 아이템의갯수(visibleItemCount)가
+        // 리스트 전체의 갯수(totalOtemCount)-1 보다 크거나 같을때
+        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+        totalItemCountScroll = totalItemCount
+
+    }
+
+    override fun onScrollStateChanged(p0: AbsListView?, scrollState: Int) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            userScrolled = true
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
+            userScrolled = false
+
+            //화면이 바닥에 닿았을때
+            if (totalPage > page) {
+                page++
+                lastcount = totalItemCountScroll
+
+                mainData()
+            }
+
+
+        }
+    }
+
+
 
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -481,6 +544,20 @@ open class FreeFragment : Fragment() {
             when (requestCode) {
                 RESET_DATA -> {
                     if (data!!.getStringExtra("reset") != null){
+                        if (adapterData != null){
+                            adapterData.clear()
+                        }
+
+                        mainData()
+                    }
+                }
+
+                DETAIL -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        if (adapterData != null){
+                            adapterData.clear()
+                        }
+
                         mainData()
                     }
                 }

@@ -94,4 +94,15 @@ object MemberAction {
         HttpClient.post("/member/alarms.json", params, handler)
     }
 
+    // 친구 검색 키워드 지우기
+    fun delete_search(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/delete_search.json", params, handler)
+    }
+
+    // 지역 멤버 가져오기
+    fun get_region_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/get_region_member.json", params, handler)
+    }
+
+
 }

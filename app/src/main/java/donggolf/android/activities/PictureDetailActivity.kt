@@ -50,6 +50,7 @@ class PictureDetailActivity : RootActivity() {
 
         if (intent.hasExtra("id")) {
             val id = intent.getStringExtra("id")
+            adPosition = intent.getIntExtra("adPosition",0)
 
             if (intent.getSerializableExtra("paths") != null){
                 adverImagePaths = intent.getSerializableExtra("paths") as ArrayList<String>
@@ -59,8 +60,8 @@ class PictureDetailActivity : RootActivity() {
                     for (i in 0 until adverImagePaths.size){
                         val iv = ImageView(context)
 
-                        val photoViewAttacher = PhotoViewAttacher(iv)
-                        photoViewAttacher.scaleType = ImageView.ScaleType.FIT_XY
+//                        val photoViewAttacher = PhotoViewAttacher(iv)
+//                        photoViewAttacher.scaleType = ImageView.ScaleType.CENTER_CROP
 
                         com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(adverImagePaths.get(i),iv,Utils.UILoptions)
 
@@ -70,87 +71,90 @@ class PictureDetailActivity : RootActivity() {
                             pagerAdapter.addView(iv)
                         }
 
-                        pageTV.setText("(" + 1 + "/" + adverImagePaths.size.toString() + ")")
 
                         pagerAdapter.notifyDataSetChanged()
                     }
                 }
 
+//                adPosition
+                pageTV.setText("(" + (adPosition+1) + "/" + adverImagePaths.size.toString() + ")")
+                viewpagerVP.setCurrentItem(adPosition)
+
             }
 
-            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                if (success){
-                    if(data != null){
-                        if(data.size != 0){
-
-                            println("data : $data")
-                            val time: Long = data["createAt"] as Long
-
-                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
-
-                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
-
-                            for(i in 0.. (texts.size-1)){
-
-                                val text_ = JSONObject(texts.get(i))
-
-                                val type = Utils.getString(text_, "type")
-
-                                if(type == "text") {
-                                    val text = text_.get("text")as String
-                                } else if (type == "photo") {
-                                    val photo = text_.get("file") as JSONArray
-
-                                    pageTV.setText("(" + 1 + "/" + photo.length() + ")")
-                                    for(i in 0.. (photo.length() - 1)) {
-
-                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
-                                            if (s != null) {
-                                                adverImagePaths.add(s)
-
-                                                val iv = ImageView(context)
-
-                                                val photoViewAttacher = PhotoViewAttacher(iv)
-                                                photoViewAttacher.scaleType = ImageView.ScaleType.FIT_XY
-
-                                                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(s,iv,Utils.UILoptions)
-
-                                                if(i == 0) {
-                                                    pagerAdapter.addView(iv,i)
-                                                } else {
-                                                    pagerAdapter.addView(iv)
-                                                }
-
-
-
-                                                pagerAdapter.notifyDataSetChanged()
-                                            }
-                                        }
-                                    }
-
-
-                                } else if (type == "video"){
-                                    val video = text_.get("file") as JSONArray
-                                    println("video : ========= $video")
-                                }
-
-                            }
-
-                            println("data : " + data)
+//            ContentAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
+//                if (success){
+//                    if(data != null){
+//                        if(data.size != 0){
 //
-//                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
+//                            println("data : $data")
+//                            val time: Long = data["createAt"] as Long
 //
-//                            detailIV.setImageBitmap(bt)
-
-                            //상태메시지
-
-
-                        }
-                    }
-                } else {
-
-                }
-            }
+//                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
+//
+//                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
+//
+//                            for(i in 0.. (texts.size-1)){
+//
+//                                val text_ = JSONObject(texts.get(i))
+//
+//                                val type = Utils.getString(text_, "type")
+//
+//                                if(type == "text") {
+//                                    val text = text_.get("text")as String
+//                                } else if (type == "photo") {
+//                                    val photo = text_.get("file") as JSONArray
+//
+//                                    pageTV.setText("(" + 1 + "/" + photo.length() + ")")
+//                                    for(i in 0.. (photo.length() - 1)) {
+//
+//                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
+//                                            if (s != null) {
+//                                                adverImagePaths.add(s)
+//
+//                                                val iv = ImageView(context)
+//
+//                                                val photoViewAttacher = PhotoViewAttacher(iv)
+//                                                photoViewAttacher.scaleType = ImageView.ScaleType.FIT_XY
+//
+//                                                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(s,iv,Utils.UILoptions)
+//
+//                                                if(i == 0) {
+//                                                    pagerAdapter.addView(iv,i)
+//                                                } else {
+//                                                    pagerAdapter.addView(iv)
+//                                                }
+//
+//
+//
+//                                                pagerAdapter.notifyDataSetChanged()
+//                                            }
+//                                        }
+//                                    }
+//
+//
+//                                } else if (type == "video"){
+//                                    val video = text_.get("file") as JSONArray
+//                                    println("video : ========= $video")
+//                                }
+//
+//                            }
+//
+//                            println("data : " + data)
+////
+////                            var bt: Bitmap = Utils.getImage(context.contentResolver, data[0]!!["door_image"].toString(), 100)
+////
+////                            detailIV.setImageBitmap(bt)
+//
+//                            //상태메시지
+//
+//
+//                        }
+//                    }
+//                } else {
+//
+//                }
+//            }
         }
 
 

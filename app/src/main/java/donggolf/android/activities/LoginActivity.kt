@@ -38,6 +38,11 @@ import java.security.NoSuchAlgorithmException
 
 class LoginActivity : RootActivity() {
 
+
+
+
+
+
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
 //    private lateinit var mAuth: FirebaseAuth

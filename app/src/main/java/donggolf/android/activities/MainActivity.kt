@@ -60,10 +60,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var content_id = -1
     var friend_id = -1
     var AREA_OK = 101
-    var sidotype = ""
-    var goguntype = ""
+    var sidotype = "전국"
+    var sidotype2 = "전국"
+    var goguntype = "전국"
+    var goguntype2 = "전국"
     var membercnt = ""
-    var region_id = ""
+    var region_id = "1001"
+    var region_id2 = ""
 
     internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -105,17 +108,26 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         if (PrefUtils.getStringPreference(context, "sidotype") != null){
             sidotype = PrefUtils.getStringPreference(context, "sidotype")
+            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
             goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-            areaTV.text = sidotype+"/"+goguntype
+            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+            region_id  =PrefUtils.getStringPreference(context, "region_id")
+            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
+
+            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
+        } else {
+            PrefUtils.setPreference(context, "sidotype", sidotype)
+            PrefUtils.setPreference(context, "sidotype2", sidotype2)
+            PrefUtils.setPreference(context, "goguntype", goguntype)
+            PrefUtils.setPreference(context, "goguntype2", goguntype2)
+            PrefUtils.setPreference(context, "region_id", region_id)
+            PrefUtils.setPreference(context, "region_id2", region_id2)
         }
 
-
-        sidotype = PrefUtils.getStringPreference(context, "sidotype")
-        goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-        if (sidotype==""&&goguntype==""){
-            areaTV.text ="지역을 설정해주세요."
+        if (sidotype=="전국"&&goguntype=="전국"){
+            areaTV.text ="전국"
         }else{
-            areaTV.text =sidotype  +"/"+ goguntype
+            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
         }
 
 
@@ -208,6 +220,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         val params = RequestParams()
         params.put("sidotype", sidotype)
         params.put("goguntype", goguntype)
+        if (goguntype2 != ""){
+            params.put("goguntype2", goguntype2)
+        }
 
         MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -270,24 +285,33 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 if(resultCode == Activity.RESULT_OK) {
                     sidotype  = data!!.getStringExtra("sidotype")
                     PrefUtils.setPreference(context, "sidotype", sidotype)
+                    sidotype2  = data!!.getStringExtra("sidotype2")
+                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
                     goguntype =  data!!.getStringExtra("goguntype")
                     PrefUtils.setPreference(context, "goguntype", goguntype)
+                    goguntype2 =  data!!.getStringExtra("goguntype2")
+                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
                     region_id = data!!.getStringExtra("region_id")
                     PrefUtils.setPreference(context, "region_id", region_id)
+                    region_id2 = data!!.getStringExtra("region_id2")
+                    PrefUtils.setPreference(context, "region_id2", region_id2)
                     Log.d("시도",sidotype)
 
                     sidotype = PrefUtils.getStringPreference(context, "sidotype")
+                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
                     goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
                     region_id = PrefUtils.getStringPreference(context,"region_id")
+                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
                     member_cnt()
                     var intent = Intent()
                     intent.action = "MSG_NEXT"
                     context.sendBroadcast(intent)
 
 
+                    println("-----region_id ----- $region_id , ------ region_id2 $region_id2")
 
-
-                    areaTV.text = sidotype+"/"+goguntype
+                    areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
                 }
             }
         }
