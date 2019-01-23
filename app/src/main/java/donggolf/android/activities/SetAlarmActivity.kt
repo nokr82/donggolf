@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
@@ -11,7 +12,9 @@ import donggolf.android.actions.ChattingAction
 import donggolf.android.adapters.SetAlarmAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_set_alarm.*
+import kotlinx.android.synthetic.main.dlg_chat_setting.view.*
 import org.json.JSONObject
 
 class SetAlarmActivity : RootActivity() {
@@ -44,6 +47,56 @@ class SetAlarmActivity : RootActivity() {
             setAlarm.visibility = View.GONE
         }
 
+        set_chat_list.setOnItemClickListener { parent, view, position, id ->
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_setting, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            val item = adapterData.get(position)
+            var room = item.getJSONObject("Chatroom")
+            var room_id = Utils.getString(room,"id")
+            val chatmember = item.getJSONObject("Chatmember")
+            val chatmember_id = Utils.getString(chatmember,"member_id")
+            val push_yn = Utils.getString(chatmember,"push_yn")
+            if (PrefUtils.getIntPreference(context,"member_id") == chatmember_id.toInt()) {
+                if (push_yn == "Y") {
+                    dialogView.pushIV.visibility = View.VISIBLE
+                    dialogView.pushoffIV.visibility = View.GONE
+                    dialogView.silentIV.visibility = View.GONE
+                } else if (push_yn == "C"){
+                    dialogView.pushIV.visibility = View.GONE
+                    dialogView.pushoffIV.visibility = View.GONE
+                    dialogView.silentIV.visibility = View.VISIBLE
+                } else {
+                    dialogView.pushIV.visibility = View.GONE
+                    dialogView.pushoffIV.visibility = View.VISIBLE
+                    dialogView.silentIV.visibility = View.GONE
+                }
+            }
+
+            dialogView.dlg_comment_blockLL.setOnClickListener {
+                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"Y")
+                alert.dismiss()
+            }
+
+            dialogView.dlg_prod_modLL.setOnClickListener {
+                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"C")
+                alert.dismiss()
+            }
+
+            dialogView.dlg_comment_delLL.setOnClickListener {
+                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"N")
+                alert.dismiss()
+            }
+
+            dialogView.dlg_close_IV.setOnClickListener {
+                alert.dismiss()
+            }
+
+
+        }
+
         getmychat(1)
 
     }
@@ -69,6 +122,30 @@ class SetAlarmActivity : RootActivity() {
                         }
                     }
                     adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_push(room_id:String, member_id:String,push_yn:String){
+        val params = RequestParams()
+        params.put("member_id",member_id)
+        params.put("room_id", room_id)
+        params.put("push_yn",push_yn)
+
+        ChattingAction.set_push(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    getmychat(1)
                 }
             }
 

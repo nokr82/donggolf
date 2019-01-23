@@ -53,13 +53,15 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val myId = PrefUtils.getIntPreference(context, "member_id")
         val send_member_id = Utils.getInt(chatting,"member_id")
         val content = Utils.getString(chatting,"content")
-        val content_image = Utils.getString(chatting, "image")
+        val content_image = Utils.getString(chatting, "img")
         val member_nick = Utils.getString(member,"nick")
         var messageCreated = Utils.getString(chatting,"created")
         var split = messageCreated.split(" ")
         var peoplecount = Utils.getInt(chatting,"peoplecount")
         var read_count = Utils.getInt(chatting,"read_count")
         var difference = peoplecount - read_count
+        var type = Utils.getString(chatting,"type")
+
 
         var text_size = Utils.getString(json,"text_size")
         if (text_size == "1"){
@@ -86,11 +88,26 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.myLL.visibility = View.VISIBLE
             item.userLL.visibility = View.GONE
             item.mycontentTV.setText(content)
+
+            if (type == "i"){
+                item.myimageIV.visibility = View.VISIBLE
+                item.mycontentTV.visibility = View.GONE
+                var image = Config.url + content_image
+                ImageLoader.getInstance().displayImage(image, item.myimageIV, Utils.UILoptionsUserProfile)
+            }
+
         } else {
             item.myLL.visibility = View.GONE
             item.userLL.visibility = View.VISIBLE
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
+
+            if (type == "i"){
+                item.userimageIV.visibility = View.VISIBLE
+                item.usercontentTV.visibility = View.GONE
+                var image = Config.url + content_image
+                ImageLoader.getInstance().displayImage(image, item.userimageIV, Utils.UILoptionsUserProfile)
+            }
 
             val today = Utils.todayStr()
 
@@ -146,6 +163,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var usernickTV : TextView
         var usercontentTV: TextView
         var userdateTV: TextView
+        var userimageIV :ImageView
+        var myimageIV :ImageView
 
         init {
             myLL = v.findViewById<View>(R.id.myLL) as LinearLayout
@@ -156,6 +175,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             usernickTV = v.findViewById<View>(R.id.usernickTV) as TextView
             usercontentTV = v.findViewById<View>(R.id.usercontentTV) as TextView
             userdateTV = v.findViewById<View>(R.id.userdateTV) as TextView
+            userimageIV = v.findViewById<View>(R.id.userimageIV) as ImageView
+            myimageIV = v.findViewById<View>(R.id.myimageIV) as ImageView
 
         }
     }

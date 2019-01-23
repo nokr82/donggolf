@@ -75,13 +75,31 @@ class NoticeManageActivity : RootActivity() {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val item = response.getJSONObject("announcement")
-                        val Announcement = item.getJSONObject("Announcement")
-                        val Member = item.getJSONObject("Member")
-                        val Chatroom = item.getJSONObject("Chatroom")
+                        val room = response.getJSONObject("chatroom")
+                        val chatroom = room.getJSONObject("Chatroom")
+                        val founder_id = Utils.getString(chatroom,"member_id")
+
+                        println("-------founder_id $founder_id")
+
+                        if (PrefUtils.getIntPreference(context,"member_id") == founder_id.toInt()){
+                            noticeLL.visibility = View.GONE
+                            founderLL.visibility = View.VISIBLE
+                            founderTV.isCursorVisible = true
+                        }
+
+                        val Member = room.getJSONObject("Member")
 
                         val nick = Utils.getString(Member,"nick")
                         nickTV.setText(nick)
+
+                        var image = Config.url + Utils.getString(Member, "profile_img")
+                        ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+
+                        val item = response.getJSONObject("announcement")
+                        val Announcement = item.getJSONObject("Announcement")
+                        val Chatroom = item.getJSONObject("Chatroom")
+
 
                         val readcount = Utils.getString(Announcement,"readcount")
                         readcountTV.setText(readcount + "명 읽음")
@@ -110,10 +128,10 @@ class NoticeManageActivity : RootActivity() {
                         } else {
                             noticeLL.visibility = View.GONE
                             founderLL.visibility = View.VISIBLE
+                            founderTV.isCursorVisible = true
                         }
 
-                        var image = Config.url + Utils.getString(Member, "profile_img")
-                        ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
 
                     }
                 } catch (e: JSONException) {

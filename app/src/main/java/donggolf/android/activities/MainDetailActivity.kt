@@ -121,6 +121,26 @@ class MainDetailActivity : RootActivity() {
             }
         }
 
+        leftIV.setOnClickListener {
+            if (adPosition-1 < 0){
+                Toast.makeText(context,"마지막 사진입니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            adPosition -= 1
+            pagerVP.setCurrentItem(adPosition)
+        }
+
+        rightIV.setOnClickListener {
+
+            if (adPosition+1 > adverImagePaths.size){
+                Toast.makeText(context,"마지막 사진입니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            adPosition += 1
+            pagerVP.setCurrentItem(adPosition)
+        }
+
         main_detail_gofindpicture.setOnClickListener {
             val galleryIntent = Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -317,6 +337,11 @@ class MainDetailActivity : RootActivity() {
                         cmtET.hint = ""
                         Utils.hideKeyboard(this@MainDetailActivity)
                         commentLL.visibility = View.GONE
+
+                        addedImgIV.setImageResource(0)
+                        commentLL.visibility = View.GONE
+                        main_detail_gofindpicture.visibility = View.VISIBLE
+                        comment_path = null
                     }
                 }
 
@@ -642,6 +667,7 @@ class MainDetailActivity : RootActivity() {
         delIV.setOnClickListener {
             addedImgIV.setImageResource(0)
             commentLL.visibility = View.GONE
+            main_detail_gofindpicture.visibility = View.VISIBLE
             comment_path = null
         }
 
@@ -778,6 +804,7 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
+                                pagerVP.visibility = View.VISIBLE
                                 var imagePaths: ArrayList<String> = ArrayList<String>()
 
                                 for (i in 0 until imageDatas.length()){
@@ -791,7 +818,6 @@ class MainDetailActivity : RootActivity() {
                                     } else {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         videoviewTV.visibility = View.VISIBLE
-                                        println("-----------타ㅓㄴ다")
                                         video = Uri.parse(Config.url + path)
 //                                        videoVV.visibility = View.VISIBLE
 //                                        videoVV.start()
@@ -809,6 +835,12 @@ class MainDetailActivity : RootActivity() {
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
+
+                                if (adverImagePaths.size > 1){
+                                    leftIV.visibility = View.VISIBLE
+                                    rightIV.visibility = View.VISIBLE
+                                }
+
                             } else {
                                 imageRL.visibility = View.GONE
                             }
@@ -1154,6 +1186,7 @@ class MainDetailActivity : RootActivity() {
                         try
                         {
                             commentLL.visibility = View.VISIBLE
+                            main_detail_gofindpicture.visibility = View.GONE
 
                             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 

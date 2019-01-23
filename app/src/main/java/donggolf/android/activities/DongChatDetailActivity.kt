@@ -2,11 +2,11 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
@@ -29,6 +29,8 @@ import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -57,6 +59,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
     var block_code = ""
     var SET_NOTICE = 100
 
+    var comment_path: Bitmap? = null
+
     var block_member_ids:ArrayList<String> = ArrayList<String>()
 
     internal var loadDataHandler: Handler = object : Handler() {
@@ -65,7 +69,18 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
     }
 
+    internal var resetReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                detail_chatting()
+            }
+        }
+    }
+
     private var timer: Timer? = null
+
+    val BLOCK_MEMBER = 500
+    val GALLERY = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +89,9 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         context = this
 
         room_id = intent.getStringExtra("room_id")
+
+        var filter1 = IntentFilter("RESET_CHATTING")
+        registerReceiver(resetReceiver, filter1)
 
         adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
 
@@ -126,10 +144,15 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
         cancleLL.setOnClickListener {
             noticevisibleLL.visibility = View.GONE
+            set_notice_yn("Y")
         }
 
         addchattingTV.setOnClickListener {
             add_chatting()
+            addedImgIV.setImageResource(0)
+            commentLL.visibility = View.GONE
+            gofindpictureLL.visibility = View.VISIBLE
+            comment_path = null
         }
 
         chatsizeLL.setOnClickListener {
@@ -260,7 +283,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         allviewLL.setOnClickListener {
-            val intent = Intent(context, SelectMemberActivity::class.java)
+            val intent = Intent(context, ChatMemberActivity::class.java)
             intent.putExtra("founder",founder_id)
             intent.putExtra("room_id",room_id)
             intent.putExtra("member_count",memberList.size)
@@ -274,6 +297,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
         downcancleLL.setOnClickListener {
             downnoticevisibleLL.visibility = View.GONE
+            set_notice_yn("Y")
         }
 
         noticevisibleLL.setOnClickListener {
@@ -292,7 +316,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             val intent = Intent(context, SelectMemberActivity::class.java)
             intent.putExtra("block","block")
             intent.putExtra("room_id",room_id)
-            startActivity(intent)
+            startActivityForResult(intent,BLOCK_MEMBER)
         }
 
         chatSettingmemberLL.setOnClickListener {
@@ -324,7 +348,20 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             val intent = Intent(context, DongchatProfileActivity::class.java)
             intent.putExtra("room_id",room_id)
             startActivity(intent)
-            finish()
+        }
+
+        gofindpictureLL.setOnClickListener {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+            startActivityForResult(galleryIntent, GALLERY)
+        }
+
+        delIV.setOnClickListener {
+            addedImgIV.setImageResource(0)
+            commentLL.visibility = View.GONE
+            gofindpictureLL.visibility = View.VISIBLE
+            comment_path = null
         }
 
     }
@@ -354,6 +391,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             val notice = Utils.getString(chatroom,"notice")
                             val id = Utils.getString(chatmember,"member_id")
                             val nick = Utils.getString(chatmember,"nick")
+                            val notice_yn = Utils.getString(chatmember,"notice_yn")
                             max_count = Utils.getInt(chatroom,"max_count")
                             people_count = Utils.getInt(chatroom,"peoplecount")
 
@@ -373,7 +411,16 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                                 noticevisibleLL.visibility = View.GONE
                             }
 
-                            nicknameTV.setText(title)
+                            if (id == PrefUtils.getIntPreference(context,"member_id").toString()){
+                                println("-----notice_yn $notice_yn")
+
+                                if (notice_yn == "Y"){
+                                    downnoticevisibleLL.visibility = View.GONE
+                                    noticevisibleLL.visibility = View.GONE
+                                }
+                            }
+
+                            nicknameTV.setText(title + "(" + members.length().toString() + ")")
                             founder_id = Utils.getString(memberinfo,"id")
 
                             if (visible == "1"){
@@ -454,7 +501,14 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         params.put("mate_id", mate_id)
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
-        params.put("img","")
+
+        if (comment_path == null) {
+            params.put("type", "c")
+        } else {
+            params.put("img", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+            params.put("type", "i")
+            comment_path = null
+        }
 
         ChattingAction.add_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -507,7 +561,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                     val list = response.getJSONArray("list")
                     val room = response.getJSONObject("chatroom")
                     val roomtitle = Utils.getString(room,"title")
-                    nicknameTV.setText(roomtitle)
+//                    nicknameTV.setText(roomtitle)
 
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
@@ -557,7 +611,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         timer = Timer()
-        timer!!.schedule(task, 0, 2000)
+        timer!!.schedule(task, 0, 1000)
 
     }
 
@@ -839,8 +893,88 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                       detail_chatting()
                   }
               }
+
+                GALLERY -> {
+                    if (data != null)
+                    {
+
+                        val contentURI = data.data
+
+                        try
+                        {
+//                            commentLL.visibility = View.VISIBLE
+//                            gofindpictureLL.visibility = View.GONE
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
+//                                addedImgIV.setImageBitmap(comment_path)
+                                add_chatting()
+
+                            }
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+
+
+                    }
+                }
+
+                BLOCK_MEMBER ->{
+                    if (data!!.getStringExtra("reset") != null) {
+                        if (mate_id != null){
+                            mate_id.clear()
+                        }
+
+                        if (memberList != null){
+                            memberList.clear()
+                        }
+
+                        if (mate_nick != null){
+                            mate_nick.clear()
+                        }
+                        memberlistLL.removeAllViews()
+
+                        detail_chatting()
+                    }
+                }
             }
         }
+    }
+
+    fun set_notice_yn(type:String){
+
+        val params = RequestParams()
+        params.put("room_id",PrefUtils.getIntPreference(context,"room_id"))
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type", type)
+
+        ChattingAction.set_notice_yn(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "block") {
+                    Toast.makeText(context,"차단당한 게시물 입니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
     }
 
 }

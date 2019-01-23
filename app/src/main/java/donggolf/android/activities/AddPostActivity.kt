@@ -956,6 +956,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.MediaController
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -1016,6 +1017,7 @@ class AddPostActivity : RootActivity() {
     lateinit var videofile:ByteArray
 
     var MODIFYY = 100
+    var temp_yn = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1078,7 +1080,7 @@ class AddPostActivity : RootActivity() {
             video_image.clear()
         }
 
-//        loadData(dbManager,member_id.toString())
+        loadData(dbManager,member_id.toString())
 
         permission()
 
@@ -1097,59 +1099,63 @@ class AddPostActivity : RootActivity() {
 
                     .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-//                        val title = Utils.getString(titleET)
-//                        val content = Utils.getString(contentET)
-//
-//                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
-//
-//                        dbManager.inserttmpcontent(tmpContent)
-//
-//                        if (images_path != null && images_path!!.size > 0 ) {
-//                            for (i in 0 until images_path!!.size){
-//                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
-//                                println("imagesPath ${imagesPath.path}")
-//                                dbManager.insertimagespath(imagesPath)
-//                            }
-//                        }
-//
-//                        if (videoPaths != null && videoPaths.size > 0 ) {
-//                            for (i in 0 until videoPaths.size){
-//                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
-//                                println("videoPath ${videoPath.path}")
-//                                dbManager.insertimagespath(videoPath)
-//                            }
-//                        }
-//
-//                        if (hashtag != null && hashtag.size > 0 ) {
-//                            for (i in 0 until hashtag.size){
-//                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
-//                                println("hastag ${hastag.path}")
-//                                dbManager.insertimagespath(hastag)
-//                            }
-//                        }
+                        val title = Utils.getString(titleET)
+                        val content = Utils.getString(contentET)
 
+                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
+                        dbManager.inserttmpcontent(tmpContent)
+
+                        if (images_path != null && images_path!!.size > 0 ) {
+                            for (i in 0 until images_path!!.size){
+                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+                                println("imagesPath ${imagesPath.path}")
+                                dbManager.insertimagespath(imagesPath)
+                            }
+                        }
+
+                        if (videoPaths != null && videoPaths.size > 0 ) {
+                            for (i in 0 until videoPaths.size){
+                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                                println("videoPath ${videoPath.path}")
+                                dbManager.insertimagespath(videoPath)
+                            }
+                        }
+
+                        if (hashtag != null && hashtag.size > 0 ) {
+                            for (i in 0 until hashtag.size){
+                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                                println("hastag ${hastag.path}")
+                                dbManager.insertimagespath(hastag)
+                            }
+                        }
+
+                        temp_yn = "N"
 
                         finish()
+
+                        Utils.hideKeyboard(this)
 
                     })
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
-//                        loadData(dbManager,member_id.toString())
-//
-//                        if(tmpContent.id == null){
-//                            finish()
-//                        }
-//
-//                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
-//                            dbManager.deleteImagePaths(member_id.toString())
-//                        }
-//
-//                        if(tmpContent.id != null) {
-//                            dbManager.deleteTmpContent(tmpContent.id!!)
-//                            finish()
-//                        }
+                        loadData(dbManager,member_id.toString())
+
+                        if(tmpContent.id == null){
+                            finish()
+                        }
+
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            dbManager.deleteImagePaths(member_id.toString())
+                        }
+
+                        if(tmpContent.id != null) {
+                            dbManager.deleteTmpContent(tmpContent.id!!)
+                            finish()
+                        }
+
+                        Utils.hideKeyboard(this)
 
 
                     })
@@ -1445,6 +1451,10 @@ class AddPostActivity : RootActivity() {
             for (i in 0 .. hashtag.size - 1){
                 params.put("tag[" + i + "]",  hashtag.get(i))
             }
+        }
+
+        if (temp_yn != ""){
+            params.put("tmp_yn",temp_yn)
         }
 
 
@@ -2019,6 +2029,82 @@ class AddPostActivity : RootActivity() {
 
                 })
                 .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        val alert = builder.create()
+        alert.show()
+
+    }
+
+    override fun onBackPressed() {
+
+        val dbManager = DataBaseHelper(context)
+        val dataList: Array<String> = arrayOf("*");
+
+        val builder = AlertDialog.Builder(context)
+        builder
+                .setMessage("글쓰기를 취소하시겠습니까 ?")
+
+                .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+                    val title = Utils.getString(titleET)
+                    val content = Utils.getString(contentET)
+
+                    val tmpContent = TmpContent(0, member_id.toString(), title, content)
+
+                    dbManager.inserttmpcontent(tmpContent)
+
+                    if (images_path != null && images_path!!.size > 0 ) {
+                        for (i in 0 until images_path!!.size){
+                            val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+                            println("imagesPath ${imagesPath.path}")
+                            dbManager.insertimagespath(imagesPath)
+                        }
+                    }
+
+                    if (videoPaths != null && videoPaths.size > 0 ) {
+                        for (i in 0 until videoPaths.size){
+                            val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                            println("videoPath ${videoPath.path}")
+                            dbManager.insertimagespath(videoPath)
+                        }
+                    }
+
+                    if (hashtag != null && hashtag.size > 0 ) {
+                        for (i in 0 until hashtag.size){
+                            val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                            println("hastag ${hastag.path}")
+                            dbManager.insertimagespath(hastag)
+                        }
+                    }
+
+                    temp_yn = "N"
+
+                    finish()
+
+                    Utils.hideKeyboard(this)
+
+                })
+                .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+
+                    loadData(dbManager,member_id.toString())
+
+                    if(tmpContent.id == null){
+                        finish()
+                    }
+
+                    if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        dbManager.deleteImagePaths(member_id.toString())
+                    }
+
+                    if(tmpContent.id != null) {
+                        dbManager.deleteTmpContent(tmpContent.id!!)
+                        finish()
+                    }
+
+                    Utils.hideKeyboard(this)
+
+
+                })
         val alert = builder.create()
         alert.show()
 

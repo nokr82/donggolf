@@ -2,11 +2,11 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
@@ -27,6 +27,8 @@ import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.util.*
 
 class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
@@ -60,7 +62,18 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
     }
 
+    internal var resetReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                detail_chatting()
+            }
+        }
+    }
+
+    var comment_path: Bitmap? = null
+
     var RESET = 100
+    var GALLERY = 1000
 
     private var timer: Timer? = null
 
@@ -71,6 +84,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         context = this
 
         val intent = getIntent()
+
+        var filter1 = IntentFilter("RESET_CHATTING")
+        registerReceiver(resetReceiver, filter1)
 
         division = intent.getIntExtra("division",0)
         member_id = PrefUtils.getIntPreference(context,"member_id")
@@ -333,6 +349,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         }
 
+        gofindpictureLL.setOnClickListener {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+            startActivityForResult(galleryIntent, GALLERY)
+        }
+
 
 
     }
@@ -453,7 +476,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("mate_id", mate_id)
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
-        params.put("img","")
+
+        if (comment_path == null) {
+            params.put("type", "c")
+        } else {
+            params.put("img", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+            params.put("type", "i")
+            comment_path = null
+        }
 
         ChattingAction.add_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -481,7 +511,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         timer = Timer()
-        timer!!.schedule(task, 0, 2000)
+        timer!!.schedule(task, 0, 1000)
 
     }
 
@@ -836,6 +866,42 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     if (data!!.getStringExtra("finish") != null){
                         finish()
+                    }
+                }
+
+                GALLERY -> {
+                    if (data != null)
+                    {
+
+                        val contentURI = data.data
+
+                        try
+                        {
+//                            commentLL.visibility = View.VISIBLE
+//                            gofindpictureLL.visibility = View.GONE
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
+//                                addedImgIV.setImageBitmap(comment_path)
+                                add_chatting()
+
+                            }
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+
+
                     }
                 }
             }

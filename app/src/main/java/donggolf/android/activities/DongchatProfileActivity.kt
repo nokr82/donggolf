@@ -73,6 +73,12 @@ class DongchatProfileActivity : RootActivity() {
         if (null != context) {
             doSomethingWithContext(context)
         }
+
+        backLL.setOnClickListener {
+            finish()
+        }
+
+
         joinDongChatRL.setOnClickListener {
             var chkData = false
             if (PrefUtils.getIntPreference(context, "member_id") == -1){
@@ -207,6 +213,11 @@ class DongchatProfileActivity : RootActivity() {
             }
         }
 
+        founderIV.setOnClickListener {
+            var intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", founder_id)
+            startActivity(intent)
+        }
 
     }
     fun detail_chatting(){
@@ -242,6 +253,11 @@ class DongchatProfileActivity : RootActivity() {
                             val created = Utils.getString(chatroom,"created")
                             val intro = Utils.getString(chatroom,"intro")
                             val background = Utils.getString(chatroom,"background")
+                            val block_code = Utils.getString(chatroom,"block_code")
+                            if (block_code != null && block_code != ""){
+                                lockIV.visibility = View.VISIBLE
+                            }
+
                             people_count = Utils.getString(chatroom,"peoplecount").toInt()
                             max_count = Utils.getString(chatroom,"max_count").toInt()
                             val getnotice = Utils.getString(chatroom,"notice")
@@ -260,7 +276,7 @@ class DongchatProfileActivity : RootActivity() {
 
                             ImageLoader.getInstance().displayImage(introimage, profileIV, Utils.UILoptionsProfile)
 
-                            founder_id = Utils.getString(chatroom,"id")
+                            founder_id = Utils.getString(chatroom,"member_id")
 
                             val createdsplit = created.split(" ")
                             createdTV.setText(createdsplit.get(0))
@@ -476,6 +492,8 @@ class DongchatProfileActivity : RootActivity() {
                                 val prof = Utils.getImage(context.contentResolver, picturePath.toString())
 
 
+
+
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
 //                            profileIV.setImageURI(contentURI)
@@ -504,7 +522,7 @@ class DongchatProfileActivity : RootActivity() {
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
                             var thumbnail = Utils.getImage(context.contentResolver, contentURI.toString())
 
-                            ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
+//                            ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
                             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 
                             val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
@@ -516,6 +534,9 @@ class DongchatProfileActivity : RootActivity() {
 
                                 val prof = Utils.getImage(context.contentResolver, picturePath.toString())
 
+                                Image_path.clear()
+                                Image_path.add(contentURI.toString())
+                                backgroundAdapter.notifyDataSetChanged()
 
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail

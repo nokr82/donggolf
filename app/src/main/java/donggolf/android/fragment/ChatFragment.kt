@@ -282,7 +282,17 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
 
         //new section
-        myChatOnRL.setOnClickListener {
+//        myChatOnRL.setOnClickListener {
+//            if (PrefUtils.getStringPreference(context,"region_id") != null) {
+//                myChatOnRL.visibility = View.GONE
+//                townChatOnRL.visibility = View.VISIBLE
+//                getmychat(2)
+//            } else {
+//                Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+
+        dongChatOnRL.setOnClickListener {
             if (PrefUtils.getStringPreference(context,"region_id") != null) {
                 myChatOnRL.visibility = View.GONE
                 townChatOnRL.visibility = View.VISIBLE
@@ -293,7 +303,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
 
 
-        townChatOnRL.setOnClickListener {
+        ChatOnRL.setOnClickListener {
             myChatOnRL.visibility = View.VISIBLE
             townChatOnRL.visibility = View.GONE
             getmychat(1)
@@ -336,7 +346,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         if (type == 2){
             if (PrefUtils.getStringPreference(context,"region_id") != null) {
                 var region_id = PrefUtils.getStringPreference(context, "region_id")
+                var region_id2 = PrefUtils.getStringPreference(context, "region_id2")
                 params.put("region", region_id)
+                params.put("region2", region_id2)
             } else {
                 Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
             }

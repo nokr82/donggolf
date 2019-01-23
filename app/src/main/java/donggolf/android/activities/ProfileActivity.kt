@@ -40,7 +40,19 @@ class ProfileActivity : RootActivity() {
         //프로필 사진
         otherPrfImgIV.setOnClickListener {
             val intent = Intent(context,ViewProfileListActivity::class.java)
-            intent.putExtra("viewAlbumUser", user_id)
+            intent.putExtra("viewAlbumUser", member_id.toInt())
+            startActivity(intent)
+        }
+
+        profBack.setOnClickListener {
+            finish()
+        }
+
+        click_post.setOnClickListener {
+            val intent = Intent(context, MyPostMngActivity::class.java)
+            intent.putExtra("founder", member_id)
+            intent.putExtra("type", "founder")
+            intent.putExtra("nick",txUserName.text.toString())
             startActivity(intent)
         }
 

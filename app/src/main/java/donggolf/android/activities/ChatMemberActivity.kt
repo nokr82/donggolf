@@ -33,6 +33,7 @@ class ChatMemberActivity : RootActivity() {
 
     var room_id = ""
     var founder = ""
+    var division = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,7 @@ class ChatMemberActivity : RootActivity() {
 
         room_id = intent.getStringExtra("room_id")
         founder = intent.getStringExtra("founder")
+        division = intent.getStringExtra("division")
 
         chatMemberAdapter = ChatMemberAdapter(context, R.layout.item_chat_member_list, chatMemberList)
         joinMemberLV.adapter = chatMemberAdapter
@@ -51,15 +53,35 @@ class ChatMemberActivity : RootActivity() {
         detail_chatting()
 
         addmemberLL.setOnClickListener {
-            val intent = Intent(context, SelectMemberActivity::class.java)
-            intent.putExtra("founder",founder)
-            intent.putExtra("room_id",room_id)
-            intent.putExtra("member_count",chatMemberList.size)
-            intent.putExtra("member_ids",member_ids)
-            intent.putExtra("member_nicks",member_nicks)
-            intent.putExtra("division","0")
+            if (division == "0") {
+                val intent = Intent(context, SelectMemberActivity::class.java)
+                intent.putExtra("founder", founder)
+                intent.putExtra("room_id", room_id)
+                intent.putExtra("member_count", chatMemberList.size)
+                intent.putExtra("member_ids", member_ids)
+                intent.putExtra("member_nicks", member_nicks)
+                intent.putExtra("division", "0")
+                startActivity(intent)
+            } else {
+                val member_count = intent.getIntExtra("member_count",0)
+                val mate_ids = intent.getStringArrayListExtra("member_ids")
+                val get_mate_nicks = intent.getStringArrayListExtra("member_ids")
+                val mate_nicks = intent.getStringArrayListExtra("member_nicks")
+                val max_count = intent.getIntExtra("max_count",0)
+                val people_count = intent.getIntExtra("people_count",0)
 
-            startActivity(intent)
+                val intent = Intent(context, SelectMemberActivity::class.java)
+                intent.putExtra("founder",founder)
+                intent.putExtra("room_id",room_id)
+                intent.putExtra("member_count",member_count)
+                intent.putExtra("member_ids",mate_ids)
+                intent.putExtra("member_nicks",mate_nicks)
+                intent.putExtra("division","1")
+                intent.putExtra("max_count",max_count)
+                intent.putExtra("people_count",people_count)
+                startActivity(intent)
+            }
+
         }
 
         btnBack.setOnClickListener {

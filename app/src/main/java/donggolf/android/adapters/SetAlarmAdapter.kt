@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
@@ -49,16 +50,20 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val content = Utils.getString(room,"contents")
         val member = json.getJSONObject("Member")
         val chatmember = json.getJSONObject("Chatmember")
+        val chatmember_id = Utils.getString(chatmember,"member_id")
         val push_yn = Utils.getString(chatmember,"push_yn")
+        val type = Utils.getString(room,"type")
 
-        if (push_yn == "Y"){
-            item.chatpushonIV.visibility = View.VISIBLE
-            item.chatpushoffIV.visibility = View.GONE
-            item.txOnOff.setText("켜짐")
-        } else {
-            item.chatpushonIV.visibility = View.GONE
-            item.chatpushoffIV.visibility = View.VISIBLE
-            item.txOnOff.setText("꺼짐")
+        if (PrefUtils.getIntPreference(context,"member_id") == chatmember_id.toInt()) {
+            if (push_yn == "Y") {
+                item.chatpushonIV.visibility = View.VISIBLE
+                item.chatpushoffIV.visibility = View.GONE
+                item.txOnOff.setText("켜짐")
+            } else {
+                item.chatpushonIV.visibility = View.GONE
+                item.chatpushoffIV.visibility = View.VISIBLE
+                item.txOnOff.setText("꺼짐")
+            }
         }
 
 
@@ -75,8 +80,14 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         item.nickTV.setText(title)
-        var image = Config.url + Utils.getString(member, "profile_img")
-        ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+
+        if (type == "2"){
+            var image = Config.url + Utils.getString(room, "profileimg")
+            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+        } else {
+            var image = Config.url + Utils.getString(member, "profile_img")
+            ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+        }
 
         return retView
 

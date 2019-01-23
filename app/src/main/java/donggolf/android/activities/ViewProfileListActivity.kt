@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -87,7 +88,7 @@ class ViewProfileListActivity : RootActivity() {
 
         showProfImgAlbumIV.setOnClickListener {
             val intent = Intent(context, ViewAlbumActivity::class.java)
-            intent.putExtra("viewAlbumListUserID", member_id)
+            intent.putExtra("viewAlbumListUserID", member_id.toInt())
             startActivity(intent)
         }
 
@@ -95,11 +96,13 @@ class ViewProfileListActivity : RootActivity() {
     fun getMyProfile(){
         val params = RequestParams()
         if (PrefUtils.getIntPreference(context, "member_id")!= null){
-            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+//            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         } else {
             Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
             return
         }
+
+        params.put("member_id", member_id)
 
 
         MemberAction.get_member_img_history(params, object : JsonHttpResponseHandler() {
@@ -127,6 +130,10 @@ class ViewProfileListActivity : RootActivity() {
 
                         if (profileImagePaths.size > 0) {
                             albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
+                        }
+
+                        if (member_id != PrefUtils.getIntPreference(context, "member_id")){
+                            showProfImgAlbumIV.visibility = View.GONE
                         }
                     }
                 } catch (e : JSONException) {

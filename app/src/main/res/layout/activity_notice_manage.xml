@@ -114,13 +114,13 @@
 
     <LinearLayout
         android:id="@+id/founderLL"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:gravity="center"
-        android:visibility="gone">
+        android:gravity="center">
         <EditText
             android:id="@+id/founderTV"
             android:layout_width="match_parent"
@@ -129,6 +129,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@null"
+            android:hint="입력해주세요."
             android:gravity="left|center_vertical"/>
     </LinearLayout>
 
@@ -136,7 +137,8 @@
     <LinearLayout
         android:id="@+id/chatvisibleLL"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -190,22 +192,29 @@
                         android:textSize="13dp"
                         android:textStyle="bold"
                         android:text="상단에서 내리기"/>
-                    <TextView
-                        android:id="@+id/saveTV"
-                        android:layout_marginLeft="15dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_ok"
-                        android:text="확인"
-                        android:gravity="center"
-                        android:textColor="#ffffff"/>
                 </LinearLayout>
 
             </LinearLayout>
 
 
         </RelativeLayout>
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/saveTV"
+            android:layout_marginTop="40dp"
+            android:layout_centerInParent="true"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_ok"
+            android:text="확인"
+            android:gravity="center"
+            android:textColor="#ffffff"/>
+    </RelativeLayout>
 
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -26,6 +27,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_dong_chat.*
+import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_people_count.view.*
 import kotlinx.android.synthetic.main.dlg_select_chat_region.*
 import kotlinx.android.synthetic.main.dlg_select_chat_region.view.*
@@ -54,6 +56,8 @@ class AddDongChatActivity : RootActivity() {
 
     var profile: Bitmap? = null
     var background:Bitmap? = null
+
+    var secretcode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -197,6 +201,44 @@ class AddDongChatActivity : RootActivity() {
             adddongchat()
         }
 
+        invisibleRB.setOnClickListener {
+
+
+            val builder = AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlgTitle.setText("비공개 코드 입력")
+            dialogView.categoryTitleET.setHint("코드를 입력해 주세요.")
+
+            if (secretcode == "") {
+                dialogView.blockcodeTV.setText(secretcode)
+                dialogView.codevisibleLL.visibility = View.GONE
+            }
+            dialogView.btn_title_clear.setOnClickListener {
+                dialogView.blockcodeTV.setText("")
+                secretcode = ""
+            }
+
+            dialogView.cancleTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.okTV.setOnClickListener {
+                val code = dialogView.categoryTitleET.text.toString()
+                if (code == null || code == "") {
+                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                secretcode = code
+
+                alert.dismiss()
+            }
+        }
+
+
 
     }
 
@@ -224,17 +266,26 @@ class AddDongChatActivity : RootActivity() {
         params.put("title", title)
         params.put("introduce", content)
         params.put("regions", region_id)
-        if (profile != null){
-//            var profileBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, profile)
+
+        if (profile == null){
+            Utils.alert(context, "프로필사진은 필수 입력입니다.")
+            return
+        } else {
             params.put("intro", ByteArrayInputStream(Utils.getByteArray(profile)))
         }
 
-        if (background != null){
-//            var backgroundBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, background)
+        if (background == null){
+            Utils.alert(context, "대문/배경사진은 필수 입력입니다.")
+            return
+        } else {
             params.put("background", ByteArrayInputStream(Utils.getByteArray(background)))
         }
         params.put("type", "2")
         params.put("division",0)
+
+        if (secretcode != ""){
+            params.put("block_code",secretcode)
+        }
 
         ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

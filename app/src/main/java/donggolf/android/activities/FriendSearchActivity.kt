@@ -107,7 +107,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         goguntype = PrefUtils.getStringPreference(context, "goguntype")
         goguntype2 = PrefUtils.getStringPreference(context, "goguntype2")
         member_cntTV.text = "골퍼 " + membercnt + "명"
-        areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+        if (sidotype != "전국") {
+            areaTV.text = sidotype + " " + goguntype + "/ " + sidotype2 + " " + goguntype2
+        } else {
+            areaTV.text = sidotype
+        }
 
 
 

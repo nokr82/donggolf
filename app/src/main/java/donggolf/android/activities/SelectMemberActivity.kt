@@ -441,6 +441,7 @@ class SelectMemberActivity : RootActivity() {
 
     }
 
+
     fun getChatMember() {
         //친구 리스트 받아오기
         val params = RequestParams()
@@ -514,6 +515,9 @@ class SelectMemberActivity : RootActivity() {
 
         ChattingAction.set_dongchat_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var intent = Intent()
+                intent.putExtra("reset","reset")
+                setResult(RESULT_OK, intent);
                 finish()
             }
 

@@ -44,6 +44,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
+        var peoplecount = Utils.getString(room,"peoplecount")
         var profileimg = Utils.getString(room,"profileimg")
         var room_type = Utils.getString(room,"type")
         var max_count = Utils.getString(room,"max_count")
@@ -57,7 +58,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         for (i in 0 until chatmember.length()){
             var roomitem = chatmember.get(i) as JSONObject
-            println("------roomitem$roomitem")
             val push_yn = Utils.getString(roomitem,"push_yn")
             val member = roomitem.getJSONObject("Member")
             val member_nick = Utils.getString(member,"nick")
@@ -119,7 +119,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.nofriendIV.visibility = View.GONE
             item.firstIV.visibility = View.GONE
             item.countTV.visibility = View.VISIBLE
-            item.countTV.setText("("+chatmember.length().toString()+")")
+            item.countTV.setText("("+peoplecount.toString()+")")
         }
 
         if (title != null && title.length > 0) {
@@ -137,7 +137,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.nofriendIV.visibility = View.GONE
             item.firstIV.visibility = View.GONE
             item.countTV.visibility = View.VISIBLE
-            item.countTV.setText("("+chatmember.length().toString()+")")
+            item.countTV.setText("("+peoplecount.toString()+")")
 
 
 

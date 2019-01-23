@@ -767,6 +767,8 @@ class AddGoodsActivity : RootActivity() {
                 return
             }
 
+
+
             when (delivery_typeRG.checkedRadioButtonId) {
                 R.id.seller_payRB -> {
                     deliv_way = "판매자 부담"

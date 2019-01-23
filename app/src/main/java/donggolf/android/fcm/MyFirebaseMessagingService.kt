@@ -48,6 +48,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val title = data["title"]
         val body = data["body"]
+        val type = data["type"]
         val channelId = getString(R.string.default_notification_channel_id)
         val group = channelId
 
@@ -69,10 +70,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setGroup(group)
-                .setVibrate(longArrayOf(1000, 1000))
+//                .setVibrate(longArrayOf(1000, 1000))
                 .setContentIntent(pendingIntent)
 
-        notificationBuilder.setSound(defaultSoundUri)
+        if(type != "N") {
+            val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            notificationBuilder.setSound(defaultSoundUri)
+            notificationBuilder.setVibrate(longArrayOf(1000, 1000))
+        }
+
+//        notificationBuilder.setSound(defaultSoundUri)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
