@@ -78,4 +78,8 @@ object ChattingAction {
         HttpClient.post("/chatting/set_dong_image.json", params, handler)
     }
 
+    fun set_notice_yn(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_notice_yn.json", params, handler)
+    }
+
 }
