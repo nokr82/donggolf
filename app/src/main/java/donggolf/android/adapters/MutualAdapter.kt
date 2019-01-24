@@ -1,21 +1,25 @@
 package donggolf.android.adapters
 
 import android.content.Context
-import android.media.Image
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+//import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
-import java.sql.Timestamp
-import java.util.ArrayList
+import donggolf.android.base.Config
+import donggolf.android.base.Utils
+import donggolf.android.models.Users
+import org.json.JSONObject
+import java.net.UnknownServiceException
+import java.util.*
 
-class MutualAdapter (context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
-
+class MutualAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data: ArrayList<Map<String, Any>> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,17 +39,20 @@ class MutualAdapter (context: Context, view:Int, data:ArrayList<Map<String, Any>
             }
         }
 
-        var data : Map<String, Any> = getItem(position)
+        val json = data.get(position)
+        val member = json.getJSONObject("Member")
 
-        //println("data : $data")
+        item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
+        item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")
 
-        var title:String = data.get("title") as String
-        item.main_detail_listitem_nickname.text = title
+        val img_uri = Utils.getString(member,"profile_img")//small_uri
+        val image = Config.url + img_uri
+        ImageLoader.getInstance().displayImage(image, item.main_detail_listitem_profileimage, Utils.UILoptionsProfile)
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -67,22 +74,19 @@ class MutualAdapter (context: Context, view:Int, data:ArrayList<Map<String, Any>
 
     class ViewHolder(v: View) {
 
-        var main_detail_listitem_comment : ImageView
-        var main_detail_listitem_profileimage : ImageView
-        var main_detail_listitem_nickname : TextView
-        var main_detail_listitem_firstimage : ImageView
-        var main_detail_listitem_condition : TextView
+
+        var main_detail_listitem_profileimage : de.hdodenhof.circleimageview.CircleImageView //프사
+        var isOnlineIV : ImageView //프사에 붙은 초록불
+        var main_detail_listitem_nickname : TextView //닉네임
+        var main_detail_listitem_firstimage : ImageView //일촌인지 이촌인지
+        var main_detail_listitem_condition : TextView //상메
 
         init {
-
-            main_detail_listitem_comment = v.findViewById<View>(R.id.main_detail_listitem_comment) as ImageView
-            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as ImageView
+            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as de.hdodenhof.circleimageview.CircleImageView
+            isOnlineIV = v.findViewById<View>(R.id.isOnlineIV) as ImageView
             main_detail_listitem_nickname = v.findViewById<View>(R.id.main_detail_listitem_nickname) as TextView
             main_detail_listitem_firstimage = v.findViewById<View>(R.id.main_detail_listitem_firstimage) as ImageView
             main_detail_listitem_condition = v.findViewById<View>(R.id.main_detail_listitem_condition) as TextView
-
         }
-
-
     }
 }

@@ -28,6 +28,7 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
 
     private var videoList: ArrayList<VideoAdapter.VideoData> = ArrayList<VideoAdapter.VideoData>()
 
+
     private val selected = LinkedList<String>()
 
     private var videoUri: Uri? = null
@@ -69,10 +70,14 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
             val idx = IntArray(proj.size)
 
 //            cursor = MediaStore.Video.Media.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
-            cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
+//            cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
 //            cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, null);
-
-            println(" cursor : " + cursor.count)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
+                println(" cursor : " + cursor.count)
+            } else {
+                cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
+            }
 
             if (cursor != null && cursor.moveToFirst()) {
 
@@ -113,6 +118,8 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
             }
 
         }
+
+
 
         videoselectGV.setOnItemClickListener(this)
 

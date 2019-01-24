@@ -1,15 +1,20 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.*
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.ChattingAction
 import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -17,11 +22,13 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.ArrayList
 
 class ProfileActivity : RootActivity() {
 
     lateinit var context: Context
     var member_id = ""
+    var mate_ids: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +42,7 @@ class ProfileActivity : RootActivity() {
         var intent = getIntent()
         member_id = intent.getStringExtra("member_id")
         member_info(member_id)
+        mate_ids.add(member_id)
 
 
         //프로필 사진
@@ -53,6 +61,26 @@ class ProfileActivity : RootActivity() {
             intent.putExtra("founder", member_id)
             intent.putExtra("type", "founder")
             intent.putExtra("nick",txUserName.text.toString())
+            startActivity(intent)
+        }
+
+        click_chat.setOnClickListener {
+
+            val nick = txUserName.text.toString()
+
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        addchat()
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+        }
+
+        click_friend.setOnClickListener {
+            val intent = Intent(context, MutualActivity::class.java)
+            intent.putExtra("mate_id", member_id)
             startActivity(intent)
         }
 
@@ -150,6 +178,40 @@ class ProfileActivity : RootActivity() {
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
                 println(errorResponse.toString())
+            }
+        })
+
+    }
+
+    fun addchat(){
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_ids)
+//        params.put("title", chatTitle)
+        params.put("regions", "")
+        params.put("intro", "")
+        params.put("type", "1")
+
+        ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("finish","finish")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
+                    setResult(RESULT_OK, intent);
+                    finish()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
             }
         })
 

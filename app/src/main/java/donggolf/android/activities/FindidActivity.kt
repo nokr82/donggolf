@@ -136,6 +136,7 @@ class FindidActivity : RootActivity() {
                             //해당 폰번으로 가입된 계정이 있는 경우
                             val params = RequestParams()
                             params.put("is_user", "yes")
+                            params.put("member_id",Utils.getInt(member,"id"))
 
                             MemberAction.getPassCode(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

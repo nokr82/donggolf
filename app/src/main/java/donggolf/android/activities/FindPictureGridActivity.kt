@@ -18,6 +18,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import donggolf.android.R
 import donggolf.android.adapters.ImageAdapter
+import donggolf.android.adapters.VideoAdapter
 import donggolf.android.base.ImageLoader
 import donggolf.android.base.RootActivity
 import kotlinx.android.synthetic.main.activity_find_picture_grid.*
@@ -30,6 +31,9 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
     private lateinit var context: Context
 
     private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
+    private var videoList: ArrayList<VideoAdapter.VideoData> = ArrayList<VideoAdapter.VideoData>()
+
+
 
     private val selected = LinkedList<String>()
 
@@ -49,6 +53,11 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     private var selectedImage: Bitmap? = null
 
+    var category = "image"
+    private var picCount = 0
+    private var limit = 0
+    private var nowPicCount = 0
+
     constructor(parcel: Parcel) : this() {
         imageUri = parcel.readParcelable(Uri::class.java.classLoader)
         FROM_CAMERA = parcel.readInt()
@@ -62,88 +71,206 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance();
-        var cursor: Cursor? = null
-        val resolver = contentResolver
+        var intent = getIntent()
+        if (intent.getStringExtra("category") != null){
+            category = intent.getStringExtra("category")
+            val bucketName = getIntent().getStringExtra("bucketName")
+            val total = getIntent().getIntExtra("total", 0)
+            picCount = getIntent().getIntExtra("pic_count", 0)
+            limit = getIntent().getIntExtra("limit", 0)
+            nowPicCount = getIntent().getIntExtra("nowPicCount", 1)
 
-        try {
-            val proj = arrayOf(
-                    MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.DATA,
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    MediaStore.Images.Media.ORIENTATION,
-                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-            )
-            val idx = IntArray(proj.size)
+            if (category == "image"){
 
-            cursor = MediaStore.Images.Media.query(
-                    resolver,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    null,
-                    null,
-                    MediaStore.Images.Media.DATE_ADDED + " DESC"
-            )
-            if (cursor != null && cursor.moveToFirst()) {
-                idx[0] = cursor.getColumnIndex(proj[0])
-                idx[1] = cursor.getColumnIndex(proj[1])
-                idx[2] = cursor.getColumnIndex(proj[2])
-                idx[3] = cursor.getColumnIndex(proj[3])
-                idx[4] = cursor.getColumnIndex(proj[4])
+                val resolver = contentResolver
+                var cursor: Cursor? = null
+                try {
+                    val proj = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.ORIENTATION)
+                    val idx = IntArray(proj.size)
 
-                var photo = ImageAdapter.PhotoData()
+                    val selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
-                do {
-                    val photoID = cursor.getInt(idx[0])
-                    val photoPath = cursor.getString(idx[1])
-                    val displayName = cursor.getString(idx[2])
-                    val orientation = cursor.getInt(idx[3])
-                    val bucketDisplayName = cursor.getString(idx[4])
-                    if (displayName != null) {
-                        photo = ImageAdapter.PhotoData()
-                        photo.photoID = photoID
-                        photo.photoPath = photoPath
-                        //Log.d("yjs", "name : " + displayName)
-                        photo.displayName = displayName
-                        photo.orientation = orientation
-                        photo.bucketPhotoName = bucketDisplayName
-                        photoList!!.add(photo)
+                    cursor = MediaStore.Images.Media.query(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, proj, selection, MediaStore.Images.Media.DATE_ADDED + " DESC")
+                    if (cursor != null && cursor.moveToFirst()) {
+                        idx[0] = cursor.getColumnIndex(proj[0])
+                        idx[1] = cursor.getColumnIndex(proj[1])
+                        idx[2] = cursor.getColumnIndex(proj[2])
+                        idx[3] = cursor.getColumnIndex(proj[3])
+
+                        do {
+                            val photoID = cursor.getInt(idx[0])
+                            val photoPath = cursor.getString(idx[1])
+                            val displayName = cursor.getString(idx[2])
+                            val orientation = cursor.getInt(idx[3])
+                            if (displayName != null) {
+                                val photo = ImageAdapter.PhotoData()
+                                photo.photoID = photoID
+                                photo.photoPath = photoPath
+                                photo.orientation = orientation
+                                photoList.add(photo)
+                            }
+                        } while (cursor.moveToNext())
+                    }
+                } catch (ex: Exception) {
+                    // Log the exception's message or whatever you like
+                } finally {
+                    try {
+                        if (cursor != null && !cursor.isClosed) {
+                            cursor.close()
+                        }
+                    } catch (ex: Exception) {
                     }
 
-                } while (cursor.moveToNext())
-
-                cursor.close()
-            }
-        } catch (ex: Exception) {
-            // Log the exception's message or whatever you like
-        } finally {
-            try {
-                if (cursor != null && !cursor.isClosed) {
-                    cursor.close()
                 }
-            } catch (ex: Exception) {
-            }
 
+                selectGV.setOnItemClickListener(this)
+
+                val imageLoader: ImageLoader = ImageLoader(resolver)
+
+                val adapter = ImageAdapter(this, photoList, imageLoader, selected)
+
+                selectGV.adapter = adapter
+
+                imageLoader.setListener(adapter)
+
+                adapter.notifyDataSetChanged()
+
+            } else {
+
+                val resolver = contentResolver
+                var cursor: Cursor? = null
+                try {
+                    val proj = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.DISPLAY_NAME,MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+                    val idx = IntArray(proj.size)
+
+                    val selection = MediaStore.Video.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
+                        println(" cursor : " + cursor.count)
+                    } else {
+                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
+                    }
+//                    cursor = MediaStore.Images.Media.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, MediaStore.Video.Media.DATE_ADDED + " DESC")
+                    if (cursor != null && cursor.moveToFirst()) {
+                        idx[0] = cursor.getColumnIndex(proj[0])
+                        idx[1] = cursor.getColumnIndex(proj[1])
+                        idx[2] = cursor.getColumnIndex(proj[2])
+                        idx[3] = cursor.getColumnIndex(proj[3])
+
+                        do {
+                            val photoID = cursor.getInt(idx[0])
+                            val photoPath = cursor.getString(idx[1])
+                            val displayName = cursor.getString(idx[2])
+                            val orientation = cursor.getInt(idx[3])
+                            if (displayName != null) {
+                                val video = VideoAdapter.VideoData()
+                                video.videoID = photoID
+                                video.videoPath = photoPath
+                                video.orientation = orientation
+                                videoList.add(video)
+                            }
+                        } while (cursor.moveToNext())
+                    }
+                } catch (ex: Exception) {
+                    // Log the exception's message or whatever you like
+                } finally {
+                    try {
+                        if (cursor != null && !cursor.isClosed) {
+                            cursor.close()
+                        }
+                    } catch (ex: Exception) {
+                    }
+
+                }
+
+                selectGV.setOnItemClickListener(this)
+
+                val imageLoader: ImageLoader = ImageLoader(resolver)
+
+                val adapter = VideoAdapter(this, videoList, imageLoader,selected)
+
+                selectGV.setAdapter(adapter)
+
+                imageLoader.setListener(adapter)
+
+                adapter.notifyDataSetChanged()
+            }
         }
 
-        selectGV.setOnItemClickListener(this)
 
-        val imageLoader: ImageLoader = ImageLoader(resolver)
+//        mAuth = FirebaseAuth.getInstance();
+//        var cursor: Cursor? = null
+//        val resolver = contentResolver
+//
+//        try {
+//            val proj = arrayOf(
+//                    MediaStore.Images.Media._ID,
+//                    MediaStore.Images.Media.DATA,
+//                    MediaStore.Images.Media.DISPLAY_NAME,
+//                    MediaStore.Images.Media.ORIENTATION,
+//                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+//            )
+//            val idx = IntArray(proj.size)
+//
+//            cursor = MediaStore.Images.Media.query(
+//                    resolver,
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                    null,
+//                    null,
+//                    MediaStore.Images.Media.DATE_ADDED + " DESC"
+//            )
+//            if (cursor != null && cursor.moveToFirst()) {
+//                idx[0] = cursor.getColumnIndex(proj[0])
+//                idx[1] = cursor.getColumnIndex(proj[1])
+//                idx[2] = cursor.getColumnIndex(proj[2])
+//                idx[3] = cursor.getColumnIndex(proj[3])
+//                idx[4] = cursor.getColumnIndex(proj[4])
+//
+//                var photo = ImageAdapter.PhotoData()
+//
+//                do {
+//                    val photoID = cursor.getInt(idx[0])
+//                    val photoPath = cursor.getString(idx[1])
+//                    val displayName = cursor.getString(idx[2])
+//                    val orientation = cursor.getInt(idx[3])
+//                    val bucketDisplayName = cursor.getString(idx[4])
+//                    if (displayName != null) {
+//                        photo = ImageAdapter.PhotoData()
+//                        photo.photoID = photoID
+//                        photo.photoPath = photoPath
+//                        //Log.d("yjs", "name : " + displayName)
+//                        photo.displayName = displayName
+//                        photo.orientation = orientation
+//                        photo.bucketPhotoName = bucketDisplayName
+//                        photoList!!.add(photo)
+//                    }
+//
+//                } while (cursor.moveToNext())
+//
+//                cursor.close()
+//            }
+//        } catch (ex: Exception) {
+//            // Log the exception's message or whatever you like
+//        } finally {
+//            try {
+//                if (cursor != null && !cursor.isClosed) {
+//                    cursor.close()
+//                }
+//            } catch (ex: Exception) {
+//            }
+//
+//        }
 
-        val adapter = ImageAdapter(this, photoList, imageLoader, selected)
-
-        selectGV.adapter = adapter
-
-        imageLoader.setListener(adapter)
-
-        adapter.notifyDataSetChanged()
 
         finishBT.setOnClickListener {
-            try {
-                if (cursor != null && !cursor.isClosed) {
-                    cursor.close()
-                }
-            } catch (ex: Exception) {
-            }
+//            try {
+//                if (cursor != null && !cursor.isClosed) {
+//                    cursor.close()
+//                }
+//            } catch (ex: Exception) {
+//            }
             finish()
         }
 
@@ -166,24 +293,39 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             var idx = 0
                             var idxn = 0
 
-                            for (strPo in selected) {
-                                result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
-                                name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
+                            if (category == "image") {
 
-                                Log.d("yjs", "Path : " + photoList[0].photoPath + photoList[0].displayName)
-                            }
+                                for (strPo in selected) {
+                                    result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
+                                    name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
 
-                            val returnIntent = Intent()
-                            returnIntent.putExtra("images", result)
-                            returnIntent.putExtra("displayname",name)
-                            setResult(RESULT_OK, returnIntent)
-                            try {
-                                if (cursor != null && !cursor.isClosed) {
-                                    cursor.close()
+//                                    Log.d("yjs", "Path : " + photoList[0].photoPath + photoList[0].displayName)
                                 }
-                            } catch (ex: Exception) {
+
+                                val returnIntent = Intent()
+                                returnIntent.putExtra("images", result)
+                                returnIntent.putExtra("displayname", name)
+                                setResult(RESULT_OK, returnIntent)
+//                            try {
+//                                if (cursor != null && !cursor.isClosed) {
+//                                    cursor.close()
+//                                }
+//                            } catch (ex: Exception) {
+//                            }
+                                finish()
+                            } else {
+
+                                for (strPo in selected) {
+                                    result[idx++] = videoList[Integer.parseInt(strPo)].videoPath
+                                    name[idxn++] = videoList[Integer.parseInt(strPo)].displayName
+                                }
+
+                                val returnIntent = Intent()
+                                returnIntent.putExtra("videos", result)
+                                returnIntent.putExtra("displayname", name)
+                                setResult(RESULT_OK, returnIntent)
+                                finish()
                             }
-                            finish()
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
@@ -198,42 +340,89 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        val strPo = position.toString()
 
-        val photo_id = photoList[position].photoID
+        if (category == "image") {
 
-        if (photo_id == -1) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val strPo = position.toString()
 
+            val photo_id = photoList[position].photoID
+
+            if (photo_id == -1) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+
+                } else {
+                    takePhoto()
+                }
             } else {
-                takePhoto()
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
+
+                    countTV.text = selected.size.toString()
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ImageAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
+                    if (count + selected.size > 9) {
+                        Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    selected.add(strPo)
+
+                    countTV.text = selected.size.toString()
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ImageAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+                }
             }
         } else {
-            if (selected.contains(strPo)) {
-                selected.remove(strPo)
+            val strPo = position.toString()
 
-                countTV.text = selected.size.toString()
+            val video_id = videoList[position].videoID
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ImageAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
-                }
+
+            if (video_id == -1) {
 
             } else {
-                if (count + selected.size > 9) {
-                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                    return
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+
+                } else {
+//                    takeVideo()
                 }
 
-                selected.add(strPo)
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
 
-                countTV.text = selected.size.toString()
+                    countTV.text = selected.size.toString()
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ImageAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as VideoAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
+                    if (selected.size  + 1 > 1) {
+                        Toast.makeText(context, "동영상은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    selected.add(strPo)
+
+                    countTV.text = selected.size.toString()
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as VideoAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
             }
         }

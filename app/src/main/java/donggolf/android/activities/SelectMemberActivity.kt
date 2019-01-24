@@ -260,18 +260,20 @@ class SelectMemberActivity : RootActivity() {
                                 for (i in 0 until mate_nicks.size) {
                                     chatTitle += mate_nicks.get(i) + " "
                                 }
-                                addchat()
-                            } else if (member_count == 2) {
-                                for (i in 0 until mate_nicks.size) {
-                                    chatTitle += mate_nicks.get(i) + " "
-                                }
-
-                                for (i in 0 until get_mate_nicks.size){
-                                    mate_ids.add(get_mate_nicks.get(i))
-                                }
+//                                addchat()
+                            }
+//                            else if (member_count == 2) {
+//                                for (i in 0 until mate_nicks.size) {
+//                                    chatTitle += mate_nicks.get(i) + " "
+//                                }
+//
+//                                for (i in 0 until get_mate_nicks.size){
+//                                    mate_ids.add(get_mate_nicks.get(i))
+//                                }
 //                                add_chat_member()
-                                addchat()
-                            } else {
+////                                addchat()
+//                            }
+                            else {
                                 for (i in 0 until mate_nicks.size) {
                                     chatTitle += mate_nicks.get(i) + " "
                                 }
@@ -279,7 +281,7 @@ class SelectMemberActivity : RootActivity() {
                             }
 
                         } else {
-                            println("--------add mate_ids${mate_ids.size} ---- $people_count ----- $max_count")
+//                            println("--------add mate_ids${mate_ids.size} ---- $people_count ----- $max_count")
                             if (max_count < people_count + mate_ids.size) {
                                 Toast.makeText(context, "정원초과 입니다.", Toast.LENGTH_SHORT).show()
                             } else {

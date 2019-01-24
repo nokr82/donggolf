@@ -57,4 +57,8 @@ object MateAction {
     fun updateCategory(params: RequestParams, handler: JsonHttpResponseHandler){
         HttpClient.post("/mate/modify_category.json", params, handler)
     }
+
+    fun get_together_mate(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/get_together_mate.json", params, handler)
+    }
 }

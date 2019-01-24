@@ -10,28 +10,44 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import donggolf.android.R
+import donggolf.android.adapters.CustomVideoFolderArrayAdapter
 import donggolf.android.adapters.FindPictureAdapter
 import donggolf.android.adapters.ImageAdapter
 import donggolf.android.adapters.VideoAdapter
-import donggolf.android.base.DataBaseHelper
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import kotlinx.android.synthetic.main.activity_find_picture.*
 import org.json.JSONObject
 
 class FindPictureActivity : RootActivity() {
 
-        private lateinit var context: Context
+    private lateinit var context: Context
 
-        private  var adapterData : ArrayList<PictureCategory> = ArrayList<PictureCategory>()
+    private val data:ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private val videodata:ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private val buckets:ArrayList<String> = ArrayList<String>()
+    private val videobuckets:ArrayList<String> = ArrayList<String>()
 
-        private  lateinit var  adapter : FindPictureAdapter
+    private var picCount = 0
+    private var limit = 0
+    private var nowPicCount = 0
 
-        private var videoList: java.util.ArrayList<VideoAdapter.VideoData> = java.util.ArrayList<VideoAdapter.VideoData>()
+    var pics: MutableList<String> = ArrayList<String>()
 
-        private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
+    private  var adapterData : ArrayList<PictureCategory> = ArrayList<PictureCategory>()
 
-        val SELECT_PICTURE = 101
+    private  lateinit var  adapter : CustomGalleryFolderArrayAdapter
+    private  lateinit var  videoadapter : CustomVideoFolderArrayAdapter
+
+    private var videoList: java.util.ArrayList<VideoAdapter.VideoData> = java.util.ArrayList<VideoAdapter.VideoData>()
+
+    private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
+
+    val SELECT_PICTURE = 101
+    val SELECT_VIDEO = 102
+
+    var image = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,46 +56,106 @@ class FindPictureActivity : RootActivity() {
 
         context = this
 
-
         var intent = getIntent()
 
-        videoSize()
-        photoSize()
+//        videoSize()
+//        photoSize()
 
-        var camera = PictureCategory("카메라",photoList.size,1,null)
-        var video = PictureCategory("동영상",videoList.size,2,null)
+        if (intent.getStringExtra("image") != null){
+            image = intent.getStringExtra("image")
+            if (image == "image"){
 
+                val projection = arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val c = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
+                if (c.count > 0) {
+                    c.moveToFirst()
+                    do {
+                        val bucketDisplayName = c.getString(c.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
 
-        adapterData.add(camera)
-        adapterData.add(video)
+                        if (!buckets.contains(bucketDisplayName)) {
+                            buckets.add(bucketDisplayName)
 
-        adapter = FindPictureAdapter(context,R.layout.findpicture_listview_item,adapterData)
+                            val jsonObject = JSONObject()
+                            jsonObject.put("bucketName",bucketDisplayName)
+                            jsonObject.put("total",-1)
+                            data.add(jsonObject)
 
-        findpictre_listview.adapter = adapter
+                        }
+                    } while (c.moveToNext())
+                }
 
-        adapter.notifyDataSetChanged()
+                c.close()
+                adapter = CustomGalleryFolderArrayAdapter(context, R.layout.item_custom_gallery_folder, data)
+                findpictre_listview.setAdapter(adapter)
 
-        findpictre_listview.setOnItemClickListener { parent, view, position, id ->
+            } else {
 
-            var item = adapterData.get(position)
+                titleTV.setText("비디오선택")
+                val projection = arrayOf(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+                val c = contentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
+                if (c.count > 0) {
+                    c.moveToFirst()
+                    do {
+                        val bucketDisplayName = c.getString(c.getColumnIndex(MediaStore.Video.Media.BUCKET_DISPLAY_NAME))
 
-            if (item.category == 1){
-                Log.d("yjs", "category :" + item.category)
-                MoveFindPictureGridActivity()
-            }else if (item.category == 2){
-                MoveFindVideoActivity()
+                        if (!videobuckets.contains(bucketDisplayName)) {
+                            videobuckets.add(bucketDisplayName)
+
+                            val jsonObject = JSONObject()
+                            jsonObject.put("bucketName",bucketDisplayName)
+                            jsonObject.put("total",-1)
+                            videodata.add(jsonObject)
+
+                        }
+                    } while (c.moveToNext())
+                }
+
+                c.close()
+                println("videodata${videodata}")
+                videoadapter = CustomVideoFolderArrayAdapter(context, R.layout.item_custom_gallery_folder, videodata)
+                findpictre_listview.setAdapter(videoadapter)
+
             }
-
-
         }
 
+        findpictre_listview.setOnItemClickListener { parent, view, position, id ->
+            if (image == "image"){
+                val item = data.get(position)
+                val bucketName = Utils.getString(item,"bucketName")
+                val total = Utils.getInt(item,"total")
 
+                val intent = Intent(context, FindPictureGridActivity::class.java)
+                intent.putExtra("bucketName", bucketName)
+                intent.putExtra("total", total)
+                intent.putExtra("pic_count", picCount)
+                intent.putExtra("limit", limit)
+                intent.putExtra("nowPicCount", nowPicCount)
+                intent.putExtra("category","image")
+                startActivityForResult(intent, SELECT_PICTURE)
+
+            } else {
+                val item = videodata.get(position)
+                val bucketName = Utils.getString(item,"bucketName")
+                val total = Utils.getInt(item,"total")
+
+                val intent = Intent(context, FindPictureGridActivity::class.java)
+                intent.putExtra("bucketName", bucketName)
+                intent.putExtra("total", total)
+                intent.putExtra("pic_count", picCount)
+                intent.putExtra("limit", limit)
+                intent.putExtra("nowPicCount", nowPicCount)
+                intent.putExtra("category","video")
+                startActivityForResult(intent, SELECT_VIDEO)
+
+            }
+        }
 
 
 
         finishLL.setOnClickListener {
             finish()
         }
+
 
 
     }
@@ -204,16 +280,32 @@ class FindPictureActivity : RootActivity() {
 
             when(requestCode) {
                 SELECT_PICTURE -> {
-                    var result: String = data!!.getStringExtra("images")
+                    var item = data?.getStringArrayExtra("images")
+                    var name = data?.getStringArrayExtra("displayname")
 
                     var intent = Intent()
-                    intent.putExtra("images", result)
+                    intent.putExtra("images", item)
+                    intent.putExtra("displayname", name)
 
-                    Log.d("yjs", "findpicture : " + result)
+                    Log.d("yjs", "findpicture : " + item)
 
                     setResult(RESULT_OK,intent)
                     finish()
 
+                }
+
+                SELECT_VIDEO -> {
+                    var item = data?.getStringArrayExtra("videos")
+                    var name = data?.getStringArrayExtra("displayname")
+
+                    var intent = Intent()
+                    intent.putExtra("videos", item)
+                    intent.putExtra("displayname", name)
+
+                    Log.d("yjs", "findpicture : " + item)
+
+                    setResult(RESULT_OK,intent)
+                    finish()
                 }
             }
 

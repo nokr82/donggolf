@@ -76,12 +76,12 @@ class SetAlarmActivity : RootActivity() {
             }
 
             dialogView.dlg_comment_blockLL.setOnClickListener {
-                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"Y")
+                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"C")
                 alert.dismiss()
             }
 
             dialogView.dlg_prod_modLL.setOnClickListener {
-                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"C")
+                set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"Y")
                 alert.dismiss()
             }
 

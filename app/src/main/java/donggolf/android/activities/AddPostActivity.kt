@@ -1164,11 +1164,11 @@ class AddPostActivity : RootActivity() {
         }
 
         movefindpictureBT.setOnClickListener {
-            moveMyPicture()
+            permissionimage()
         }
 
         movefindvideoBT.setOnClickListener {
-            moveMyVideo()
+            permissionvideo()
         }
 
         addcontentBT.setOnClickListener {
@@ -1354,9 +1354,6 @@ class AddPostActivity : RootActivity() {
 //                }
 //            }
 //        }
-
-
-
 
         if (video_image.size > 0){
             params.put("video_delete", "delete")
@@ -1567,12 +1564,17 @@ class AddPostActivity : RootActivity() {
     }
 
     private fun moveMyPicture() {
-        var intent = Intent(context, FindPictureGridActivity::class.java);
+//        var intent = Intent(context, FindPictureGridActivity::class.java);
+        var intent = Intent(context, FindPictureActivity::class.java);
+        intent.putExtra("image","image")
         startActivityForResult(intent, SELECT_PICTURE);
+
     }
 
     private fun moveMyVideo() {
-        var intent = Intent(context, FindVideoActivity::class.java);
+//        var intent = Intent(context, FindVideoActivity::class.java);
+        var intent = Intent(context, FindPictureActivity::class.java);
+        intent.putExtra("image","video")
         startActivityForResult(intent, SELECT_VIDEO);
     }
 
@@ -1584,7 +1586,7 @@ class AddPostActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -1597,6 +1599,47 @@ class AddPostActivity : RootActivity() {
 
     }
 
+    private fun permissionimage() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                moveMyPicture()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
+
+    private fun permissionvideo() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                moveMyVideo()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
 
 
     fun reset(str: String, i: Int) {
