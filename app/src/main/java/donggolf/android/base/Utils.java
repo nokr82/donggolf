@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -46,6 +47,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -1063,21 +1065,39 @@ public class Utils {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
+    public static  byte[] getByteArrayFromImageView(ImageView imageView)
+    {
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
+        Bitmap bitmap;
+        if(bitmapDrawable==null){
+            imageView.buildDrawingCache();
+            bitmap = imageView.getDrawingCache();
+            imageView.buildDrawingCache(false);
+        }else
+        {
+            bitmap = bitmapDrawable .getBitmap();
+        }
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
+    }
+
     public static DisplayImageOptions UILoptions = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
          .showImageOnLoading(R.drawable.noimage)
          .showImageForEmptyUri(R.drawable.noimage)
              .showImageOnFail(R.drawable.noimage)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
-
+//        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
     public static DisplayImageOptions UILoptionsProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
              .showImageOnLoading(R.drawable.noimage)
             .showImageForEmptyUri(R.drawable.noimage)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
 
     public static DisplayImageOptions UILoptionsUserProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
@@ -1085,7 +1105,8 @@ public class Utils {
             .showImageForEmptyUri(R.drawable.icon_profile)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
 
     public static String fullDateTime(String created) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
