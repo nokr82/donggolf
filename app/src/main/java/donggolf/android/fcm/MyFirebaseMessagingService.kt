@@ -65,7 +65,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.mipmap.dongne_golf_logo)
+                .setSmallIcon(R.drawable.alarm_resize)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)

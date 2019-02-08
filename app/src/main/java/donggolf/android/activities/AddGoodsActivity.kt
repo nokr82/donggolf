@@ -368,6 +368,7 @@ class AddGoodsActivity : RootActivity() {
 //                var intent = Intent(context, FindPictureGridActivity::class.java)
                 var intent = Intent(context, FindPictureActivity::class.java);
                 intent.putExtra("image","image")
+
                 startActivityForResult(intent, SELECT_PICTURE)
 
             }

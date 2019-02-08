@@ -536,7 +536,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
             for (i in 0..comment_path!!.size - 1){
 
-                var bt: Bitmap = Utils.getImage(context.contentResolver, comment_path!!.get(i))
+                var bt: Bitmap = Utils.noResizeImage(context.contentResolver, comment_path!!.get(i))
 
                 params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
             }

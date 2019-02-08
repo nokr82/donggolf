@@ -1278,7 +1278,7 @@ class AddPostActivity : RootActivity() {
         titleET.setText(tmpcontent.title)
         contentET.setText(tmpcontent.texts)
 
-        getPost()
+//        getPost()
     }
 
     private fun modify(id: String) {
@@ -1707,7 +1707,7 @@ class AddPostActivity : RootActivity() {
 //        }
         println("------imagespath ---- $str")
         images_path.add(str)
-        var add_file = Utils.getImage(context.contentResolver, str)
+        var add_file = Utils.noResizeImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
         var v = View.inflate(context, R.layout.item_addgoods, null)
 //        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
