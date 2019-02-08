@@ -1080,7 +1080,7 @@ class AddPostActivity : RootActivity() {
             video_image.clear()
         }
 
-        loadData(dbManager,member_id.toString())
+//        loadData(dbManager,member_id.toString())
 
         permission()
 
@@ -1140,7 +1140,7 @@ class AddPostActivity : RootActivity() {
                     .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
-                        loadData(dbManager,member_id.toString())
+//                        loadData(dbManager,member_id.toString())
 
                         if(tmpContent.id == null){
                             finish()
@@ -1336,7 +1336,7 @@ class AddPostActivity : RootActivity() {
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
                 if (imageIV is ImageView) {
                     val bitmap = imageIV.drawable as BitmapDrawable
-                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
                     seq++
                     println("add-------------$seq")
                 }
