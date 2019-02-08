@@ -76,6 +76,11 @@ class AddDongChatActivity : RootActivity() {
             finish()
         }
 
+        gotermLL.setOnClickListener {
+            val intent = Intent(this, TermSpecifActivity::class.java)
+            startActivity(intent)
+        }
+
         region1TV.setOnClickListener {
             val builder = android.app.AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_select_chat_region, null)
@@ -278,6 +283,8 @@ class AddDongChatActivity : RootActivity() {
             Utils.alert(context, "대문/배경사진은 필수 입력입니다.")
             return
         } else {
+
+
             params.put("background", ByteArrayInputStream(Utils.getByteArray(background)))
         }
         params.put("type", "2")

@@ -87,7 +87,13 @@ class SelectMemberActivity : RootActivity() {
         if (intent.getStringExtra("block") != null){
             block = intent.getStringExtra("block")
             room_id = intent.getStringExtra("room_id")
-            titleTV.setText("차단하기/차단해제")
+            var block_yn = intent.getStringExtra("block_yn")
+            if (block_yn == "Y"){
+                titleTV.setText("차단하기")
+            } else {
+                titleTV.setText("차단해제")
+            }
+//            titleTV.setText("차단하기/차단해제")
             countTV.visibility = View.GONE
             addchatTV.setText("확인")
         }
@@ -321,7 +327,7 @@ class SelectMemberActivity : RootActivity() {
         removesearchLL.setOnClickListener {
             Utils.hideKeyboard(context!!)
 
-            if(Utils.getString(searchTV) == "") {
+            if(searchET.text.toString() == "") {
                 return@setOnClickListener
             }
 

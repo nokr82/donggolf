@@ -265,6 +265,10 @@ class AddGoodsActivity : RootActivity() {
                     pay_wayLL.visibility = View.GONE
                 }
 
+                if (title == "안전거래(준비중입니다)"){
+                    Toast.makeText(context, "준비중입니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnItemClickListener
+                }
                 alert.dismiss()
             }
 
@@ -361,7 +365,9 @@ class AddGoodsActivity : RootActivity() {
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
 
-                var intent = Intent(context, FindPictureGridActivity::class.java)
+//                var intent = Intent(context, FindPictureGridActivity::class.java)
+                var intent = Intent(context, FindPictureActivity::class.java);
+                intent.putExtra("image","image")
                 startActivityForResult(intent, SELECT_PICTURE)
 
             }
@@ -757,6 +763,11 @@ class AddGoodsActivity : RootActivity() {
                 return
             }
 
+            if (prod_form == "" || prod_form == null){
+                Toast.makeText(context, "형태/성향은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             if (prod_regoin == "" || prod_regoin == null){
                 Toast.makeText(context, "지역은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
                 return
@@ -764,6 +775,11 @@ class AddGoodsActivity : RootActivity() {
 
             if (trade_type == "" || trade_type == null){
                 Toast.makeText(context, "거래방법은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (images_path == null){
+                Toast.makeText(context, "상품 사진 등록은 필수 입니다.", Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -805,6 +821,7 @@ class AddGoodsActivity : RootActivity() {
 //                }
 //            }
 //        }
+
 
             if (images_path != null) {
                 if (images_path!!.size != 0) {

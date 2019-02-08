@@ -59,6 +59,11 @@ class NoticeActivity : RootActivity() {
             return
         }
 
+        var keywordcnt = keywordcntTV.text.toString().toInt()
+        if (keywordcnt >= 15){
+            Toast.makeText(context, "키워드는 15개 이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val params = RequestParams()
         params.put("keyword",keyword)

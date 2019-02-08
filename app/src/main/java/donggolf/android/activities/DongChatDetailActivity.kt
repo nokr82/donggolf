@@ -59,7 +59,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
     var block_code = ""
     var SET_NOTICE = 100
 
-    var comment_path: Bitmap? = null
+//    var comment_path: Bitmap? = null
+    var comment_path: java.util.ArrayList<String> = java.util.ArrayList<String>()
 
     var block_member_ids:ArrayList<String> = ArrayList<String>()
 
@@ -97,6 +98,25 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
         chatCont.adapter = adapter
         chatCont.setOnScrollListener(this)
+
+        chatCont.setOnItemClickListener { parent, view, position, id ->
+            val item = chattingList.get(position) as JSONObject
+            val chatting = item.getJSONObject("Chatting")
+            val type = Utils.getString(chatting,"type")
+            println("--------typ[e====== $type")
+            if (type == "i"){
+                val img = Utils.getString(chatting,"img")
+                val imglist: java.util.ArrayList<String> = java.util.ArrayList<String>()
+                imglist.add(img)
+                val id = intent.getStringExtra("id")
+                var intent = Intent(context, PictureDetailActivity::class.java)
+                intent.putExtra("id", id)
+                intent.putExtra("adPosition",0)
+                intent.putExtra("paths",imglist)
+                intent.putExtra("type","chat")
+                startActivity(intent)
+            }
+        }
 
         btn_opDongchatMenu.setOnClickListener {
             dongchat_drawerMenu.openDrawer(dongchat_right_menu)
@@ -152,7 +172,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             addedImgIV.setImageResource(0)
             commentLL.visibility = View.GONE
             gofindpictureLL.visibility = View.VISIBLE
-            comment_path = null
+//            comment_path = null
+            comment_path.clear()
         }
 
         chatsizeLL.setOnClickListener {
@@ -316,6 +337,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             val intent = Intent(context, SelectMemberActivity::class.java)
             intent.putExtra("block","block")
             intent.putExtra("room_id",room_id)
+            intent.putExtra("block_yn","Y")
             startActivityForResult(intent,BLOCK_MEMBER)
         }
 
@@ -323,6 +345,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
             val intent = Intent(context, SelectMemberActivity::class.java)
             intent.putExtra("block","block")
             intent.putExtra("room_id",room_id)
+            intent.putExtra("block_yn","N")
             startActivity(intent)
         }
 
@@ -351,17 +374,21 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         gofindpictureLL.setOnClickListener {
-            val galleryIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            var intent = Intent(context, FindPictureActivity::class.java);
+            intent.putExtra("image","image")
 
-            startActivityForResult(galleryIntent, GALLERY)
+//            val galleryIntent = Intent(Intent.ACTION_PICK,
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+            startActivityForResult(intent, GALLERY)
         }
 
         delIV.setOnClickListener {
             addedImgIV.setImageResource(0)
             commentLL.visibility = View.GONE
             gofindpictureLL.visibility = View.VISIBLE
-            comment_path = null
+//            comment_path = null
+            comment_path.clear()
         }
 
     }
@@ -502,13 +529,22 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
 
-        if (comment_path == null) {
-            params.put("type", "c")
-        } else {
-            params.put("img", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+        if (comment_path.size > 0) {
+            //            params.put("img", ByteArrayInputStream(Utils.getByteArray(comment_path)))
             params.put("type", "i")
-            comment_path = null
+//            comment_path = null
+
+            for (i in 0..comment_path!!.size - 1){
+
+                var bt: Bitmap = Utils.getImage(context.contentResolver, comment_path!!.get(i))
+
+                params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
+            }
+
+        } else {
+            params.put("type", "c")
         }
+
 
         ChattingAction.add_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -895,39 +931,55 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
               }
 
                 GALLERY -> {
-                    if (data != null)
-                    {
 
-                        val contentURI = data.data
+                    var item = data?.getStringArrayExtra("images")
+                    var name = data?.getStringArrayExtra("displayname")
 
-                        try
-                        {
-//                            commentLL.visibility = View.VISIBLE
-//                            gofindpictureLL.visibility = View.GONE
+                    for (i in 0..(item!!.size - 1)) {
+                        val str = item[i]
 
-                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+                        comment_path!!.add(str)
 
-                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
-                            if (cursor!!.moveToFirst()) {
-                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-                                val picturePath = cursor.getString(columnIndex)
-
-                                cursor.close()
-
-                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
-//                                addedImgIV.setImageBitmap(comment_path)
-                                add_chatting()
-
-                            }
-
-                        }
-                        catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-
-
-
+                        val add_file = Utils.getImage(context.contentResolver, str)
                     }
+
+                    println("----comment_path size ${comment_path.size}")
+
+                    add_chatting()
+
+//                    if (data != null)
+//                    {
+//
+//                        val contentURI = data.data
+//
+//                        try
+//                        {
+////                            commentLL.visibility = View.VISIBLE
+////                            gofindpictureLL.visibility = View.GONE
+//
+//                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+//
+//                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+//                            if (cursor!!.moveToFirst()) {
+//                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+//                                val picturePath = cursor.getString(columnIndex)
+//
+//                                cursor.close()
+//
+//                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
+////                                addedImgIV.setImageBitmap(comment_path)
+//                                add_chatting()
+//
+//                            }
+//
+//                        }
+//                        catch (e: IOException) {
+//                            e.printStackTrace()
+//                        }
+//
+//
+//
+//                    }
                 }
 
                 BLOCK_MEMBER ->{

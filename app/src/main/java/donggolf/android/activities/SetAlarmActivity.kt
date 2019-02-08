@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -73,6 +74,7 @@ class SetAlarmActivity : RootActivity() {
                     dialogView.pushoffIV.visibility = View.VISIBLE
                     dialogView.silentIV.visibility = View.GONE
                 }
+                Toast.makeText(context, "채팅방 알림이 설정 되었습니다.", Toast.LENGTH_SHORT).show()
             }
 
             dialogView.dlg_comment_blockLL.setOnClickListener {

@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="245dp"
         android:layout_margin="5dp"
         android:background="@mipmap/box_product_list_left">
 
@@ -32,6 +32,8 @@
                 android:layout_height="wrap_content"
                 android:text="정품 폴로 랄프로렌 퀼팅 베스트 테크니클 스포츠 양말"
                 android:textSize="13dp"
+                android:maxLines="2"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"/>
             <LinearLayout
@@ -80,10 +82,10 @@
 
         </LinearLayout>
         <TextView
-            android:id="@+id/divisionTV"
             android:visibility="gone"
+            android:id="@+id/divisionTV"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="거래중"
             android:background="@mipmap/box_sold_out"
             android:textColor="#ffffff"

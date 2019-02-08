@@ -1,11 +1,13 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.media.Image
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
@@ -56,12 +58,15 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val chatmember = room.getJSONArray("Chatmember")
         var nick = ""
 
+        item.addNickLL.removeAllViews()
+
         for (i in 0 until chatmember.length()){
             var roomitem = chatmember.get(i) as JSONObject
             val push_yn = Utils.getString(roomitem,"push_yn")
             val member = roomitem.getJSONObject("Member")
             val member_nick = Utils.getString(member,"nick")
             val member_id = Utils.getString(member,"id")
+            val gander = Utils.getString(member,"sex")
 
             if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
                 if (push_yn == "Y"){
@@ -74,6 +79,27 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
             } else {
                 nick += member_nick + " "
+                if (i < 4){
+                    var v = View.inflate(context, R.layout.item_nick, null)
+                    val nickTV = v.findViewById(R.id.nickTV) as TextView
+                    nickTV.setText(member_nick + " ")
+                    if (gander == "0"){
+                        nickTV.setTextColor(Color.parseColor("#000000"))
+                    } else {
+                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
+                    }
+                    item.addNickLL.addView(v)
+                } else if (i == 4){
+                    var v = View.inflate(context, R.layout.item_nick, null)
+                    val nickTV = v.findViewById(R.id.nickTV) as TextView
+                    nickTV.setText("....")
+                    if (gander == "0"){
+                        nickTV.setTextColor(Color.parseColor("#000000"))
+                    } else {
+                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
+                    }
+                    item.addNickLL.addView(v)
+                }
             }
 
         }
@@ -123,9 +149,13 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         if (title != null && title.length > 0) {
+            item.nickTV.visibility = View.VISIBLE
+            item.addNickLL.visibility = View.GONE
             item.nickTV.setText(title)
         } else {
-            item.nickTV.setText(nick)
+            item.nickTV.visibility = View.GONE
+            item.addNickLL.visibility = View.VISIBLE
+//            item.nickTV.setText(nick)
         }
 
         if (room_type == "1") {
@@ -138,9 +168,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.firstIV.visibility = View.GONE
             item.countTV.visibility = View.VISIBLE
             item.countTV.setText("("+peoplecount.toString()+")")
-
-
-
         }
 
         return retView
@@ -179,6 +206,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var nofriendIV: ImageView
         var pushoffIV : ImageView
         var pushonIV : ImageView
+        var addNickLL: LinearLayout
 
         init {
             profPhoto = v.findViewById<View>(R.id.profPhoto) as CircleImageView
@@ -191,7 +219,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
             pushoffIV = v.findViewById<View>(R.id.pushoffIV) as ImageView
             pushonIV = v.findViewById<View>(R.id.pushonIV) as ImageView
-
+            addNickLL = v.findViewById<View>(R.id.addNickLL) as LinearLayout
 
         }
     }

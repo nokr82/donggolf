@@ -55,24 +55,40 @@ class PictureDetailActivity : RootActivity() {
             if (intent.getSerializableExtra("paths") != null){
                 adverImagePaths = intent.getSerializableExtra("paths") as ArrayList<String>
 
-                if (adverImagePaths != null){
+                if (adverImagePaths != null) {
 
-                    for (i in 0 until adverImagePaths.size){
-                        val iv = ImageView(context)
+                    if (intent.getStringExtra("type") != null) {
+                        for (i in 0 until adverImagePaths.size) {
+                            val iv = ImageView(context)
+                            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(Config.url + adverImagePaths.get(i), iv, Utils.UILoptions)
+
+                            if (i == 0) {
+                                pagerAdapter.addView(iv, i)
+                            } else {
+                                pagerAdapter.addView(iv)
+                            }
+
+                            pagerAdapter.notifyDataSetChanged()
+                        }
+                    } else {
+
+                        for (i in 0 until adverImagePaths.size) {
+                            val iv = ImageView(context)
 
 //                        val photoViewAttacher = PhotoViewAttacher(iv)
 //                        photoViewAttacher.scaleType = ImageView.ScaleType.CENTER_CROP
 
-                        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(adverImagePaths.get(i),iv,Utils.UILoptions)
+                            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(adverImagePaths.get(i), iv, Utils.UILoptions)
 
-                        if(i == 0) {
-                            pagerAdapter.addView(iv,i)
-                        } else {
-                            pagerAdapter.addView(iv)
+                            if (i == 0) {
+                                pagerAdapter.addView(iv, i)
+                            } else {
+                                pagerAdapter.addView(iv)
+                            }
+
+
+                            pagerAdapter.notifyDataSetChanged()
                         }
-
-
-                        pagerAdapter.notifyDataSetChanged()
                     }
                 }
 

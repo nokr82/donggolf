@@ -32,7 +32,7 @@
             android:layout_alignParentTop="true" />
         />
         <LinearLayout
-            android:layout_marginTop="90dp"
+            android:layout_marginTop="100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -43,11 +43,13 @@
                 android:orientation="horizontal"
                 android:gravity="center">
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"
                     android:text="시작일"/>
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/roomcreatedTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,6 +65,16 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="100dp">
+
+                    <TextView
+                        android:id="@+id/dongcreatedTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="시작일 "
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="10dp"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profileIV"

@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.media.Image
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +60,7 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.chatpushonIV.visibility = View.VISIBLE
                 item.chatpushoffIV.visibility = View.GONE
                 item.txOnOff.setText("켜짐")
+                item.txOnOff.setTextColor(Color.parseColor("#0EDA2F"))
             } else {
                 item.chatpushonIV.visibility = View.GONE
                 item.chatpushoffIV.visibility = View.VISIBLE
@@ -82,7 +84,7 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         item.nickTV.setText(title)
 
         if (type == "2"){
-            var image = Config.url + Utils.getString(room, "profileimg")
+            var image = Config.url + Utils.getString(room, "intro")
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
         } else {
             var image = Config.url + Utils.getString(member, "profile_img")

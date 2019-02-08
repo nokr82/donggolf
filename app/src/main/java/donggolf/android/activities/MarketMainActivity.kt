@@ -45,9 +45,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var form  = ""
     var brand = ""
 
-
     var page = 1
     var totalPage = 1
+    var todayCount = 0
+    var monthCount = 0
     private var userScrolled = false
     private var lastItemVisibleFlag = false
     private var totalItemCountScroll = 0
@@ -121,6 +122,14 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         addgoodsTV.setOnClickListener {
             if (PrefUtils.getIntPreference(context, "member_id") == -1){
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (todayCount >= 5){
+                Toast.makeText(context, "하루에 5개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }else if (monthCount >= 40) {
+                Toast.makeText(context, "한달에 40개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -334,6 +343,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("product_type", product_type)
         params.put("form", form)
         params.put("brand", brand)
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
 
         MarketAction.get_market_product(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -345,6 +355,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                     Log.d("마켓목록",marketItems.toString())
                     this@MarketMainActivity.page = response.getInt("page")
                     totalPage = response.getInt("totalPage")
+                    todayCount = response.getInt("todayCount")
+                    monthCount = response.getInt("monthCount")
 
                     if(page == 1) {
                         adapterData.clear()

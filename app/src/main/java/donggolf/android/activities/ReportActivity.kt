@@ -109,13 +109,13 @@ class ReportActivity : RootActivity() {
     }
 
     fun add_report(){
-        val title = titleTV.text.toString()
+//        val title = titleTV.text.toString()
         val content = contentTV.text.toString()
 
-        if (title.isEmpty()) {
-            Utils.alert(context, "제목을 입력해주세요.")
-            return
-        }
+//        if (title.isEmpty()) {
+//            Utils.alert(context, "제목을 입력해주세요.")
+//            return
+//        }
 
         if (content.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")

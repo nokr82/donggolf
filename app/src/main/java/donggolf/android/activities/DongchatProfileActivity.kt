@@ -187,7 +187,7 @@ class DongchatProfileActivity : RootActivity() {
             builder.setView(dialogView)
             val alert = builder.show()
 
-            dialogView.dlgtextTV.setText("변경할 제목을 입력하세요")
+            dialogView.dlgtextTV.setText("변경할 코드을 입력하세요")
             dialogView.dlgTitle.setText("제목 입력")
             val title = roomtitleTV.text.toString()
             dialogView.settitleTV.setText("현재 채팅방 제목은 ")
@@ -258,6 +258,9 @@ class DongchatProfileActivity : RootActivity() {
                                 lockIV.visibility = View.VISIBLE
                             }
 
+//                            var split = created.split(" ")
+//                            dongcreatedTV.setText(split.get(0))
+
                             people_count = Utils.getString(chatroom,"peoplecount").toInt()
                             max_count = Utils.getString(chatroom,"max_count").toInt()
                             val getnotice = Utils.getString(chatroom,"notice")
@@ -279,6 +282,7 @@ class DongchatProfileActivity : RootActivity() {
                             founder_id = Utils.getString(chatroom,"member_id")
 
                             val createdsplit = created.split(" ")
+                            dongcreatedTV.setText("시작일 " + createdsplit.get(0))
                             createdTV.setText(createdsplit.get(0))
                             roomcreatedTV.setText(createdsplit.get(0))
 

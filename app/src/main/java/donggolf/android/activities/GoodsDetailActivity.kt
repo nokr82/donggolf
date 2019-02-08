@@ -69,8 +69,16 @@ class GoodsDetailActivity : RootActivity() {
     var seller_id2 = ""
     var blockYN = ""
 
+    var x = 0.0f
+    var adPosition = 0
+
     private  lateinit var  commentAdapter : GoodsComAdapter
     private  var commentList:ArrayList<JSONObject> = ArrayList<JSONObject>()
+
+    var brand = ""
+    var product_type = ""
+
+    var PICTURE_DETAIL = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,6 +122,48 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
 
+        pagerVP.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN ->{
+                        x = event.x
+                    }
+
+                    MotionEvent.ACTION_CANCEL->{
+
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        var difference = 0
+                        if (x >= event.x){
+                            difference = x.toInt() - event.x.toInt()
+                        } else {
+                            difference = event.x.toInt() - x.toInt()
+                        }
+                        if (difference < 10){
+                            val pressDuration = System.currentTimeMillis() - pressStartTime!!
+                            if (pressDuration < MAX_CLICK_DURATION && stayedWithinClickDistance!!) {
+                            }
+
+                            val id = "IMAGE"
+                            var intent = Intent(context, PictureDetailActivity::class.java)
+                            intent.putExtra("id", id)
+                            intent.putExtra("adPosition",adPosition)
+                            if (_Images != null){
+                                intent.putExtra("paths",_Images)
+                            }
+                            startActivityForResult(intent, PICTURE_DETAIL)
+                        }
+
+                    }
+
+                }
+
+                return v?.onTouchEvent(event) ?: true
+            }
+        })
+
         show_mng_dlgLL.setOnClickListener {
             popupDialogView()
 
@@ -154,6 +204,7 @@ class GoodsDetailActivity : RootActivity() {
                 tmp_prod_status = "판매예약"
                 alert.dismiss()
                 updateProductStatus()
+
             }
             dialogView.dlg_saleLL.setOnClickListener {
                 tmp_prod_status = "판매중"
@@ -171,9 +222,20 @@ class GoodsDetailActivity : RootActivity() {
                 updateProductStatus()
             }
             dialogView.dlg_completeLL.setOnClickListener {
-                tmp_prod_status = "판매완료"
-                alert.dismiss()
-                updateProductStatus()
+
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("판매완료 처리하면 수정할 수 없습니다.")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                            tmp_prod_status = "판매완료"
+                            alert.dismiss()
+                            updateProductStatus()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                        })
+                val alert = builder.create()
+                alert.show()
             }
             }else{
                 Toast.makeText(context,"다른사람의 판매글입니다.",Toast.LENGTH_SHORT).show()
@@ -185,11 +247,14 @@ class GoodsDetailActivity : RootActivity() {
             if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
                 Toast.makeText(context,"자신의 게시물에는 전송하실 수 없습니다.",Toast.LENGTH_SHORT).show()
             } else {
-                val permissionlistener = object : PermissionListener {
-                    override fun onPermissionGranted() {
-                        var myPhoneNum = PrefUtils.getStringPreference(context,"userPhone")
 
-                        val text = "[동네골프]안녕하세요? 중고장터에 올라온 게시글을 보고 연락드립니다. 판매의사 있으시면 회신 바랍니다."
+                var status = sale_statusTV.text.toString()
+                if (status == "판매중") {
+                    val permissionlistener = object : PermissionListener {
+                        override fun onPermissionGranted() {
+                            var myPhoneNum = PrefUtils.getStringPreference(context, "userPhone")
+
+                            val text = "[동네골프] $brand > $product_type 판매 게시글보고 연락드립니다."
 //                    try{
 //                        SmsManager.getDefault().sendTextMessage(phone,null, text, null, null)
 //                        Toast.makeText(context,"문자 전송 완료",Toast.LENGTH_SHORT).show()
@@ -197,30 +262,35 @@ class GoodsDetailActivity : RootActivity() {
 //                        e.printStackTrace()
 //                    }
 
-                        var intent = Intent(Intent.ACTION_VIEW,Uri.parse("sms:"+seller_phone))
-                        intent.putExtra("sms_body",text)
-                        startActivity(intent)
+                            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + seller_phone))
+                            intent.putExtra("sms_body", text)
+                            startActivity(intent)
+
+                        }
+
+                        override fun onPermissionDenied(deniedPermissions: List<String>) {
+                        }
 
                     }
 
-                    override fun onPermissionDenied(deniedPermissions: List<String>) {
-                    }
+                    TedPermission.with(this)
+                            .setPermissionListener(permissionlistener)
+                            .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                            .setPermissions(
+                                    android.Manifest.permission.READ_PHONE_STATE,
+                                    android.Manifest.permission.SEND_SMS,
+                                    android.Manifest.permission.RECEIVE_SMS
+                            )
+                            .check();
 
+                } else {
+                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
-
-                TedPermission.with(this)
-                        .setPermissionListener(permissionlistener)
-                        .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
-                        .setPermissions(
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.SEND_SMS,
-                                android.Manifest.permission.RECEIVE_SMS
-                        )
-                        .check();
-
             }
 
         }
+
         findET.setFocusableInTouchMode(false);
         findET.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://cyberbureau.police.go.kr/mobile/sub/sub_02.jsp")))
@@ -228,6 +298,7 @@ class GoodsDetailActivity : RootActivity() {
         findLL.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://cyberbureau.police.go.kr/mobile/sub/sub_02.jsp")))
         }
+
 
         getLooker()
 
@@ -404,8 +475,18 @@ class GoodsDetailActivity : RootActivity() {
 
             dialogView.dlg_prod_delTV.setOnClickListener {
                 //삭제 액션
-                delete_product("del")
-                alert.dismiss()
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("정말 삭제하시겠습니까 ?")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                            delete_product("del")
+                            alert.dismiss()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel()
+                        })
+                val alert = builder.create()
+                alert.show()
             }
 
             dialogView.dlg_pull_LL.setOnClickListener {
@@ -492,12 +573,18 @@ class GoodsDetailActivity : RootActivity() {
                     }
                     val product = response.getJSONObject("product")
                     val market = product.getJSONObject("Market")
+                    var seller_cnt = Utils.getString(market,"seller_cnt")
+                    sellercountTV.setText("("+seller_cnt+")")
                     seller_id2 = Utils.getString(market,"member_id")
 
                     categoryTV.text = "[${Utils.getString(market,"form").substringBefore(" ")}형]" +
                             "[${Utils.getString(market,"form").substringAfter(" ")}용]" +
-                            " 브랜드 > ${Utils.getString(market,"brand")}"
+                            " ${Utils.getString(market,"brand")} > ${Utils.getString(market,"product_type")}"
+                    brand = Utils.getString(market,"brand")
+                    product_type = Utils.getString(market,"product_type")
                     tagTV.text = "# ${Utils.getString(market,"brand")} 정품"
+
+
                     tmp_prod_status = Utils.getString(market,"status")
                     sale_statusTV.text = tmp_prod_status
                     prd_titleTV.text = Utils.getString(market,"title")
@@ -538,7 +625,13 @@ class GoodsDetailActivity : RootActivity() {
                         imageCountTV.text = "1/${_Images.size}"
                     }
 
-                    reportTV.text = "신고하기(${response.getString("reportcount")})"
+                    var reportcount = response.getString("reportcount")
+                    reportTV.text = "신고하기($reportcount)"
+
+                    if (reportcount == "0"){
+                        reportTV.setBackgroundResource(R.drawable.btn_grey)
+                    }
+
                     val lookers = response.getString("lookers")
                     main_item_view_count.setText(lookers)
 
@@ -569,6 +662,7 @@ class GoodsDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     sale_statusTV.text = tmp_prod_status
+                    Toast.makeText(context,"$tmp_prod_status 으로 변경되었습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 

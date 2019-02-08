@@ -91,6 +91,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         item.firstIV.visibility = View.GONE
         item.nofriendIV.visibility = View.GONE
+        item.nickTV.visibility = View.VISIBLE
 
         item.nickTV.setText(title)
 
