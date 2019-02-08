@@ -1,7 +1,11 @@
 package donggolf.android.activities
 
+import android.app.Activity
+import android.app.ProgressDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
@@ -9,22 +13,24 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.iid.FirebaseInstanceId
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
-import donggolf.android.adapters.MainAdapter
-import donggolf.android.adapters.MainEditAdapter
+import donggolf.android.actions.MemberAction
+import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
+import donggolf.android.base.Utils
 import donggolf.android.fragment.ChatFragment
 import donggolf.android.fragment.FreeFragment
-import donggolf.android.fragment.FushFragment
 import donggolf.android.fragment.InfoFragment
-import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 
@@ -32,8 +38,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     private lateinit var context: Context
 
+    private var progressDialog: ProgressDialog? = null
 
     private val SELECT_PICTURE: Int = 101
+
+    private val BACK_PRESSED_TERM:Long = 1000 * 2
+    private var backPressedTime: Long = -1
 
     val user = HashMap<String, Any>()
 
@@ -45,11 +55,82 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     private var mAuth: FirebaseAuth? = null
 
+    var is_push = false
+    var market_id = -1
+    var content_id = -1
+    var friend_id = -1
+    var AREA_OK = 101
+    var sidotype = "전국"
+    var sidotype2 = "전국"
+    var goguntype = "전국"
+    var goguntype2 = "전국"
+    var membercnt = ""
+    var region_id = "1001"
+    var region_id2 = ""
+
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                member_cnt()
+            }
+        }
+    }
+
+    internal var mychattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                frags.currentItem = 1
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//
+        this.context = this
+
+        var filter1 = IntentFilter("REGION_CHANGE")
+        registerReceiver(reloadReciver, filter1)
+
+        var filter2 = IntentFilter("MY_CHATTING")
+        registerReceiver(mychattingReciver, filter2)
+
+
+        is_push = intent.getBooleanExtra("is_push", false)
+        market_id = intent.getIntExtra("market_id", -1)
+        content_id = intent.getIntExtra("content_id", -1)
+        friend_id = intent.getIntExtra("friend_id", -1)
+
+        if(is_push) {
+            handlePush()
+        }
+
+        if (PrefUtils.getStringPreference(context, "sidotype") != null){
+            sidotype = PrefUtils.getStringPreference(context, "sidotype")
+            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
+            goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+            region_id  =PrefUtils.getStringPreference(context, "region_id")
+            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
+
+            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
+        } else {
+            PrefUtils.setPreference(context, "sidotype", sidotype)
+            PrefUtils.setPreference(context, "sidotype2", sidotype2)
+            PrefUtils.setPreference(context, "goguntype", goguntype)
+            PrefUtils.setPreference(context, "goguntype2", goguntype2)
+            PrefUtils.setPreference(context, "region_id", region_id)
+            PrefUtils.setPreference(context, "region_id2", region_id2)
+        }
+
+        if (sidotype=="전국"&&goguntype=="전국"){
+            areaTV.text ="전국"
+        }else{
+            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+        }
+
+
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
         frags.adapter = pagerAdapter
         pagerAdapter.notifyDataSetChanged()
@@ -76,24 +157,42 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
 
 
-        context = this
-
-
 
         homeRL.setOnClickListener {
+            setButtonImage()
             frags.currentItem = 0
+            homeBT.setBackgroundResource(R.drawable.btn_main_on)
+            homeIV.setBackgroundResource(R.drawable.btn_withdrawal)
         }
 
         chatRL.setOnClickListener {
+            setButtonImage()
             frags.currentItem = 1
+            chatBT.setBackgroundResource(R.drawable.btn_chatting_on)
+            chatIV.setBackgroundResource(R.drawable.btn_withdrawal)
         }
 
         noticeRV.setOnClickListener {
-            frags.currentItem = 2
+//            frags.currentItem = 2
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+//            setButtonImage()
+            var intent = Intent(context, AlarmActivity::class.java)
+            startActivity(intent)
         }
 
         infoRL.setOnClickListener {
-            frags.currentItem = 3
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            setButtonImage()
+            infoBT.setBackgroundResource(R.drawable.btn_mypage_on)
+            infoIV.setBackgroundResource(R.drawable.btn_withdrawal)
+
+            frags.currentItem = 2
         }
 
         areaLL.setOnClickListener {
@@ -106,16 +205,56 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         friendsLL.setOnClickListener {
             var intent = Intent(context, FriendSearchActivity::class.java)
-            intent.putExtra("tUser", user)
+            intent.putExtra("membercnt", membercnt)
             startActivity(intent)
         }
+        member_cnt()
+        updateToken()
 
     }
 
 
 
-    fun MoveAddPostActivity(){
+    //지역별멤버수
+    fun member_cnt() {
+        val params = RequestParams()
+        params.put("sidotype", sidotype)
+        params.put("goguntype", goguntype)
+        if (goguntype2 != ""){
+            params.put("goguntype2", goguntype2)
+        }
 
+        MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+
+                    if (result == "ok") {
+                        membercnt = response!!.getString("membercnt")
+                        areaCntTV.text = membercnt + " 명"
+
+
+                    }
+
+
+                }catch (e:JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+
+
+    fun MoveAddPostActivity(){
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
         startActivityForResult(intent, SELECT_PICTURE);
@@ -129,7 +268,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     fun MoveAreaRangeActivity(){
         var intent: Intent = Intent(this, AreaRangeActivity::class.java)
-        startActivity(intent)
+        intent.putExtra("region_type", "content_filter")
+        startActivityForResult(intent,AREA_OK)
     }
 
     fun MoveMarketMainActivity(){
@@ -137,14 +277,61 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         startActivity(intent)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
+        when(requestCode) {
+            AREA_OK -> {
+                if(resultCode == Activity.RESULT_OK) {
+                    sidotype  = data!!.getStringExtra("sidotype")
+                    PrefUtils.setPreference(context, "sidotype", sidotype)
+                    sidotype2  = data!!.getStringExtra("sidotype2")
+                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
+                    goguntype =  data!!.getStringExtra("goguntype")
+                    PrefUtils.setPreference(context, "goguntype", goguntype)
+                    goguntype2 =  data!!.getStringExtra("goguntype2")
+                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
+                    region_id = data!!.getStringExtra("region_id")
+                    PrefUtils.setPreference(context, "region_id", region_id)
+                    region_id2 = data!!.getStringExtra("region_id2")
+                    PrefUtils.setPreference(context, "region_id2", region_id2)
+                    Log.d("시도",sidotype)
+
+                    sidotype = PrefUtils.getStringPreference(context, "sidotype")
+                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
+                    goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+                    region_id = PrefUtils.getStringPreference(context,"region_id")
+                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
+                    member_cnt()
+                    var intent = Intent()
+                    intent.action = "MSG_NEXT"
+                    context.sendBroadcast(intent)
+
+
+                    println("-----region_id ----- $region_id , ------ region_id2 $region_id2")
+
+                    areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+                }
+            }
+        }
+
     }
 
+    fun setButtonImage(){
+        homeBT.setBackgroundResource(R.drawable.btn_main_off)
+        homeIV.setBackgroundResource(R.drawable.img_line_1)
+        chatBT.setBackgroundResource(R.drawable.btn_chatting_off)
+        chatIV.setBackgroundResource(R.drawable.img_line_1)
+        noticeBT.setBackgroundResource(R.drawable.btn_notice_off)
+        noticeIV.setBackgroundResource(R.drawable.img_line_1)
+        infoBT.setBackgroundResource(R.drawable.btn_mypage_off)
+        infoIV.setBackgroundResource(R.drawable.img_line_1)
+    }
+
+
+
     private fun updateUI(currentUser: FirebaseUser?) {
-
-
 //        mAuth!!.signInWithCustomToken(mCustomToken)
 //                .addOnCompleteListener(this) { task ->
 //                    if (task.isSuccessful) {
@@ -181,11 +368,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
                     return fragment
                 }
-                2 -> {
-                    fragment = FushFragment()
-                    fragment.arguments = args
-                    return fragment
-                }
+//                2 -> {
+//                    fragment = FushFragment()
+//                    fragment.arguments = args
+//                    return fragment
+//                }
                 else -> {
                     fragment = InfoFragment()
                     fragment.arguments = args
@@ -195,7 +382,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
         override fun getCount(): Int {
-            return 4
+            return 3
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
@@ -207,5 +394,140 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
     }
 
+    private fun updateToken() {
+        val params = RequestParams()
+        val member_id = PrefUtils.getIntPreference(context, "member_id", -1)
+        val member_token = FirebaseInstanceId.getInstance().token
+
+        if (member_id == -1 || null == member_token || "" == member_token || member_token.length < 1) {
+            return
+        }
+        params.put("member_id", member_id)
+        params.put("token", member_token)
+        params.put("device", Config.device)
+
+        MemberAction.regist_token(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
+                try {
+                    val result = response!!.getString("result")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
+                super.onSuccess(statusCode, headers, response)
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, responseString: String?) {}
+
+            private fun error() {
+
+                if (progressDialog != null) {
+                    Utils.alert(context, "조회중 장애가 발생하였습니다.")
+                }
+            }
+
+            override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<Header>?,
+                    responseString: String?,
+                    throwable: Throwable
+            ) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
+//                val member_id = PrefUtils.getIntPreference(context, "member_id")
+//                LogAction.log(javaClass.toString(), member_id, responseString)
+
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<Header>?,
+                    throwable: Throwable,
+                    errorResponse: JSONObject?
+            ) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<Header>?,
+                    throwable: Throwable,
+                    errorResponse: JSONArray?
+            ) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+//        progressDialog!!.dismiss()
+    }
+
+    fun handlePush() {
+
+        if(content_id > 0) {
+            // 게시글 관련 푸쉬
+            var intent = Intent(context, MainDetailActivity::class.java)
+            intent.putExtra("id", content_id.toString())
+            startActivity(intent)
+        } else if (market_id > 0) {
+            // 마켓 관련 푸쉬
+            var intent = Intent(context, GoodsDetailActivity::class.java)
+            intent.putExtra("product_id", market_id)
+            startActivity(intent)
+        } else if (friend_id > 0) {
+            var intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","waiting")
+            startActivity(intent)
+        }
+
+    }
+
+    override fun onBackPressed() {
+
+        if (System.currentTimeMillis() - backPressedTime < BACK_PRESSED_TERM) {
+            finish()
+        } else {
+            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+            backPressedTime = System.currentTimeMillis()
+        }
+
+    }
 
 }

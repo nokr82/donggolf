@@ -1,92 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="85dp"
     android:gravity="center_vertical"
-    android:padding="20dp"
     android:orientation="horizontal">
 
-    <RelativeLayout
-        android:layout_width="60dp"
-        android:layout_height="60dp">
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/profPhoto"
-            android:src="@drawable/icon_profile"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:id="@+id/isOnLine"
-            android:src="@drawable/icon_user_online"/>
-    </RelativeLayout>
-
-
     <LinearLayout
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <!--대화상대, 미리보기-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="5dp">
-            <TextView
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_marginLeft="5dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/profPhoto"
+                android:src="@drawable/icon_profile"/>
+            <ImageView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="닉네임일곱글자"
-                android:textSize="13dp"
-                android:textColor="#EF5C34"
-                android:textStyle="bold"
-                android:layout_marginRight="3dp"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/icon_first"
-                android:layout_marginRight="3dp"/>
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:src="@drawable/icon_off_alarm"/>
-<!--
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="9dp"
-                android:textColor="#CDCDCD"
-                android:gravity="right"
-                android:text="오후 12:12"/>
--->
-        </LinearLayout>
+                android:layout_alignParentRight="true"
+                android:id="@+id/isOnLine"
+                android:src="@drawable/icon_user_online"/>
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!--대화상대, 미리보기-->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:textSize="12dp"
-                android:layout_marginRight="30dp"
-                android:textColor="#cdcdcd"
-                android:lines="2"
-                android:text="1:1 채팅방 형태입니다. 채팅에 대한 내용은 2줄까지 표시되어 나옵니다"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="7"
-                android:textSize="13dp"
-                android:textStyle="bold"
-                android:gravity="center_horizontal"
-                android:text="꺼짐"
-                android:id="@+id/txOnOff"/>
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="5dp">
+                <TextView
+                    android:id="@+id/nickTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:textColor="#EF5C34"
+                    android:textStyle="bold"
+                    android:layout_marginRight="3dp"/>
+                <ImageView
+                    android:id="@+id/friendIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon_first"
+                    android:layout_marginRight="3dp"/>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/nofriendIV"
+                    android:layout_width="25dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/icon_second"
+                    android:layout_marginRight="3dp"/>
+                <ImageView
+                    android:id="@+id/chatpushoffIV"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/icon_off_alarm"/>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/chatpushonIV"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/img_alarm_off"/>
+    <!--
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="9dp"
+                    android:textColor="#CDCDCD"
+                    android:gravity="right"
+                    android:text="오후 12:12"/>
+    -->
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/contentTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textSize="12dp"
+                    android:layout_marginRight="30dp"
+                    android:textColor="#cdcdcd"
+                    android:lines="2"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:text="꺼짐"
+                    android:id="@+id/txOnOff"/>
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

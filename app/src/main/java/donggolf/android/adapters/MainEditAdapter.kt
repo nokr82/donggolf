@@ -5,9 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.R.id.main_edit_listitem_title
+import donggolf.android.actions.PostAction
 import donggolf.android.actions.SearchAction
 import donggolf.android.base.Utils
 import donggolf.android.fragment.FreeFragment
@@ -16,11 +21,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
+open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject>,FreeFragment:FreeFragment) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String, Any>> = data
+    var data:ArrayList<JSONObject> = data
+    var FreeFragment:FreeFragment = FreeFragment
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -40,34 +46,27 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
             }
         }
 
-        var data : Map<String, Any> = getItem(position)
+        var json = data.get(position)
 
-        var title:String = data.get("content") as String
-        item.main_edit_listitem_title.text = title
+        var SearchList = json.getJSONObject("SearchList")
+        var searchid = Utils.getString(SearchList,"id")
 
-        var date:Long = data.get("date") as Long
-        val dateFormat: SimpleDateFormat = SimpleDateFormat("MM-dd", Locale.KOREA)
-        val currentTime: String = dateFormat.format(Date(date))
-        item.main_edit_listitem_date.text = currentTime
+        var content:String = Utils.getString(SearchList,"content")
+        item.main_edit_listitem_title.text = content
 
-        /*item.main_edit_listitem_title.setOnClickListener {
-
-        }*/
+        var created = Utils.getString(SearchList,"created")
+        item.main_edit_listitem_date.text = created
 
         item.main_edit_listitem_delete.setOnClickListener {
-
-            var id:String = data.get("id") as String
-            SearchAction.deleteContent(id){
-                if(it){
-                    removeItem(position)
-                }
-            }
+            FreeFragment.deleteSearchList(searchid)
+            removeItem(position)
+            notifyDataSetChanged()
         }
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -92,12 +91,12 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<Map<String
 
         var main_edit_listitem_title : TextView
         var main_edit_listitem_date : TextView
-        var main_edit_listitem_delete : ImageView
+        var main_edit_listitem_delete : LinearLayout
 
         init {
             main_edit_listitem_title = v.findViewById<View>(R.id.main_edit_listitem_title) as TextView
             main_edit_listitem_date = v.findViewById<View>(R.id.main_edit_listitem_date) as TextView
-            main_edit_listitem_delete = v.findViewById<View>(R.id.main_edit_listitem_delete) as ImageView
+            main_edit_listitem_delete = v.findViewById<View>(R.id.main_edit_listitem_delete) as LinearLayout
         }
     }
 }

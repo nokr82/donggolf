@@ -1,54 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="10dp">
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginRight="5dp"
-        android:id="@+id/chat_profile"
-        android:src="@drawable/icon_profile_l"/>
-
-
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/myLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="right|center_vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textStyle="bold"
-            android:textSize="14dp"
-            android:textColor="#EF5C34"
-            android:text="닉네임일곱글자"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textSize="11dp"
+            android:textColor="#0DDB2E"
+            android:layout_gravity="bottom"
+            android:text="1"
+            android:layout_marginRight="3dp"
+            android:id="@+id/readTV"/>
+        <TextView
+            android:id="@+id/mycontentTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:background="@drawable/item_chat_box_my"
+            android:padding="8dp"
+            android:text="내 채팅 메시지"/>
+
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/myimageIV"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/userLL"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/userprofileIV"
+                android:src="@drawable/icon_profile_l"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
                 <TextView
+                    android:id="@+id/usernickTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textStyle="bold"
                     android:textSize="14dp"
-                    android:padding="8dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/item_chat_box_oppo"
-                    android:text="상대방이 보낸 메시지입니다"/>
+                    android:textColor="#EF5C34"
+                    android:text="닉네임일곱글자"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
+                    <TextView
+                        android:id="@+id/usercontentTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14dp"
+                        android:padding="8dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/item_chat_box_oppo"
+                        android:text="상대방이 보낸 메시지입니다"/>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:layout_weight="5"
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/userimageIV"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerCrop"/>
 
-                android:textSize="12dp"
-                android:textColor="#CDCDCD"
-                android:text="0월00일"/>
-        </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/userdateTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:layout_weight="5"
+
+                        android:textSize="12dp"
+                        android:textColor="#CDCDCD"
+                        android:text="0월00일"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
     </LinearLayout>
+
 
 </LinearLayout>

@@ -3,18 +3,22 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.firebase.auth.FirebaseAuth
+import android.view.View
+import android.widget.Toast
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.InfoAction
-import donggolf.android.actions.JoinAction
+import donggolf.android.actions.MemberAction
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import donggolf.android.models.Info
 import kotlinx.android.synthetic.main.activity_register.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class RegisterActivity : RootActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
+    //private lateinit var mAuth: FirebaseAuth
 
     private lateinit var context: Context
 
@@ -28,7 +32,7 @@ class RegisterActivity : RootActivity() {
 
         context = this
 
-        mAuth = FirebaseAuth.getInstance()
+        //mAuth = FirebaseAuth.getInstance()
 
         finishBT.setOnClickListener {
             finish()
@@ -42,6 +46,30 @@ class RegisterActivity : RootActivity() {
         checkRadioboxes()
 
         checkAll()
+
+        maleLL.setOnClickListener {
+            maleIV.setImageResource(R.drawable.btn_radio_on)
+            femaleIV.setImageResource(R.drawable.btn_radio_off)
+            gender = 0
+        }
+
+        femaleLL.setOnClickListener {
+            maleIV.setImageResource(R.drawable.btn_radio_off)
+            femaleIV.setImageResource(R.drawable.btn_radio_on)
+            gender = 1
+        }
+
+        gotermLL.setOnClickListener {
+            val intent = Intent(this, TermSpecifActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        mysqRL.setOnClickListener {
+            val intent = Intent(this, PersonalInfoTernsActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 
@@ -68,15 +96,50 @@ class RegisterActivity : RootActivity() {
             allCheckCB.isChecked = agreeCB.isChecked && privacyCB.isChecked
         }
 
+        allcheckRL.setOnClickListener {
+            if (checkIV.visibility == View.VISIBLE){
+                agreeIV.visibility = View.GONE
+                checkIV.visibility = View.GONE
+                privateIV.visibility = View.GONE
+            } else {
+                agreeIV.visibility = View.VISIBLE
+                checkIV.visibility = View.VISIBLE
+                privateIV.visibility = View.VISIBLE
+            }
+        }
+
+
+        agreeRL.setOnClickListener {
+            if (agreeIV.visibility == View.VISIBLE){
+                agreeIV.visibility = View.GONE
+                checkIV.visibility = View.GONE
+            } else {
+                agreeIV.visibility = View.VISIBLE
+                if (privateIV.visibility == View.VISIBLE){
+                    checkIV.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        privateRL.setOnClickListener {
+            if (privateIV.visibility == View.VISIBLE){
+                privateIV.visibility = View.GONE
+                checkIV.visibility = View.GONE
+            } else {
+                privateIV.visibility = View.VISIBLE
+                if (agreeIV.visibility == View.VISIBLE){
+                    checkIV.visibility = View.VISIBLE
+                }
+            }
+        }
+
+
     }
 
 
     private fun checkRadioboxes() {
 
         // 라디오 버튼 디폴트 값
-        if (!maleRB.isChecked && !femaleRB.isChecked) {
-            maleRB.isChecked = true
-        }
 
     }
 
@@ -88,6 +151,26 @@ class RegisterActivity : RootActivity() {
         if (email.isEmpty()) {
             Utils.alert(context, "아이디는 필수 입력입니다.")
             return
+        } else {
+            val tmpparam = RequestParams()
+            tmpparam.put("member_id", email)
+
+            MemberAction.is_duplicated_id(tmpparam, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "overlap") {
+                            emailET.setText("")
+                            Utils.alert(context, response!!.getString("result"))
+                        }else{
+                            finish()
+                        }
+                    } catch (e : JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            })
+
         }
 
         // 이메일 형식 체크
@@ -143,58 +226,49 @@ class RegisterActivity : RootActivity() {
         }
 
         // 라디오 버튼 값주기
-        gender = if (this.radio_gender.checkedRadioButtonId == R.id.maleRB) {
-
-            // 남자
-            0
-        } else {
-
-            // 여자
-            1
-        }
 
         // 모두 동의 체크
-        if (!allCheckCB.isChecked) {
+//        if (!allCheckCB.isChecked) {
+//            Utils.alert(context, "문서/앱 권한 전체동의를 체크해 주세요.")
+//            return
+//        }
+
+        if (checkIV.visibility == View.GONE){
             Utils.alert(context, "문서/앱 권한 전체동의를 체크해 주세요.")
             return
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    val user = mAuth.currentUser
-                    if(user != null) {
-                        val uid = user.uid
+        val params = RequestParams()
 
-                        val info = Info(phone = phone, nick = nickName, sex = (if (gender == 0) "M" else "F"), agree = true)
-                        JoinAction.join(uid, info) {
+        params.put("email", email)
+        params.put("passwd", password)
+        params.put("phone", phone)
+        params.put("sex", gender)
+        params.put("nick", nickName)
 
-                            println("it : $it")
+        MemberAction.join_member(params, object : JsonHttpResponseHandler() {
 
-                            if(it) {
-                                InfoAction.getInfo(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                                    if(success) {
-                                        println("data : $data")
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val message  = Utils.getString(response,"message")
 
-                                        LoginActivity.setInfoData(context, data)
-
-
-                                        finish()
-
-                                    } else {
-
-                                    }
-                                }
-                            } else {
-
-                            }
-
-                        }
-                    }
+                if (message.equals("이미 가입된 휴대폰 번호가 있습니다.")){
+                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+                    finish()
                 }
-                .addOnFailureListener {
-                    println("fa : $it")
-                    it.printStackTrace()
-                }
+
+
+
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+            }
+
+        })
+
 
 
     }

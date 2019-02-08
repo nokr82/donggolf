@@ -1,138 +1,146 @@
 package donggolf.android.activities
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
-import donggolf.android.actions.ProfileAction
-import donggolf.android.adapters.PictureDetailViewAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_picture_detail.*
+import donggolf.android.actions.MemberAction
+import donggolf.android.adapters.ProfileSlideViewAdapter
+import donggolf.android.base.*
 import kotlinx.android.synthetic.main.activity_view_profile_list.*
-import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
-import uk.co.senab.photoview.PhotoViewAttacher
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ViewProfileListActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    private lateinit var pagerAdapter: PictureDetailViewAdapter
+    //private lateinit var pagerAdapter: PictureDetailViewAdapter
+    private lateinit var pagerAdapter: ProfileSlideViewAdapter
 
-    var adverImagePaths: ArrayList<String> = ArrayList<String>()
+    var profileImagePaths = ArrayList<String>()
+    var getImages : ArrayList<Bitmap> = ArrayList()
 
-    var getImages : ArrayList<Bitmap> = ArrayList<Bitmap>()
 
-    var adPosition = 0
+    //private lateinit var adverAdapter: FullScreenImageAdapter
+    //    var adverImagePaths:ArrayList<String> = ArrayList<String>()
+    //
+    //    var adPosition = 0
+
+    var imgPosition = 0
+    var member_id = 0
+
+    internal var resetDataReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                getMyProfile()
+            }
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_profile_list)
 
         context = this
+        member_id = intent.getIntExtra("viewAlbumUser",0)
 
-        pagerAdapter = PictureDetailViewAdapter()
+        //pagerAdapter = PictureDetailViewAdapter()
+        pagerAdapter = ProfileSlideViewAdapter(this, profileImagePaths)
 
-        albumVP.setAdapter(pagerAdapter)
+        albumVP.adapter = pagerAdapter
+
+        getMyProfile()
 
         closeAlbum.setOnClickListener {
             finish()
         }
 
-        if (intent.hasExtra("id")) {
-            val id = intent.getStringExtra("id")
+        var filter1 = IntentFilter("RESET_DATA")
+        registerReceiver(resetDataReceiver, filter1)
 
-
-            ProfileAction.viewContent(id){ success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-                if (success){
-                    if(data != null){
-                        if(data.size != 0){
-
-                            println("data : $data")
-                            val time: Long = data["createAt"] as Long
-
-                            val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA)
-
-                            var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
-
-                            for(i in 0.. (texts.size-1)){
-
-                                val text_ = JSONObject(texts.get(i))
-
-                                val type = Utils.getString(text_, "type")
-
-                                if(type == "text") {
-                                    val text = text_.get("text")as String
-                                } else if (type == "photo") {
-                                    val photo = text_.get("file") as JSONArray
-
-                                    pageTV.setText("(" + 1 + "/" + photo.length() + ")")
-                                    for(i in 0.. (photo.length() - 1)) {
-
-                                        FirebaseFirestoreUtils.getFileUri("imgl/"+photo[i].toString()) { b: Boolean, s: String?, exception: Exception? ->
-                                            if (s != null) {
-                                                adverImagePaths.add(s)
-
-                                                val iv = ImageView(context)
-
-                                                val photoViewAttacher = PhotoViewAttacher(iv)
-                                                photoViewAttacher.scaleType = ImageView.ScaleType.FIT_XY
-
-                                                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(s,iv, Utils.UILoptions)
-
-                                                if(i == 0) {
-                                                    pagerAdapter.addView(iv,i)
-                                                } else {
-                                                    pagerAdapter.addView(iv)
-                                                }
-
-
-
-                                                pagerAdapter.notifyDataSetChanged()
-                                            }
-                                        }
-                                    }
-
-
-                                } else if (type == "video"){
-                                    val video = text_.get("file") as JSONArray
-                                    println("video : ========= $video")
-                                }
-
-                            }
-
-                        }
-                    }
-                } else {
-
-                }
-            }
-        }
-
-
-
-        viewpagerVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        albumVP.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                adPosition = position
+                imgPosition = position
             }
 
             override fun onPageSelected(position: Int) {}
 
             override fun onPageScrollStateChanged(state: Int) {
-                pageTV.setText("(" + (adPosition + 1) + "/" + adverImagePaths.size + ")")
+                albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
             }
         })
 
+        showProfImgAlbumIV.setOnClickListener {
+            val intent = Intent(context, ViewAlbumActivity::class.java)
+            intent.putExtra("viewAlbumListUserID", member_id.toInt())
+            startActivity(intent)
+        }
+
+    }
+    fun getMyProfile(){
+        val params = RequestParams()
+        if (PrefUtils.getIntPreference(context, "member_id")!= null){
+//            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        } else {
+            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        params.put("member_id", member_id)
 
 
+        MemberAction.get_member_img_history(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        profileImagePaths.clear()
+                        val memberImages = response.getJSONArray("MemberImgs")
+                        for (i in 0 until memberImages.length()) {
+
+                            val json = memberImages[i] as JSONObject
+                            val memberImg = json.getJSONObject("MemberImg")
+                            var image = Config.url + Utils.getString(memberImg,"image_uri")
+
+                            profileImagePaths.add(image)
+
+                            /*val btm = BitmapFactory.decodeFile(image)
+
+                            getImages.add(btm)*/
+
+                        }
+
+                        pagerAdapter.notifyDataSetChanged()
+
+                        if (profileImagePaths.size > 0) {
+                            albumPageTV.text = "(" + (imgPosition + 1) + "/" + profileImagePaths.size + ")"
+                        }
+
+                        if (member_id != PrefUtils.getIntPreference(context, "member_id")){
+                            showProfImgAlbumIV.visibility = View.GONE
+                        }
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+        })
     }
 }

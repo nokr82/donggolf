@@ -10,16 +10,28 @@ import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.ImageAdapter
-import donggolf.android.base.ImageLoader
-import donggolf.android.base.RootActivity
+import donggolf.android.base.*
+import donggolf.android.models.Photo
+import kotlinx.android.synthetic.main.activity_find_picture_grid.*
 import kotlinx.android.synthetic.main.activity_select_profile_img.*
+import org.json.JSONObject
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.Member
 import java.util.*
 
 class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListener {
@@ -28,7 +40,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
     private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
 
-//    private val selected = LinkedList<String>()
+    private val selected = LinkedList<String>()
 
     private var imageUri: Uri? = null
 
@@ -38,7 +50,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
     private var imagePath: String? = ""
 
-    private var displayName: String? = ""
+    private var displaynamePaths: String? = ""
 
     private var count: Int = 0
 
@@ -61,7 +73,6 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
         mAuth = FirebaseAuth.getInstance()
 
-        //앨범에 있는 사진들 로드
         val resolver = contentResolver
         var cursor: Cursor? = null
         try {
@@ -89,6 +100,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
                         photo.photoID = photoID
                         photo.photoPath = photoPath
                         photo.displayName = displayName
+                        //Log.d("yjs", "name : " + displayName)
                         photo.orientation = orientation
                         photo.bucketPhotoName = bucketDisplayName
                         photoList!!.add(photo)
@@ -112,33 +124,134 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
         profileGV.setOnItemClickListener(this)
 
-        val imageLoader = ImageLoader(resolver)
+        val imageLoader: ImageLoader = ImageLoader(resolver)
 
+        val adapter = ImageAdapter(this, photoList, imageLoader, selected)
+
+        profileGV.setAdapter(adapter)
+
+        imageLoader.setListener(adapter)
+
+        adapter.notifyDataSetChanged()
+
+        /*profileSelFinLL.setOnClickListener {
+            finish()
+        }*/
+
+        profileSelFinLL.setOnClickListener {
+
+            if (selected != null) {
+
+//                    var bt: Bitmap = Utils.getImage(context.getContentResolver(), selected[0], 10)
+
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("사진을 등록하시겠습니까 ?")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            /*val result = arrayOfNulls<String>(selected.size)
+                            val name = arrayOfNulls<String>(selected.size)
+
+                            var idx = 0
+                            var idxn = 0
+
+                            for (strPo in selected) {
+                                result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
+                                name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
+                            }
+                            */
+                            displaynamePaths = photoList[1].displayName
+                            uploadProfileImage()
+
+                            /*val returnIntent = Intent()
+//                            returnIntent.putExtra("images", result)
+//                            returnIntent.putExtra("displayname", name)
+                            setResult(RESULT_OK, returnIntent)
+                            finish()*/
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                            finish()
+                        })
+                val alert = builder.create()
+                alert.show()
+            }
+
+        }
     }
+
+    fun uploadProfileImage() {
+
+        var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths, 800)
+        println("displaynamePaths $displaynamePaths")
+        println("이미지 ::: ${ByteArrayInputStream(Utils.getByteArray(bt))}")
+        println("bt ------ $bt")
+
+        val params = RequestParams()
+
+        params.put("files",  ByteArrayInputStream(Utils.getByteArray(bt)))
+        params.put("type", "image")
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+
+        MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                setResult(RESULT_OK,intent)
+                finish()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                if (errorResponse != null)
+                    println(errorResponse!!.getString("message"))
+            }
+        })
+    }
+
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        val builder = AlertDialog.Builder(context)
-        var photo = photoList.get(position)
-        builder
-                .setMessage("사진을 등록하시겠습니까 ?")
+        val strPo = position.toString()
 
-                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.cancel()
+        val photo_id = photoList[position].photoID
 
-                    val returnIntent = Intent()
-//                    returnIntent.putExtra("profImg", photo)
-                    setResult(RESULT_OK, returnIntent)
-                    finish()
-                })
-                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.cancel()
-                })
-        val alert = builder.create()
-        alert.show()
+        if (photo_id == -1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+
+            }/* else {
+                takePhoto()
+            }*/
+        } else {
+            if (selected.contains(strPo)) {
+                selected.remove(strPo)
+
+                val adapter = selectGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ImageAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
+
+            } else {
+                if (count + selected.size > 1) {
+                    //Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                selected.add(strPo)
+
+
+                val adapter = profileGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ImageAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
+            }
+        }
     }
 
-    //직접 사진찍어서 올리는 것
-    private fun takePhoto() {
+    /*private fun takePhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
 
@@ -149,12 +262,14 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
 
             try {
                 val photo = File.createTempFile(
-                        System.currentTimeMillis().toString(), /* prefix */
-                        ".jpg", /* suffix */
-                        storageDir      /* directory */
+                        System.currentTimeMillis().toString(), *//* prefix *//*
+                        ".jpg", *//* suffix *//*
+                        storageDir      *//* directory *//*
                 )
 
+                //                imageUri = Uri.fromFile(photo);
                 imageUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", photo)
+                Log.d("yjs", "Uri : " + imageUri)
                 imagePath = photo.absolutePath
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 startActivityForResult(intent, FROM_CAMERA)
@@ -164,7 +279,7 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
             }
 
         }
-    }
+    }*/
 
     companion object CREATOR : Parcelable.Creator<SelectProfileImgActivity> {
         override fun createFromParcel(parcel: Parcel): SelectProfileImgActivity {

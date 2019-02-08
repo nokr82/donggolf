@@ -6,14 +6,20 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
 //import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
+import donggolf.android.base.Config
+import donggolf.android.base.Utils
+import donggolf.android.models.Users
+import org.json.JSONObject
+import java.net.UnknownServiceException
 import java.util.*
 
-class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data) {
+class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String, Any>> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -33,38 +39,20 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>
             }
         }
 
-        item.main_detail_listitem_nickname.setText(data.get(position).get("nick").toString())
-        item.main_detail_listitem_condition.setText(data.get(position).get("state_msg").toString())
-        /*if (data.get(position).get("relation").toString().equals("mate1")){
-            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_first)
-        }else{
-            item.main_detail_listitem_firstimage.setImageResource(R.drawable.icon_second)
-        }*/
+        val json = data.get(position)
+        val member = json.getJSONObject("Member")
 
-        /*var data : Map<String, Any> = getItem(position)
+        item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
+        item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")
 
-        var title:String = data.get("content") as String
-        item.main_edit_listitem_title.text = title
-
-        var date:Long = data.get("date") as Long
-        val dateFormat: SimpleDateFormat = SimpleDateFormat("MM-dd", Locale.KOREA)
-        val currentTime: String = dateFormat.format(Date(date))
-        item.main_edit_listitem_date.text = currentTime
-
-        item.main_edit_listitem_delete.setOnClickListener {
-
-            var id:String = data.get("id") as String
-            SearchAction.deleteContent(id){
-                if(it){
-                    removeItem(position)
-                }
-            }
-        }*/
+        val img_uri = Utils.getString(member,"profile_img")//small_uri
+        val image = Config.url + img_uri
+        ImageLoader.getInstance().displayImage(image, item.main_detail_listitem_profileimage, Utils.UILoptionsProfile)
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -87,14 +75,14 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<Map<String, Any>
     class ViewHolder(v: View) {
 
 
-        var main_detail_listitem_profileimage : ImageView //프사
+        var main_detail_listitem_profileimage : de.hdodenhof.circleimageview.CircleImageView //프사
         var isOnlineIV : ImageView //프사에 붙은 초록불
         var main_detail_listitem_nickname : TextView //닉네임
         var main_detail_listitem_firstimage : ImageView //일촌인지 이촌인지
         var main_detail_listitem_condition : TextView //상메
 
         init {
-            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as ImageView
+            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as de.hdodenhof.circleimageview.CircleImageView
             isOnlineIV = v.findViewById<View>(R.id.isOnlineIV) as ImageView
             main_detail_listitem_nickname = v.findViewById<View>(R.id.main_detail_listitem_nickname) as TextView
             main_detail_listitem_firstimage = v.findViewById<View>(R.id.main_detail_listitem_firstimage) as ImageView

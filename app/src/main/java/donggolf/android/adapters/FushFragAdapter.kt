@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.PictureCategory
 import org.json.JSONObject
@@ -38,8 +41,37 @@ open class FushFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         var data: JSONObject = getItem(position)
+        val alarm = data.getJSONObject("Alarm")
+        val created = Utils.getString(alarm,"created")
+        item.timeTV.setText(Utils.since(created))
+        val sender = data.getJSONObject("Sender")
 
+        item.contentTV.text = Utils.getString(alarm, "contents")
 
+        var profile = Config.url + Utils.getString(sender, "profile_img")
+        ImageLoader.getInstance().displayImage(profile, item.profileIV, Utils.UILoptionsUserProfile)
+
+        val type = Utils.getInt(alarm , "type")
+
+        var title = ""
+
+        if(type == 1) {
+
+            val content = data.getJSONObject("Content")
+
+            title = "[우리동네] " + Utils.getString(content, "title")
+
+        } else if (type == 2) {
+
+            val market = data.getJSONObject("Market")
+
+            title = "[중고장터] " + Utils.getString(market, "title")
+
+        } else {
+            title = "[친구신청] 새로운 친구 신청입니다."
+        }
+
+        item.titleTV.text = title
 
         return retView
 
@@ -67,15 +99,16 @@ open class FushFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
     class ViewHolder(v: View) {
 
+        var profileIV : CircleImageView
         var titleTV : TextView
         var contentTV : TextView
         var timeTV : TextView
 
         init {
+            profileIV = v.findViewById<View>(R.id.profileIV) as CircleImageView
             titleTV = v.findViewById<View>(R.id.titleTV) as TextView
             contentTV = v.findViewById<View>(R.id.contentTV) as TextView
             timeTV = v.findViewById<View>(R.id.timeTV) as TextView
-
         }
     }
 }

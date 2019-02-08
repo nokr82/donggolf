@@ -3,28 +3,29 @@ package donggolf.android.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import android.graphics.Bitmap
 import android.os.Bundle
 import donggolf.android.R
 import donggolf.android.base.RootActivity
-import kotlinx.android.synthetic.main.activity_profile_phone_change.*
 import kotlinx.android.synthetic.main.activity_profile_tag_change.*
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
-import android.view.View
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import donggolf.android.actions.ProfileAction
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
+import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.ProfileTagAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.Users
-import kotlinx.android.synthetic.main.activity_profile_name_modif.*
+import kotlinx.android.synthetic.main.tag.view.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.ByteArrayInputStream
 
 
 class ProfileTagChangeActivity : RootActivity() {
@@ -35,18 +36,8 @@ class ProfileTagChangeActivity : RootActivity() {
 
     internal lateinit var adapter: ProfileTagAdapter
 
-    private  var adapterData : ArrayList<String> = ArrayList<String>()
-
-    private var mAuth: FirebaseAuth? = null
-
-    lateinit var imgl : String
-    lateinit var imgs : String
-    var lastN : Long = 0
-    lateinit var nick : String
-    lateinit var sex : String
-    lateinit var sTag : ArrayList<String>
-    lateinit var statusMessage : String
-
+    private var adapterData : ArrayList<String> = ArrayList<String>()
+    private var delList = ArrayList<Int>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,65 +50,108 @@ class ProfileTagChangeActivity : RootActivity() {
             finish()
         }
 
+        var intent = getIntent()
+
         adapter = ProfileTagAdapter(context,R.layout.tag,adapterData)
 
         tagList.adapter = adapter
 
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
-        val db = FirebaseFirestore.getInstance()
+        if (intent.getStringExtra("type") != null){
+            titleTV.setText("나의 게시글 #")
+        }
 
-        var uid = PrefUtils.getStringPreference(context, "uid")
-        //println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
 
-            if (success){
-                if (data != null) {
-                    statusMessage = data!!.get("state_msg") as String
-                    imgl = data!!.get("imgl") as String
-                    imgs = data!!.get("imgs") as String
-                    lastN = data!!.get("last") as Long
-                    nick = data!!.get("nick") as String
-                    sex = data!!.get("sex") as String
-                    sTag = data!!.get("sharpTag") as ArrayList<String>
-                    adapterData = sTag
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        val data = response.getJSONArray("MemberTags")
+                        for (i in 0..data.length()-1) {
+                            val json = data[i] as JSONObject
+                            val member_tag = json.getJSONObject("MemberTag")
+                            val tag = Utils.getString(member_tag, "tag")
+
+                            adapterData.add(tag)
+                        }
+
+                        adapter.notifyDataSetChanged()
+
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
                 }
-
-
             }
 
-            /*if(success && data != null) {
-                data.forEach {
-                    println(it)
-                    adapterData.clear()
-                    if (it != null) {
-                        adapter.add(it)
-                    }
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
-                }
+            }
+        })
 
-                adapter.notifyDataSetChanged()
+        tagList.setOnItemClickListener { parent, view, position, id ->
+            view.removeIV.setOnClickListener {
 
-            }*/
+                val taglist = adapterData.get(position)
+//                delList.add(oldTagID)
 
+                adapter.removeItem(position)
+                adapterData.remove(taglist)
+
+            }
         }
 
         confirmRL.setOnClickListener {
-            nick = nameET.text.toString()
-            val item = Users(imgl, imgs, lastN, nick, sex, adapterData, statusMessage)
 
-            FirebaseFirestoreUtils.save("users", uid, item) {
-                if (it) {
-                    var itt = Intent()
-                    itt.putExtra("newNick", nick)
-                    setResult(RESULT_OK, itt)
+            Utils.hideKeyboard(context!!)
+
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
+//            params.put("update", adapterData)//추가할거
+            if (adapterData != null){
+                Log.d("작성",adapterData.toString())
+                if (adapterData!!.size != 0){
+                    for (i in 0..adapterData!!.size - 1){
+
+                        params.put("update[" + i + "]",adapterData.get(i))
+                    }
+                }
+            }
+            //params.put("del_tag", delList) //지울거
+            params.put("type", "tags") //태그를 건드릴것이다
+
+            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    setResult(RESULT_OK,intent)
+
+                    finish()
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
+
+
+            if (intent.getStringExtra("type") != null){
+                val type = intent.getStringExtra("type")
+                println("type $type")
+                if (type == "post"){
+                    if (adapterData.size > 0 ){
+                        intent.putExtra("data",adapterData)
+                    }
+                    setResult(Activity.RESULT_OK, intent)
                     finish()
                 } else {
 
                 }
             }
+
         }
 
+        //입력관련 처리
         hashtagET.addTextChangedListener(object : TextWatcher {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -135,30 +169,31 @@ class ProfileTagChangeActivity : RootActivity() {
             }
         })
 
+        //Enter key is pressed
         hashtagET.setOnEditorActionListener { v, actionId, event ->
 
             if(actionId == EditorInfo.IME_ACTION_DONE){
 
                 tag = Utils.getString(hashtagET)
 
-                if("".equals(tag) || null == tag || tag!!.length < 1) {
+                if("" == tag || null == tag || tag!!.isEmpty()) {
 
-                    Toast.makeText(context, "검색어를 입력해주세요.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "태그를 입력해주세요.", Toast.LENGTH_LONG).show()
 
                     return@setOnEditorActionListener false
 
+                } else {
+
+                    Utils.hideKeyboard(context!!)
+
+                    adapterData.add(tag!!)
+
+                    //sTag.add(tag!!)
+
+                    adapter.notifyDataSetChanged()
+
+                    hashtagET.setText("")
                 }
-
-                Utils.hideKeyboard(context!!)
-
-                adapterData.add("#" + tag!!)
-
-                sTag.add(tag!!)
-
-                adapter.notifyDataSetChanged()
-
-                hashtagET.setText("")
-
             }
 
             return@setOnEditorActionListener true
@@ -168,7 +203,7 @@ class ProfileTagChangeActivity : RootActivity() {
             hashtagET.setText("")
         }
 
-        confirmRL.setOnClickListener {
+        /*confirmRL.setOnClickListener {
             var intent = Intent();
             intent.putExtra("data",adapterData)
             if(adapterData.size > 0 && !adapterData.get(0).equals("")){
@@ -179,13 +214,10 @@ class ProfileTagChangeActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-
             intent.putExtra("data",adapterData)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }
-
-
+        }*/
 
     }
 }

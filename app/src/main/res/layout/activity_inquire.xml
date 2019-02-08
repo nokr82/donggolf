@@ -8,6 +8,7 @@
 
 
     <ScrollView
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -65,20 +66,51 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/inquire_emailLL"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:textStyle="bold"
-                        android:textSize="13dp"
-                        android:text="kido92@naver.com"
-                        android:id="@+id/ans_user_email"/>
-                    <ImageView
-                        android:id="@+id/goToEmailMod"
-                        android:layout_width="wrap_content"
+                        android:visibility="visible">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:textStyle="bold"
+                            android:textSize="13dp"
+                            android:text="kido92@naver.com"
+                            android:id="@+id/ans_user_email"/>
+                        <ImageView
+                            android:id="@+id/goToEmailMod"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/btn_change_name"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/modEmailLL"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/btn_change_name"/>
+                        android:visibility="gone">
+                        <EditText
+                            android:id="@+id/rsp_emailET"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
+                            android:background="@null"
+                            android:textSize="13dp"
+                            android:hint="답변 받을 이메일"/>
+                        <TextView
+                            android:id="@+id/btn_okTV"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:background="#a7a7a7"
+                            android:textColor="#ffffff"
+                            android:textSize="13dp"
+                            android:text="확인"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -103,7 +135,7 @@
                     android:textStyle="bold"
                     android:textSize="13dp"
                     android:text="010-2534-5553"
-                    android:id="@+id/mobNum"/>
+                    android:id="@+id/mobNumTV"/>
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
@@ -113,12 +145,14 @@
                 android:textSize="11dp"
                 android:background="#f4f4f4"/>
             <EditText
+                android:id="@+id/inquire_contET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lines="10"
+                android:maxLength="1000"
                 android:gravity="top"
-                android:padding="15dp"
-                android:background="@android:color/transparent"
+                android:padding="13dp"
+                android:background="@null"
                 android:hint="문의 내용을 입력해주세요."/>
 
         </LinearLayout>

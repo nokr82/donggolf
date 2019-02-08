@@ -63,8 +63,9 @@
         android:layout_height="4dp"
         android:background="@drawable/line_0" />
     <GridView
+        android:scrollbars="none"
         android:id="@+id/selectGV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:numColumns="3"></GridView>
+        android:numColumns="3"/>
 </LinearLayout>

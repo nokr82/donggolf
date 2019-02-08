@@ -1,22 +1,28 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.MemberAction
+import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.AreaRangeAdapter
 import donggolf.android.adapters.AreaRangeGridAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
-import donggolf.android.models.National
-import donggolf.android.models.NationalGrid
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_area_range.*
+import kotlinx.android.synthetic.main.item_area.view.*
+import org.json.JSONException
+import org.json.JSONObject
+
 class AreaRangeActivity : RootActivity() {
 
     private lateinit var context: Context
@@ -28,13 +34,25 @@ class AreaRangeActivity : RootActivity() {
     private var mAuth: FirebaseAuth? = null
 
     val user = HashMap<String, Any>()
-    private val actArea = 3
+    var actArea = 0
+    var userRG1 = ""
+    var userRG2 = ""
+    var userRG3 = ""
 
-    var arealist: ArrayList<National> = ArrayList<National>()
+    var sidotype = ""
+    var sidotype2 = ""
+    var goguntype = ""
+    var goguntype2 = ""
+    var region_id = ""
+    var region_id2 = ""
 
-    var areaGridList: ArrayList<NationalGrid> = ArrayList<NationalGrid>()
+    lateinit var type :String
 
-    var count = 0
+    var areacount = 0
+
+    var bigcitylist: ArrayList<JSONObject> = ArrayList<JSONObject>()
+
+    var gugunList: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,147 +62,262 @@ class AreaRangeActivity : RootActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        val db = FirebaseFirestore.getInstance()
+        intent = getIntent()
+        type = intent.getStringExtra("region_type")//content_filter
 
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
-                    override fun onComplete(task: Task<QuerySnapshot>) {
-                        if (task.isSuccessful) {
-                            for (document in task.result!!) {
-                                Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
-                            }
-                        } else {
-                            Log.w(MainActivity.TAG, "Error getting documents.", task.exception)
-                        }
-                    }
-                })
+        getBigCity()
 
-        FirebaseFirestoreUtils.get("settings","national"){ success, data, exception ->
-
-            var data:HashMap<String, Any> = data as HashMap<String, Any>
-            for (i in 0..(data.size - 1)) {
-                var sido:HashMap<String, Any>  = data.get(i.toString()) as HashMap<String, Any>
-
-                val iterator = sido.entries.iterator()
-
-                while (iterator.hasNext()){
-
-                    var entry = iterator.next() as java.util.Map.Entry<String, ArrayList<java.util.Map.Entry<String,Long>>>
-
-                    var datas = National(entry.key,entry.value)
-
-                    arealist.add(datas)
-
-                }
-
-            }
-
-            adapter.notifyDataSetChanged()
-
-        }
-
-        adapter = AreaRangeAdapter(context, R.layout.item_area_range, arealist)
-
+        adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
         arealistLV.adapter = adapter
+        arealistLV.setOnItemClickListener { parent, view, position, id ->
+            val item = bigcitylist.get(position)
+            var type = item.getJSONObject("Regions")
+            var id  = Utils.getString(type,"id")
 
-        arealistLV.itemsCanFocus = true
-        arealistLV.setOnItemClickListener{ parent, view, position, id ->
+            if (areacount == 0){
+                sidotype = Utils.getString(type,"name")
+            } else if (areacount == 1){
+                sidotype2 = Utils.getString(type,"name")
+            }
 
-            gridGV.visibility = View.VISIBLE
-
+            getGugun(id.toInt())
             arealistLV.visibility = View.GONE
-
-            val item = arealist.get(position)
-
-            println("item :========= ${item.national}")
-
-            if(areaGridList.size > 1) {
-                areaGridList.clear()
-                for (i in 0..item.national.size-1){
-
-                    var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
-
-                    val iterator = data.entries.iterator()
-
-                    while (iterator.hasNext()){
-
-                        var entry = iterator.next() as java.util.Map.Entry<String, Long>
-
-                        var datas = NationalGrid(entry.key,entry.value)
-
-                        areaGridList.add(datas)
-
-                    }
-
-                }
-            }else {
-            for (i in 0..item.national.size-1){
-
-                var data:HashMap<String, Long> = item.national.get(i) as HashMap<String, Long>
-
-                val iterator = data.entries.iterator()
-
-                while (iterator.hasNext()){
-
-                    var entry = iterator.next() as java.util.Map.Entry<String, Long>
-
-                    var datas = NationalGrid(entry.key,entry.value)
-
-                    areaGridList.add(datas)
-
-                }
-
-            }
-            }
-
-            GridAdapter.notifyDataSetChanged()
-
-
+            gridGV.visibility = View.VISIBLE
+//
+//            if (Utils.getString(type,"name") == "세종특별자치시") {
+//                var intent = Intent();
+//                intent.putExtra("sidotype", sidotype)
+//                intent.putExtra("goguntype", sidotype)
+//                intent.putExtra("region_id", id)
+//                setResult(Activity.RESULT_OK, intent)
+//                finish()
+//            } else if (Utils.getString(type,"name") == "전국"){
+//                var intent = Intent();
+//                intent.putExtra("sidotype", sidotype)
+//                intent.putExtra("goguntype", sidotype)
+//                intent.putExtra("region_id", id)
+//                setResult(Activity.RESULT_OK, intent)
+//                finish()
+//            }
         }
 
-        GridAdapter = AreaRangeGridAdapter(context,R.layout.item_area_range_grid,areaGridList)
-
+        GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, gugunList)
         gridGV.adapter = GridAdapter
+        gridGV.setOnItemClickListener { parent, view, position, id ->
+            val item = gugunList.get(position)
+            var type = item.getJSONObject("Regions")
+            var name:String = Utils.getString(type,"name")
+            var index = areaCnt.text.toString().toInt()
+            var nowIndex = index + 1
+            if (areacount == 0){
+                region_id = Utils.getString(type,"id")
+                goguntype = name
+                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
+            } else if (areacount == 1){
+                region_id2 = Utils.getString(type,"id")
+                goguntype2 = name
+            }
+            areacount++
 
-        //활동 지역 범위 삭제
-        area_deal1.setOnClickListener {
-            hideArea(area1)
-            hideArea(area_deal1)
-            areaCnt.text = "지역 범위 설정 ($actArea/3)"
-            //파이어베이스 사용자 활동범위 제거
-        }
-        area_deal2.setOnClickListener {
-            hideArea(area2)
-            hideArea(area_deal2)
-            areaCnt.text = "지역 범위 설정 ($actArea/3)"
-            //
-        }
-        area_deal1.setOnClickListener {
-            hideArea(area3)
-            hideArea(area_deal3)
-            areaCnt.text = "지역 범위 설정 ($actArea/3)"
-            //
+            arealistLV.visibility = View.VISIBLE
+            gridGV.visibility = View.GONE
+
+            if (areacount == 2) {
+                Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
+                var intent = Intent();
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("sidotype2", sidotype2)
+                intent.putExtra("goguntype", goguntype)
+                intent.putExtra("goguntype2", goguntype2)
+                intent.putExtra("region_id", region_id)
+                intent.putExtra("region_id2", region_id2)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+
         }
 
         finishLL.setOnClickListener {
-            if(arealistLV.visibility == View.VISIBLE){
-                finish()
+        /*    if(arealistLV.visibility == View.VISIBLE){
+                //여기에 db 데이터 업데이트
+                val params = RequestParams()
+                params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+                params.put("type", "region")
+                params.put("region1", userRG1)
+                params.put("region2", userRG2)
+                params.put("region3", userRG3)
+
+                MemberAction.update_info(params, object : JsonHttpResponseHandler(){
+                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                        try {
+                            val result = response!!.getString("result")
+                            println("AreaRangeActivity save changed data :: $response")
+                            if (result == "ok") {
+                                Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
+                                setResult(RESULT_OK,intent)
+                                finish()
+                            }
+                        } catch (e : JSONException) {
+                            e.printStackTrace()
+                        }
+
+                    }
+
+                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                        Toast.makeText(context, "지역 변경 실패", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
             }
 
             if(gridGV.visibility == View.VISIBLE){
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
-            }
+            }*/
+finish()
+
         }
-    }
-
-    fun hideArea(view: View){
-        view.visibility = View.GONE
-    }
-
-    override fun onResume() {
-        super.onResume()
 
     }
+
+    fun tempMyActRegion() {
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
+                        tmpRegionLL.removeAllViews()
+
+                        val region1 = Utils.getString(member,"region1")
+                        if (!region1.isEmpty()) {
+                            val regionView = View.inflate(context, R.layout.item_area,null)
+                            regionView.regionNameTV.text = region1
+                            userRG1 = region1
+                            actArea++
+
+                            regionView.regionDelIV.setOnClickListener {
+                                userRG1 = ""
+                                actArea--
+                                println("userRG1 : $userRG1, actArea : $actArea")
+                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
+                                tmpRegionLL.removeView(regionView)
+                            }
+
+                            tmpRegionLL.addView(regionView)
+                        }
+
+                        val region2 = Utils.getString(member,"region2")
+                        if (!region2.isEmpty()) {
+                            val regionView = View.inflate(context, R.layout.item_area,null)
+                            regionView.regionNameTV.text = region2
+                            userRG2 = region2
+                            actArea++
+
+                            regionView.regionDelIV.setOnClickListener {
+                                userRG2 = ""
+                                actArea--
+                                println("userRG2 : $userRG2, actArea : $actArea")
+                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
+                                tmpRegionLL.removeView(regionView)
+                            }
+
+                            tmpRegionLL.addView(regionView)
+                        }
+
+                        val region3 = Utils.getString(member,"region3")
+                        if (!region3.isEmpty()) {
+                            val regionView = View.inflate(context, R.layout.item_area,null)
+                            regionView.regionNameTV.text = region3
+                            userRG3 = region3
+                            actArea++
+
+                            regionView.regionDelIV.setOnClickListener {
+                                userRG3 = ""
+                                actArea--
+                                println("userRG3 : $userRG3, actArea : $actArea")
+                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
+                                tmpRegionLL.removeView(regionView)
+                            }
+
+                            tmpRegionLL.addView(regionView)
+                        }
+
+                        areaCnt.text = "지역 범위 설정 ($actArea/3)"
+
+                    } else {
+
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
+    }
+
+
+    fun getBigCity(){
+
+        val params = RequestParams()
+
+        RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val datalist = response!!.getJSONArray("sido")
+
+                if (datalist.length() > 0 && datalist != null){
+                    for (i in 0 until datalist.length()){
+                        bigcitylist.add(datalist.get(i) as JSONObject)
+                        bigcitylist[i].put("isSelectedOp",false)
+                    }
+
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Utils.alert(context, "서버에 접속 중 문제가 발생했습니다.\n재시도해주십시오.")
+            }
+
+        })
+
+    }
+
+    fun getGugun(position: Int){
+        if (gugunList != null){
+            gugunList.clear()
+        }
+
+        val params = RequestParams()
+        params.put("sido",position)
+
+        RegionAction.api_gugun(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var datalist = response!!.getJSONArray("gugun")
+
+                tmpSV.visibility = View.VISIBLE
+
+                if (datalist.length() > 0 && datalist != null){
+                    for (i in 0 until datalist.length()){
+                        gugunList.add(datalist.get(i) as JSONObject)
+                        gugunList[i].put("isSelectedOp",false)
+                    }
+                    GridAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                Toast.makeText(context, "불러오기 실패", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
 }

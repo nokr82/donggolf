@@ -4,18 +4,28 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.models.National
+import donggolf.android.R.id.main_edit_listitem_title
+import donggolf.android.actions.PostAction
+import donggolf.android.actions.SearchAction
+import donggolf.android.base.Utils
+import donggolf.android.fragment.FreeFragment
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>) : ArrayAdapter<National>(context,view, data){
+open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<National> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -35,21 +45,24 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>
             }
         }
 
-        var data : National = getItem(position)
+        var json = data.get(position)
 
-        item.titleTV.setText(data.title)
+        var type = json.getJSONObject("Regions")
 
-        item.checkCB.setOnClickListener {
-            var checkBox:CheckBox = it as CheckBox
+        var name:String = Utils.getString(type,"name")
+        item.item_option_nameTV.text = name
 
-            data.is_checked = checkBox.isChecked
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.item_option_checkIV.visibility = View.VISIBLE
+        } else {
+            item.item_option_checkIV.visibility = View.INVISIBLE
         }
-
 
         return retView
     }
 
-    override fun getItem(position: Int): National {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -72,12 +85,12 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<National>
     class ViewHolder(v: View) {
 
 
-        var titleTV : TextView
-        var checkCB : CheckBox
+        var item_option_nameTV : TextView
+        var item_option_checkIV : ImageView
 
         init {
-            titleTV = v.findViewById<View>(R.id.titleTV) as TextView
-            checkCB = v.findViewById<View>(R.id.checkCB) as CheckBox
+            item_option_nameTV = v.findViewById<View>(R.id.item_option_nameTV) as TextView
+            item_option_checkIV = v.findViewById<View>(R.id.item_option_checkIV) as ImageView
         }
     }
 }

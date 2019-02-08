@@ -55,7 +55,8 @@ public class HttpClient {
 
         client.setTimeout(60 * 1000);
 
-        client.post("http://13.124.13.37" + url, params, responseHandler);
+        //client.post("http://13.124.13.37" + url, params, responseHandler);
+        client.post("http://13.125.241.200" + url, params, responseHandler);
     }
 
     public static void postJSON(Context context, String url, JSONObject jsonParams, AsyncHttpResponseHandler responseHandler) {

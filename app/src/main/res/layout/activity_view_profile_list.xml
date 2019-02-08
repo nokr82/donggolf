@@ -36,11 +36,19 @@
                 android:id="@+id/albumPageTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="(0/15)"
+                android:text="(0/0)"
                 android:layout_marginLeft="8dp"
                 android:textColor="#ffffff"
                 android:textSize="15dp"/>
         </LinearLayout>
+        <ImageView
+            android:id="@+id/showProfImgAlbumIV"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/btn_show_album"/>
     </RelativeLayout>
 
     <RelativeLayout

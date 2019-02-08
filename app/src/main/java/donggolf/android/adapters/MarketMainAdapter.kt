@@ -4,10 +4,11 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -36,9 +37,42 @@ open class MarketMainAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var json = data.get(position)
+        val market = json.getJSONObject("Market")
+        val id = Utils.getInt(market,"id")
+        json.put("prodId", id)
+        val title = Utils.getString(market,"title")
+        val price = Utils.getString(market,"price")
+        val region = Utils.getString(market,"region")
+        val created = Utils.getString(market,"created")
+        val nick = Utils.getString(market,"nick")
+        val status = Utils.getString(market,"status")
+        val com_cnt = Utils.getString(market,"com_cnt")
 
+        item.contentTV.text = title +"("+com_cnt+")"
+        item.nicknameTV.text = nick
+        item.timeTV.text = created.substringBefore(" ")
+        if (status.equals("판매완료")){
+            item.priceTV.text = "******원"
+        }else{
+            item.priceTV.text = Utils._comma(price)+"원"
+        }
+        item.moreTV.text = region
+        item.divisionTV.text = status
+        if (status == "판매중"){
+            item.divisionTV.visibility = View.GONE
+        } else {
+            item.divisionTV.visibility = View.VISIBLE
+        }
 
+        val marketImg = json.getJSONArray("MarketImg")
+        if (marketImg.length() != 0) {
+            val img_uri = Utils.getString(marketImg[0] as JSONObject, "img_small")
+            val image = Config.url + img_uri
+            ImageLoader.getInstance().displayImage(image, item.imageIV, Utils.UILoptionsProfile)
+        } else {
+            ImageLoader.getInstance().displayImage(Config.url, item.imageIV, Utils.UILoptionsProfile)
+        }
 
         return retView
     }

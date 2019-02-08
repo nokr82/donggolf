@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    
+    tools:context=".activities.MyPostMngActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/btn_back"/>
+            <TextView
+                android:id="@+id/titleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:text="내 글 관리"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_0"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+        <!-- 내 게시물 -->
+        <RelativeLayout
+            android:id="@+id/myPostTab"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/myPost_myPostTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_centerInParent="true"
+                android:text="내 게시물(99)"/>
+            <View
+                android:id="@+id/myPost_myPost_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#0EDA2F"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+        <!--댓글단 글-->
+        <RelativeLayout
+            android:id="@+id/myCommentTab"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/myPost_commentTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_centerInParent="true"
+                android:text="댓글단 글"/>
+            <View
+                android:id="@+id/myPost_commentPost_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#0EDA2F"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+        <!--보관 글-->
+        <RelativeLayout
+            android:id="@+id/myStorePostTab"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/myPost_storeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_centerInParent="true"
+                android:text="보관 글(99)"/>
+            <View
+                android:id="@+id/myPost_storePost_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#0EDA2F"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_1"/>
+
+    <!--android.support.v4.view.ViewPager
+        android:id="@+id/myPostMngVP"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/postsLV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.v4.view.ViewPager-->
+
+    <ListView
+        android:scrollbars="none"
+        android:id="@+id/myPostLV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    <ListView
+        android:scrollbars="none"
+        android:id="@+id/myCommentLV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+    <ListView
+        android:scrollbars="none"
+        android:id="@+id/myStorePostLV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</LinearLayout>

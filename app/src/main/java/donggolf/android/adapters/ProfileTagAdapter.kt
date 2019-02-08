@@ -35,14 +35,15 @@ open class ProfileTagAdapter(context: Context, view:Int, data:ArrayList<String>)
             }
         }
 
-        var data : String = getItem(position)
+        //var data : String = getItem(position)
+        var tmp = data.get(position)
 
-        item.titleTV.setText(data)
-        println("ProfileTagAdapter=====$data")
+        item.titleTagTV.text = "#"+ tmp
+        println("ProfileTagAdapter()=====$tmp")
 
-        item.removeIV.setOnClickListener {
+        /*item.removeIV.setOnClickListener {
             removeItem(position)
-        }
+        }*/
 
         return retView
     }
@@ -70,11 +71,11 @@ open class ProfileTagAdapter(context: Context, view:Int, data:ArrayList<String>)
     class ViewHolder(v: View) {
 
 
-        var titleTV : TextView
+        var titleTagTV : TextView
         var removeIV : ImageView
 
         init {
-            titleTV = v.findViewById<View>(R.id.titleTV) as TextView
+            titleTagTV = v.findViewById<View>(R.id.titleTagTV) as TextView
             removeIV = v.findViewById<View>(R.id.removeIV) as ImageView
 
 

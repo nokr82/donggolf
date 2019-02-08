@@ -1,34 +1,28 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ProfileAction
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.actions.MemberAction
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
-import donggolf.android.models.Users
-import kotlinx.android.synthetic.main.activity_mod_status_msg.*
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile_name_modif.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class ProfileNameModifActivity : RootActivity() {
 
-    private var mAuth: FirebaseAuth? = null
     lateinit var context : Context
-
-    lateinit var imgl : String
-    lateinit var imgs : String
-    var lastN : Long = 0
     lateinit var nick : String
-    lateinit var sex : String
-    lateinit var sTag : ArrayList<String>
-    lateinit var statusMessage : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,40 +57,56 @@ class ProfileNameModifActivity : RootActivity() {
             nameET.setText("")
         }
 
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
-        val db = FirebaseFirestore.getInstance()
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
-        var uid = PrefUtils.getStringPreference(context, "uid")
-        //println("uid====$uid")
-        ProfileAction.viewContent(uid) { success: Boolean, data: Map<String, Any>?, exception: Exception? ->
-            statusMessage = data!!.get("state_msg") as String
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    println("InfoFrag :: $response")
 
-            imgl = data!!.get("imgl") as String
-            imgs = data!!.get("imgs") as String
-            lastN = data!!.get("last") as Long
-            nick = data!!.get("nick") as String
-            sex = data!!.get("sex") as String
-            sTag = data!!.get("sharpTag") as ArrayList<String>
+                    if (result == "ok") {
+                        val member = response.getJSONObject("Member")
 
-            nameET.setText(nick)
-        }
+                        var jNick = Utils.getString(member,"nick")
+                        nameET.setText(jNick)
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+        })
 
         nick_ok.setOnClickListener {
             //DB에 저장하고 finish
             nick = nameET.text.toString()
-            val item = Users(imgl, imgs, lastN, nick, sex, sTag, statusMessage)
 
-            FirebaseFirestoreUtils.save("users", uid, item) {
-                if (it) {
-                    var itt = Intent()
-                    itt.putExtra("newNick", nick)
-                    setResult(RESULT_OK, itt)
-                    finish()
-                } else {
+            //Do table update action
+            val params = RequestParams()
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+            params.put("update", nick)
+            params.put("type", "nick")
+
+            //php구현 아직 안함
+            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        if (result == "ok") {
+                            var intent = Intent()
+                            setResult(RESULT_OK,intent)
+                            finish()
+                        }
+                    }catch (e : JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
                 }
-            }
+            })
         }
 
     }

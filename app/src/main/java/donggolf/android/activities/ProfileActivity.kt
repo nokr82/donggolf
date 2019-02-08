@@ -1,37 +1,34 @@
 package donggolf.android.activities
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.*
-import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import android.view.View
+import android.widget.Toast
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ProfileAction
-import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
+import donggolf.android.actions.ChattingAction
+import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
+import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.util.ArrayList
 
 class ProfileActivity : RootActivity() {
 
     lateinit var context: Context
-    val SELECT_PROFILE = 104
-    private var pimgPaths: ArrayList<String> = ArrayList<String>()
-    private var images: ArrayList<Bitmap> = ArrayList()
-    private var strPaths: ArrayList<String> = ArrayList<String>()
-
-    private var mAuth: FirebaseAuth? = null
-
-    var wimgl : String = ""
-    var wimgs : String = ""
-    var wlast : Long = 0
-    var wnick : String = ""
-    var wsex : String = ""
-    var wTags : ArrayList<String> = ArrayList<String>()
-    var wstmsg : String = ""
+    var member_id = ""
+    var mate_ids: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,104 +36,186 @@ class ProfileActivity : RootActivity() {
 
         context = this
 
-        var wid = intent.getStringExtra("writerID")
-        println("wid============$wid")
+        //상대 홈피
+        val user_id = intent.getIntExtra("other_member_id",0)
 
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
+        var intent = getIntent()
+        member_id = intent.getStringExtra("member_id")
+        member_info(member_id)
+        mate_ids.add(member_id)
 
-        /*ProfileAction.viewContent(wid){ success, data, exception ->
-            if (success){
-                wimgl = data!!.get("imgl") as String
-                wimgs = data!!.get("imgs") as String
-                wlast = data!!.get("last") as Long
-                wnick = data!!.get("nick") as String
-                wsex = data!!.get("sex") as String
-                wTags = data!!.get("sharpTag") as ArrayList<String>
-                wstmsg = data!!.get("state_msg") as String
-            }
-        }*/
 
-        txUserName.setText(wnick)
-        statusMessage.setText(wstmsg)
+        //프로필 사진
+        otherPrfImgIV.setOnClickListener {
+            val intent = Intent(context,ViewProfileListActivity::class.java)
+            intent.putExtra("viewAlbumUser", member_id.toInt())
+            startActivity(intent)
+        }
 
-        click_chat.setOnClickListener {
-            btn_frd_cc1.setBackgroundColor(R.drawable.btn_frd_cancel)
+        profBack.setOnClickListener {
+            finish()
         }
 
         click_post.setOnClickListener {
-            btn_frd_cc2.setBackgroundColor(R.drawable.btn_frd_cancel)
+            val intent = Intent(context, MyPostMngActivity::class.java)
+            intent.putExtra("founder", member_id)
+            intent.putExtra("type", "founder")
+            intent.putExtra("nick",txUserName.text.toString())
+            startActivity(intent)
+        }
+
+        click_chat.setOnClickListener {
+
+            val nick = txUserName.text.toString()
+
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        addchat()
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
         }
 
         click_friend.setOnClickListener {
-            btn_frd_cc3.setBackgroundColor(R.drawable.btn_frd_cancel)
+            val intent = Intent(context, MutualActivity::class.java)
+            intent.putExtra("mate_id", member_id)
+            startActivity(intent)
         }
 
-        /*showProfImg.setOnClickListener {
-            var intent = Intent(context, FindPictureGridActivity::class.java)
-            startActivityForResult(intent, SELECT_PROFILE)
-        }*/
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    fun get_user_information(){
+        val params = RequestParams()
+        //params.put("member_id")//상대방 홈페이지로 넘어갈 때 주는 인텐트값을 줌
+    }
 
+    fun member_info(member_id:String){
+        val params = RequestParams()
+        params.put("member_id", member_id)
 
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                SELECT_PROFILE -> {
-                    var item = data?.getStringArrayExtra("images")
-                    var name = data?.getStringArrayExtra("displayname")
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
+                try {
+                    val result = response.getString("result")
 
-                    for (i in 0..(item!!.size - 1)) {
-                        val str = item[i]
+                    if (result == "ok") {
 
-                        pimgPaths.add(str)
+                        val member = response.getJSONObject("Member")
 
+                        val friendCount = response.getString("friendCount")
+                        val contentCount = response.getString("contentCount")
+                        val chatCount = response.getString("chatCount")
 
-                        val add_file = Utils.getImage(context.contentResolver, str, 15)
+                        if (chatCount==null){
+                            txChatCnt.setText("0")
+                        }else{
+                            txChatCnt.setText(chatCount)
 
-                        if (images?.size == 0) {
+                        }
 
-                            images?.add(add_file)
+                        txPostCnt.setText(contentCount)
+                        friendCountTV.setText(friendCount)
 
-                        } else {
-                            try {
-                                images?.set(images!!.size, add_file)
-                            } catch (e: IndexOutOfBoundsException) {
-                                images?.add(add_file)
+                        textDate.text = Utils.getString(member,"created").substringBefore(" ")
+                        txUserName.text = Utils.getString(member,"nick")
+
+                        //지역
+                        var region = ""
+
+                        if (Utils.getString(member,"region1") != null) {
+                            region += Utils.getString(member,"region1") + ","
+                        }
+                        if (Utils.getString(member,"region2") != null) {
+                            region += Utils.getString(member,"region2") + ","
+                        }
+                        if (Utils.getString(member,"region3") != null) {
+                            region += Utils.getString(member,"region3")
+                        }
+
+                        /*       if (region.substring(region.length-1) == ","){
+                                   region = region.substring(0, region.length-2)
+                               }*/
+                        txUserRegion.text = region
+
+                        //상메
+                        var statusMessage = Utils.getString(member,"status_msg")
+                        if (statusMessage != null) {
+                            statusMessageTV.text = statusMessage
+                        }
+
+                        knowTogether.visibility = View.GONE
+
+                        //해시태그
+                        val data = response.getJSONArray("MemberTags")
+                        if (data != null) {
+                            var string_tag = ""
+                            for (i in 0 until data.length()) {
+                                var json = data[i] as JSONObject
+                                val memberTag = json.getJSONObject("MemberTag")
+
+                                string_tag += "#" + Utils.getString(memberTag, "tag") + " "
                             }
-
+//                            hashtagTV.text = string_tag
                         }
 
-                    }
+                        //프로필 이미지
+                        val imgData = response.getJSONArray("MemberImgs")
+                        txPhotoCnt.text = imgData.length().toString()
 
-                    strPaths.clear()
-                    for (i in 0..(name!!.size - 1)) {
-                        val str = name[i]
+                        //val tmpProfileImage = imgData.getJSONObject(0)
+                        val img_uri = Utils.getString(member,"profile_img")//small_uri
+                        val image = Config.url + img_uri
 
-                        if (strPaths != null) {
-                            strPaths.add(str)
-
-                            Log.d("yjs", "display " + strPaths.get(0))
-                            Log.d("yjs", "display " + strPaths.get(0))
-                        } else {
-                            strPaths.add(str)
-                            Log.d("yjs", "display " + strPaths.get(0))
-                        }
+                        ImageLoader.getInstance().displayImage(image, otherPrfImgIV, Utils.UILoptionsProfile)
 
                     }
-
-                    var intent = Intent()
-
-                    setResult(RESULT_OK, intent)
-
-                    txPhotoCnt.text = images.size.toString()
-
+                } catch (e : JSONException) {
+                    e.printStackTrace()
                 }
             }
-        }
 
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
+                println(errorResponse.toString())
+            }
+        })
 
     }
+
+    fun addchat(){
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_ids)
+//        params.put("title", chatTitle)
+        params.put("regions", "")
+        params.put("intro", "")
+        params.put("type", "1")
+
+        ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("finish","finish")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
+                    setResult(RESULT_OK, intent);
+                    finish()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+
+    }
+
+
 }

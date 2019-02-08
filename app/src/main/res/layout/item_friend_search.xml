@@ -27,7 +27,7 @@
                     android:background="@drawable/icon_user_online"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="2dp"/>
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/main_detail_listitem_profileimage"
                     android:layout_width="36dp"
                     android:layout_height="36dp"

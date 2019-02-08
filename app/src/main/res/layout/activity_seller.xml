@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MarketMainActivity"
+    tools:context=".activities.SellerActivity"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/addpostTV"
+            android:id="@+id/titleTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -40,31 +40,33 @@
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
+            android:id="@+id/sel_formTV"
             android:layout_weight="4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="분류 전체"/>
         <TextView
+            android:id="@+id/sel_brandTV"
             android:layout_weight="4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="브랜드 전체"/>
         <TextView
+            android:id="@+id/sel_typeTV"
             android:layout_weight="4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="종류 전체"/>
         <TextView
+            android:id="@+id/sel_statusTV"
             android:layout_weight="4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="전체보기"/>
-
-
     </LinearLayout>
 
     <ImageView
@@ -73,9 +75,11 @@
         android:background="@drawable/line_0" />
 
     <GridView
+        android:scrollbars="none"
         android:id="@+id/gridGV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="2"></GridView>
+        android:layout_margin="10dp"
+        android:numColumns="2"/>
 
 </LinearLayout>

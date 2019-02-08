@@ -1,33 +1,27 @@
 package donggolf.android.adapters
 
 import android.content.Context
-import android.util.Log
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
-import donggolf.android.models.Content
-import donggolf.android.models.Photo
 import donggolf.android.models.Text
-import donggolf.android.models.Video
 import org.json.JSONArray
 import org.json.JSONObject
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-import java.time.Year
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
-open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, Any>>) : ArrayAdapter<Map<String, Any>>(context,view, data){
+open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String, Any>> = data
-
+    var data:ArrayList<JSONObject> = data
 
     var text:Text = Text()
     var photo:JSONArray = JSONArray()
@@ -51,82 +45,59 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
             }
         }
 
-        var data : Map<String, Any> = getItem(position)
+        var json = data.get(position)
+        var Content = json.getJSONObject("Content")
+        val member_id = Utils.getString(Content,"member_id")
+        val title = Utils.getString(Content,"title")
+        val text = Utils.getString(Content,"text")
+        val content_id = Utils.getString(Content,"id")
+        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
+        val look_cnt = Utils.getString(Content,"look_cnt")
+        val like_cnt = Utils.getString(Content,"like_cnt")
+        val cmt_cnt = Utils.getString(Content,"cmt_cnt")
+        var member = json.getJSONObject("Member")
+        var nick = Utils.getString(member,"nick")
+        var sex = Utils.getString(member,"sex")
+        var profile = Utils.getString(member,"profile_img")
+        var created = Utils.getString(Content,"created")
+        var image_uri = Utils.getString(Content,"image_uri")
 
-        println("data : ======$data")
+        val since = Utils.since(created)
 
-        var title:String = data.get("title") as String
-        item.main_item_title.text = title
-
-        var texts:ArrayList<HashMap<Objects, Objects>> = data.get("texts") as ArrayList<HashMap<Objects, Objects>>
-        println("texts ======= $texts")
-
-        for(i in 0.. (texts.size-1)){
-//            var text = texts.get(i)
-            val text_ = JSONObject(texts.get(i))
-            println(text_)
-            print( " ============================= ")
-
-            val type = Utils.getString(text_, "type")
-
-            if(type == "text") {
-                val text = text_.get("text")as String
-                item.main_item_content.text = text
-            } else if (type == "photo") {
-                photo = text_.get("file") as JSONArray
-
-            } else if (type == "video"){
-                video.add(text_.get("file") as String)
-                println("video : ========= $video")
-            }
-
+        if (sex == "0"){
+            item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
         }
 
+        item.main_item_title.text = title.toString()
+        item.main_item_content.text = text.toString()
+        item.main_item_view_count.text = look_cnt.toString()
+        item.main_item_like_count.text = like_cnt.toString()
+        item.main_item_nickname.text = nick.toString()
+        item.main_item_comment_count.text = cmt_cnt.toString()
+        item.main_item_lately.text = since.toString()
 
-        var owner:String = data.get("owner").toString()
-        item.main_item_nickname.text = owner
-
-        var looker:Long = data.get("looker") as Long
-        item.main_item_view_count.text = looker.toString()
-
-        val time: Long = data.get("createAt")as Long
-
-        val now: Long = System.currentTimeMillis()
-
-        val t1: Timestamp = Timestamp(time)
-
-        val t2: Timestamp = Timestamp(now)
-
-        val gap = now-time
-
-        val min: Long = (gap / 1000) / 60
-
-        val sec: Long = (gap / 1000) % 60
-
-        val hour: Long = (gap / 1000) / 60 / 60
-
-        val day: Long = hour / 24
-
-
-
-        if(min >= 60){
-            if(hour > 24){
-                item.main_item_lately.text = day.toString() + " 일 전"
-            }else {
-                item.main_item_lately.text = hour.toString() + " 시간 전"
+        if (image_uri != null){
+            if (image_uri != "") {
+                item.profileIV.visibility = View.VISIBLE
+                var image = Config.url + image_uri
+                ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+            } else {
+                item.profileIV.visibility = View.GONE
             }
-        }else {
-            item.main_item_lately.text = min.toString() + " 분 전"
+        } else {
+            item.profileIV.visibility = View.GONE
         }
 
-
-
+        if (profile != null){
+            var image = Config.url + profile
+            ImageLoader.getInstance().displayImage(image, item.main_item_image, Utils.UILoptionsUserProfile)
+        }
 
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String, Any> {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -156,7 +127,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
         var main_item_view_count : TextView
         var main_item_comment_count : TextView
         var main_item_like_count : TextView
-
+        var profileIV: ImageView
+        var main_item_image : CircleImageView
         init {
 
             main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
@@ -166,7 +138,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<Map<String, An
             main_item_view_count = v.findViewById<View>(R.id.main_item_view_count) as TextView
             main_item_comment_count = v.findViewById<View>(R.id.main_item_comment_count) as TextView
             main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
-
+            profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
+            main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
 
         }
 

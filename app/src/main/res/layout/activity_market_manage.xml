@@ -65,6 +65,7 @@
                         android:text="오늘 "
                         android:textSize="13dp"/>
                     <TextView
+                        android:id="@+id/availDayTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
@@ -85,9 +86,10 @@
                         android:text="당월 "
                         android:textSize="13dp"/>
                     <TextView
+                        android:id="@+id/availMonthTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
+                        android:text="0"
                         android:textColor="#0EDA2F"
                         android:textSize="13dp"/>
                     <TextView
@@ -101,9 +103,11 @@
     </LinearLayout>
     
     <LinearLayout
+        android:id="@+id/myMarketPostLL"
         android:layout_width="match_parent"
         android:layout_height="30dp">
         <TextView
+            android:id="@+id/mycontentTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="내가 올린글(99)"
@@ -127,6 +131,7 @@
         
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/noticeLL"
         android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="30dp">
@@ -134,7 +139,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="새글 알림설정"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:gravity="center"
             android:layout_marginLeft="15dp"/>
         <RelativeLayout
@@ -154,6 +159,7 @@
 
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/servicecenterLL"
         android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="30dp">
@@ -181,6 +187,7 @@
 
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/marketruleLL"
         android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="30dp">

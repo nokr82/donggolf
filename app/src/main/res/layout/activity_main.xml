@@ -20,6 +20,7 @@
                 android:background="@drawable/icon_area"
                 android:layout_margin="10dp"/>
             <TextView
+                android:id="@+id/areaTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -39,6 +40,7 @@
                 android:layout_gravity="center_vertical"
                 />
             <TextView
+                android:id="@+id/areaCntTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -71,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
+                android:id="@+id/homeRL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
@@ -78,21 +81,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="4">
-                        <Button
-                            android:id="@+id/homeRL"
+                        <ImageView
+                            android:id="@+id/homeBT"
                             android:layout_centerInParent="true"
                             android:layout_width="33dp"
                             android:layout_height="32dp"
-                            android:background="@drawable/btn_main_on_selector" />
-                        <Button
+                            android:background="@drawable/btn_main_on" />
+                        <ImageView
+                            android:id="@+id/homeIV"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@drawable/line_btn_main_selector"
-                            android:layout_alignParentBottom="true"
-                            android:id="@+id/btnMyTown"/>
+                            android:background="@drawable/btn_withdrawal"
+                            android:layout_alignParentBottom="true"/>
                     </RelativeLayout>
                 </LinearLayout>
             <LinearLayout
+                android:id="@+id/chatRL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
@@ -100,41 +104,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4">
-                    <Button
-                        android:id="@+id/chatRL"
+                    <ImageView
+                        android:id="@+id/chatBT"
                         android:layout_width="21dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/btn_chatting_on_selector"/>
-                    <Button
+                        android:background="@drawable/btn_chatting_off"/>
+                    <ImageView
+                        android:id="@+id/chatIV"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@drawable/line_btn_main_selector"
+                        android:background="@drawable/img_line_1"
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/noticeRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <Button
-                        android:id="@+id/noticeRV"
+                    <ImageView
+                        android:id="@+id/noticeBT"
                         android:layout_width="19dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/btn_notice_on_selector"/>
-                    <Button
+                        android:background="@drawable/btn_notice_off"/>
+                    <ImageView
+                        android:id="@+id/noticeIV"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@drawable/line_btn_main_selector"
+                        android:background="@drawable/img_line_1"
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/infoRL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
@@ -142,16 +150,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4">
-                    <Button
-                        android:id="@+id/infoRL"
+                    <ImageView
+                        android:id="@+id/infoBT"
                         android:layout_width="27dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/btn_mypage_on_selector"/>
-                    <Button
+                        android:background="@drawable/btn_mypage_off"/>
+                    <ImageView
+                        android:id="@+id/infoIV"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@drawable/line_btn_main_selector"
+                        android:background="@drawable/img_line_1"
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </LinearLayout>

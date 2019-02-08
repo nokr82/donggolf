@@ -1,5 +1,7 @@
 package donggolf.android.fragment
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
@@ -7,44 +9,38 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
-import donggolf.android.actions.SearchAction
+import donggolf.android.actions.PostAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
-import donggolf.android.models.Search
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
+import org.json.JSONException
 import org.json.JSONObject
 
-open class FreeFragment : Fragment() {
+open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
     var ctx: Context? = null
 
-    //원본 데이터 정의 부분
-    private  var adapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  adapter : MainAdapter
     private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<Map<String, Any>> = ArrayList<Map<String, Any>>()
+    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     val user = HashMap<String, Any>()
 
@@ -52,23 +48,40 @@ open class FreeFragment : Fragment() {
     lateinit var addpostLL : LinearLayout
     lateinit var main_edit_search : EditText
     lateinit var main_listview_search : LinearLayout
-    lateinit var main_edit_close : TextView
-
+    lateinit var main_edit_close : LinearLayout
     lateinit var main_listview:ListView
-
-
-    private var mAuth: FirebaseAuth? = null
-    //원본 데이터 정의 끝
 
     private var progressDialog: ProgressDialog? = null
 
-    lateinit var activity: MainActivity//메인액티비티 위에 드로잉할 권한
-    var tabType = 1//탭호스트 위치 초기화
-    var member_id = -1 //로그인 회원 아이디 값
+    lateinit var activity: MainActivity
+    var tabType = 1
+    var member_id = -1
     private val SELECT_PICTURE: Int = 101
+
+    val RESET_DATA = 1000
+    val DETAIL = 1001
+
+    private var page = 1
+    private var totalPage = 0
+    private val visibleThreshold = 10
+    private var userScrolled = false
+    private var lastItemVisibleFlag = false
+    private var lastcount = 0
+    private var totalItemCountScroll = 0
 
 
     lateinit var vpPage: ViewPager
+    internal var MsgReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                adapterData.clear()
+                mainData()
+            }
+        }
+    }
+
+
 
     internal var ResetPostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -83,7 +96,7 @@ open class FreeFragment : Fragment() {
                             println(it)
 
                             if (it != null) {
-                                adapterData.add(it)
+//                                adapterData.add(it)
                             }
 
                         }
@@ -91,7 +104,6 @@ open class FreeFragment : Fragment() {
                         adapter.notifyDataSetChanged()
 
                     }
-
                 }
             }
         }
@@ -110,7 +122,7 @@ open class FreeFragment : Fragment() {
                             println(it)
 
                             if (it != null) {
-                                adapterData.add(it)
+//                                adapterData.add(it)
                             }
 
                         }
@@ -118,7 +130,6 @@ open class FreeFragment : Fragment() {
                         adapter.notifyDataSetChanged()
 
                     }
-
                 }
             }
         }
@@ -133,57 +144,11 @@ open class FreeFragment : Fragment() {
             doSomethingWithContext(ctx)
         }
 
-        //여기서 데이터를 불러와야 함
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.getCurrentUser()
-
-        println("currentUser======$currentUser")
-
-        updateUI(currentUser)
-
-        val db = FirebaseFirestore.getInstance()
-
-        user.put("first", "Ada")
-        user.put("last", "Lovelace")
-        user.put("born", 1815)
-
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
-                    override fun onComplete(task: Task<QuerySnapshot>) {
-                        if (task.isSuccessful) {
-                            for (document in task.result!!) {
-                                Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
-                            }
-                        } else {
-                            Log.w(MainActivity.TAG, "Error getting documents.", task.exception)
-                        }
-                    }
-                })
-
-        ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
-
-            if(success && data != null) {
-                data.forEach {
-                    println(it)
-
-                    if (it != null) {
-                        adapterData.add(it)
-                    }
-
-                }
-
-                adapter.notifyDataSetChanged()
-
-            }
-
-        }
+        mainData()
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-
-    //여기서 뷰 연결
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -194,136 +159,18 @@ open class FreeFragment : Fragment() {
         main_edit_listview = view.findViewById(R.id.main_edit_listview)
         main_listview = view.findViewById(R.id.main_listview)
 
-        main_edit_search.setOnClickListener {
-
-            SearchAction.list(user, Pair("date",Query.Direction.DESCENDING), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-
-                if(success && data != null) {
-                    editadapterData.clear()
-                    data.forEach {
-
-                        if (it != null) {
-                            editadapterData.add(it)
-                        }
-
-                    }
-
-                    editadapter.notifyDataSetChanged()
-
-                }
-
-            }
-            main_listview_search.visibility = View.VISIBLE
-            main_edit_close.setOnClickListener {
-                main_listview_search.visibility = View.GONE
-            }
-        }
-
-        //enter key pressed
-        main_edit_search.setOnEditorActionListener { v, actionId, event ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                val srchWd = main_edit_search.text.toString()
-                println("srchWd===+$srchWd")
-                addSearchWords(srchWd)
-                searchPosts(srchWd)
-                main_listview_search.visibility = View.GONE
-                main_edit_search.setText("")
-                true
-            } else {
-                false
-            }
-        }
-
-        btn_del_searchWord.setOnClickListener {
-            main_edit_search.setText("")
-        }
-    }//onViewCreated end
-
-    fun searchPosts(keyWord : String){
-        SearchAction.searchList(keyWord, Pair("createAt",Query.Direction.DESCENDING), 0){ success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
-
-            if(success && data != null) {
-
-                adapterData.clear()
-
-                data.forEach {
-                    println(it)
-                    if (it != null) {
-                        adapterData.add(it)
-                    }
-
-                }
-
-                adapter.notifyDataSetChanged()
-
-            }else{
-                ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
-
-                    if(success && data != null) {
-                        adapterData.clear()
-                        data.forEach {
-                            //println(it)
-
-                            if (it != null) {
-                                adapterData.add(it)
-                            }
-
-                        }
-
-                        adapter.notifyDataSetChanged()
-
-                    }
-                }
-            }
-        }
-        adapterData.clear()
-
     }
-
-    //검색어를 검색기록에 추가
-    fun addSearchWords(content: String) {
-
-        if (content.isEmpty()) {
-            Utils.alert(context, "검색어를 입력해주세요.")
-            return
-        }
-
-        //val user = mAuth.currentUser
-
-        if (user != null) {
-            //val uid = user
-            val nowTime = System.currentTimeMillis()
-
-            val item = Search(content, nowTime)
-            SearchAction.saveContent(item) { success: Boolean, key: String?, exception: Exception? ->
-                if (success) {
-                    println("검색어 입력 성공")
-                } else {
-                    ContentAction.list(user,Pair("createAt",null),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
-
-                        if(success && data != null) {
-                            data.forEach {
-                                println(it)
-
-                                if (it != null) {
-                                    adapterData.add(it)
-                                }
-                            }
-
-                            adapter.notifyDataSetChanged()
-
-                        }
-                    }
-                }
-            }
-        }
-    }//addSearchWords end
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         activity = getActivity() as MainActivity
+
+        main_edit_search.isCursorVisible = false
+
+        //메시지보내기
+        var filter = IntentFilter("MSG_NEXT")
+        activity.registerReceiver(MsgReceiver, filter)
 
         val filter1 = IntentFilter("SAVE_POST")
         activity.registerReceiver(ResetPostReceiver, filter1)
@@ -331,25 +178,27 @@ open class FreeFragment : Fragment() {
         val filter2 = IntentFilter("DELETE_POST")
         activity.registerReceiver(DeletePostReceiver, filter2)
 
-        //기본화면설정
-
-        // 뷰페이저
-
         adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
-
         main_listview.adapter = adapter
 
-        //////adapter 사용전에 해줘야 하는 부분
-
-        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData)
-
+        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData,this)
         main_edit_listview.adapter = editadapter
-        //---------------------------------------------------------------------------------------
 
+        main_listview.setOnScrollListener(this)
         main_listview.setOnItemClickListener { parent, view, position, id ->
-            val id : String
-            id = adapterData.get(position)!!.get("id").toString()
-            MoveMainDetailActivity(id)
+
+            Utils.hideKeyboard(context)
+
+            if(main_listview_search.visibility == View.VISIBLE) {
+                main_listview_search.visibility = View.GONE
+                return@setOnItemClickListener
+            }
+
+            val data = adapter.getItem(position)
+            val content = data.getJSONObject("Content")
+            var id = Utils.getInt(content,"id")
+
+            MoveMainDetailActivity(id.toString())
         }
 
         addpostLL.setOnClickListener {
@@ -357,6 +206,72 @@ open class FreeFragment : Fragment() {
         }
 
         member_id = PrefUtils.getIntPreference(context, "member_id")
+
+        main_edit_search.setOnClickListener {
+            main_listview_search.visibility = View.VISIBLE
+            main_edit_search.isCursorVisible = true
+        }
+
+        main_edit_search.setOnEditorActionListener() { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                val srchWd = main_edit_search.text.toString()
+                if (srchWd != null && srchWd != "") {
+                    addSearchWords(srchWd)
+                    getSearchList()
+                    resetList(srchWd)
+                }
+
+                if (srchWd == null || srchWd == ""){
+                    resetList(srchWd)
+                }
+                main_listview_search.visibility = View.GONE
+
+                Utils.hideKeyboard(context)
+//                main_edit_search.setText("")
+            } else {
+            }
+            false
+        }
+
+        main_edit_close.setOnClickListener {
+            main_listview_search.visibility = View.GONE
+            Utils.hideKeyboard(context)
+            main_edit_search.isCursorVisible = false
+        }
+
+        iconsearchIV.setOnClickListener {
+            resetList("")
+            main_listview_search.visibility = View.GONE
+            main_edit_search.isCursorVisible = false
+        }
+
+
+        btn_del_searchWord.setOnClickListener {
+            Utils.hideKeyboard(context)
+
+            if(Utils.getString(main_edit_search) == "") {
+                return@setOnClickListener
+            }
+
+            main_edit_search.setText("")
+            resetList("")
+            main_edit_search.isCursorVisible = false
+        }
+
+        main_edit_listview.setOnItemClickListener { parent, view, position, id ->
+
+            val item = editadapterData.get(position)
+            val SearchList = item.getJSONObject("SearchList")
+            val content = Utils.getString(SearchList,"content")
+            println("----content$content")
+            resetList(content)
+            main_edit_search.isCursorVisible = false
+            Utils.hideKeyboard(context)
+            main_edit_search.setText("")
+        }
+
+        mainData()
+        getSearchList()
 
     }
 
@@ -366,22 +281,21 @@ open class FreeFragment : Fragment() {
         progressDialog = ProgressDialog(ctx)
     }
 
-
-    //pageAdapter class
-
-
-    //여기서부터는 MainActivity에 있던 코드들
     fun MoveAddPostActivity(){
+        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
-        startActivityForResult(intent, SELECT_PICTURE);
+        startActivityForResult(intent, RESET_DATA);
     }
 
     fun MoveMainDetailActivity(id : String){
         var intent: Intent = Intent(activity, MainDetailActivity::class.java)
         intent.putExtra("id",id)
-        startActivity(intent)
+        startActivityForResult(intent, DETAIL);
     }
 
     fun MoveAreaRangeActivity(){
@@ -394,31 +308,277 @@ open class FreeFragment : Fragment() {
         startActivity(intent)
     }
 
+    fun mainData() {
+        val params = RequestParams()
+        var sidotype = PrefUtils.getStringPreference(context, "sidotype")
+        var goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+        var goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+        var region_id = PrefUtils.getStringPreference(context,"region_id")
+        var region_id2 = PrefUtils.getStringPreference(context,"region_id2")
 
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
+        params.put("member_id",member_id)
+        params.put("goguntype",goguntype)
+        params.put("sidotype",sidotype)
+        params.put("region_id",region_id)
+        if (region_id2 != ""){
+            params.put("region_id2", region_id2)
+        }
+        params.put("page", page)
+
+        PostAction.load_post(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
+                val result = response!!.getString("result")
+                if (result == "ok") {
+//                    if (adapterData != null){
+//                        adapterData.clear()
+//                    }
+
+                    totalPage = response.getInt("totalPage");
+                    page = response.getInt("page");
+
+                    println("-------page $page")
+                    println("-------totalpage $totalPage")
+
+                    val list = response!!.getJSONArray("content")
+
+                    for (i in 0..(list.length()-1)){
+                        val Content = list.get(i) as JSONObject
+                        adapterData.add(Content)
+                    }
+
+                    adapter.notifyDataSetChanged()
+                    main_listview_search.visibility = View.GONE
+
+                }
+
+            }
+
+            private fun error() {
+                Utils.alert(context, "조회중 장애가 발생하였습니다.")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
+                // System.out.println(responseString);
+
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+            }
+        })
     }
 
-    private fun updateUI(currentUser: FirebaseUser?) {
+    fun addSearchWords(content: String) {
 
-        /*
-        mAuth!!.signInWithCustomToken(mCustomToken)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCustomToken:success")
-                        val user = mAuth!!.getCurrentUser()
-                        updateUI(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCustomToken:failure", task.exception)
-                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                        updateUI(null)
+        val params = RequestParams()
+        params.put("member_id",member_id)
+        params.put("content",content)
+
+        PostAction.add_search(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                getSearchList()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+
+        })
+
+    }
+
+    fun getSearchList(){
+        val params = RequestParams()
+        params.put("member_id",member_id)
+
+        PostAction.search_list(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    if (editadapterData != null){
+                        editadapterData.clear()
+                    }
+
+                    var contents:ArrayList<JSONObject> = ArrayList<JSONObject>()
+                    val data = response.getJSONArray("SearchList")
+                    for (i in 0..data.length() - 1) {
+                        var json = data.get(i) as JSONObject
+                        editadapterData.add(json)
+                    }
+                    editadapter.notifyDataSetChanged()
+                    main_listview_search.visibility = View.GONE
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+
+        })
+    }
+
+    fun resetList(keyWord : String){
+
+        if (keyWord == null || keyWord == ""){
+            mainData()
+        } else {
+            val params = RequestParams()
+            params.put("searchKeyword",keyWord)
+
+            PostAction.load_post(params,object : JsonHttpResponseHandler(){
+
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        try {
+                            val list = response!!.getJSONArray("content")
+
+                            if(adapterData != null){
+                                adapterData.clear()
+                                adapter.notifyDataSetChanged()
+                            }
+
+                            Log.d("리스트",list.toString())
+                            println("-------------------------")
+                            for (i in 0..(list.length()-1)){
+                                val Content = list.get(i) as JSONObject
+                                adapterData.add(Content as JSONObject)
+                            }
+                            adapter.notifyDataSetChanged()
+                            main_listview_search.visibility = View.GONE
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
                     }
                 }
-        */
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+                }
+
+            })
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (MsgReceiver != null) {
+            context!!.unregisterReceiver(MsgReceiver)
+        }
+        if (ResetPostReceiver != null) {
+            context!!.unregisterReceiver(ResetPostReceiver)
+        }
+        if (DeletePostReceiver != null) {
+            context!!.unregisterReceiver(DeletePostReceiver)
+        }
+    }
+
+
+    override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+
+        if (userScrolled && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold && page < totalPage && totalPage > 0) {
+            if (totalPage > page) {
+                //page++;
+                //threemeals_store_index1();
+            }
+        }
+
+        //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem)
+        // + 현재 화면에 보이는 리스트 아이템의갯수(visibleItemCount)가
+        // 리스트 전체의 갯수(totalOtemCount)-1 보다 크거나 같을때
+        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+        totalItemCountScroll = totalItemCount
+
+    }
+
+    override fun onScrollStateChanged(p0: AbsListView?, scrollState: Int) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            userScrolled = true
+        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
+            userScrolled = false
+
+            //화면이 바닥에 닿았을때
+            if (totalPage > page) {
+                page++
+                lastcount = totalItemCountScroll
+
+                mainData()
+            }
+
+
+        }
     }
 
 
 
+    @SuppressLint("NewApi")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            when (requestCode) {
+                RESET_DATA -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        if (adapterData != null){
+                            adapterData.clear()
+                        }
+
+                        mainData()
+                    }
+                }
+
+                DETAIL -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        if (adapterData != null){
+                            adapterData.clear()
+                        }
+
+                        mainData()
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun deleteSearchList(searchid:String){
+        val params = RequestParams()
+        params.put("searchid",searchid)
+
+        PostAction.delete_search(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+        })
+    }
 }

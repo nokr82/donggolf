@@ -1,18 +1,15 @@
 package donggolf.android.adapters
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.google.firebase.firestore.FirebaseFirestore
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
-import donggolf.android.activities.ProfileActivity
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
-
 
 
 open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
@@ -39,55 +36,74 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             }
         }
 
-        var data : JSONObject = getItem(position)
+        var data = data.get(position)
+        //val member_info = data.getJSONObject("Member")
+        val comment = data.getJSONObject("ContentComment")
 
-        //LinearLayout click listener ; going to go other's mini-homepage
-        /*View.OnClickListener{
-            println("main_detailLV was clicked")
+        var image_uri = Utils.getString(comment,"image_uri")
+        if (image_uri != "" && image_uri != null){
+            item.itemimageIV.visibility = View.VISIBLE
+            var image = Config.url + image_uri
+            ImageLoader.getInstance().displayImage(image, item.itemimageIV, Utils.UILoptionsUserProfile)
+        }
+
+
+        var comment_id = Utils.getInt(comment,"id")
+        data.put("comment_id", comment_id)
+
+        item.main_detail_comment_conditionTV.text = Utils.getString(comment,"comment")
+        data.put("comment_content", Utils.getString(comment,"comment"))
+        item.main_detail_comment_nicknameTV.text = Utils.getString(comment,"nick")
+        item.main_detail_comment_dateTV.text = Utils.getString(comment,"created")
+        item.main_detail_comment_typeIV.visibility = View.GONE
+
+        var typeAdt = Utils.getString(comment,"type")
+
+        if (typeAdt == "r"){
+            item.main_detail_comment_typeIV.visibility = View.VISIBLE
+            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+
+        } else if (typeAdt == "c") {
+            item.main_detail_comment_typeIV.visibility = View.VISIBLE
+            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+
+        } else {
+            item.main_detail_comment_typeIV.visibility = View.GONE
+
+        }
+
+        val freind = Utils.getString(comment,"freind")
+
+        if (freind == "0"){
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+        } else {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+        }
+
+        val Member = data.getJSONObject("Member")
+        val profile_img = Utils.getString(Member,"profile_img")
+        if (profile_img != null){
+            var image = Config.url + profile_img
+            ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
+        }
+
+
+        var comment_memberID = Utils.getInt(comment,"member_id")
+        data.put("cmt_wrt_id", comment_memberID)
+
+        var isBlocked = Utils.getString(comment,"block_yn")
+
+        /*var cbyn = data.getString("changedBlockYN")
+        if (cbyn == "Y"){
+            isBlocked = data.getString("block_yn")
         }*/
 
-
-        item.main_detailLV.setOnClickListener {
-            //println("main_detailLV was clicked")
-            //유저 조회
-            /*var condition:HashMap<String, String> = HashMap<String,String>()
-            condition.put("nick", item.main_detail_listitem_nickname.text.toString())*/
-//            var nick= item.main_detail_listitem_nickname.text.toString()
-
-            val type = Utils.getString(data, "nick")
-
-            if(type == "nick") {
-                val nick = data.get("nick")as String
-
-                println("nick ========$nick")
-
-                val db = FirebaseFirestore.getInstance()
-                var writer : String = ""
-
-                db.collection("users")
-                        .whereEqualTo("nick",nick)
-                        .get()
-                        .addOnCompleteListener{
-                            if (it.isSuccessful) {
-                                for (document in it.getResult()) {
-                                    Log.d("getUserData", "getId : "+document.getId() + " => " + " getData : " +document.getData())
-                                    writer = document.getId()
-                                }
-                            }
-                        }
-
-                var goit = Intent(context, ProfileActivity::class.java)
-                goit.putExtra("writerID", writer)
-                it.context.startActivity(goit)
-            }
-//            println(data.getJSONObject("id"))
+        if (isBlocked == "Y") {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
+            notifyDataSetChanged()
         }
 
         return retView
-    }
-
-    fun getUserData(nick:String){
-
     }
 
     override fun getItem(position: Int): JSONObject {
@@ -112,25 +128,27 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
 
     class ViewHolder(v: View) {
 
-
-        var main_detail_listitem_comment : ImageView
-        var main_detail_listitem_profileimage : ImageView
-        var main_detail_listitem_nickname : TextView
-        var main_detail_listitem_firstimage : ImageView
-        var main_detail_listitem_condition : TextView
-        var main_detail_listitem_date : TextView
+        var main_detail_comment_typeIV : ImageView
+        var main_detail_comment_profileIV : CircleImageView
+        var main_detail_comment_nicknameTV : TextView
+        var main_detail_comment_relationIV : ImageView
+        var main_detail_comment_conditionTV : TextView
+        var main_detail_comment_dateTV : TextView
         var main_detailLV : LinearLayout
+        var itemimageIV :ImageView
 
 
         init {
-            main_detail_listitem_comment = v.findViewById<View>(R.id.main_detail_listitem_comment) as ImageView
-            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as ImageView
-            main_detail_listitem_nickname = v.findViewById<View>(R.id.main_detail_listitem_nickname) as TextView
-            main_detail_listitem_firstimage = v.findViewById<View>(R.id.main_detail_listitem_firstimage) as ImageView
-            main_detail_listitem_condition = v.findViewById<View>(R.id.main_detail_listitem_condition) as TextView
-            main_detail_listitem_date = v.findViewById<View>(R.id.main_detail_listitem_date) as TextView
-            main_detailLV = v.findViewById(R.id.main_detailLV) as LinearLayout
+            main_detail_comment_typeIV = v.findViewById(R.id.main_detail_comment_typeIV)
+            main_detail_comment_profileIV = v.findViewById(R.id.main_detail_comment_profileIV)
+            main_detail_comment_nicknameTV = v.findViewById(R.id.main_detail_comment_nicknameTV)
+            main_detail_comment_relationIV = v.findViewById(R.id.main_detail_comment_relationIV)
+            main_detail_comment_conditionTV = v.findViewById(R.id.main_detail_comment_conditionTV)
+            main_detail_comment_dateTV = v.findViewById(R.id.main_detail_comment_dateTV)
+            main_detailLV = v.findViewById(R.id.main_detailLV)
+            itemimageIV = v.findViewById(R.id.itemimageIV)
 
         }
     }
 }
+

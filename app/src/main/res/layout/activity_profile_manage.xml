@@ -15,6 +15,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
             <ImageView
+                android:visibility="gone"
                 android:layout_width="11dp"
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
@@ -60,17 +61,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="151dp"
+        android:layout_marginTop="10dp"
         android:gravity="bottom|center">
 
         <RelativeLayout
             android:layout_width="145dp"
             android:layout_height="150dp">
 
-            <ImageView
+            <!--<ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_profile_l"
+                android:scaleType="centerCrop"
+                android:id="@+id/imgProfile"/>-->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/icon_profile_l"
                 android:id="@+id/imgProfile"/>
             <ImageView
                 android:id="@+id/addProfImg"
@@ -78,18 +87,20 @@
                 android:layout_height="20dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/btn_add_photo" />
 
+            <TextView
+                android:id="@+id/mngTXPhotoCnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="15"
+                android:textColor="#C9C9C9"
+                android:textSize="10dp"
+                android:layout_marginLeft="2dp"/>
         </RelativeLayout>
-        <TextView
-            android:id="@+id/mngTXPhotoCnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="15"
-            android:textColor="#C9C9C9"
-            android:textSize="10dp"
-            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -98,11 +109,11 @@
         android:layout_gravity="center"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/txUserName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="사용자이름"
-            android:id="@+id/txUserName"
             android:textSize="24dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
@@ -118,6 +129,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
         android:orientation="horizontal"
         android:gravity="center">
         <TextView
@@ -137,6 +149,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -234,6 +247,7 @@
             android:paddingRight="50dp">
 
             <FrameLayout
+                android:id="@+id/mychatFL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp">
@@ -267,6 +281,7 @@
                 android:layout_margin="10dp">
 
                 <ImageView
+                    android:id="@+id/btn_myPosts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -308,6 +323,7 @@
                 android:layout_margin="10dp">
 
                 <ImageView
+                    android:id="@+id/btn_go_frd_mng"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -332,7 +348,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/friendcountTV"
+                    android:id="@+id/friendCountTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"

@@ -9,22 +9,21 @@
         android:layout_height="wrap_content"
         android:padding="5dp">
         <ImageView
-            android:id="@+id/main_detail_listitem_comment"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:id="@+id/main_detail_comment_typeIV"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/icon_comment"
             android:layout_marginLeft="10dp"
             android:visibility="gone"/>
-        <ImageView
-            android:id="@+id/main_detail_listitem_profileimage"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/main_detail_comment_profileIV"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="7dp"
             android:background="@drawable/icon_profile"/>
         <LinearLayout
-            android:gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
@@ -32,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:id="@+id/main_detail_listitem_nickname"
+                    android:id="@+id/main_detail_comment_nicknameTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="닉네임일곱글자"
@@ -40,22 +39,21 @@
                     android:textSize="15dp"
                     android:maxLength="7"/>
                 <ImageView
-                    android:id="@+id/main_detail_listitem_firstimage"
+                    android:id="@+id/main_detail_comment_relationIV"
                     android:layout_width="25dp"
                     android:layout_height="13dp"
-                    android:background="@drawable/icon_first"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"/>
             </LinearLayout>
             <TextView
-                android:id="@+id/main_detail_listitem_condition"
+                android:id="@+id/main_detail_comment_conditionTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="상태메시지 텍스트가 들어 갈 자리입니다."
                 android:textColor="#AFAFAF"
                 android:textSize="13dp"/>
             <TextView
-                android:id="@+id/main_detail_listitem_date"
+                android:id="@+id/main_detail_comment_dateTV"
                 android:layout_gravity="left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,6 +61,21 @@
                 android:textSize="12dp"
                 android:textColor="#CDCDCD"/>
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right">
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/itemimageIV"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:scaleType="centerCrop"
+            android:background="#000000"/>
     </LinearLayout>
 
 </LinearLayout>
