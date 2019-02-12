@@ -66,6 +66,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         if (sex == "0"){
             item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
+        }else{
+            item.main_item_nickname.setTextColor(Color.parseColor("#EF5C34"))
         }
 
         item.main_item_title.text = title.toString()
