@@ -859,9 +859,15 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (cmt_yn == "Y"){
+                                main_detail_gofindpicture.visibility = View.VISIBLE
+                                detail_add_commentTV.visibility = View.VISIBLE
+                                cmtLL.visibility = View.VISIBLE
                                 cmtTV.visibility = View.GONE
                                 cmtET.visibility = View.VISIBLE
                             } else {
+                                main_detail_gofindpicture.visibility = View.GONE
+                                detail_add_commentTV.visibility = View.GONE
+                                cmtLL.visibility = View.GONE
                                 cmtTV.visibility = View.VISIBLE
                                 cmtET.visibility = View.GONE
                             }

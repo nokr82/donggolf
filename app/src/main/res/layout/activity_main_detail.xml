@@ -494,6 +494,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/cmtLL"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -517,7 +518,6 @@
                     android:id="@+id/cmtTV"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="30dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="댓글이 차단된 상태입니다"
@@ -536,6 +536,8 @@
                     android:layout_weight="3"
                     android:gravity="center"
                     android:text="등록"
+                    android:visibility="visible"
+
                     android:textColor="#0EDA2F"
                     android:textSize="13dp" />
             </LinearLayout>
