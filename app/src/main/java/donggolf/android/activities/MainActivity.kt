@@ -80,6 +80,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 frags.currentItem = 1
+                setButtonImage()
+                chatBT.setBackgroundResource(R.drawable.btn_chatting_on)
+                chatIV.setBackgroundResource(R.drawable.btn_withdrawal)
             }
         }
     }
@@ -136,7 +139,23 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         pagerAdapter.notifyDataSetChanged()
         frags.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
+                when (position) {
+                    0 -> {
+                        setButtonImage()
+                        homeBT.setBackgroundResource(R.drawable.btn_main_on)
+                        homeIV.setBackgroundResource(R.drawable.btn_withdrawal)
+                    }
+                    1 -> {
+                        setButtonImage()
+                        chatBT.setBackgroundResource(R.drawable.btn_chatting_on)
+                        chatIV.setBackgroundResource(R.drawable.btn_withdrawal)
+                    }
+                    2 -> {
+                        setButtonImage()
+                        infoBT.setBackgroundResource(R.drawable.btn_mypage_on)
+                        infoIV.setBackgroundResource(R.drawable.btn_withdrawal)
+                    }
+                }
             }
 
             override fun onPageSelected(position: Int) {
@@ -212,8 +231,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         updateToken()
 
     }
-
-
 
     //지역별멤버수
     fun member_cnt() {

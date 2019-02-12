@@ -49,9 +49,9 @@ class IntroActivity : RootActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
 
-        mAuth = FirebaseAuth.getInstance();
+//        mAuth = FirebaseAuth.getInstance();
 
-        val user = mAuth!!.getCurrentUser()
+//        val user = mAuth!!.getCurrentUser()
 
         this.context = this
         progressDialog = ProgressDialog(context)
