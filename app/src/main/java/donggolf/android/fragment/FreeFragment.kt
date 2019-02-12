@@ -145,8 +145,9 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        progressDialog = ProgressDialog(context)
-
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
         val ctx = context
         if (null != ctx) {
             doSomethingWithContext(ctx)
@@ -307,7 +308,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context
         this.ctx = context
-        progressDialog = ProgressDialog(ctx)
+//        progressDialog = ProgressDialog(ctx)
     }
 
     fun MoveAddPostActivity(){
