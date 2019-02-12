@@ -42,18 +42,22 @@ class FriendManageActivity : RootActivity() {
             val itt = Intent(context, FriendCategoryDetailActivity::class.java)
             itt.putExtra("groupTitle", friendCategoryData.get(position).getString("title"))
             startActivity(itt)
-        }
-
-        reqFriendLL.setOnClickListener {
-            val intent = Intent(context, RequestFriendActivity::class.java)
             intent.putExtra("type","waiting")
             startActivity(intent)
         }
 
         blockListLL.setOnClickListener {
+        }
+
+        reqFriendLL.setOnClickListener {
+            val intent = Intent(context, RequestFriendActivity::class.java)
             val intent = Intent(context, FriendCategoryDetailActivity::class.java)
             intent.putExtra("type","block")
             startActivity(intent)
+        }
+        btn_back.setOnClickListener {
+            finish()
+            Utils.hideKeyboard(this)
         }
 
         friendCategoryLV.setOnItemClickListener { parent, view, position, id ->

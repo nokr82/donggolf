@@ -208,15 +208,8 @@ fun member_info(){
 
                 val friendCount = response.getString("friendCount")
                 val contentCount = response.getString("contentCount")
-                val chatCount = response.getString("chatCount")
-
-                if (chatCount==null){
-                    chatcountTV.setText("0")
-                }else{
-                    chatcountTV.setText(chatCount)
-
-                }
-
+                val chatCount = response.getInt("chatCount")
+                chatcountTV.setText(chatCount.toString())
                 postcountTV.setText(contentCount)
                 friendCountTV.setText(friendCount)
 
