@@ -1381,7 +1381,6 @@ class AddPostActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     var intent = Intent()
-                    intent.putExtra("reset", "reset")
                     intent.putExtra("id", intent.getStringExtra("id"))
                     setResult(RESULT_OK, intent);
                     finish()
@@ -1430,9 +1429,15 @@ class AddPostActivity : RootActivity() {
 
         if (PrefUtils.getStringPreference(context,"region_id") != null) {
             var region_id = PrefUtils.getStringPreference(context, "region_id")
-            params.put("region", region_id)
+            if (region_id=="1001"){
+                region_id ="0"
+                params.put("region", region_id)
+            }else{
+                params.put("region", region_id)
+            }
+
         } else {
-            var region_id = 1
+            var region_id = 0
             params.put("region", region_id)
         }
 
@@ -1533,8 +1538,7 @@ class AddPostActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
-                intent.putExtra("reset","reset")
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_OK, intent)
                 finish()
             }
 

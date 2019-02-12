@@ -29,11 +29,19 @@ import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
 import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
 import org.json.JSONException
 import org.json.JSONObject
 
 open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
+    override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     var ctx: Context? = null
 
@@ -184,7 +192,28 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData,this)
         main_edit_listview.adapter = editadapter
 
-        main_listview.setOnScrollListener(this)
+        main_listview.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
+                if (!main_listview.canScrollVertically(-1)) {
+                    page=1
+                    mainData()
+                } else if (!main_listview.canScrollVertically(1)) {
+                    if (totalPage > page) {
+                        page++
+                        lastcount = totalItemCountScroll
+
+                        mainData()
+                    }
+                }
+            }
+        })
+
+
+
         main_listview.setOnItemClickListener { parent, view, position, id ->
 
             Utils.hideKeyboard(context)
@@ -298,15 +327,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         startActivityForResult(intent, DETAIL);
     }
 
-    fun MoveAreaRangeActivity(){
-        var intent: Intent = Intent(activity, AreaRangeActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun MoveMarketMainActivity(){
-        var intent: Intent = Intent(activity, MarketMainActivity::class.java)
-        startActivity(intent)
-    }
 
     fun mainData() {
         val params = RequestParams()
@@ -334,9 +354,9 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
                 val result = response!!.getString("result")
                 if (result == "ok") {
-//                    if (adapterData != null){
-//                        adapterData.clear()
-//                    }
+                    if (page == 1){
+                        adapterData.clear()
+                    }
 
                     totalPage = response.getInt("totalPage");
                     page = response.getInt("page");
@@ -498,44 +518,16 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
     }
 
 
-    override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
 
-        if (userScrolled && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold && page < totalPage && totalPage > 0) {
-            if (totalPage > page) {
-                //page++;
-                //threemeals_store_index1();
-            }
-        }
 
-        //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem)
-        // + 현재 화면에 보이는 리스트 아이템의갯수(visibleItemCount)가
-        // 리스트 전체의 갯수(totalOtemCount)-1 보다 크거나 같을때
-        lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
-        totalItemCountScroll = totalItemCount
 
+
+    override fun onPause() {
+        super.onPause()
+        page = 1
+        mainData()
     }
 
-    override fun onScrollStateChanged(p0: AbsListView?, scrollState: Int) {
-        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-            userScrolled = true
-        } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
-            userScrolled = false
-
-            //화면이 바닥에 닿았을때
-            if (totalPage > page) {
-                page++
-                lastcount = totalItemCountScroll
-
-                mainData()
-            }
-
-
-        }
-    }
-
-
-
-    @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -543,21 +535,21 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
             when (requestCode) {
                 RESET_DATA -> {
-                    if (data!!.getStringExtra("reset") != null){
+                    if (resultCode == Activity.RESULT_OK){
                         if (adapterData != null){
                             adapterData.clear()
                         }
-
+                        page=1
                         mainData()
                     }
                 }
 
                 DETAIL -> {
-                    if (data!!.getStringExtra("reset") != null){
+                    if (resultCode == Activity.RESULT_OK){
                         if (adapterData != null){
                             adapterData.clear()
                         }
-
+                        page=1
                         mainData()
                     }
                 }
