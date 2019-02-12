@@ -12,12 +12,14 @@ import android.widget.RelativeLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
 import donggolf.android.base.Utils
+import java.util.*
 
-class ProfileSlideViewAdapter(activity: Activity, imagePaths: ArrayList<String>) : PagerAdapter() {
+class ProfileSlideViewAdapter(activity: Activity, imagePaths: ArrayList<String>, selected : LinkedList<String>) : PagerAdapter() {
 
     private val _activity: Activity = activity
     private val _imagePaths: ArrayList<String> = imagePaths
     private lateinit var inflater: LayoutInflater
+
 
     override fun getCount(): Int {
         return this._imagePaths.size

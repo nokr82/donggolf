@@ -258,9 +258,6 @@ class RegisterActivity : RootActivity() {
                     finish()
                 }
 
-
-
-
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {

@@ -33,8 +33,6 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
     private var photoList: ArrayList<ImageAdapter.PhotoData> = ArrayList<ImageAdapter.PhotoData>()
     private var videoList: ArrayList<VideoAdapter.VideoData> = ArrayList<VideoAdapter.VideoData>()
 
-
-
     private val selected = LinkedList<String>()
 
     private var imageUri: Uri? = null
@@ -358,6 +356,8 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     selected.remove(strPo)
 
                     countTV.text = selected.size.toString()
+
+                    println("---selected.size ${selected.size}")
 
                     val adapter = selectGV.getAdapter()
                     if (adapter != null) {

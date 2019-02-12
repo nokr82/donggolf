@@ -73,6 +73,7 @@ class AreaRangeActivity : RootActivity() {
             val item = bigcitylist.get(position)
             var type = item.getJSONObject("Regions")
             var id  = Utils.getString(type,"id")
+            var name:String = Utils.getString(type,"name")
 
             if (areacount == 0){
                 sidotype = Utils.getString(type,"name")
@@ -80,25 +81,28 @@ class AreaRangeActivity : RootActivity() {
                 sidotype2 = Utils.getString(type,"name")
             }
 
-            getGugun(id.toInt())
-            arealistLV.visibility = View.GONE
-            gridGV.visibility = View.VISIBLE
-//
-//            if (Utils.getString(type,"name") == "세종특별자치시") {
-//                var intent = Intent();
-//                intent.putExtra("sidotype", sidotype)
-//                intent.putExtra("goguntype", sidotype)
-//                intent.putExtra("region_id", id)
-//                setResult(Activity.RESULT_OK, intent)
-//                finish()
-//            } else if (Utils.getString(type,"name") == "전국"){
-//                var intent = Intent();
-//                intent.putExtra("sidotype", sidotype)
-//                intent.putExtra("goguntype", sidotype)
-//                intent.putExtra("region_id", id)
-//                setResult(Activity.RESULT_OK, intent)
-//                finish()
-//            }
+            if (Utils.getString(type,"name") == "세종특별자치시") {
+                region_id = Utils.getString(type,"id")
+                goguntype = name
+                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
+                areacount++
+            } else if (Utils.getString(type,"name") == "전국"){
+                var intent = Intent();
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("sidotype2", sidotype)
+                intent.putExtra("goguntype", sidotype)
+                intent.putExtra("goguntype2", sidotype)
+                intent.putExtra("region_id", id)
+                intent.putExtra("region_id2", id)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            } else {
+                getGugun(id.toInt())
+                arealistLV.visibility = View.GONE
+                gridGV.visibility = View.VISIBLE
+            }
+
+
         }
 
         GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, gugunList)
@@ -174,7 +178,7 @@ class AreaRangeActivity : RootActivity() {
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
             }*/
-finish()
+            finish()
 
         }
 

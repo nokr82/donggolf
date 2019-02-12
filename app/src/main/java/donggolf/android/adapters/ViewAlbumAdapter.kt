@@ -2,6 +2,7 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -12,11 +13,13 @@ import donggolf.android.R
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
+import java.util.*
 
-class ViewAlbumAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
+class ViewAlbumAdapter(context: Context, view:Int, data:ArrayList<JSONObject>, selected : LinkedList<String>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
     var data: java.util.ArrayList<JSONObject> = data
+    private val selected: LinkedList<String> = selected
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         lateinit var retView: View
@@ -67,6 +70,13 @@ class ViewAlbumAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var img_uri = Utils.getString(memberImg,"small_uri")
         val image = Config.url + img_uri
         ImageLoader.getInstance().displayImage(image, item.picture_grid_image, Utils.UILoptionsProfile)
+
+        if (selected.contains(position.toString())) {
+            val idx = selected.indexOf(position.toString())
+            item.picture_grid_click.text = (idx + 1).toString()
+        }else {
+            item.picture_grid_click.text = ""
+        }
 
         return retView
     }

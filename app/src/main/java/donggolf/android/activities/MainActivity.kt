@@ -308,10 +308,16 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     intent.action = "MSG_NEXT"
                     context.sendBroadcast(intent)
 
+                    if (sidotype == "전국"){
+                        areaTV.text =  sidotype
+                    } else if (sidotype == "세종특별자치시"){
+                        areaTV.text =  sidotype +"/ "+ sidotype2+" " +goguntype2
+                    } else if (sidotype2 == "세종특별자치시"){
+                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2
+                    } else {
+                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+                    }
 
-                    println("-----region_id ----- $region_id , ------ region_id2 $region_id2")
-
-                    areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
                 }
             }
         }

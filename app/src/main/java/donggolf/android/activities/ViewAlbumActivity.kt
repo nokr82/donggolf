@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -20,8 +21,12 @@ import kotlinx.android.synthetic.main.activity_view_album.*
 import org.json.JSONException
 import org.json.JSONObject
 import android.view.View
+import android.widget.AdapterView
+import android.widget.BaseAdapter
 import android.widget.PopupMenu
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import donggolf.android.adapters.ViewAlbumAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
@@ -29,8 +34,9 @@ import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
 import kotlinx.android.synthetic.main.findpicture_gridview_item.view.*
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.util.*
 
-class ViewAlbumActivity : RootActivity() {
+class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 
     lateinit var context: Context
 
@@ -52,6 +58,8 @@ class ViewAlbumActivity : RootActivity() {
 
     var images_path: ArrayList<String> = ArrayList<String>()
 
+    private val selected = LinkedList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_album)
@@ -60,7 +68,8 @@ class ViewAlbumActivity : RootActivity() {
         tmp_member_id = intent.getIntExtra("viewAlbumListUserID",0)
         login_id = PrefUtils.getIntPreference(context,"member_id")
 
-        eachViewAdapter = ViewAlbumAdapter(context, R.layout.findpicture_gridview_item, albumList)
+        selectGV.setOnItemClickListener(this)
+        eachViewAdapter = ViewAlbumAdapter(context, R.layout.findpicture_gridview_item, albumList,selected)
         selectGV.adapter = eachViewAdapter
 
         getProfilImageList()
@@ -86,7 +95,8 @@ class ViewAlbumActivity : RootActivity() {
                             builder.setView(dialogView)
                             val alert = builder.show()
 
-                            dialogView.dlg_selected_cntTV.text = selImgViewPositions.size.toString()
+//                            dialogView.dlg_selected_cntTV.text = selImgViewPositions.size.toString()
+                            dialogView.dlg_selected_cntTV.text = selected.size.toString()
 
                             dialogView.dlg_yesTV.setOnClickListener {
                                 removeImages()
@@ -111,9 +121,7 @@ class ViewAlbumActivity : RootActivity() {
 //
 //                                startActivityForResult(galleryIntent, GALLERY)
 
-                                var intent = Intent(context, FindPictureGridActivity::class.java);
-                                startActivityForResult(intent, SELECT_PICTURE);
-
+                                permissionimage()
 
                             } else {
 
@@ -136,35 +144,39 @@ class ViewAlbumActivity : RootActivity() {
             }
         })
 
-        selectGV.setOnItemClickListener { parent, view, position, id ->
-
-            //var is_duplicateClicks= albumList[position].getBoolean("duplicateClicks")
-            if (clickedItmeCnt <= albumList.size) {
-
-                var dc_tf = albumList[position].getBoolean("duplicateClicks")
-
-                println("temp position item : $dc_tf")
-                if (dc_tf){
-                    albumList[position].put("duplicateClicks", !dc_tf)
-                    println("removed item : ${selImgViewPositions-1}")
-                    selImgViewPositions.removeAt(selImgViewPositions.size - position - 1)
-                    clickedItmeCnt--
-                } else {
-                    albumList[position].put("duplicateClicks", !dc_tf)
-                    clickedItmeCnt++
-                    albumList[position].put("select_album_img_cnt", clickedItmeCnt)
-                    selectedImageList.add(albumList[position].getString("image_id"))
-                    selectedImageViewList.add(Config.url + albumList[position].getString("image_uri"))
-                    Log.d("이미지배열",selectedImageViewList.toString())
-                    selImgViewPositions.add(position)
-                }
-
-                println(selImgViewPositions)
-
-                eachViewAdapter.notifyDataSetChanged()
-            }
-
-        }
+//        selectGV.setOnItemClickListener { parent, view, position, id ->
+//
+//            println("------clickeditemcnt$clickedItmeCnt    albumlist ${albumList.size}")
+//
+//            var is_duplicateClicks= albumList[position].getBoolean("duplicateClicks")
+//            if (clickedItmeCnt <= albumList.size) {
+//
+//                var dc_tf = albumList[position].getBoolean("duplicateClicks")
+//
+//                println("temp position item : $dc_tf")
+//                if (dc_tf){
+//                    albumList[position].put("duplicateClicks", !dc_tf)
+//                    println("removed item : ${selImgViewPositions-1}")
+//                    selImgViewPositions.removeAt(selImgViewPositions.size - (position - 1))
+//                    clickedItmeCnt--
+//                } else {
+//                    albumList[position].put("duplicateClicks", !dc_tf)
+//                    clickedItmeCnt++
+//                    albumList[position].put("select_album_img_cnt", clickedItmeCnt)
+//                    selectedImageList.add(albumList[position].getString("image_id"))
+//                    selectedImageViewList.add(Config.url + albumList[position].getString("image_uri"))
+//                    Log.d("이미지배열",selectedImageViewList.toString())
+//                    selImgViewPositions.add(position)
+//                }
+//
+//                println("----clickeditemcnt$clickedItmeCnt")
+//
+//                println(selImgViewPositions)
+//
+//                eachViewAdapter.notifyDataSetChanged()
+//            }
+//
+//        }
 
 
     }
@@ -286,6 +298,18 @@ class ViewAlbumActivity : RootActivity() {
     }
 
     fun removeImages(){
+
+        var idx = 0
+        var idxn = 0
+
+        for (strPo in selected) {
+            val item = albumList.get(strPo.toInt())
+            val MemberImg = item.getJSONObject("MemberImg")
+            val image_id = Utils.getString(MemberImg,"id")
+            selectedImageList.add(image_id)
+            println("---------$image_id")
+        }
+
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("deleteImgs",selectedImageList)
@@ -302,6 +326,7 @@ class ViewAlbumActivity : RootActivity() {
                     }*/
                     selImgViewPositions.clear()
                     selImgViewPositions.sort()
+                    selected.clear()
                     getProfilImageList()
                     var intent = Intent()
                     intent.action = "DELETE_IMG"
@@ -364,4 +389,60 @@ class ViewAlbumActivity : RootActivity() {
         })
     }
 
+    private fun permissionimage() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                moveMyPicture()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
+
+    fun moveMyPicture(){
+        var intent = Intent(context, FindPictureActivity::class.java);
+        intent.putExtra("image","image")
+        startActivityForResult(intent, SELECT_PICTURE);
+    }
+
+    override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+
+        val strPo = position.toString()
+
+        if (selected.contains(strPo)) {
+            selected.remove(strPo)
+
+            val adapter = selectGV.getAdapter()
+            if (adapter != null) {
+                val f = adapter as ViewAlbumAdapter
+                (f as BaseAdapter).notifyDataSetChanged()
+            }
+
+        } else {
+            if (selected.size > 9) {
+                Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            selected.add(strPo)
+
+            val adapter = selectGV.getAdapter()
+            if (adapter != null) {
+                val f = adapter as ViewAlbumAdapter
+                (f as BaseAdapter).notifyDataSetChanged()
+            }
+        }
+    }
 }

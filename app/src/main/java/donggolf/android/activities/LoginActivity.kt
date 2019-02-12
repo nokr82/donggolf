@@ -38,11 +38,6 @@ import java.security.NoSuchAlgorithmException
 
 class LoginActivity : RootActivity() {
 
-
-
-
-
-
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
 //    private lateinit var mAuth: FirebaseAuth
@@ -177,6 +172,9 @@ class LoginActivity : RootActivity() {
                                 PrefUtils.setPreference(context, "auto", true)
 
                             } else {
+                                PrefUtils.setPreference(context, "email", email)
+                                PrefUtils.setPreference(context, "pass", password)
+                                PrefUtils.setPreference(context, "auto", false)
                                 //PrefUtils.setPreference(context, "auto", false)
                             }
 
@@ -188,8 +186,29 @@ class LoginActivity : RootActivity() {
                             finish()
                         }
                         else {
-                            PrefUtils.setPreference(context,"isActiveAccount", "i")
-                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
+
+                            val builder = AlertDialog.Builder(context)
+                            builder
+                                    .setMessage("휴면계정을 해제 하시겠습니까 ?")
+
+                                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+
+                                        updateDormancy(member_id)
+                                        dialog.cancel()
+
+                                    })
+                                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                                        PrefUtils.setPreference(context,"isActiveAccount", "i")
+                                        dialog.cancel()
+                                    })
+
+                            val alert = builder.create()
+                            alert.show()
+
+
+
+//                            PrefUtils.setPreference(context,"isActiveAccount", "i")
+//                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
 
                     }else{
@@ -229,6 +248,29 @@ class LoginActivity : RootActivity() {
         println("moveRegister()")
         startActivity(Intent(this, RegisterActivity::class.java))
     }
+
+    fun updateDormancy(member_id:Int){
+        val params = RequestParams()
+        params.put("member_id", member_id)
+        params.put("type","status")
+        params.put("update", "a")
+        MemberAction.update_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
 /*
     companion object {
         fun setLoginData(context: Context, user: FirebaseUser?) {

@@ -47,7 +47,22 @@ class ProfileTagChangeActivity : RootActivity() {
         context = this
 
         finishtagLL.setOnClickListener {
-            finish()
+            Utils.hideKeyboard(context!!)
+            if (intent.getStringExtra("type") != null){
+                val type = intent.getStringExtra("type")
+                println("type $type")
+                if (type == "post"){
+                    if (adapterData.size > 0 ){
+                        intent.putExtra("data",adapterData)
+                    }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+            } else {
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+//            finish()
         }
 
         var intent = getIntent()
@@ -100,55 +115,13 @@ class ProfileTagChangeActivity : RootActivity() {
                 adapter.removeItem(position)
                 adapterData.remove(taglist)
 
+                updateTag()
+
             }
         }
 
         confirmRL.setOnClickListener {
-
-            Utils.hideKeyboard(context!!)
-
-            val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
-//            params.put("update", adapterData)//추가할거
-            if (adapterData != null){
-                Log.d("작성",adapterData.toString())
-                if (adapterData!!.size != 0){
-                    for (i in 0..adapterData!!.size - 1){
-
-                        params.put("update[" + i + "]",adapterData.get(i))
-                    }
-                }
-            }
-            //params.put("del_tag", delList) //지울거
-            params.put("type", "tags") //태그를 건드릴것이다
-
-            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    setResult(RESULT_OK,intent)
-
-                    finish()
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-                }
-            })
-
-
-            if (intent.getStringExtra("type") != null){
-                val type = intent.getStringExtra("type")
-                println("type $type")
-                if (type == "post"){
-                    if (adapterData.size > 0 ){
-                        intent.putExtra("data",adapterData)
-                    }
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
-                } else {
-
-                }
-            }
-
+            updateTag()
         }
 
         //입력관련 처리
@@ -160,7 +133,6 @@ class ProfileTagChangeActivity : RootActivity() {
 
             override fun afterTextChanged(count: Editable) {
                 // 입력이 끝났을 때 호출된다.
-
                 countTV.setText(Integer.toString(hashtagET.text.toString().length))
             }
 
@@ -189,6 +161,8 @@ class ProfileTagChangeActivity : RootActivity() {
                     adapterData.add(tag!!)
 
                     //sTag.add(tag!!)
+
+                    updateTag()
 
                     adapter.notifyDataSetChanged()
 
@@ -220,4 +194,55 @@ class ProfileTagChangeActivity : RootActivity() {
         }*/
 
     }
+
+    fun updateTag(){
+        Utils.hideKeyboard(context!!)
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
+//            params.put("update", adapterData)//추가할거
+        if (adapterData != null){
+            Log.d("작성",adapterData.toString())
+            if (adapterData!!.size != 0){
+                for (i in 0..adapterData!!.size - 1){
+
+                    params.put("update[" + i + "]",adapterData.get(i))
+                }
+            }
+        }
+        //params.put("del_tag", delList) //지울거
+        params.put("type", "tags") //태그를 건드릴것이다
+
+        MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                setResult(RESULT_OK,intent)
+
+//                    finish()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
+
+    }
+
+    override fun onBackPressed() {
+        Utils.hideKeyboard(context!!)
+        if (intent.getStringExtra("type") != null){
+            val type = intent.getStringExtra("type")
+            println("type $type")
+            if (type == "post"){
+                if (adapterData.size > 0 ){
+                    intent.putExtra("data",adapterData)
+                }
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+        } else {
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+    }
+
 }

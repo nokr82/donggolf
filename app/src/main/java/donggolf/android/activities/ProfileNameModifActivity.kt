@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -80,6 +81,11 @@ class ProfileNameModifActivity : RootActivity() {
 
         nick_ok.setOnClickListener {
             //DB에 저장하고 finish
+            if (nameET.text.toString().length > 0){
+                Toast.makeText(context,"이름 입력은 필수 입력입니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             nick = nameET.text.toString()
 
             //Do table update action

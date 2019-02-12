@@ -28,6 +28,10 @@ class OtherManageActivity : RootActivity() {
         context = this
 
         isActive = PrefUtils.getStringPreference(context,"isActiveAccount")
+        var auto =   PrefUtils.getBooleanPreference(context,"auto")
+        if (auto == false){
+            statusTV.setText("수동")
+        }
 
         setpasswordLL.setOnClickListener {
             var intent = Intent(context, ChangePasswordActivity::class.java)
@@ -121,9 +125,6 @@ class OtherManageActivity : RootActivity() {
                 })
             }
 
-
-
-
         }
 
         loginStatusLL.setOnClickListener {
@@ -142,13 +143,15 @@ class OtherManageActivity : RootActivity() {
             }
             dialogView.dlg_autoLL.setOnClickListener {
                 PrefUtils.setPreference(context,"auto", true)
+                statusTV.setText("자동")
                 alert.dismiss()
             }
             dialogView.dlg_manualLL.setOnClickListener {
                 PrefUtils.setPreference(context,"auto", false)
-                var intent = Intent(context, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+//                var intent = Intent(context, LoginActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                startActivity(intent)
+                statusTV.setText("수동")
                 alert.dismiss()
             }
 

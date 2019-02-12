@@ -71,9 +71,56 @@ class AreaMyRangeActivity : RootActivity() {
             val item = bigcitylist.get(position)
             var type = item.getJSONObject("Regions")
             val parent_id = Utils.getString(type,"id")
-            getGugun(parent_id.toInt())
-            arealistLV.visibility = View.GONE
-            gridGV.visibility = View.VISIBLE
+            var name:String = Utils.getString(type,"name")
+            if (name == "세종특별자치시"){
+                var index = areaCnt.text.toString().toInt()
+                var nowIndex = index + 1
+                val regionView = View.inflate(context, R.layout.item_area,null)
+                regionView.regionNameTV.text = name
+
+                areaCnt.setText(nowIndex.toString())
+
+                bigcitylist[position].put("isSelectedOp",true)
+                adapter.notifyDataSetChanged()
+                actArea++
+
+                when (actArea) {
+                    1 -> userRG1 = name.toString()
+                    2 -> userRG2 = name.toString()
+                    3 -> userRG3 = name.toString()
+                }
+
+                regionView.regionDelIV.setOnClickListener {
+                    when (actArea) {
+                        1 -> userRG1 = ""
+                        2 -> userRG2 = ""
+                        3 -> userRG3 = ""
+                    }
+                    actArea--
+                    areaCnt.text = "${actArea.toString()}"
+                    tmpRegionLL.removeView(regionView)
+                    bigcitylist[position].put("isSelectedOp",false)
+                    adapter.notifyDataSetChanged()
+                }
+
+                if (nowIndex == 3){
+                    update_info()
+                } else {
+                    tmpRegionLL.addView(regionView)
+                    areaCnt.text = "${actArea.toString()}"
+                    tmpSV.visibility = View.VISIBLE
+                }
+            } else if (name == "전국"){
+                userRG1 = "전국"
+                userRG2 = "전국"
+                userRG3 = "전국"
+                update_info()
+            } else {
+                getGugun(parent_id.toInt())
+                arealistLV.visibility = View.GONE
+                gridGV.visibility = View.VISIBLE
+            }
+
         }
 
         GridAdapter = AreaRangeGridAdapter(context, R.layout.item_area_range_grid, gugunList)
@@ -112,9 +159,10 @@ class AreaMyRangeActivity : RootActivity() {
             }
             if (nowIndex == 3){
                 update_info()
+            } else {
+                tmpRegionLL.addView(regionView)
+                areaCnt.text = "${actArea.toString()}"
             }
-            tmpRegionLL.addView(regionView)
-            areaCnt.text = "${actArea.toString()}"
 
 
         }

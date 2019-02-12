@@ -22,15 +22,15 @@
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_back" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="회원탈퇴"
+                android:textSize="15dp"
+                android:textColor="#000000" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="회원탈퇴"
-            android:textSize="15dp"
-            android:textColor="#000000" />
     </LinearLayout>
 
     <LinearLayout

@@ -105,6 +105,7 @@ class IntroActivity : RootActivity() {
     private fun stopIntro() {
 
         val autoLogin = PrefUtils.getBooleanPreference(context, "auto")
+
 //        val first = PrefUtils.getBooleanPreference(context, "first")
 
         if (!autoLogin) {
