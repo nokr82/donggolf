@@ -1075,6 +1075,7 @@ class AddPostActivity : RootActivity() {
 
         removeIV.setOnClickListener {
             videoVV.visibility = View.GONE
+            videoLL.visibility =View.GONE
             removeIV.visibility = View.GONE
             videoPaths.clear()
             video_image.clear()
@@ -1800,6 +1801,7 @@ class AddPostActivity : RootActivity() {
                                         println("path ----- $path")
                                         removeIV.visibility = View.VISIBLE
                                         videoVV.visibility = View.VISIBLE
+                                        videoLL.visibility =View.VISIBLE
                                         val uri = Uri.parse(Config.url + path)
                                         videoVV.start()
                                         videoVV.setVideoURI(uri)
@@ -1946,6 +1948,7 @@ class AddPostActivity : RootActivity() {
 
                     println("path ----- ${videoPaths.get(0)}")
                     videoVV.visibility = View.VISIBLE
+                    videoLL.visibility =View.VISIBLE
                     removeIV.visibility = View.VISIBLE
                     val uri = Uri.parse(videoPaths.get(0))
                     videoVV.start()
