@@ -244,6 +244,7 @@
                             <TextView
                                 android:id="@+id/leftIV"
                                 android:text="〈"
+                                android:visibility="gone"
                                 android:layout_width="30dp"
                                 android:layout_height="50dp"
                                 android:gravity="center"
@@ -255,6 +256,7 @@
                             <TextView
                                 android:id="@+id/rightIV"
                                 android:layout_width="30dp"
+                                android:visibility="gone"
                                 android:layout_height="50dp"
                                 android:gravity="center"
                                 android:textSize="30dp"

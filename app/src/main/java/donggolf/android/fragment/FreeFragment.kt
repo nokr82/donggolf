@@ -270,9 +270,14 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         }
 
         iconsearchIV.setOnClickListener {
-            resetList("")
+           var keyword =   Utils.getString(main_edit_search)
             main_listview_search.visibility = View.GONE
             main_edit_search.isCursorVisible = false
+            if (keyword==""){
+                Toast.makeText(context,"키워드를 입력해주세요.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            resetList(keyword)
         }
 
 
@@ -282,9 +287,8 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             if(Utils.getString(main_edit_search) == "") {
                 return@setOnClickListener
             }
-
             main_edit_search.setText("")
-            resetList("")
+//            resetList("")
             main_edit_search.isCursorVisible = false
         }
 
@@ -294,10 +298,10 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             val SearchList = item.getJSONObject("SearchList")
             val content = Utils.getString(SearchList,"content")
             println("----content$content")
+            main_edit_search.setText(content)
             resetList(content)
             main_edit_search.isCursorVisible = false
             Utils.hideKeyboard(context)
-            main_edit_search.setText("")
         }
 
         mainData()
