@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.media.Image
 import android.util.TypedValue
 import android.view.View
@@ -55,12 +56,17 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val content = Utils.getString(chatting,"content")
         val content_image = Utils.getString(chatting, "img")
         val member_nick = Utils.getString(member,"nick")
+        val sex = Utils.getString(member,"sex")
         var messageCreated = Utils.getString(chatting,"created")
         var split = messageCreated.split(" ")
         var peoplecount = Utils.getInt(chatting,"peoplecount")
         var read_count = Utils.getInt(chatting,"read_count")
         var difference = peoplecount - read_count
         var type = Utils.getString(chatting,"type")
+
+        if (sex == "0"){
+            item.usernickTV.setTextColor(Color.parseColor("#000000"))
+        }
 
 
         var text_size = Utils.getString(json,"text_size")

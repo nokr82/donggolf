@@ -814,9 +814,16 @@ class MainDetailActivity : RootActivity() {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
                                     } else {
+
                                         val path = Utils.getString(contentFile, "image_uri")
+                                        videoviewTV.text = "동영상 숨기기"
                                         videoviewTV.visibility = View.VISIBLE
+                                        videoVV.visibility = View.VISIBLE
+                                        pagerVP.visibility = View.GONE
                                         video = Uri.parse(Config.url + path)
+                                        videoVV.start()
+                                        videoVV.setVideoURI(video)
+                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
 //                                        videoVV.visibility = View.VISIBLE
 //                                        videoVV.start()
 //                                        videoVV.setVideoURI(video)

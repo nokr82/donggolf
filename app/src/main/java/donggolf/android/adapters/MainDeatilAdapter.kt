@@ -9,6 +9,7 @@ import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.activities.PictureDetailActivity
 import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
@@ -94,6 +95,19 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         if (gender == "0"){
             item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
         }
+
+        item.itemimageIV.setOnClickListener {
+            val imglist:ArrayList<String> = ArrayList<String>()
+            imglist.add(image_uri)
+            var intent = Intent(context, PictureDetailActivity::class.java)
+            intent.putExtra("id", "2")
+            intent.putExtra("adPosition",0)
+            intent.putExtra("paths",imglist)
+            intent.putExtra("type","chat")
+            context.startActivity(intent)
+        }
+
+
         item.main_detail_comment_profileIV.setOnClickListener {
 
             val member_id = Utils.getString(Member, "id")
