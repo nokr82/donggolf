@@ -182,9 +182,9 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                     get_region_member()
                 }
 
-                if (keyWord != null && keyWord != "") {
+              /*  if (keyWord != null && keyWord != "") {
                     friendSearchWords(keyWord)
-                }
+                }*/
 
                 //println("Search Words : $keyWord in FriendSearchActivity")
                 if (keyWord.startsWith("#")) {
@@ -198,7 +198,6 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
                 frdSearchET.setText("")
 
-//                friendSearchWords(keyWord)
                 true
             } else {
                 false
@@ -214,7 +213,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             if (which.startsWith("#")) {
                 which = which.replace("#","")
 
-                friendSearchhash(which)
+//                friendSearchhash(which)
 
             } else {
                 friendSearchWords(which)
