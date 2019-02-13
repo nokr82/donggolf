@@ -1016,6 +1016,9 @@ class AddPostActivity : RootActivity() {
 
     lateinit var videofile:ByteArray
 
+    var cht_yn = "Y"
+    var cmt_yn = "Y"
+
     var MODIFYY = 100
     var temp_yn = ""
 
@@ -1044,6 +1047,18 @@ class AddPostActivity : RootActivity() {
             reset2(path,i)
 
         }*/
+
+        if (cht_yn=="Y"){
+            chatableIV.visibility = View.VISIBLE
+        }else{
+            chatableIV.visibility = View.GONE
+        }
+
+        if (cmt_yn =="Y"){
+            replyableIV.visibility = View.VISIBLE
+        }else{
+            replyableIV.visibility = View.GONE
+        }
 
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
@@ -1094,74 +1109,79 @@ class AddPostActivity : RootActivity() {
         }
 
         finishaBT.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder
-                    .setMessage("글쓰기를 취소하시겠습니까 ?")
+            if (addpostTV.text.equals("수정하기")){
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("글쓰기를 취소하시겠습니까 ?")
 
-                    .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
-                        val title = Utils.getString(titleET)
-                        val content = Utils.getString(contentET)
+                        .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                            val title = Utils.getString(titleET)
+                            val content = Utils.getString(contentET)
 
-                        val tmpContent = TmpContent(0, member_id.toString(), title, content)
+                            val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
-                        dbManager.inserttmpcontent(tmpContent)
+                            dbManager.inserttmpcontent(tmpContent)
 
-                        if (images_path != null && images_path!!.size > 0 ) {
-                            for (i in 0 until images_path!!.size){
-                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
-                                println("imagesPath ${imagesPath.path}")
-                                dbManager.insertimagespath(imagesPath)
+                            if (images_path != null && images_path!!.size > 0 ) {
+                                for (i in 0 until images_path!!.size){
+                                    val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+                                    println("imagesPath ${imagesPath.path}")
+                                    dbManager.insertimagespath(imagesPath)
+                                }
                             }
-                        }
 
-                        if (videoPaths != null && videoPaths.size > 0 ) {
-                            for (i in 0 until videoPaths.size){
-                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
-                                println("videoPath ${videoPath.path}")
-                                dbManager.insertimagespath(videoPath)
+                            if (videoPaths != null && videoPaths.size > 0 ) {
+                                for (i in 0 until videoPaths.size){
+                                    val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                                    println("videoPath ${videoPath.path}")
+                                    dbManager.insertimagespath(videoPath)
+                                }
                             }
-                        }
 
-                        if (hashtag != null && hashtag.size > 0 ) {
-                            for (i in 0 until hashtag.size){
-                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
-                                println("hastag ${hastag.path}")
-                                dbManager.insertimagespath(hastag)
+                            if (hashtag != null && hashtag.size > 0 ) {
+                                for (i in 0 until hashtag.size){
+                                    val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                                    println("hastag ${hastag.path}")
+                                    dbManager.insertimagespath(hastag)
+                                }
                             }
-                        }
 
-                        temp_yn = "N"
+                            temp_yn = "N"
 
-                        finish()
+                            finish()
 
-                        Utils.hideKeyboard(this)
+                            Utils.hideKeyboard(this)
 
-                    })
-                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
+                        })
+                        .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
 
 //                        loadData(dbManager,member_id.toString())
 
-                        if(tmpContent.id == null){
-                            finish()
-                        }
+                            if(tmpContent.id == null){
+                                finish()
+                            }
 
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
-                            dbManager.deleteImagePaths(member_id.toString())
-                        }
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                                dbManager.deleteImagePaths(member_id.toString())
+                            }
 
-                        if(tmpContent.id != null) {
-                            dbManager.deleteTmpContent(tmpContent.id!!)
-                            finish()
-                        }
+                            if(tmpContent.id != null) {
+                                dbManager.deleteTmpContent(tmpContent.id!!)
+                                finish()
+                            }
 
-                        Utils.hideKeyboard(this)
+                            Utils.hideKeyboard(this)
 
 
-                    })
-            val alert = builder.create()
-            alert.show()
+                        })
+                val alert = builder.create()
+                alert.show()
+            }else{
+                finish()
+            }
+
         }
 
         movefindpictureBT.setOnClickListener {
@@ -1204,6 +1224,30 @@ class AddPostActivity : RootActivity() {
             intent.putExtra("type","post")
             startActivityForResult(intent, SELECT_HASHTAG);
         }
+        /*  var cmt_yn = "Y"
+              if (chatableRL.isChecked == false){
+                  cmt_yn = "N"
+              }*/
+        replyableRL.setOnClickListener {
+            if (replyableIV.visibility == View.GONE) {
+                replyableIV.visibility = View.VISIBLE
+                cmt_yn = "Y"
+            } else {
+                replyableIV.visibility = View.GONE
+                cmt_yn = "N"
+            }
+        }
+        chatableRL.setOnClickListener {
+            if (chatableIV.visibility == View.GONE) {
+                chatableIV.visibility = View.VISIBLE
+                cht_yn  = "Y"
+            } else {
+                chatableIV.visibility = View.GONE
+                cht_yn  = "N"
+            }
+        }
+
+
 
     }
 
@@ -1302,16 +1346,17 @@ class AddPostActivity : RootActivity() {
         params.put("title",title)
         params.put("text",text)
 
-        var cht_yn = "Y"
-        if (replyableCB.isChecked == false){
+      /*  var cht_yn = "Y"
+        if (replyableRL.isChecked == false){
             cht_yn = "N"
-        }
+        }*/
+
         params.put("cht_yn",cht_yn)
 
-        var cmt_yn = "Y"
-        if (chatableCB.isChecked == false){
+      /*  var cmt_yn = "Y"
+        if (chatableRL.isChecked == false){
             cmt_yn = "N"
-        }
+        }*/
         params.put("cmt_yn",cmt_yn)
 
         if (hashtag != null){
@@ -1416,16 +1461,16 @@ class AddPostActivity : RootActivity() {
         params.put("text",text)
         params.put("deleted","N")
 
-        var cht_yn = "Y"
+       /* var cht_yn = "Y"
         if (replyableCB.isChecked == false){
             cht_yn = "N"
-        }
+        }*/
         params.put("cht_yn",cht_yn)
 
-        var cmt_yn = "Y"
+      /*  var cmt_yn = "Y"
         if (chatableCB.isChecked == false){
             cmt_yn = "N"
-        }
+        }*/
         params.put("cmt_yn",cmt_yn)
 
         if (PrefUtils.getStringPreference(context,"region_id") != null) {
@@ -1819,15 +1864,15 @@ class AddPostActivity : RootActivity() {
                             contentET.setText(text)
 
                             if (cht_yn  == "Y"){
-                                chatableCB.isChecked = true
+                                chatableIV.visibility = View.VISIBLE
                             } else {
-                                chatableCB.isChecked = false
+                                chatableIV.visibility = View.GONE
                             }
 
                             if (cmt_yn == "Y"){
-                                replyableCB.isChecked = true
+                                replyableIV.visibility = View.VISIBLE
                             } else {
-                                replyableCB.isChecked = false
+                                replyableIV.visibility = View.GONE
                             }
 
                         }

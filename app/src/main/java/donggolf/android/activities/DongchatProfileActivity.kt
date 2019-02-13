@@ -569,7 +569,9 @@ class DongchatProfileActivity : RootActivity() {
 
     fun doSomethingWithContext(context: Context) {
         this.context = context
-        progressDialog = ProgressDialog(context)
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
     }
 
 

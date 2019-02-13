@@ -197,7 +197,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right">
+                        android:gravity="center_vertical|right">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -207,14 +207,33 @@
                             android:textColor="#CDCDCD"
                             android:textSize="15dp" />
 
-                        <CheckBox
+                        <RelativeLayout
+                            android:id="@+id/replyableRL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@drawable/box_check" />
+
+                            <ImageView
+                                android:id="@+id/replyableIV"
+                                android:visibility="gone"
+                                android:layout_width="12dp"
+                                android:layout_height="10dp"
+                                android:layout_centerInParent="true"
+                                android:background="@mipmap/icon_check" />
+                        </RelativeLayout>
+
+                        <!--<CheckBox
                             android:id="@+id/replyableCB"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginRight="10dp"
                             android:checked="true"
-                            android:buttonTint="#0EDA2F" />
+                            android:buttonTint="#0EDA2F" />-->
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -224,12 +243,31 @@
                             android:textColor="#CDCDCD"
                             android:textSize="15dp" />
 
-                        <CheckBox
+                        <RelativeLayout
+                            android:layout_marginRight="20dp"
+                            android:id="@+id/chatableRL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@drawable/box_check" />
+
+                            <ImageView
+                                android:id="@+id/chatableIV"
+                                android:visibility="gone"
+                                android:layout_width="12dp"
+                                android:layout_height="10dp"
+                                android:layout_centerInParent="true"
+                                android:background="@mipmap/icon_check" />
+                        </RelativeLayout>
+                        <!--<CheckBox
                             android:id="@+id/chatableCB"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:buttonTint="#0EDA2F" />
+                            android:buttonTint="#0EDA2F" />-->
                     </LinearLayout>
                 </LinearLayout>
 
