@@ -136,6 +136,20 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         editadapter = FriendSearchAdapter(context, R.layout.main_edit_listview_item, editadapterData,this)
         frd_editLV.adapter = editadapter
 
+
+        frd_editLV.setOnItemClickListener { parent, view, position, id ->
+
+            val item = editadapterData.get(position)
+            val SearchList = item.getJSONObject("MateSearch")
+            val content = Utils.getString(SearchList,"keyword")
+            println("----content$content")
+            frdSearchET.setText(content)
+            friendSearchWords(content)
+            frdSearchET.isCursorVisible = false
+            Utils.hideKeyboard(this)
+        }
+
+
         searchList()
         get_region_member()
 
@@ -192,13 +206,14 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         btn_search_friends.setOnClickListener {
-
+            main_listview_search.visibility = View.GONE
             var which = Utils.getString(frdSearchET)
             if (which.isEmpty()) {
                 get_region_member()
             }
             if (which.startsWith("#")) {
                 which = which.replace("#","")
+
                 friendSearchhash(which)
 
             } else {
@@ -419,6 +434,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                     println("친구검색 ::: $response")
                     val result = response!!.getString("result")
                     friendData.clear()
+                    main_listview_search.visibility = View.GONE
                     if (result == "ok") {
                         val members = response.getJSONArray("members")
                         if (members.length() == 0) {
@@ -671,12 +687,12 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val mateSearchHistories = response.getJSONArray("mateSearchHistories")
                         editadapterData.clear()
+                        val mateSearchHistories = response.getJSONArray("mateSearchHistories")
                         if (mateSearchHistories.length() > 0) {
                             for (i in 0 until mateSearchHistories.length()) {
                                 val mateSearch = mateSearchHistories[i] as JSONObject
-
+                                Log.d("메이트",mateSearch.toString())
                                 editadapterData.add(mateSearch)
                             }
                         }

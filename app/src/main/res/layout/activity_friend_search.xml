@@ -18,7 +18,7 @@
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_back" />
-        </LinearLayout>
+
 
         <TextView
             android:id="@+id/areaTV"
@@ -28,7 +28,7 @@
             android:text="부천/경기/인천"
             android:textSize="15dp"
             android:textColor="#000000" />
-
+        </LinearLayout>
         <TextView
             android:id="@+id/member_cntTV"
             android:layout_width="wrap_content"
