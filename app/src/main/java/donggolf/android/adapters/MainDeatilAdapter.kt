@@ -1,12 +1,15 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
@@ -39,7 +42,6 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         var data = data.get(position)
         //val member_info = data.getJSONObject("Member")
         val comment = data.getJSONObject("ContentComment")
-
         var image_uri = Utils.getString(comment,"image_uri")
         if (image_uri != "" && image_uri != null){
             item.itemimageIV.visibility = View.VISIBLE
@@ -50,6 +52,7 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
 
         var comment_id = Utils.getInt(comment,"id")
         data.put("comment_id", comment_id)
+
 
         item.main_detail_comment_conditionTV.text = Utils.getString(comment,"comment")
         data.put("comment_content", Utils.getString(comment,"comment"))
@@ -87,7 +90,17 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
         }
 
+        var gender = Utils.getString(Member,"sex")
+        if (gender == "0"){
+            item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
+        }
+        item.main_detail_comment_profileIV.setOnClickListener {
 
+            val member_id = Utils.getString(Member, "id")
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", member_id)
+            context.startActivity(intent)
+        }
         var comment_memberID = Utils.getInt(comment,"member_id")
         data.put("cmt_wrt_id", comment_memberID)
 
