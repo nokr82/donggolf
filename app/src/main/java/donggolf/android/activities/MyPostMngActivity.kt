@@ -42,9 +42,7 @@ class MyPostMngActivity : RootActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activit
-
-                y_my_post_mng)
+        setContentView(R.layout.activity_my_post_mng)
 
         context = this
         member_id = PrefUtils.getIntPreference(context,"member_id")

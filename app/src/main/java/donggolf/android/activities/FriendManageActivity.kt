@@ -51,7 +51,7 @@ class FriendManageActivity : RootActivity() {
 
         reqFriendLL.setOnClickListener {
             val intent = Intent(context, RequestFriendActivity::class.java)
-            val intent = Intent(context, FriendCategoryDetailActivity::class.java)
+//            val intent = Intent(context, FriendCategoryDetailActivity::class.java)
             intent.putExtra("type","block")
             startActivity(intent)
         }
