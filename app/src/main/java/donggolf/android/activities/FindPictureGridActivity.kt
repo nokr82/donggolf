@@ -134,7 +134,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 adapter.notifyDataSetChanged()
 
             } else {
-
+                titleTV.text = "동영상선택"
                 val resolver = contentResolver
                 var cursor: Cursor? = null
                 try {
@@ -279,8 +279,12 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 //                    var bt: Bitmap = Utils.getImage(context.getContentResolver(), selected[0], 10)
 
                 val builder = AlertDialog.Builder(context)
-                builder
-                        .setMessage("사진을 등록하시겠습니까 ?")
+                 if (category == "image"){
+                     builder.setMessage("사진을 등록하시겠습니까 ?")
+                } else {
+                     builder.setMessage("동영상을 등록하시겠습니까 ?")
+                 }
+
 
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()

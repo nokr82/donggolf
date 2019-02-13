@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import android.media.ThumbnailUtils
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -43,6 +44,7 @@ class CustomVideoFolderArrayAdapter(context: Context, textViewResourceId: Int, d
         (convertView.findViewById(R.id.bucketName) as TextView).setText(Utils.getString(o, "bucketName"))
 
         var total = Utils.getInt(o,"total")
+        Log.d("토탈",total.toString())
         var image = Utils.getString(o,"image")
         // total
         if (total == -1) {

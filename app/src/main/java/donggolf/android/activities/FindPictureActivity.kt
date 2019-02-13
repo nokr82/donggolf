@@ -90,7 +90,7 @@ class FindPictureActivity : RootActivity() {
 
             } else {
 
-                titleTV.setText("비디오선택")
+                titleTV.setText("동영상선택")
                 val projection = arrayOf(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
                 val c = contentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
                 if (c.count > 0) {
