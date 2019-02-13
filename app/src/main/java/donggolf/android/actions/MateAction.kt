@@ -14,6 +14,11 @@ object MateAction {
         HttpClient.post("/member/view_fs_history.json", params, handler)
     }
 
+    fun get_mates_list2(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/mate/mate_req_list2.json", params, handler)
+    }
+
+
     fun get_mates_list(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/mate/mate_req_list.json", params, handler)
     }

@@ -1220,7 +1220,7 @@ class AddPostActivity : RootActivity() {
         }
 
         hashtagLL.setOnClickListener {
-            var intent = Intent(context, ProfileTagChangeActivity::class.java);
+            var intent = Intent(context, ContentTagChangeActivity::class.java);
             intent.putExtra("type","post")
             startActivityForResult(intent, SELECT_HASHTAG);
         }
@@ -1345,18 +1345,7 @@ class AddPostActivity : RootActivity() {
         params.put("member_id",login_id)
         params.put("title",title)
         params.put("text",text)
-
-      /*  var cht_yn = "Y"
-        if (replyableRL.isChecked == false){
-            cht_yn = "N"
-        }*/
-
         params.put("cht_yn",cht_yn)
-
-      /*  var cmt_yn = "Y"
-        if (chatableRL.isChecked == false){
-            cmt_yn = "N"
-        }*/
         params.put("cmt_yn",cmt_yn)
 
         if (hashtag != null){
@@ -1364,7 +1353,6 @@ class AddPostActivity : RootActivity() {
                 params.put("tag[" + i + "]",  hashtag.get(i))
             }
         }
-
 
         if (delids!=null){
             Log.d("삭제",delids.toString())
@@ -1460,17 +1448,7 @@ class AddPostActivity : RootActivity() {
         params.put("title",title)
         params.put("text",text)
         params.put("deleted","N")
-
-       /* var cht_yn = "Y"
-        if (replyableCB.isChecked == false){
-            cht_yn = "N"
-        }*/
         params.put("cht_yn",cht_yn)
-
-      /*  var cmt_yn = "Y"
-        if (chatableCB.isChecked == false){
-            cmt_yn = "N"
-        }*/
         params.put("cmt_yn",cmt_yn)
 
         if (PrefUtils.getStringPreference(context,"region_id") != null) {
@@ -1494,6 +1472,7 @@ class AddPostActivity : RootActivity() {
             var region_id = 1
             params.put("region2", region_id)
         }
+        Log.d("태그",hashtag.toString())
 
         if (hashtag != null){
             for (i in 0 .. hashtag.size - 1){
@@ -1803,25 +1782,21 @@ class AddPostActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
 
                                 for (i in 0 until tags.length()){
                                     var json = tags.get(i) as JSONObject
-                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    var MemberTags = json.getJSONObject("ContentsTags")
                                     val division = Utils.getString(MemberTags,"division")
 
                                     if (division == "1"){
                                         val tag = Utils.getString(MemberTags,"tag")
                                         hashtags += "#"+tag + "  "
-                                        hashtag.add(tag)
                                     }
                                 }
-
-                            }
-
-                            if (hashtag != null){
-
+                                hashtagsTV.text = hashtags
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){

@@ -76,6 +76,9 @@
             android:name=".activities.RegisterActivity"
             android:theme="@style/NoTitleDialog" />
         <activity
+            android:name=".activities.ContentTagChangeActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
             android:name=".activities.FindidActivity"
             android:theme="@style/NoTitleDialog" />
         <activity

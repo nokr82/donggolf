@@ -790,7 +790,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until tags.length()){
                                     var json = tags.get(i) as JSONObject
-                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    var MemberTags = json.getJSONObject("ContentsTags")
                                     val division = Utils.getString(MemberTags,"division")
 
                                     if (division == "1"){

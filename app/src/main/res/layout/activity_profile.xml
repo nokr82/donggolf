@@ -168,10 +168,10 @@
             android:gravity="center"
             android:orientation="vertical">
             <RelativeLayout
+                android:id="@+id/click_chat"
                 android:layout_width="70dp"
                 android:layout_height="70dp">
                 <ImageView
-                    android:id="@+id/click_chat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
