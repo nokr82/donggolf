@@ -1124,7 +1124,11 @@ class MainDetailActivity : RootActivity() {
             }
 
             dialogView.addFriendTV.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
+                val intent = Intent(context, ProfileActivity::class.java)
+                intent.putExtra("member_id", writer)
+                context.startActivity(intent)
+
+            /*    val builder = AlertDialog.Builder(context)
                 builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
                             if (PrefUtils.getIntPreference(context, "member_id") == -1){
@@ -1162,7 +1166,7 @@ class MainDetailActivity : RootActivity() {
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
-                alert.show()
+                alert.show()*/
             }
         }
     }
