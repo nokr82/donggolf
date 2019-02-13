@@ -13,15 +13,18 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import com.kakao.kakaostory.StringSet.text
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.actions.MemberAction
+import donggolf.android.actions.PostAction
 import donggolf.android.adapters.ProfileTagAdapter
 import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.Users
+import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.tag.view.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -48,6 +51,9 @@ class ContentTagChangeActivity : RootActivity() {
 
         titleTV.text = "나의 게시글 #"
 
+
+
+
         finishtagLL.setOnClickListener {
             Utils.hideKeyboard(context!!)
             if (intent.getStringExtra("type") != null){
@@ -66,10 +72,10 @@ class ContentTagChangeActivity : RootActivity() {
             }
         }
 
-        var intent = getIntent()
 
         adapter = ProfileTagAdapter(context,R.layout.tag,adapterData)
         tagList.adapter = adapter
+        getPost()
 
 
         tagList.setOnItemClickListener { parent, view, position, id ->
@@ -137,6 +143,52 @@ class ContentTagChangeActivity : RootActivity() {
             hashtagET.setText("")
         }
 
+
+    }
+
+
+    fun getPost(){
+        //게시글 불러오기
+            val id = intent.getStringExtra("id")
+            val login_id = PrefUtils.getIntPreference(context, "member_id")
+            var params = RequestParams()
+            params.put("id",id)
+            params.put("member_id",login_id)
+
+            PostAction.get_post(params, object : JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    try {
+                        val result = response!!.getString("result")
+                        Log.d("태그",response.toString())
+
+                        if (result == "ok") {
+
+                            val tags = response.getJSONArray("tags")
+
+                            if (tags != null && tags.length() > 0 ){
+                                for (i in 0 until tags.length()){
+                                    var json = tags.get(i) as JSONObject
+                                    var MemberTags = json.getJSONObject("ContentsTags")
+                                    val division = Utils.getString(MemberTags,"division")
+
+                                    if (division == "1"){
+                                        val tag = Utils.getString(MemberTags,"tag")
+                                        adapterData.add(tag)
+                                        adapter.notifyDataSetChanged()
+                                    }
+                                }
+                            }
+
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                }
+            })
 
     }
 

@@ -1220,9 +1220,12 @@ class AddPostActivity : RootActivity() {
         }
 
         hashtagLL.setOnClickListener {
+            val id = intent.getStringExtra("id")
+
             var intent = Intent(context, ContentTagChangeActivity::class.java);
-            intent.putExtra("type","post")
-            startActivityForResult(intent, SELECT_HASHTAG);
+                intent.putExtra("type","post")
+            intent.putExtra("id",id)
+            startActivityForResult(intent, SELECT_HASHTAG)
         }
         /*  var cmt_yn = "Y"
               if (chatableRL.isChecked == false){
