@@ -266,7 +266,6 @@ class MainDetailActivity : RootActivity() {
                                         commentList[position].put("block_yn", "N")
                                         commentAdapter.notifyDataSetChanged()
                                     }*/
-                                    commentList.clear()
                                     getComments()
 
                                 } else {
@@ -312,7 +311,9 @@ class MainDetailActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-
+            cmtET.setText("")
+            cmtET.hint = ""
+            Utils.hideKeyboard(this@MainDetailActivity)
             val params = RequestParams()
             params.put("cont_id", content_id)
             params.put("member_id", login_id)
@@ -333,10 +334,6 @@ class MainDetailActivity : RootActivity() {
                         val comments = response.getJSONObject("comments")
                         commentList.add(comments)
                         commentAdapter.notifyDataSetChanged()
-                        cmtET.setText("")
-                        cmtET.hint = ""
-                        Utils.hideKeyboard(this@MainDetailActivity)
-                        commentLL.visibility = View.GONE
 
                         addedImgIV.setImageResource(0)
                         commentLL.visibility = View.GONE
@@ -353,6 +350,7 @@ class MainDetailActivity : RootActivity() {
                     println(responseString)
                 }
             })
+            getPost()
         }
 
         //대댓글
@@ -982,6 +980,7 @@ class MainDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
+                    commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
                         //commentList.get(i).put("changedBlockYN", "N")
