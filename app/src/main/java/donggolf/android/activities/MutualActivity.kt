@@ -1,21 +1,13 @@
 package donggolf.android.activities
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MateAction
-import donggolf.android.adapters.MainAdapter
-import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.adapters.MutualAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
@@ -56,6 +48,8 @@ class MutualActivity : RootActivity() {
         finishLL.setOnClickListener {
             finish()
         }
+
+
 
 
 

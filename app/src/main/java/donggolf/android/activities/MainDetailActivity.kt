@@ -888,7 +888,8 @@ class MainDetailActivity : RootActivity() {
                                 nickNameTV.setTextColor(Color.parseColor("#000000"))
                             }
 
-                            val freind = Utils.getString(member,"freind")
+                            var content = response.getJSONObject("Content")
+                            val freind = Utils.getString(content,"freind")
                             if (freind == "0"){
                                 freindIV.setImageResource(R.drawable.icon_second)
                             }
