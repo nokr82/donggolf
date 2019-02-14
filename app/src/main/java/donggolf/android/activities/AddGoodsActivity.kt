@@ -48,7 +48,7 @@ class AddGoodsActivity : RootActivity() {
     private var addPicturesLL: LinearLayout? = null
 
     private val imgSeq = 0
-
+    var sk: String? = null
     var pk: String? = null
     var images_path: ArrayList<String>? = null
     var images: ArrayList<Bitmap>? = null
