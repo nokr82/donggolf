@@ -266,6 +266,7 @@ class MainDetailActivity : RootActivity() {
                                         commentList[position].put("block_yn", "N")
                                         commentAdapter.notifyDataSetChanged()
                                     }*/
+                                    commentList.clear()
                                     getComments()
 
                                 } else {
@@ -311,9 +312,7 @@ class MainDetailActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-            cmtET.setText("")
-            cmtET.hint = ""
-            Utils.hideKeyboard(this@MainDetailActivity)
+
             val params = RequestParams()
             params.put("cont_id", content_id)
             params.put("member_id", login_id)
@@ -334,6 +333,10 @@ class MainDetailActivity : RootActivity() {
                         val comments = response.getJSONObject("comments")
                         commentList.add(comments)
                         commentAdapter.notifyDataSetChanged()
+                        cmtET.setText("")
+                        cmtET.hint = ""
+                        Utils.hideKeyboard(this@MainDetailActivity)
+                        commentLL.visibility = View.GONE
 
                         addedImgIV.setImageResource(0)
                         commentLL.visibility = View.GONE
@@ -350,7 +353,6 @@ class MainDetailActivity : RootActivity() {
                     println(responseString)
                 }
             })
-            getPost()
         }
 
         //대댓글
@@ -404,7 +406,7 @@ class MainDetailActivity : RootActivity() {
 
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->{
-                       x = event.x
+                        x = event.x
                     }
 
                     MotionEvent.ACTION_CANCEL->{
@@ -447,7 +449,7 @@ class MainDetailActivity : RootActivity() {
             finish()
         }
         plusBT.setOnClickListener {
-//            relativ_RL.visibility = View.VISIBLE
+            //            relativ_RL.visibility = View.VISIBLE
             visibleMenu()
         }
 
@@ -475,13 +477,13 @@ class MainDetailActivity : RootActivity() {
                             params.put("type", 1)
 
                             PostAction.add_report(params, object : JsonHttpResponseHandler() {
-                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                            val result = response!!.getString("result")
-                                            if (result == "yes") {
-                                                Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
-                                            }else {
-                                                Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
-                                            }
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    val result = response!!.getString("result")
+                                    if (result == "yes") {
+                                        Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                                    }else {
+                                        Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
@@ -774,6 +776,12 @@ class MainDetailActivity : RootActivity() {
                             cmt_yn = Utils.getString(data,"cmt_yn")
 
 
+                            val freind = Utils.getString(data,"freind")
+                            if (freind == "0"){
+                                freindIV.setBackgroundResource(R.drawable.icon_second)
+                            }
+
+
                             val likeDiv = response.getString("LikeDiv")
 
                             if (likeDiv == "N") {
@@ -790,7 +798,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until tags.length()){
                                     var json = tags.get(i) as JSONObject
-                                    var MemberTags = json.getJSONObject("ContentsTags")
+                                    var MemberTags = json.getJSONObject("MemberTags")
                                     val division = Utils.getString(MemberTags,"division")
 
                                     if (division == "1"){
@@ -814,16 +822,9 @@ class MainDetailActivity : RootActivity() {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
                                     } else {
-
                                         val path = Utils.getString(contentFile, "image_uri")
-                                        videoviewTV.text = "동영상 숨기기"
                                         videoviewTV.visibility = View.VISIBLE
-                                        videoVV.visibility = View.VISIBLE
-                                        pagerVP.visibility = View.GONE
                                         video = Uri.parse(Config.url + path)
-                                        videoVV.start()
-                                        videoVV.setVideoURI(video)
-                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
 //                                        videoVV.visibility = View.VISIBLE
 //                                        videoVV.start()
 //                                        videoVV.setVideoURI(video)
@@ -888,11 +889,6 @@ class MainDetailActivity : RootActivity() {
                                 nickNameTV.setTextColor(Color.parseColor("#000000"))
                             }
 
-                            var content = response.getJSONObject("Content")
-                            val freind = Utils.getString(content,"freind")
-                            if (freind == "0"){
-                                freindIV.setImageResource(R.drawable.icon_second)
-                            }
 
 
 //                            if (member_id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
@@ -988,7 +984,6 @@ class MainDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
-                    commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
                         //commentList.get(i).put("changedBlockYN", "N")
@@ -1125,11 +1120,7 @@ class MainDetailActivity : RootActivity() {
             }
 
             dialogView.addFriendTV.setOnClickListener {
-                val intent = Intent(context, ProfileActivity::class.java)
-                intent.putExtra("member_id", writer)
-                context.startActivity(intent)
-
-            /*    val builder = AlertDialog.Builder(context)
+                val builder = AlertDialog.Builder(context)
                 builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
                             if (PrefUtils.getIntPreference(context, "member_id") == -1){
@@ -1167,7 +1158,7 @@ class MainDetailActivity : RootActivity() {
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
-                alert.show()*/
+                alert.show()
             }
         }
     }

@@ -93,6 +93,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         if (profile != null){
             var image = Config.url + profile
             ImageLoader.getInstance().displayImage(image, item.main_item_image, Utils.UILoptionsUserProfile)
+        } else {
+            item.main_item_image.setImageResource(R.drawable.icon_profiles)
         }
 
 

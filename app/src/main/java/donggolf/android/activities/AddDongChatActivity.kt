@@ -16,7 +16,6 @@ import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
-import donggolf.android.R
 import donggolf.android.actions.ChattingAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.RegionAction
@@ -27,9 +26,9 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_add_dong_chat.*
+import donggolf.android.R
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_people_count.view.*
-import kotlinx.android.synthetic.main.dlg_select_chat_region.*
 import kotlinx.android.synthetic.main.dlg_select_chat_region.view.*
 import org.json.JSONObject
 import java.io.ByteArrayInputStream

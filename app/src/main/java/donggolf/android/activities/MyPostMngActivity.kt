@@ -208,14 +208,14 @@ class MyPostMngActivity : RootActivity() {
 
                             val data = response!!.getJSONArray("contents")
 
-                                myStoredPostList.clear()
-                                for (i in 0 until data.length()) {
-                                    myStoredPostList.add(data[i] as JSONObject)
-                                    myStoredPostList.get(i).put("willDel", false)
-                                }
-                                myStoredPostAdapter.notifyDataSetChanged()
+                            myStoredPostList.clear()
+                            for (i in 0 until data.length()) {
+                                myStoredPostList.add(data[i] as JSONObject)
+                                myStoredPostList.get(i).put("willDel", false)
+                            }
+                            myStoredPostAdapter.notifyDataSetChanged()
 
-                                myPost_storeTV.text = "보관 글(" + data.length() + ")"
+                            myPost_storeTV.text = "보관 글(" + data.length() + ")"
 
                         }
 

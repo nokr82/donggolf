@@ -1,11 +1,13 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.squareup.okhttp.internal.Util
@@ -26,6 +28,7 @@ class FriendManageActivity : RootActivity() {
     lateinit var frdMngAdapter : FriendCategoryAdapter
     var friendCategoryData = ArrayList<JSONObject>()
     lateinit var context : Context
+    val RESET = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +45,27 @@ class FriendManageActivity : RootActivity() {
             val itt = Intent(context, FriendCategoryDetailActivity::class.java)
             itt.putExtra("groupTitle", friendCategoryData.get(position).getString("title"))
             startActivity(itt)
-            intent.putExtra("type","waiting")
-            startActivity(intent)
         }
 
         blockListLL.setOnClickListener {
+            //            val intent = Intent(context, FriendCategoryDetailActivity::class.java)
+            val intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","block")
+            startActivityForResult(intent,RESET)
         }
 
         reqFriendLL.setOnClickListener {
             val intent = Intent(context, RequestFriendActivity::class.java)
-//            val intent = Intent(context, FriendCategoryDetailActivity::class.java)
-            intent.putExtra("type","block")
-            startActivity(intent)
+            intent.putExtra("type","waiting")
+            startActivityForResult(intent,RESET)
         }
+
+        sendFriendLL.setOnClickListener {
+            val intent = Intent(context, RequestFriendActivity::class.java)
+            intent.putExtra("type","send")
+            startActivityForResult(intent,RESET)
+        }
+
         btn_back.setOnClickListener {
             finish()
             Utils.hideKeyboard(this)
@@ -93,6 +104,14 @@ class FriendManageActivity : RootActivity() {
 
             builder.setView(dialogView)
                     .setPositiveButton("확인") { dialog, id ->
+
+                        var category = Utils.getString(dialogView.categoryTitleET)
+                        if (category == "" || category == null){
+                            Toast.makeText(context,"빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
+                        }
+
+
                         addMateCategory(Utils.getString(dialogView.categoryTitleET))
                         /*val jsonobject = null as JSONObject
                         jsonobject.put("category", Utils.getString(dialogView.categoryTitleET))
@@ -133,6 +152,8 @@ class FriendManageActivity : RootActivity() {
                     friend_request_cnt.setText(waitcount)
                     val blockcount = response!!.getString("blockcount")
                     friend_block_cnt.setText(blockcount)
+                    val sendcount = response!!.getInt("sendcount")
+                    sendcountTV.setText(sendcount.toString())
                 }
             }
 
@@ -168,6 +189,17 @@ class FriendManageActivity : RootActivity() {
                 println(responseString)
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK){
+            when(requestCode) {
+                RESET -> {
+                    getCategoryList()
+                }
+            }
+        }
     }
 
 
