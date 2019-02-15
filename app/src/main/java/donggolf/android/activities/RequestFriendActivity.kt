@@ -69,23 +69,24 @@ class RequestFriendActivity : RootActivity() {
             val item = mateRequestList.get(position)
             val matemember = item.getJSONObject("MateMember")
             val mate_id = Utils.getString(matemember,"id")
+            println("-----------------------------------$mate_id")
             val mate_nick = Utils.getString(matemember,"nick")
             val member = item.getJSONObject("Member")
             val member_id = Utils.getString(member,"id")
             val member_nick = Utils.getString(member,"nick")
             val division = item.getString("division")
 
-            view.acceptLL.setOnClickListener {
+            view.accLL.setOnClickListener {
                 val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
-                acceptItt.putExtra("mate_id",mate_id)
+                acceptItt.putExtra("mate_id",member_id)
                 startActivityForResult(acceptItt,SELECT_CATEGORY)
             }
 
-            view.refuseTV.setOnClickListener {
-                refuse(mate_id)
+            view.refuseLL.setOnClickListener {
+                refuse(member_id)
             }
 
-            view.cancleTV.setOnClickListener {
+            view.cancleLL.setOnClickListener {
                 val builder = AlertDialog.Builder(context)
                 builder
                         .setMessage("$mate_nick 님에게 보낸 친구 요청을 취소하시겠습니까 ?")
@@ -102,7 +103,7 @@ class RequestFriendActivity : RootActivity() {
                 alert.show()
             }
 
-            view.blockcancleTV.setOnClickListener {
+            view.blockcancleLL.setOnClickListener {
                 val builder = AlertDialog.Builder(context)
                 builder
                         .setMessage("$mate_nick 님을 차단해제 하시겠습니까 ?")
@@ -120,7 +121,11 @@ class RequestFriendActivity : RootActivity() {
             }
 
             var intent = Intent(context, ProfileActivity::class.java)
-            intent.putExtra("member_id", mate_id)
+            if (wait == "wait"){
+                intent.putExtra("member_id", member_id)
+            } else {
+                intent.putExtra("member_id", mate_id)
+            }
             startActivity(intent)
 
         }
@@ -294,16 +299,16 @@ class RequestFriendActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK){
             when(requestCode) {
                 SELECT_CATEGORY -> {
-                    val selCateg = data!!.getIntExtra("CategoryID", 1)
-                    val member_id = data!!.getStringExtra("member_id")
+                    val selCateg = data!!.getStringExtra("CategoryID")
+                    val mate_id = data!!.getStringExtra("mate_id")
 
-                    acceptMates(selCateg,member_id)
+                    acceptMates(selCateg,mate_id)
                 }
             }
         }
     }
 
-    fun acceptMates(category_id: Int,member_id:String) {
+    fun acceptMates(category_id: String,member_id:String) {
 //        mateList.clear()
 //
 //        for (i in 0 until mateRequestList.size) {
@@ -379,7 +384,7 @@ class RequestFriendActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    Utils.alert(context,"선택한 대상의 요청을 거절했습니다")
+                    Utils.alert(context,"선택한 대상의 친구신청을 취소했습니다")
                     getFriendList("w",0)
                 }
             }

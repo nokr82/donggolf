@@ -61,11 +61,12 @@ class FriendReqSelectCategoryActivity : RootActivity() {
             Log.d("리스트선택", data.toString())
 
             val category = data.getJSONObject("MateCategory")
-            val category_id = Utils.getInt(category,"id")
+            val category_id = Utils.getString(category,"id")
 
-            var intent = Intent()
+            var intent = getIntent()
 
             val mate_id = intent.getStringExtra("mate_id")
+
             intent.putExtra("CategoryID", category_id)
             intent.putExtra("mate_id",mate_id)
             setResult(RESULT_OK,intent)

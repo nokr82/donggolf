@@ -3,10 +3,7 @@ package donggolf.android.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import donggolf.android.R
 import donggolf.android.base.Utils
 import org.json.JSONObject
@@ -48,6 +45,9 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
         item.mates_status_msgTV.text = Utils.getString(mateMember,"status_msg")
 
         json.put("mate_id", Utils.getInt(mateMember,"id"))
+
+        item.visibleRL.visibility = View.VISIBLE
+        item.acceptLL.visibility = View.GONE
 
         if (check) {
             item.mates_checkedIV.visibility = View.VISIBLE
@@ -99,6 +99,8 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
         var mates_status_msgTV : TextView //상메
         var mates_checkedIV : ImageView //체크박스 체크
         var mates_checkboxRL : RelativeLayout
+        var acceptLL : LinearLayout
+        var visibleRL : RelativeLayout
 
         init {
             mates_profileIV = v.findViewById(R.id.mates_profileIV)
@@ -107,6 +109,8 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
             mates_status_msgTV = v.findViewById(R.id.mates_status_msgTV)
             mates_checkedIV = v.findViewById(R.id.mates_checkedIV)
             mates_checkboxRL = v.findViewById(R.id.mates_checkboxRL)
+            acceptLL = v.findViewById(R.id.acceptLL)
+            visibleRL = v.findViewById(R.id.visibleRL)
         }
     }
 }

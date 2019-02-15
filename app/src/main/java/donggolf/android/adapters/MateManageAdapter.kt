@@ -51,7 +51,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
         var mate_gender = Utils.getString(matemember,"sex")
 
         val member = json.getJSONObject("Member")
-        val profile = Utils.getString(member,"MateMember")
+        val profile = Utils.getString(member,"profile_img")
         val member_gender = Utils.getString(member,"sex")
 
         json.put("mate_id", Utils.getInt(matemember,"id"))
@@ -73,7 +73,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
             }
         } else if (division == "s"){
             item.acceptLL.visibility = View.GONE
-            item.cancleTV.visibility = View.VISIBLE
+            item.cancleLL.visibility = View.VISIBLE
             item.mates_checkboxRL.visibility = View.GONE
             item.mates_nickTV.text = Utils.getString(matemember,"nick")
             if (mate_gender == "0"){
@@ -91,7 +91,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
         } else {
             item.acceptLL.visibility = View.GONE
             item.mates_checkboxRL.visibility = View.GONE
-            item.blockcancleTV.visibility = View.VISIBLE
+            item.blockcancleLL.visibility = View.VISIBLE
             item.mates_nickTV.text = Utils.getString(matemember,"nick")
             if (mate_gender == "0"){
                 item.mates_nickTV.setTextColor(Color.parseColor("#000000"))
@@ -167,6 +167,11 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
         var cancleTV : TextView
         var blockcancleTV : TextView
 
+        var accLL : LinearLayout
+        var refuseLL : LinearLayout
+        var cancleLL : LinearLayout
+        var blockcancleLL : LinearLayout
+
         init {
             mates_profileIV = v.findViewById(R.id.mates_profileIV)
             isOnlineIV = v.findViewById(R.id.isOnlineIV)
@@ -179,6 +184,10 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
             refuseTV = v.findViewById(R.id.refuseTV)
             cancleTV = v.findViewById(R.id.cancleTV)
             blockcancleTV = v.findViewById(R.id.blockcancleTV)
+            accLL = v.findViewById(R.id.accLL)
+            refuseLL = v.findViewById(R.id.refuseLL)
+            cancleLL = v.findViewById(R.id.cancleLL)
+            blockcancleLL = v.findViewById(R.id.blockcancleLL)
         }
     }
 }

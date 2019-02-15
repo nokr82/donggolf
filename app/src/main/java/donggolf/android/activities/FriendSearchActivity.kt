@@ -737,6 +737,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             params.put("goguntype2", goguntype2)
         }
         params.put("page", page)
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
 
 
         MemberAction.get_region_member(params, object : JsonHttpResponseHandler() {

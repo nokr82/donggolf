@@ -189,8 +189,6 @@ class InfoFragment : Fragment(){
         startActivityForResult(galleryIntent, GALLERY)
     }
 
-
-
 fun member_info(){
     val params = RequestParams()
     params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))

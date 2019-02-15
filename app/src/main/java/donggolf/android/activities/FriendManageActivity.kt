@@ -44,7 +44,7 @@ class FriendManageActivity : RootActivity() {
         friendCategoryLV.setOnItemClickListener { parent, view, position, id ->
             val itt = Intent(context, FriendCategoryDetailActivity::class.java)
             itt.putExtra("groupTitle", friendCategoryData.get(position).getString("title"))
-            startActivity(itt)
+            startActivityForResult(itt,RESET)
         }
 
         blockListLL.setOnClickListener {
@@ -78,8 +78,7 @@ class FriendManageActivity : RootActivity() {
             val intent = Intent(context, FriendCategoryDetailActivity::class.java)
             intent.putExtra("category_id", Utils.getInt(category,"id"))
             intent.putExtra("category_title", Utils.getString(category,"category"))
-            println(Utils.getInt(category,"id"))
-            startActivity(intent)
+            startActivityForResult(intent,RESET)
         }
 
         btn_addCategory.setOnClickListener {
@@ -144,6 +143,7 @@ class FriendManageActivity : RootActivity() {
                 if (result == "ok") {
                     val categories = response.getJSONArray("categories")
                     friendCategoryData.clear()
+
                     for (i in 0 until categories.length()) {
                         friendCategoryData.add(categories[i] as JSONObject)
                     }
@@ -178,6 +178,8 @@ class FriendManageActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     getCategoryList()
+                } else if (result == "already"){
+                    Toast.makeText(context,"같은 이름의 카테고리가 있습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 

@@ -252,8 +252,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     if (result == "ok") {
                         membercnt = response!!.getString("membercnt")
                         areaCntTV.text = membercnt + " 명"
-
-
                     }
 
 

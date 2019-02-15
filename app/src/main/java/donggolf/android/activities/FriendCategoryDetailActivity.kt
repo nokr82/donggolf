@@ -1,10 +1,13 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -13,6 +16,7 @@ import donggolf.android.actions.MateAction
 import donggolf.android.adapters.MateListAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_category_detail.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -43,6 +47,17 @@ class FriendCategoryDetailActivity : RootActivity() {
         //받아온 데이터로 세팅
         val getItt = intent.getStringExtra("category_title")
         titleFrdCateTV.text = getItt
+
+        groupFriendLV.setOnItemClickListener { parent, view, position, id ->
+            val item = mateList.get(position)
+
+            val mateMember = item.getJSONObject("MateMember")
+            val mate_id = Utils.getString(mateMember,"id")
+
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", mate_id)
+            startActivity(intent)
+        }
 
         val type = intent.getStringExtra("type")
         if (type == "block") {
@@ -129,38 +144,56 @@ class FriendCategoryDetailActivity : RootActivity() {
 
         blockTV.setOnClickListener {
             //
-            mateList.clear()
+//            mateList.clear()
 
-            for (i in 0 until mateList.size) {
-                if(mateList.get(i).getBoolean("check")) {
-                    mateUpdate.add(mateList.get(i).getInt("mate_id"))
-                }
-            }
-            val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-            params.put("mate_id", mateUpdate)
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("선택하신 골퍼를 차단 하시겠습니까 ?").setCancelable(false)
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        for (i in 0 until mateList.size) {
+                            if(mateList.get(i).getBoolean("check")) {
+                                mateUpdate.add(mateList.get(i).getInt("mate_id"))
+                            }
+                        }
 
-            MateAction.blockMember(params, object : JsonHttpResponseHandler(){
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        getFriendList("m",category_id)
-                    }
-                }
+                        if (mateUpdate.size > 0) {
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
-                }
+                            val params = RequestParams()
+                            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+                            params.put("mate_id", mateUpdate)
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
-                }
-            })
+                            MateAction.blockMember(params, object : JsonHttpResponseHandler() {
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    println(response)
+                                    val result = response!!.getString("result")
+                                    if (result == "ok") {
+                                        getFriendList("m", category_id)
+                                    }
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                    println(errorResponse)
+                                }
+
+                                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                                    println(responseString)
+                                }
+                            })
+                        } else {
+                            Toast.makeText(context,"선택하신 골퍼가 없습니다.", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            val alert = builder.create()
+            alert.show()
+
             //
         }
 
         btn_back.setOnClickListener {
+            Utils.hideKeyboard(this)
+            var intent = Intent()
+            setResult(Activity.RESULT_OK)
             finish()
         }
 
@@ -209,7 +242,7 @@ class FriendCategoryDetailActivity : RootActivity() {
                 if (result == "ok") {
                     val mates = response.getJSONArray("mates")
                     mateList.clear()
-                    groupFriendLV.removeAllViews()
+//                    groupFriendLV.removeAllViews()
                     for (i in 0 until mates.length()) {
                         val mate = mates[i] as JSONObject
 
@@ -269,4 +302,12 @@ class FriendCategoryDetailActivity : RootActivity() {
             }
         })
     }
+
+    override fun onBackPressed() {
+        Utils.hideKeyboard(context)
+        var intent = Intent()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
 }
