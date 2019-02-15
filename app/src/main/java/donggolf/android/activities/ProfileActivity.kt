@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.*
 import android.view.View
 import android.widget.Toast
+import com.kakao.kakaostory.StringSet.writer
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -20,6 +21,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_profile.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
@@ -29,6 +31,9 @@ class ProfileActivity : RootActivity() {
     lateinit var context: Context
     var member_id = ""
     var mate_ids: ArrayList<String> = ArrayList<String>()
+    var type = -1
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +46,70 @@ class ProfileActivity : RootActivity() {
 
         var intent = getIntent()
         member_id = intent.getStringExtra("member_id")
+        //타입이 1이면 친구신청으로
+        type = intent.getIntExtra("type",-1)
+
         member_info(member_id)
         mate_ids.add(member_id)
+
+        if (type ==1){
+            profile_opIV.setImageResource(R.mipmap.btn_add_friend)
+            profile_opTV.text = "친구요청"
+        }
+
+
+        click_chat.setOnClickListener {
+
+            if (type==1){
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                            if (member_id != null) {
+
+
+                                var params = RequestParams()
+                                params.put("mate_id", member_id)
+                                params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+                                params.put("category_id",0)
+                                params.put("status","w")
+                                PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                        val result = response!!.getString("result")
+                                        if (result == "yes") {
+                                            Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        }else {
+                                            Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                                    }
+                                })
+
+                            }else{
+                                Toast.makeText(context, "비회원은 신청이 불가합니다.", Toast.LENGTH_SHORT).show()
+                            }
+
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }else{
+                val nick = txUserName.text.toString()
+
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            addchat()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }
+
+        }
 
 
         //프로필 사진
@@ -64,19 +131,10 @@ class ProfileActivity : RootActivity() {
             startActivity(intent)
         }
 
-        click_chat.setOnClickListener {
 
-            val nick = txUserName.text.toString()
 
-            val builder = AlertDialog.Builder(context)
-            builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
-                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-                        addchat()
-                    })
-                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-            val alert = builder.create()
-            alert.show()
-        }
+
+
 
         click_friend.setOnClickListener {
             val intent = Intent(context, MutualActivity::class.java)

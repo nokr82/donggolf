@@ -182,12 +182,14 @@
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentTop="true">
                     <ImageView
+                        android:id="@+id/profile_opIV"
                         android:layout_width="20dp"
                         android:layout_height="18dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:background="@drawable/btn_chat_on" />
+                        android:src="@drawable/btn_chat_on"/>
                     <TextView
+                        android:id="@+id/profile_opTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"

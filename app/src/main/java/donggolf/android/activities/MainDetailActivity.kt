@@ -777,6 +777,7 @@ class MainDetailActivity : RootActivity() {
 
 
                             val freind = Utils.getString(data,"freind")
+                            Log.d("친구",freind)
                             if (freind == "0"){
                                 freindIV.setBackgroundResource(R.drawable.icon_second)
                             }
@@ -1129,6 +1130,7 @@ class MainDetailActivity : RootActivity() {
             dialogView.addFriendTV.setOnClickListener {
                 val intent = Intent(context, ProfileActivity::class.java)
                 intent.putExtra("member_id", writer)
+                intent.putExtra("type", 1)
                 context.startActivity(intent)
 
                 /*    val builder = AlertDialog.Builder(context)
