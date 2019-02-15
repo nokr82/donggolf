@@ -99,6 +99,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         callback = SessionCallback()
         frdSearchET.isCursorVisible = false
 
+        Utils.hideKeyboard(this)
 
         intent = getIntent()
         membercnt = intent.getStringExtra("membercnt")

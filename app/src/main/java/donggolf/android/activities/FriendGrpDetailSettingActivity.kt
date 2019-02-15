@@ -315,6 +315,8 @@ class FriendGrpDetailSettingActivity : RootActivity() {
             params.put("login", login)
             params.put("open_mate", open_mate)
             params.put("new_market", new_market)
+
+            println("-----new_post : $new_post chat : $chat login : $login open_mate : $open_mate new_market $new_market")
         }
 
         MateAction.updateCategory(params, object : JsonHttpResponseHandler(){

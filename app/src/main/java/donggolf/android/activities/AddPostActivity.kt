@@ -1096,7 +1096,7 @@ class AddPostActivity : RootActivity() {
             video_image.clear()
         }
 
-//        loadData(dbManager,member_id.toString())
+        loadData(dbManager,member_id.toString())
 
         permission()
 
