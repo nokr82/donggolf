@@ -86,6 +86,8 @@ class MainDetailActivity : RootActivity() {
     var op_comments_id = -1
     lateinit var video:Uri
 
+    var freind = "0"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
@@ -592,6 +594,7 @@ class MainDetailActivity : RootActivity() {
                             return@OnClickListener
                         }
 
+
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
@@ -872,7 +875,7 @@ class MainDetailActivity : RootActivity() {
                             cmt_yn = Utils.getString(data,"cmt_yn")
 
 
-                            val freind = Utils.getString(data,"freind")
+                            freind = Utils.getString(data,"freind")
                             Log.d("친구",freind)
                             if (freind == "0"){
                                 freindIV.setBackgroundResource(R.drawable.icon_second)
@@ -1144,7 +1147,12 @@ class MainDetailActivity : RootActivity() {
 
             dialogView.addfavoriteTV.visibility = View.VISIBLE
             dialogView.reportTV.visibility = View.VISIBLE
-            dialogView.addFriendTV.visibility =View.VISIBLE
+//            dialogView.addFriendTV.visibility =View.VISIBLE
+            if (freind.toInt() > 0){
+                dialogView.addFriendTV.visibility =View.GONE
+            } else {
+                dialogView.addFriendTV.visibility =View.VISIBLE
+            }
 
             dialogView.addfavoriteTV.setOnClickListener {
                 val builder = AlertDialog.Builder(context)

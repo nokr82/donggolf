@@ -55,6 +55,8 @@ class ProfileActivity : RootActivity() {
         if (type ==1){
             profile_opIV.setImageResource(R.mipmap.btn_add_friend)
             profile_opTV.text = "친구요청"
+        } else {
+
         }
 
 
