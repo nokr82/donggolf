@@ -229,6 +229,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
 
         return tmpContent;
     }
@@ -255,6 +256,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
 
         return Imagespaths;
     }
@@ -278,6 +280,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
         return count;
     }
 
@@ -300,6 +303,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
         return count;
     }
 
