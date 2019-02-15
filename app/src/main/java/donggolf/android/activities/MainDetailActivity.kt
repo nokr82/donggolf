@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -24,11 +25,13 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.actions.*
+import donggolf.android.actions.CommentAction.write_comments
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import kotlinx.android.synthetic.main.dlg_post_menu.view.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
@@ -39,7 +42,6 @@ import kotlin.collections.ArrayList
 class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
-
     private  var commentList = ArrayList<JSONObject>()
     private var commentBlockList = ArrayList<JSONObject>()
 
@@ -51,7 +53,7 @@ class MainDetailActivity : RootActivity() {
     var adPosition = 0
 
     var PICTURE_DETAIL = 1
-
+    var editComments  = false
     var detailowner: String? = ""
 
     var pressStartTime: Long?  = 0
@@ -63,6 +65,7 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
+    var p_comments_id = -1
 
     var login_id = 0
     var writer = "0"
@@ -80,14 +83,19 @@ class MainDetailActivity : RootActivity() {
     val GALLERY = 500
 
     var comment_path: Bitmap? = null
-
+    var op_comments_id = -1
     lateinit var video:Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
 
+
+
         detail_add_commentTV.paintFlags = detail_add_commentTV.paintFlags or Paint.FAKE_BOLD_TEXT_FLAG
+
+
+
 
         context = this
         intent = intent
@@ -312,8 +320,8 @@ class MainDetailActivity : RootActivity() {
                 return@setOnClickListener
             }
 
-
-            val params = RequestParams()
+            writeComments()
+          /*  val params = RequestParams()
             params.put("cont_id", content_id)
             params.put("member_id", login_id)
             params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
@@ -336,6 +344,7 @@ class MainDetailActivity : RootActivity() {
                         commentAdapter.notifyDataSetChanged()
                         cmtET.setText("")
                         cmtET.hint = ""
+                        getComments()
                         Utils.hideKeyboard(this@MainDetailActivity)
                         addedImgIV.setImageResource(0)
                         commentLL.visibility = View.GONE
@@ -351,10 +360,37 @@ class MainDetailActivity : RootActivity() {
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
                     println(responseString)
                 }
-            })
-        }
+            })*/
 
-        //대댓글
+        }
+        commentListLV.setOnItemClickListener { adapterView, view, i, l ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+                var data = commentList.get(i)
+                Log.d("데이데이",data.toString())
+            val contentcomment = data.getJSONObject("ContentComment")
+
+            val comments_id = Utils.getInt(contentcomment, "id")
+
+                p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+                op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+                var user_nick =  Utils.getString(contentcomment,"nick")
+            if (p_comments_id!=-1){
+                op_comments_id = p_comments_id
+                cmtET.requestFocus()
+                Utils.showKeyboard(context)
+                cmtET.hint = user_nick+ "님의 댓글에 대댓글"
+            }else if (comments_id != -1) {
+                    p_comments_id = comments_id
+                    cmtET.requestFocus()
+                    Utils.showKeyboard(context)
+                    cmtET.hint = user_nick+ "님의 댓글에 답글"
+                }
+
+        }
+     /*   //대댓글
         commentListLV.setOnItemClickListener { parent, view, position, id ->
             if (PrefUtils.getIntPreference(context, "member_id") == -1){
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
@@ -374,7 +410,7 @@ class MainDetailActivity : RootActivity() {
                 cmtET.hint = Utils.getString(data,"nick") + "님의 대댓글에 답글"
             }
 
-        }
+        }*/
 
         //이미지 관련 어댑터
         adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
@@ -731,7 +767,63 @@ class MainDetailActivity : RootActivity() {
         alert.show()
 
     }
+    //댓글
+    fun writeComments() {
+        var comment = Utils.getString(cmtET)
+        val params = RequestParams()
+        params.put("member_id",login_id)
+        params.put("cont_id", content_id)
+        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("comment", comment)
+        params.put("p_comments_id", p_comments_id)
+        params.put("op_comments_id", op_comments_id)
 
+        write_comments(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+
+                try {
+                    val result = response!!.getString("result")
+                    if ("ok" == result) {
+                        getPost()
+                        Utils.hideKeyboard(context)
+                        cmtET.setText("")
+                        cmtET.hint = ""
+                        p_comments_id = -1
+                        op_comments_id = -1
+
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
+                super.onSuccess(statusCode, headers, response)
+            }
+
+            private fun error() {
+                Utils.alert(context, "조회중 장애가 발생하였습니다.")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
+
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {
+                // show dialog
+
+            }
+
+            override fun onFinish() {
+
+            }
+        })
+    }
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val dx = x1 - x2
         val dy = y1 - y2
