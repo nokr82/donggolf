@@ -28,6 +28,7 @@ import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
 import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
@@ -199,6 +200,15 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             }
 
             override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    userScrolled = true
+                    activity.maintitleLL.visibility=View.GONE
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    userScrolled = false
+                    activity.maintitleLL.visibility=View.VISIBLE
+                }
+
                 if (!main_listview.canScrollVertically(-1)) {
                     page=1
                     mainData()

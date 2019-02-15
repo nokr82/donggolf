@@ -1112,6 +1112,41 @@ class AddPostActivity : RootActivity() {
             if (addpostTV.text.equals("수정하기")){
                 val builder = AlertDialog.Builder(context)
                 builder
+                        .setMessage("수정하기를 취소하시겠습니까 ?")
+
+                        .setPositiveButton("계속 수정하기", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            Utils.hideKeyboard(this)
+
+                        })
+                        .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+//                        loadData(dbManager,member_id.toString())
+
+                            if(tmpContent.id == null){
+                                finish()
+                            }
+
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                                dbManager.deleteImagePaths(member_id.toString())
+                            }
+
+                            if(tmpContent.id != null) {
+                                dbManager.deleteTmpContent(tmpContent.id!!)
+                                finish()
+                            }
+
+                            Utils.hideKeyboard(this)
+
+
+                        })
+                val alert = builder.create()
+                alert.show()
+            }else{
+                val builder = AlertDialog.Builder(context)
+                builder
                         .setMessage("글쓰기를 취소하시겠습니까 ?")
 
                         .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
@@ -1147,17 +1182,13 @@ class AddPostActivity : RootActivity() {
                                 }
                             }
 
-                            temp_yn = "N"
-
                             finish()
-
-                            Utils.hideKeyboard(this)
 
                         })
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
-//                        loadData(dbManager,member_id.toString())
+                            loadData(dbManager,member_id.toString())
 
                             if(tmpContent.id == null){
                                 finish()
@@ -1172,14 +1203,10 @@ class AddPostActivity : RootActivity() {
                                 finish()
                             }
 
-                            Utils.hideKeyboard(this)
-
 
                         })
                 val alert = builder.create()
                 alert.show()
-            }else{
-                finish()
             }
 
         }
