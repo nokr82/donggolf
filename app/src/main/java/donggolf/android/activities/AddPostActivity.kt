@@ -1184,6 +1184,8 @@ class AddPostActivity : RootActivity() {
                             finish()
                             dialog.cancel()
 
+                            Utils.hideKeyboard(this)
+
                         })
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
 
@@ -1203,6 +1205,7 @@ class AddPostActivity : RootActivity() {
 
                             finish()
                             dialog.cancel()
+                            Utils.hideKeyboard(this)
 
                         })
                 val alert = builder.create()
