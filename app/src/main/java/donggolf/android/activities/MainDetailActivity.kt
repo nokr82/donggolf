@@ -777,7 +777,9 @@ class MainDetailActivity : RootActivity() {
         params.put("comment", comment)
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)
-
+        if (comment_path != null){
+            params.put("file", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+        }
         write_comments(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
@@ -791,7 +793,10 @@ class MainDetailActivity : RootActivity() {
                         cmtET.hint = ""
                         p_comments_id = -1
                         op_comments_id = -1
-
+                        addedImgIV.setImageResource(0)
+                        commentLL.visibility = View.GONE
+                        main_detail_gofindpicture.visibility = View.VISIBLE
+                        comment_path = null
                     }
 
                 } catch (e: JSONException) {

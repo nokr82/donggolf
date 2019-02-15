@@ -48,6 +48,8 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             item.itemimageIV.visibility = View.VISIBLE
             var image = Config.url + image_uri
             ImageLoader.getInstance().displayImage(image, item.itemimageIV, Utils.UILoptionsUserProfile)
+        }else{
+            item.itemimageIV.visibility = View.GONE
         }
 
 
