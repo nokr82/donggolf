@@ -1129,7 +1129,7 @@ class AddPostActivity : RootActivity() {
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
-                        loadData(dbManager,member_id.toString())
+//                        loadData(dbManager,member_id.toString())
 
                             if(tmpContent.id == null){
                                 finish()
@@ -1190,11 +1190,13 @@ class AddPostActivity : RootActivity() {
                             finish()
                             dialog.cancel()
 
+                            Utils.hideKeyboard(this)
+
                         })
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
 
 
-                            loadData(dbManager,member_id.toString())
+//                            loadData(dbManager,member_id.toString())
 
                             if(tmpContent.id == null){
                             }
@@ -1209,6 +1211,7 @@ class AddPostActivity : RootActivity() {
 
                             finish()
                             dialog.cancel()
+                            Utils.hideKeyboard(this)
 
                         })
                 val alert = builder.create()
@@ -2219,7 +2222,7 @@ class AddPostActivity : RootActivity() {
                 .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                     dialog.cancel()
 
-                    loadData(dbManager,member_id.toString())
+//                    loadData(dbManager,member_id.toString())
 
                     if(tmpContent.id == null){
                     }
