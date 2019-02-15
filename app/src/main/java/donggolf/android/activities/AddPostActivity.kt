@@ -1153,6 +1153,14 @@ class AddPostActivity : RootActivity() {
                             val title = Utils.getString(titleET)
                             val content = Utils.getString(contentET)
 
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                                dbManager.deleteImagePaths(member_id.toString())
+                            }
+
+                            if(tmpContent.id != null) {
+                                dbManager.deleteTmpContent(tmpContent.id!!)
+                            }
+
                             val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
                             dbManager.inserttmpcontent(tmpContent)
@@ -1237,6 +1245,20 @@ class AddPostActivity : RootActivity() {
                             val id = intent.getStringExtra("id")
                             modify(id)
                         }
+
+                        if(tmpContent.id == null){
+                        }
+
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            dbManager.deleteImagePaths(member_id.toString())
+                        }
+
+                        if(tmpContent.id != null) {
+                            dbManager.deleteTmpContent(tmpContent.id!!)
+                        }
+                        Utils.hideKeyboard(this)
+
+
 
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
@@ -1340,6 +1362,16 @@ class AddPostActivity : RootActivity() {
                 val delIV = v.findViewById(R.id.delIV) as ImageView
 
             }
+        }
+
+        if (videoPaths.size > 0) {
+            videoVV.visibility = View.VISIBLE
+            videoLL.visibility = View.VISIBLE
+            removeIV.visibility = View.VISIBLE
+            val uri = Uri.parse(videoPaths.get(0))
+            videoVV.start()
+            videoVV.setVideoURI(uri)
+            videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
         }
 
         if (hashtag.size > 0 ){
@@ -2153,6 +2185,14 @@ class AddPostActivity : RootActivity() {
                     dialog.cancel()
                     val title = Utils.getString(titleET)
                     val content = Utils.getString(contentET)
+
+                    if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        dbManager.deleteImagePaths(member_id.toString())
+                    }
+
+                    if(tmpContent.id != null) {
+                        dbManager.deleteTmpContent(tmpContent.id!!)
+                    }
 
                     val tmpContent = TmpContent(0, member_id.toString(), title, content)
 
