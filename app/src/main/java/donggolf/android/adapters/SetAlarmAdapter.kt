@@ -65,6 +65,7 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.chatpushonIV.visibility = View.GONE
                 item.chatpushoffIV.visibility = View.VISIBLE
                 item.txOnOff.setText("꺼짐")
+                item.txOnOff.setTextColor(Color.parseColor("#000000"))
             }
         }
 

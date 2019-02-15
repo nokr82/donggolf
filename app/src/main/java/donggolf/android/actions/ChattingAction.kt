@@ -82,4 +82,8 @@ object ChattingAction {
         HttpClient.post("/chatting/set_notice_yn.json", params, handler)
     }
 
+    fun set_all_push(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_all_push.json", params, handler)
+    }
+
 }

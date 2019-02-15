@@ -55,6 +55,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     val RESET = 1000
 
+    val CHATRESET = 1001
+
     internal var resetChattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
@@ -311,7 +313,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         chatsettingIV.setOnClickListener {
             var intent = Intent(activity, SetAlarmActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent,CHATRESET)
         }
 
         adddongchatIV.setOnClickListener {
@@ -420,6 +422,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             getmychat(2)
                         }
                     }
+                }
+
+                CHATRESET -> {
+                    getmychat(1)
                 }
             }
         }

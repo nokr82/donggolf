@@ -89,6 +89,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     val selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
                     cursor = MediaStore.Images.Media.query(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, proj, selection, MediaStore.Images.Media.DATE_ADDED + " DESC")
+                    println(" cursor : " + cursor.count)
                     if (cursor != null && cursor.moveToFirst()) {
                         idx[0] = cursor.getColumnIndex(proj[0])
                         idx[1] = cursor.getColumnIndex(proj[1])
@@ -108,6 +109,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                                 photoList.add(photo)
                             }
                         } while (cursor.moveToNext())
+                        cursor.close()
                     }
                 } catch (ex: Exception) {
                     // Log the exception's message or whatever you like
@@ -170,6 +172,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                                 videoList.add(video)
                             }
                         } while (cursor.moveToNext())
+                        cursor.close()
                     }
                 } catch (ex: Exception) {
                     // Log the exception's message or whatever you like

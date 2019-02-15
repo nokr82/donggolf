@@ -1,7 +1,9 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -35,17 +37,21 @@ class SetAlarmActivity : RootActivity() {
         set_chat_list.adapter = adapter
 
         btnBack.setOnClickListener {
+            Utils.hideKeyboard(this)
+            setResult(Activity.RESULT_OK)
             finish()
         }
 
         setAllAlarm.setOnClickListener {
             setAllAlarm.visibility = View.GONE
             setAlarm.visibility = View.VISIBLE
+            set_all_push("Y")
         }
 
         setAlarm.setOnClickListener {
             setAllAlarm.visibility = View.VISIBLE
             setAlarm.visibility = View.GONE
+            set_all_push("N")
         }
 
         set_chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -96,7 +102,7 @@ class SetAlarmActivity : RootActivity() {
                 alert.dismiss()
             }
 
-
+            setView()
         }
 
         getmychat(1)
@@ -124,6 +130,9 @@ class SetAlarmActivity : RootActivity() {
                         }
                     }
                     adapter.notifyDataSetChanged()
+
+                    setView()
+
                 }
             }
 
@@ -159,5 +168,56 @@ class SetAlarmActivity : RootActivity() {
                 println(errorResponse)
             }
         })
+    }
+
+    fun set_all_push(push_yn:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("push_yn",push_yn)
+
+        ChattingAction.set_all_push(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    getmychat(1)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun setView(){
+        var chk = true
+        for (i in 0 until adapterData.size){
+            val item = adapterData.get(i)
+            val chatmember = item.getJSONObject("Chatmember")
+            val push_yn = Utils.getString(chatmember,"push_yn")
+            if (push_yn == "N"){
+                chk = false
+            }
+        }
+
+        if (chk == true){
+            setAllAlarm.visibility = View.GONE
+            setAlarm.visibility = View.VISIBLE
+        } else {
+            setAllAlarm.visibility = View.VISIBLE
+            setAlarm.visibility = View.GONE
+        }
+    }
+
+    override fun onBackPressed() {
+
+        Utils.hideKeyboard(context)
+        setResult(Activity.RESULT_OK)
+        finish()
+
     }
 }
