@@ -32,6 +32,7 @@ class FindPictureActivity : RootActivity() {
     private var picCount = 0
     private var limit = 0
     private var nowPicCount = 0
+    private var time = 0L
 
     var pics: MutableList<String> = ArrayList<String>()
 
@@ -57,6 +58,9 @@ class FindPictureActivity : RootActivity() {
         context = this
 
         var intent = getIntent()
+//        time = intent.getLongExtra("time", 0L)
+
+        println("startactivirtytime:::::${System.currentTimeMillis()}")
 
 //        videoSize()
 //        photoSize()
@@ -131,6 +135,7 @@ class FindPictureActivity : RootActivity() {
                 intent.putExtra("limit", limit)
                 intent.putExtra("nowPicCount", nowPicCount)
                 intent.putExtra("category","image")
+//                intent.putExtra("time", time)
                 startActivityForResult(intent, SELECT_PICTURE)
 
             } else {

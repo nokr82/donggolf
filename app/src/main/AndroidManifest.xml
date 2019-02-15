@@ -17,6 +17,9 @@
         android:required="true" />
 
     <application
+        android:launchMode="singleInstance"
+        android:excludeFromRecents="true"
+        android:taskAffinity=""
         android:name=".base.GlobalApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
@@ -123,7 +126,7 @@
             android:name=".activities.FriendSearchActivity"
             android:launchMode="singleTop"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name = "android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />

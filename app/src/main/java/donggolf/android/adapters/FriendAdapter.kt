@@ -41,6 +41,13 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
 
         val json = data.get(position)
         val member = json.getJSONObject("Member")
+        val friend = Utils.getString(member,"friend")
+
+        if (friend == "0"){
+            item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
+        } else {
+            item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_first)
+        }
 
         item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
         item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")

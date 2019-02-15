@@ -1123,7 +1123,7 @@ class AddPostActivity : RootActivity() {
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
-//                        loadData(dbManager,member_id.toString())
+                        loadData(dbManager,member_id.toString())
 
                             if(tmpContent.id == null){
                                 finish()
@@ -1150,7 +1150,6 @@ class AddPostActivity : RootActivity() {
                         .setMessage("글쓰기를 취소하시겠습니까 ?")
 
                         .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
                             val title = Utils.getString(titleET)
                             val content = Utils.getString(contentET)
 
@@ -1183,15 +1182,15 @@ class AddPostActivity : RootActivity() {
                             }
 
                             finish()
+                            dialog.cancel()
 
                         })
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
+
 
                             loadData(dbManager,member_id.toString())
 
                             if(tmpContent.id == null){
-                                finish()
                             }
 
                             if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
@@ -1200,9 +1199,10 @@ class AddPostActivity : RootActivity() {
 
                             if(tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
-                                finish()
                             }
 
+                            finish()
+                            dialog.cancel()
 
                         })
                 val alert = builder.create()
@@ -1625,8 +1625,12 @@ class AddPostActivity : RootActivity() {
     private fun moveMyPicture() {
 //        var intent = Intent(context, FindPictureGridActivity::class.java);
         var intent = Intent(context, FindPictureActivity::class.java);
+        var time = System.currentTimeMillis()
+//        intent.putExtra("time", System.currentTimeMillis())
         intent.putExtra("image","image")
         startActivityForResult(intent, SELECT_PICTURE);
+
+        println("SELECT_PICTURE:::::::::::::::::::::::::${time}")
 
     }
 
@@ -1734,10 +1738,6 @@ class AddPostActivity : RootActivity() {
 
         delIV.setOnClickListener {
             addPicturesLL!!.removeView(v)
-            if (images_path!=null){
-                images_path!!.removeAt(i)
-            }
-
         }
 
         if (imgSeq == 0) {
@@ -1901,6 +1901,9 @@ class AddPostActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 SELECT_PICTURE -> {
+
+                    println("resulttime:::::::::::::::::::::::::::${System.currentTimeMillis()}")
+
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
 
@@ -2189,7 +2192,6 @@ class AddPostActivity : RootActivity() {
                     loadData(dbManager,member_id.toString())
 
                     if(tmpContent.id == null){
-                        finish()
                     }
 
                     if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
@@ -2198,9 +2200,9 @@ class AddPostActivity : RootActivity() {
 
                     if(tmpContent.id != null) {
                         dbManager.deleteTmpContent(tmpContent.id!!)
-                        finish()
                     }
 
+                    finish()
                     Utils.hideKeyboard(this)
 
 

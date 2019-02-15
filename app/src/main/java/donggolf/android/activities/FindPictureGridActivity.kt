@@ -289,6 +289,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
+
                             val result = arrayOfNulls<String>(selected.size)
                             val name = arrayOfNulls<String>(selected.size)
 
@@ -315,6 +316,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 //                            } catch (ex: Exception) {
 //                            }
                                 finish()
+                                println("확인time:::::::::::::::::::::::::::${System.currentTimeMillis()}")
                             } else {
 
                                 for (strPo in selected) {
