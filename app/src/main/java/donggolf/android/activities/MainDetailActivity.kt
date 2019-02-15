@@ -823,8 +823,14 @@ class MainDetailActivity : RootActivity() {
                                         imagePaths.add(path)
                                     } else {
                                         val path = Utils.getString(contentFile, "image_uri")
+                                        videoviewTV.text = "동영상 숨기기"
                                         videoviewTV.visibility = View.VISIBLE
+                                        videoVV.visibility = View.VISIBLE
+                                        pagerVP.visibility = View.GONE
                                         video = Uri.parse(Config.url + path)
+                                        videoVV.start()
+                                        videoVV.setVideoURI(video)
+                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
 //                                        videoVV.visibility = View.VISIBLE
 //                                        videoVV.start()
 //                                        videoVV.setVideoURI(video)
@@ -984,6 +990,7 @@ class MainDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
+                    commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
                         //commentList.get(i).put("changedBlockYN", "N")
@@ -1120,45 +1127,49 @@ class MainDetailActivity : RootActivity() {
             }
 
             dialogView.addFriendTV.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
-                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-                            if (PrefUtils.getIntPreference(context, "member_id") == -1){
-                                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
-                                return@OnClickListener
-                            }
+                val intent = Intent(context, ProfileActivity::class.java)
+                intent.putExtra("member_id", writer)
+                context.startActivity(intent)
 
-                            if (intent.getStringExtra("id") != null) {
-                                val content_id = intent.getStringExtra("id")
+                /*    val builder = AlertDialog.Builder(context)
+                    builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                            .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                    return@OnClickListener
+                                }
 
-                                var params = RequestParams()
-                                params.put("content_id", content_id)
-                                params.put("mate_id", writer)
-                                params.put("member_id", login_id)
-                                params.put("category_id",0)
-                                params.put("status","w")
+                                if (intent.getStringExtra("id") != null) {
+                                    val content_id = intent.getStringExtra("id")
 
-                                PostAction.add_friend(params, object : JsonHttpResponseHandler() {
-                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                        val result = response!!.getString("result")
-                                        if (result == "yes") {
-                                            Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
-                                        }else {
-                                            Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                    var params = RequestParams()
+                                    params.put("content_id", content_id)
+                                    params.put("mate_id", writer)
+                                    params.put("member_id", login_id)
+                                    params.put("category_id",0)
+                                    params.put("status","w")
+
+                                    PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                            val result = response!!.getString("result")
+                                            if (result == "yes") {
+                                                Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                            }else {
+                                                Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                            }
                                         }
-                                    }
 
-                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
-                                    }
-                                })
+                                        }
+                                    })
 
-                            }
-                            alert.dismiss()
-                        })
-                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-                val alert = builder.create()
-                alert.show()
+                                }
+                                alert.dismiss()
+                            })
+                            .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                    val alert = builder.create()
+                    alert.show()*/
             }
         }
     }
