@@ -960,9 +960,12 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.kakao.kakaostory.StringSet.image
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.assist.FailReason
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
@@ -996,6 +999,9 @@ class AddPostActivity : RootActivity() {
     var tmpContent: TmpContent = TmpContent()
     var delids = ArrayList<Int>()
     var tmpImagesPath: ArrayList<ImagesPath> = ArrayList<ImagesPath>()
+
+
+    var imageUrlToIVs = HashMap<String, ImageView>()
 
     var member_id = 0
 
@@ -1765,13 +1771,36 @@ class AddPostActivity : RootActivity() {
 //            }
 //        }
         println("------imagespath ---- $str")
+
+
         images_path.add(str)
         var add_file = Utils.noResizeImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
         var v = View.inflate(context, R.layout.item_addgoods, null)
-//        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
+        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
-        ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
+
+//        ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
+        imageUrlToIVs.put(str,imageIV)
+
+        ImageLoader.getInstance().loadImage(str, object : ImageLoadingListener {
+            override fun onLoadingCancelled(imageUri: String?, view: View?) {
+
+            }
+
+            override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
+            }
+
+            override fun onLoadingStarted(imageUri: String?, view: View?) {
+            }
+
+            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
+                val iv = imageUrlToIVs.get(imageUri!!)
+                iv!!.setImageBitmap(loadedImage)
+                Log.d("높이23",loadedImage!!.height.toString())
+            }
+        })
+
         delIV.tag = i
         delIV.setOnClickListener {
             addPicturesLL!!.removeView(v)
@@ -1840,6 +1869,7 @@ class AddPostActivity : RootActivity() {
                                     var id = Utils.getInt(contentFile,"id")
                                     if (type == 1) {
                                         var path = Config.url + Utils.getString(contentFile, "image_uri")
+
                                         reset2(path,id)
                                         println("getimage------$path")
                                         imagePaths.add(path)

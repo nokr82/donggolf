@@ -329,6 +329,7 @@ class MainDetailActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
                     val result = response!!.getString("result")
+                    Log.d("결과",response.toString())
                     if (result == "ok"){
                         val comments = response.getJSONObject("comments")
                         commentList.add(comments)
@@ -336,8 +337,6 @@ class MainDetailActivity : RootActivity() {
                         cmtET.setText("")
                         cmtET.hint = ""
                         Utils.hideKeyboard(this@MainDetailActivity)
-                        commentLL.visibility = View.GONE
-
                         addedImgIV.setImageResource(0)
                         commentLL.visibility = View.GONE
                         main_detail_gofindpicture.visibility = View.VISIBLE
