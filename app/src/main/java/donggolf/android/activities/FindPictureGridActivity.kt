@@ -145,7 +145,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
+                        cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
                         println(" cursor : " + cursor.count)
                     } else {
                         cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)

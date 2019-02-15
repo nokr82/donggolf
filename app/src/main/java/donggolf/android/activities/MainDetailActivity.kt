@@ -827,6 +827,8 @@ class MainDetailActivity : RootActivity() {
                                         videoviewTV.text = "동영상 숨기기"
                                         videoviewTV.visibility = View.VISIBLE
                                         videoVV.visibility = View.VISIBLE
+                                        leftIV.visibility = View.GONE
+                                        rightIV.visibility = View.GONE
                                         pagerVP.visibility = View.GONE
                                         video = Uri.parse(Config.url + path)
                                         videoVV.start()
@@ -850,8 +852,10 @@ class MainDetailActivity : RootActivity() {
                                 adverAdapter.notifyDataSetChanged()
 
                                 if (adverImagePaths.size > 1){
-                                    leftIV.visibility = View.VISIBLE
-                                    rightIV.visibility = View.VISIBLE
+                                    if (videoVV.visibility != View.VISIBLE){
+                                        leftIV.visibility = View.VISIBLE
+                                        rightIV.visibility = View.VISIBLE
+                                    } 
                                 }
 
                             } else {

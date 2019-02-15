@@ -139,7 +139,9 @@ class FriendCategoryDetailActivity : RootActivity() {
         //이동
         moveTV.setOnClickListener {
             //카테고리 고르라고
-            startActivityForResult(Intent(context,FriendReqSelectCategoryActivity::class.java),MOVEtoCATEGORY)
+            val intent = Intent(context, FriendReqSelectCategoryActivity::class.java)
+            intent.putExtra("category_id",category_id.toString())
+            startActivityForResult(intent,MOVEtoCATEGORY)
         }
 
         blockTV.setOnClickListener {
@@ -205,9 +207,10 @@ class FriendCategoryDetailActivity : RootActivity() {
         if(resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 MOVEtoCATEGORY -> {
-                    val selCateg = data!!.getIntExtra("CategoryID", 1)
+                    val selCateg = data!!.getStringExtra("CategoryID")
+                    val category_id = data!!.getStringExtra("category_id")
                     //println("category id : $selCateg")
-                    moveMateOtherCategory(selCateg)
+                    moveMateOtherCategory(selCateg,category_id)
                 }
 
                 CATEGORY_SETTING -> {
@@ -219,7 +222,7 @@ class FriendCategoryDetailActivity : RootActivity() {
         }
     }
 
-    fun moveMateOtherCategory(selCateg : Int){
+    fun moveMateOtherCategory(selCateg : String,nowCategory_id:String){
 
         mateUpdate.clear()
         for (i in 0 until mateList.size) {
@@ -231,14 +234,14 @@ class FriendCategoryDetailActivity : RootActivity() {
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("mate_id", mateUpdate)//넘길 친구목록
         params.put("category_id", selCateg)//이동할 카테고리 id
-
-        println(params)
+        params.put("now_category_id", nowCategory_id)//이동할 카테고리 id
 
         MateAction.update_mates_status(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 println(response)
                 //getFriendList("m",category_id)
                 val result = response!!.getString("result")
+                println("----result ---- $result")
                 if (result == "ok") {
                     val mates = response.getJSONArray("mates")
                     mateList.clear()
@@ -250,6 +253,9 @@ class FriendCategoryDetailActivity : RootActivity() {
 
                         mateList.add(mate)
                     }
+                    friendAdapter.notifyDataSetChanged()
+                } else if (result == "empty") {
+                    mateList.clear()
                     friendAdapter.notifyDataSetChanged()
                 }
             }

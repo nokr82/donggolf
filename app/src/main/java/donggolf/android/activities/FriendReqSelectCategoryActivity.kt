@@ -65,10 +65,11 @@ class FriendReqSelectCategoryActivity : RootActivity() {
 
             var intent = getIntent()
 
-            val mate_id = intent.getStringExtra("mate_id")
+            val get_category_id = intent.getStringExtra("category_id")
+            println("----get_category_id : $get_category_id")
 
             intent.putExtra("CategoryID", category_id)
-            intent.putExtra("mate_id",mate_id)
+            intent.putExtra("category_id",get_category_id)
             setResult(RESULT_OK,intent)
 
             finish()
