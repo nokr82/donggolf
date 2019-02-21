@@ -143,11 +143,13 @@ class MainDetailActivity : RootActivity() {
 
         rightIV.setOnClickListener {
 
-            if (adPosition+1 > adverImagePaths.size){
+            if (adPosition+1 == adverImagePaths.size){
                 Toast.makeText(context,"마지막 사진입니다.", Toast.LENGTH_SHORT).show()
+                adPosition = adverImagePaths.size-1
                 return@setOnClickListener
+            } else if (adPosition < adverImagePaths.size-1){
+                adPosition += 1
             }
-            adPosition += 1
             pagerVP.setCurrentItem(adPosition)
         }
 
@@ -156,6 +158,12 @@ class MainDetailActivity : RootActivity() {
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
             startActivityForResult(galleryIntent, GALLERY)
+        }
+
+        profileIV.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", writer)
+            startActivity(intent)
         }
 
         //댓글 리스트뷰 롱클릭
@@ -483,6 +491,9 @@ class MainDetailActivity : RootActivity() {
         })
 
         finishLL.setOnClickListener {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
             finish()
         }
         plusBT.setOnClickListener {
@@ -709,8 +720,12 @@ class MainDetailActivity : RootActivity() {
             comment_path = null
         }
 
-        getPost()
-        getLooker()
+        if (intent.getStringExtra("id") != null){
+            val id = intent.getStringExtra("id")
+            getPost(id)
+            getLooker(id)
+        }
+
     }
 
     //이미지 자세히 보기 액티비티
@@ -790,7 +805,7 @@ class MainDetailActivity : RootActivity() {
                 try {
                     val result = response!!.getString("result")
                     if ("ok" == result) {
-                        getPost()
+                        getPost(content_id.toString())
                         Utils.hideKeyboard(context)
                         cmtET.setText("")
                         cmtET.hint = ""
@@ -843,9 +858,7 @@ class MainDetailActivity : RootActivity() {
         return px / resources.displayMetrics.density
     }
 
-    fun getPost(){
-        if (intent.getStringExtra("id") != null){
-            val id = intent.getStringExtra("id")
+    fun getPost(id:String){
             login_id = PrefUtils.getIntPreference(context, "member_id")
 
             var params = RequestParams()
@@ -857,6 +870,7 @@ class MainDetailActivity : RootActivity() {
                     try {
                         val result = response!!.getString("result")
                         if (result == "ok") {
+                            likeMembersLL.removeAllViews()
 
                             val data = response.getJSONObject("Content")
 
@@ -893,6 +907,8 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+                            println("------detail imagedatas.size ${imageDatas.length()}")
+
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
 
@@ -910,6 +926,8 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
+                                println("-------------visible")
+                                imageRL.visibility = View.VISIBLE
                                 pagerVP.visibility = View.VISIBLE
                                 var imagePaths: ArrayList<String> = ArrayList<String>()
 
@@ -1001,9 +1019,9 @@ class MainDetailActivity : RootActivity() {
 
 
 
-//                            if (member_id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
-//                                freindIV.visibility = View.GONE
-//                            }
+                            if (member_id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
+                                freindIV.visibility = View.GONE
+                            }
 
                             nickNameTV.text = nick
                             statusmsgTV.text = status_msg
@@ -1056,11 +1074,9 @@ class MainDetailActivity : RootActivity() {
                 }
             })
 
-        }
     }
 
-    fun getLooker(){
-        val id = intent.getStringExtra("id")
+    fun getLooker(id:String){
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
         var params = RequestParams()
@@ -1086,7 +1102,7 @@ class MainDetailActivity : RootActivity() {
     fun getComments() {
         val params = RequestParams()
         params.put("cont_id", content_id)
-        params.put("writer", writer)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1299,7 +1315,8 @@ class MainDetailActivity : RootActivity() {
 //                    val selCateg = data!!.getIntExtra("CategoryID", 1)
 
                         videoVV.visibility = View.GONE
-                        getPost()
+                        val id = data!!.getStringExtra("id")
+                        getPost(id)
 //                    if (data!!.getStringExtra("reset") != null) {
 
 //                    }
@@ -1342,6 +1359,13 @@ class MainDetailActivity : RootActivity() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+        finish()
     }
 
 }

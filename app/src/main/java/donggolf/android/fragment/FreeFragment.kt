@@ -149,9 +149,9 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
         progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
         progressDialog!!.setCancelable(false)
-        val ctx = context
+        ctx = context
         if (null != ctx) {
-            doSomethingWithContext(ctx)
+            doSomethingWithContext(ctx!!)
         }
 
         mainData()
@@ -203,10 +203,10 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
-                    activity.maintitleLL.visibility=View.GONE
+//                    activity.maintitleLL.visibility=View.GONE
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     userScrolled = false
-                    activity.maintitleLL.visibility=View.VISIBLE
+//                    activity.maintitleLL.visibility=View.VISIBLE
                 }
 
                 if (!main_listview.canScrollVertically(-1)) {
@@ -287,6 +287,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                 Toast.makeText(context,"키워드를 입력해주세요.",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            addSearchWords(keyword)
             resetList(keyword)
         }
 
@@ -345,11 +346,11 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
     fun mainData() {
         val params = RequestParams()
-        var sidotype = PrefUtils.getStringPreference(context, "sidotype")
-        var goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-        var goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
-        var region_id = PrefUtils.getStringPreference(context,"region_id")
-        var region_id2 = PrefUtils.getStringPreference(context,"region_id2")
+        var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
+        var goguntype  =PrefUtils.getStringPreference(ctx, "goguntype")
+        var goguntype2  =PrefUtils.getStringPreference(ctx, "goguntype2")
+        var region_id = PrefUtils.getStringPreference(ctx,"region_id")
+        var region_id2 = PrefUtils.getStringPreference(ctx,"region_id2")
 
         params.put("member_id",member_id)
         params.put("goguntype",goguntype)
@@ -550,7 +551,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
             when (requestCode) {
                 RESET_DATA -> {
-                    if (resultCode == Activity.RESULT_OK){
+                    if (data!!.getStringExtra("reset") != null) {
                         if (adapterData != null){
                             adapterData.clear()
                         }
@@ -560,7 +561,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                 }
 
                 DETAIL -> {
-                    if (resultCode == Activity.RESULT_OK){
+                    if (data!!.getStringExtra("reset") != null) {
                         if (adapterData != null){
                             adapterData.clear()
                         }

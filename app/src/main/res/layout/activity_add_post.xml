@@ -63,6 +63,7 @@
                     android:background="@null"
                     android:hint="제목"
                     android:singleLine="true"
+                    android:maxLength="40"
                     android:textSize="17dp" />
 
                 <ImageView
@@ -75,7 +76,7 @@
                 <EditText
                     android:id="@+id/contentET"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_margin="10dp"
                     android:background="@null"
@@ -237,6 +238,7 @@
                             android:buttonTint="#0EDA2F" />-->
 
                         <TextView
+                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -245,6 +247,7 @@
                             android:textSize="15dp" />
 
                         <RelativeLayout
+                            android:visibility="gone"
                             android:padding="5dp"
                             android:layout_marginRight="20dp"
                             android:id="@+id/chatableRL"
@@ -302,6 +305,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/hashtagLL"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent">

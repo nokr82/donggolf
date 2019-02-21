@@ -99,6 +99,7 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
 
         val freind = Utils.getString(comment,"freind")
 
+        println("-=------freind : $freind")
         if (freind == "0"){
             item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
         } else {

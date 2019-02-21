@@ -153,7 +153,7 @@ class RegisterActivity : RootActivity() {
             return
         } else {
             val tmpparam = RequestParams()
-            tmpparam.put("member_id", email)
+            tmpparam.put("email", email)
 
             MemberAction.is_duplicated_id(tmpparam, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -246,18 +246,16 @@ class RegisterActivity : RootActivity() {
         params.put("sex", gender)
         params.put("nick", nickName)
 
+        println("---- email: $email passwd : $password phone : $phone gender : $gender nick : $nickName")
+
         MemberAction.join_member(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val message  = Utils.getString(response,"message")
-
-                if (message.equals("이미 가입된 휴대폰 번호가 있습니다.")){
-                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+                val result = response!!.getString("result")
+                if (result == "ok"){
                     finish()
                 }
-
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {

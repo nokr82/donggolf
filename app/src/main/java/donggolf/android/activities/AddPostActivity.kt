@@ -1486,7 +1486,8 @@ class AddPostActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     var intent = Intent()
-                    intent.putExtra("id", intent.getStringExtra("id"))
+                    intent.putExtra("id", id)
+                    intent.putExtra("reset", "reset")
                     setResult(RESULT_OK, intent);
                     finish()
                 }
@@ -1634,6 +1635,7 @@ class AddPostActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
+                intent.putExtra("reset", "reset")
                 setResult(RESULT_OK, intent)
                 finish()
             }
