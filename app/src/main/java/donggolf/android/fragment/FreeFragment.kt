@@ -85,7 +85,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             if (intent != null) {
 
                 adapterData.clear()
-                mainData()
+                mainData("")
             }
         }
     }
@@ -154,7 +154,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             doSomethingWithContext(ctx!!)
         }
 
-        mainData()
+        mainData("")
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -211,13 +211,22 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
                 if (!main_listview.canScrollVertically(-1)) {
                     page=1
-                    mainData()
+                    var keyword = main_edit_search.text.toString()
+                    if (keyword == null || keyword == "") {
+                        mainData("")
+                    } else {
+                        mainData(keyword)
+                    }
                 } else if (!main_listview.canScrollVertically(1)) {
                     if (totalPage > page) {
                         page++
                         lastcount = totalItemCountScroll
-
-                        mainData()
+                        var keyword = main_edit_search.text.toString()
+                        if (keyword == null || keyword == "") {
+                            mainData("")
+                        } else {
+                            mainData(keyword)
+                        }
                     }
                 }
             }
@@ -258,11 +267,13 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                 if (srchWd != null && srchWd != "") {
                     addSearchWords(srchWd)
                     getSearchList()
-                    resetList(srchWd)
+//                    resetList(srchWd)
+                    mainData(srchWd)
                 }
 
                 if (srchWd == null || srchWd == ""){
-                    resetList(srchWd)
+//                    resetList(srchWd)
+                    mainData(srchWd)
                 }
                 main_listview_search.visibility = View.GONE
 
@@ -288,7 +299,8 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                 return@setOnClickListener
             }
             addSearchWords(keyword)
-            resetList(keyword)
+            mainData(keyword)
+//            resetList(keyword)
         }
 
 
@@ -310,12 +322,13 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             val content = Utils.getString(SearchList,"content")
             println("----content$content")
             main_edit_search.setText(content)
-            resetList(content)
+//            resetList(content)
+            mainData(content)
             main_edit_search.isCursorVisible = false
             Utils.hideKeyboard(context)
         }
 
-        mainData()
+        mainData("")
         getSearchList()
 
     }
@@ -344,7 +357,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
     }
 
 
-    fun mainData() {
+    fun mainData(keyWord: String) {
         val params = RequestParams()
         var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
         var goguntype  =PrefUtils.getStringPreference(ctx, "goguntype")
@@ -356,6 +369,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         params.put("goguntype",goguntype)
         params.put("sidotype",sidotype)
         params.put("region_id",region_id)
+        params.put("searchKeyword",keyWord)
         if (region_id2 != ""){
             params.put("region_id2", region_id2)
         }
@@ -479,7 +493,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
     fun resetList(keyWord : String){
 
         if (keyWord == null || keyWord == ""){
-            mainData()
+            mainData("")
         } else {
             val params = RequestParams()
             params.put("searchKeyword",keyWord)
@@ -540,8 +554,8 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
     override fun onPause() {
         super.onPause()
-        page = 1
-        mainData()
+//        page = 1
+//        mainData("")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -556,7 +570,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                             adapterData.clear()
                         }
                         page=1
-                        mainData()
+                        mainData("")
                     }
                 }
 
@@ -566,7 +580,7 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                             adapterData.clear()
                         }
                         page=1
-                        mainData()
+                        mainData("")
                     }
                 }
             }

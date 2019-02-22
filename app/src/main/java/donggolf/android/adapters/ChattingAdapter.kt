@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.media.Image
 import android.util.TypedValue
@@ -13,6 +14,8 @@ import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.activities.PictureDetailActivity
+import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
@@ -51,8 +54,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val chatting = json.getJSONObject("Chatting")
         val member = json.getJSONObject("Member")
 
+        val id = Utils.getString(chatting,"id")
         val myId = PrefUtils.getIntPreference(context, "member_id")
-        val send_member_id = Utils.getInt(chatting,"member_id")
+        val send_member_id = Utils.getString(chatting,"member_id")
         val content = Utils.getString(chatting,"content")
         val content_image = Utils.getString(chatting, "img")
         val member_nick = Utils.getString(member,"nick")
@@ -63,6 +67,28 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var read_count = Utils.getInt(chatting,"read_count")
         var difference = peoplecount - read_count
         var type = Utils.getString(chatting,"type")
+
+        item.userprofileIV.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", send_member_id)
+            context.startActivity(intent)
+        }
+
+        item.userimageIV.setOnClickListener {
+            val type = Utils.getString(chatting,"type")
+            println("--------typ[e====== $type")
+            if (type == "i"){
+                val img = Utils.getString(chatting,"img")
+                val imglist:ArrayList<String> = ArrayList<String>()
+                imglist.add(img)
+                var intent = Intent(context, PictureDetailActivity::class.java)
+                intent.putExtra("id", id)
+                intent.putExtra("adPosition",0)
+                intent.putExtra("paths",imglist)
+                intent.putExtra("type","chat")
+                context.startActivity(intent)
+            }
+        }
 
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
@@ -90,7 +116,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.readTV.setText("")
         }
 
-        if (send_member_id == myId) {
+        if (send_member_id.toInt() == myId) {
             item.myLL.visibility = View.VISIBLE
             item.userLL.visibility = View.GONE
             item.mycontentTV.setText(content)
@@ -134,6 +160,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             ImageLoader.getInstance().displayImage(image, item.userprofileIV, Utils.UILoptionsUserProfile)
 
         }
+
 
         return retView
 

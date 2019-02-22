@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -75,6 +76,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     //초대
     private var callback: SessionCallback? = null
 
+    private var progressDialog: ProgressDialog? = null
 
     var type = ""
 
@@ -94,6 +96,10 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
         context = this
 
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
+
         var intent: Intent = intent
 
         callback = SessionCallback()
@@ -102,12 +108,13 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         intent = getIntent()
         membercnt = intent.getStringExtra("membercnt")
         sidotype = PrefUtils.getStringPreference(context, "sidotype")
-        sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
+//        sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
         goguntype = PrefUtils.getStringPreference(context, "goguntype")
-        goguntype2 = PrefUtils.getStringPreference(context, "goguntype2")
+//        goguntype2 = PrefUtils.getStringPreference(context, "goguntype2")
         member_cntTV.text = "골퍼 " + membercnt + "명"
         if (sidotype != "전국") {
-            areaTV.text = sidotype + " " + goguntype + "/ " + sidotype2 + " " + goguntype2
+//            areaTV.text = sidotype + " " + goguntype + "/ " + sidotype2 + " " + goguntype2
+            areaTV.text = sidotype + " " + goguntype
         } else {
             areaTV.text = sidotype
         }
@@ -132,6 +139,46 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 //                Log.d("멤버디디",member_id)
 
         }
+
+        frdResultLV.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    userScrolled = true
+//                    activity.maintitleLL.visibility=View.GONE
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    userScrolled = false
+//                    activity.maintitleLL.visibility=View.VISIBLE
+                }
+
+                if (!frdResultLV.canScrollVertically(-1)) {
+                    page=1
+                    var keyword = frdSearchET.text.toString()
+                    if (keyword == null || keyword == "") {
+                        get_region_member("")
+                    } else {
+                        get_region_member(keyword)
+                    }
+                } else if (!frdResultLV.canScrollVertically(1)) {
+                    if (totalPage > page) {
+                        page++
+                        lastcount = totalItemCountScroll
+                        var keyword = frdSearchET.text.toString()
+                        if (keyword == null || keyword == "") {
+                            get_region_member("")
+                        } else {
+                            get_region_member(keyword)
+                        }
+                    }
+                }
+            }
+        })
+
+
         editadapter = FriendSearchAdapter(context, R.layout.main_edit_listview_item, editadapterData,this)
         frd_editLV.adapter = editadapter
 
@@ -150,7 +197,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
 
         searchList()
-        get_region_member()
+        get_region_member("")
 
 
         btn_txDel.setOnClickListener {
@@ -178,7 +225,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                 var keyWord = frdSearchET.text.toString()
                 if (keyWord == "" || keyWord == null){
 //                    friendData.clear()
-                    get_region_member()
+                    get_region_member("")
                 }
 
               /*  if (keyWord != null && keyWord != "") {
@@ -189,10 +236,12 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                 if (keyWord.startsWith("#")) {
                     keyWord = keyWord.replace("#","")
 //                    type = "1"
-                    friendSearchWords(keyWord)
+//                    friendSearchWords(keyWord)
+                    get_region_member(keyWord)
                 } else {
 //                    type = "2"
-                    friendSearchWords(keyWord)
+//                    friendSearchWords(keyWord)
+                    get_region_member(keyWord)
                 }
 
                 frdSearchET.setText("")
@@ -207,7 +256,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             main_listview_search.visibility = View.GONE
             var which = Utils.getString(frdSearchET)
             if (which.isEmpty()) {
-                get_region_member()
+                get_region_member("")
             }
             if (which.startsWith("#")) {
                 which = which.replace("#","")
@@ -215,7 +264,8 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 //                friendSearchhash(which)
 
             } else {
-                friendSearchWords(which)
+//                friendSearchWords(which)
+                get_region_member(which)
             }
 
         }
@@ -728,7 +778,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     }
 
 
-    fun get_region_member() {
+    fun get_region_member(keyword:String) {
         val params = RequestParams()
         params.put("sidotype", sidotype)
         params.put("goguntype", goguntype)
@@ -736,33 +786,50 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             params.put("goguntype2", goguntype2)
         }
         params.put("page", page)
+        params.put("keyword", keyword)
         params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+
 
 
         MemberAction.get_region_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+
                 try {
                     val result = response!!.getString("result")
 //                    friendData.clear()
                     if (result == "ok") {
+
+                        if (page == 1){
+                            friendData.clear()
+                        }
+
+                        totalPage = response.getInt("totalPage");
+                        page = response.getInt("page");
+
+                        println("-------page $page")
+                        println("-------totalpage $totalPage")
+
                         val members = response.getJSONArray("members")
                         if (members.length() == 0) {
                             Toast.makeText(context, "친구를 찾을수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
-                        for (i in 0 until members.length()) {
+
+                        for (i in 0..(members.length()-1)){
                             val member = members[i] as JSONObject
                             val member_o = member.getJSONObject("Member")
                             val member_id = Utils.getInt(member_o,"id")
-                            Log.d("멤버다",member.toString())
                             if (member_id!=PrefUtils.getIntPreference(context, "member_id")){
                                 friendData.add(member)
                             }
-
                         }
-                    }
 
-                    println("-----friendData.size ---- ${friendData.size}")
-                    friendAdapter.notifyDataSetChanged()
+                        friendAdapter.notifyDataSetChanged()
+                        main_listview_search.visibility = View.GONE
+
+                    }
 
                 }catch (e:JSONException) {
                     e.printStackTrace()
@@ -770,11 +837,28 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
                 println(errorResponse)
+            }
+
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
             }
         })
     }
@@ -807,7 +891,9 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                 page++
                 lastcount = totalItemCountScroll
 
-                get_region_member()
+                var keyword = frdSearchET.text.toString()
+
+                get_region_member(keyword)
             }
 
 

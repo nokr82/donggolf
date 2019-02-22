@@ -149,21 +149,21 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             drawerMenu.closeDrawer(chat_right_menu)
 
             val item = chattingList.get(position) as JSONObject
-            val chatting = item.getJSONObject("Chatting")
-            val type = Utils.getString(chatting,"type")
-            println("--------typ[e====== $type")
-            if (type == "i"){
-                val img = Utils.getString(chatting,"img")
-                val imglist:ArrayList<String> = ArrayList<String>()
-                imglist.add(img)
-                val id = intent.getStringExtra("id")
-                var intent = Intent(context, PictureDetailActivity::class.java)
-                intent.putExtra("id", id)
-                intent.putExtra("adPosition",0)
-                intent.putExtra("paths",imglist)
-                intent.putExtra("type","chat")
-                startActivity(intent)
-            }
+//            val chatting = item.getJSONObject("Chatting")
+//            val type = Utils.getString(chatting,"type")
+//            println("--------typ[e====== $type")
+//            if (type == "i"){
+//                val img = Utils.getString(chatting,"img")
+//                val imglist:ArrayList<String> = ArrayList<String>()
+//                imglist.add(img)
+//                val id = intent.getStringExtra("id")
+//                var intent = Intent(context, PictureDetailActivity::class.java)
+//                intent.putExtra("id", id)
+//                intent.putExtra("adPosition",0)
+//                intent.putExtra("paths",imglist)
+//                intent.putExtra("type","chat")
+//                startActivity(intent)
+//            }
 
         }
 

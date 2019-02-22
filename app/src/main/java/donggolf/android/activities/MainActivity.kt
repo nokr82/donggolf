@@ -114,26 +114,28 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         if (PrefUtils.getStringPreference(context, "sidotype") != null){
             sidotype = PrefUtils.getStringPreference(context, "sidotype")
-            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
+//            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
             goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+//            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
             region_id  =PrefUtils.getStringPreference(context, "region_id")
-            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
+//            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
 
-            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
+//            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
+            areaTV.text = sidotype+" " +goguntype
         } else {
             PrefUtils.setPreference(context, "sidotype", sidotype)
-            PrefUtils.setPreference(context, "sidotype2", sidotype2)
+//            PrefUtils.setPreference(context, "sidotype2", sidotype2)
             PrefUtils.setPreference(context, "goguntype", goguntype)
-            PrefUtils.setPreference(context, "goguntype2", goguntype2)
+//            PrefUtils.setPreference(context, "goguntype2", goguntype2)
             PrefUtils.setPreference(context, "region_id", region_id)
-            PrefUtils.setPreference(context, "region_id2", region_id2)
+//            PrefUtils.setPreference(context, "region_id2", region_id2)
         }
 
         if (sidotype=="전국"&&goguntype=="전국"){
             areaTV.text ="전국"
         }else{
-            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+//            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+            areaTV.text = sidotype+" " +goguntype
         }
 
 
@@ -182,7 +184,17 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         homeRL.setOnClickListener {
             setButtonImage()
+//            frags.currentItem = 0
+//            pagerAdapter.getItemPosition(free)
+//            var free:FreeFragment = FreeFragment()
+//            supportFragmentManager.beginTransaction().replace(R.id.frags, free).commit()
+
+//            pagerAdapter.getItemPosition(0)
+            if (frags.currentItem == 0) {
+                pagerAdapter.notifyDataSetChanged()
+            }
             frags.currentItem = 0
+
             homeBT.setBackgroundResource(R.drawable.btn_main_on)
             homeIV.setBackgroundResource(R.drawable.btn_withdrawal)
         }
@@ -303,24 +315,24 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 if(resultCode == Activity.RESULT_OK) {
                     sidotype  = data!!.getStringExtra("sidotype")
                     PrefUtils.setPreference(context, "sidotype", sidotype)
-                    sidotype2  = data!!.getStringExtra("sidotype2")
-                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
+//                    sidotype2  = data!!.getStringExtra("sidotype2")
+//                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
                     goguntype =  data!!.getStringExtra("goguntype")
                     PrefUtils.setPreference(context, "goguntype", goguntype)
-                    goguntype2 =  data!!.getStringExtra("goguntype2")
-                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
+//                    goguntype2 =  data!!.getStringExtra("goguntype2")
+//                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
                     region_id = data!!.getStringExtra("region_id")
                     PrefUtils.setPreference(context, "region_id", region_id)
-                    region_id2 = data!!.getStringExtra("region_id2")
-                    PrefUtils.setPreference(context, "region_id2", region_id2)
+//                    region_id2 = data!!.getStringExtra("region_id2")
+//                    PrefUtils.setPreference(context, "region_id2", region_id2)
                     Log.d("시도",sidotype)
 
                     sidotype = PrefUtils.getStringPreference(context, "sidotype")
-                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
+//                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
                     goguntype  =PrefUtils.getStringPreference(context, "goguntype")
-                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
+//                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
                     region_id = PrefUtils.getStringPreference(context,"region_id")
-                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
+//                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
                     member_cnt()
                     var intent = Intent()
                     intent.action = "MSG_NEXT"
@@ -329,11 +341,15 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     if (sidotype == "전국"){
                         areaTV.text =  sidotype
                     } else if (sidotype == "세종특별자치시"){
-                        areaTV.text =  sidotype +"/ "+ sidotype2+" " +goguntype2
-                    } else if (sidotype2 == "세종특별자치시"){
-                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2
-                    } else {
-                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+//                        areaTV.text =  sidotype +"/ "+ sidotype2+" " +goguntype2
+                        areaTV.text =  sidotype
+                    }
+//                    else if (sidotype2 == "세종특별자치시"){
+//                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2
+//                    }
+                    else {
+//                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
+                        areaTV.text =  sidotype+" " +goguntype
                     }
 
                 }
@@ -553,5 +569,9 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
     }
+
+
+
+
 
 }

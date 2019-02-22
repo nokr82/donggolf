@@ -82,18 +82,24 @@ class AreaRangeActivity : RootActivity() {
             }
 
             if (Utils.getString(type,"name") == "세종특별자치시") {
-                region_id = Utils.getString(type,"id")
-                goguntype = name
-                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
-                areacount++
+//                region_id = Utils.getString(type,"id")
+//                goguntype = name
+//                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
+//                areacount++
+
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("goguntype", sidotype)
+                intent.putExtra("region_id", id)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
             } else if (Utils.getString(type,"name") == "전국"){
                 var intent = Intent();
                 intent.putExtra("sidotype", sidotype)
-                intent.putExtra("sidotype2", sidotype)
+//                intent.putExtra("sidotype2", sidotype)
                 intent.putExtra("goguntype", sidotype)
-                intent.putExtra("goguntype2", sidotype)
+//                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
-                intent.putExtra("region_id2", id)
+//                intent.putExtra("region_id2", id)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             } else {
@@ -116,7 +122,16 @@ class AreaRangeActivity : RootActivity() {
             if (areacount == 0){
                 region_id = Utils.getString(type,"id")
                 goguntype = name
-                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
+                var intent = Intent();
+                intent.putExtra("sidotype", sidotype)
+                intent.putExtra("goguntype", goguntype)
+                intent.putExtra("region_id", region_id)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+
+//                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
             } else if (areacount == 1){
                 region_id2 = Utils.getString(type,"id")
                 goguntype2 = name
@@ -130,11 +145,11 @@ class AreaRangeActivity : RootActivity() {
                 Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
                 var intent = Intent();
                 intent.putExtra("sidotype", sidotype)
-                intent.putExtra("sidotype2", sidotype2)
+//                intent.putExtra("sidotype2", sidotype2)
                 intent.putExtra("goguntype", goguntype)
-                intent.putExtra("goguntype2", goguntype2)
+//                intent.putExtra("goguntype2", goguntype2)
                 intent.putExtra("region_id", region_id)
-                intent.putExtra("region_id2", region_id2)
+//                intent.putExtra("region_id2", region_id2)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
@@ -178,7 +193,13 @@ class AreaRangeActivity : RootActivity() {
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
             }*/
-            finish()
+
+            if (gridGV.visibility == View.VISIBLE){
+                arealistLV.visibility = View.VISIBLE
+                gridGV.visibility = View.GONE
+            } else {
+                finish()
+            }
 
         }
 
@@ -306,7 +327,7 @@ class AreaRangeActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
 
-                tmpSV.visibility = View.VISIBLE
+//                tmpSV.visibility = View.VISIBLE
 
                 if (datalist.length() > 0 && datalist != null){
                     for (i in 0 until datalist.length()){

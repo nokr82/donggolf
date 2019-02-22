@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -84,6 +85,28 @@ class ChatMemberActivity : RootActivity() {
 
         }
 
+        joinMemberLV.setOnItemClickListener { parent, view, position, id ->
+            val json = chatMemberAdapter.getItem(position)
+
+            var member = json!!.getJSONObject("Member")
+            var member_id = Utils.getString(member,"id")
+
+            if ( PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
+                Toast.makeText(context,"자기 자신은 프로필을 볼 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+
+
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", member_id)
+            startActivity(intent)
+
+
+
+
+
+        }
+
         btnBack.setOnClickListener {
             finish()
         }
@@ -111,7 +134,9 @@ class ChatMemberActivity : RootActivity() {
 
                             member_ids.add(chatmember_id)
                             member_nicks.add(nick)
+
                             chatMemberList.add(item)
+
                         }
                     }
                     membercountTV.setText(chatMemberList.size.toString())

@@ -201,22 +201,40 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             dialogView.dlg_sale_bookLL.setOnClickListener {
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+
                 tmp_prod_status = "판매예약"
                 alert.dismiss()
                 updateProductStatus()
 
             }
             dialogView.dlg_saleLL.setOnClickListener {
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 tmp_prod_status = "판매중"
                 alert.dismiss()
                 updateProductStatus()
             }
             dialogView.dlg_in_dealLL.setOnClickListener {
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 tmp_prod_status = "거래중"
                 alert.dismiss()
                 updateProductStatus()
             }
             dialogView.dlg_holdLL.setOnClickListener {
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 tmp_prod_status = "판매보류"
                 alert.dismiss()
                 updateProductStatus()
@@ -301,6 +319,12 @@ class GoodsDetailActivity : RootActivity() {
 
 
         getLooker()
+
+        profileImgIV.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", seller_id2)
+            startActivity(intent)
+        }
 
         market_commentLV.setOnItemLongClickListener { parent, view, position, id ->
             var commenter = commentList[position].getInt("cmt_wrt_id")
@@ -466,6 +490,12 @@ class GoodsDetailActivity : RootActivity() {
             dialogView.dlg_pull_LL.visibility = View.VISIBLE
 
             dialogView.dlg_prod_modTV.setOnClickListener {
+
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
                 val intent = Intent(context,AddGoodsActivity::class.java)
                 intent.putExtra("product_id", product_id)
                 startActivityForResult(intent,PRODUCT_MODIFY)
@@ -490,6 +520,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             dialogView.dlg_pull_LL.setOnClickListener {
+
+                if (tmp_prod_status == "판매완료"){
+                    Toast.makeText(context, "판매완료가 된글은 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 //끌올
                 delete_product("pull")
                 alert.dismiss()
@@ -576,6 +611,10 @@ class GoodsDetailActivity : RootActivity() {
                     var seller_cnt = Utils.getString(market,"seller_cnt")
                     sellercountTV.setText("("+seller_cnt+")")
                     seller_id2 = Utils.getString(market,"member_id")
+
+                    if (seller_id2.toInt() == PrefUtils.getIntPreference(context, "member_id")){
+                        show_mng_dlgLL.visibility = View.VISIBLE
+                    }
 
                     categoryTV.text = "[${Utils.getString(market,"form").substringBefore(" ")}형]" +
                             "[${Utils.getString(market,"form").substringAfter(" ")}용]" +

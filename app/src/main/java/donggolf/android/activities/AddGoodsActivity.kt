@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -59,12 +60,14 @@ class AddGoodsActivity : RootActivity() {
     private lateinit var categoryAdapter: GoodsCategoryAdapter
     private lateinit var productTypeAdapter: ProductTypeAdaapter
     private lateinit var productCategoryAdatper: ProductCategoryAdapter
+    private lateinit var pdtCategoryAdapter: PdtCategoryAdapter
     private lateinit var tradeTypeAdatper: TradeTypeAdapater
     private lateinit var regionAdatper: RegionAdapter
 
     private var categoryData = ArrayList<JSONObject>()
     private var productData = ArrayList<JSONObject>()
     private var productCategoryData = ArrayList<JSONObject>()
+    private var pdtCategoryData = ArrayList<JSONObject>()
     private var tradeTypeData = ArrayList<JSONObject>()
     private var regionData = ArrayList<JSONObject>()
     //var category = 1
@@ -82,11 +85,17 @@ class AddGoodsActivity : RootActivity() {
     var todayCount = 0
     var monthCount = 0
 
+    private var progressDialog: ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_goods)
 
         context = this
+
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
@@ -94,11 +103,14 @@ class AddGoodsActivity : RootActivity() {
         images = ArrayList()
         images_url = ArrayList()
 
+
+
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, categoryData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, productCategoryData)
         tradeTypeAdatper = TradeTypeAdapater(context, R.layout.item_dlg_market_sel_op, tradeTypeData)
         regionAdatper = RegionAdapter(context, R.layout.item_dlg_market_sel_op, regionData)
+        pdtCategoryAdapter = PdtCategoryAdapter(context, R.layout.item_dlg_market_sel_op, pdtCategoryData)
 
         getCategory()
 
@@ -128,10 +140,16 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                for (i in 0 until productData.size){
+                    productData[position].put("isSelectedOp", false)
+                }
+
+
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
                 producttypeTV.text = title
+                tendencyTV.text = "선택"
                 prod_type = title
                 productData[position].put("isSelectedOp", true)
                 productTypeAdapter.notifyDataSetChanged()
@@ -160,6 +178,10 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                for (i in 0 until categoryData.size){
+                    categoryData[position].put("isSelectedOp", false)
+                }
+
                 var json = categoryAdapter.getItem(position)
                 var type = json.getJSONObject("GoodsCategory")
                 val title = Utils.getString(type, "title")
@@ -186,19 +208,43 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_marketLV.visibility = View.VISIBLE
             dialogView.dlg_exitIV.visibility = View.VISIBLE
             dialogView.dlg_titleTV.visibility = View.VISIBLE
-            dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            val product = producttypeTV.text.toString()
+            if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
+                dialogView.dlg_marketLV.adapter = pdtCategoryAdapter
+             } else {
+                dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            }
+
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                var json = productCategoryAdatper.getItem(position)
-                var type = json.getJSONObject("ProductCategory")
-                val title = Utils.getString(type, "title")
-                tendencyTV.text = title
-                prod_form = title
-                productCategoryData[position].put("isSelectedOp", true)
-                productCategoryAdatper.notifyDataSetChanged()
+                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
+
+                    for (i in 0 until pdtCategoryData.size){
+                        pdtCategoryData[position].put("isSelectedOp", false)
+                    }
+                    var json = pdtCategoryAdapter.getItem(position)
+                    var type = json.getJSONObject("PdtCategory")
+                    val title = Utils.getString(type, "title")
+                    tendencyTV.text = title
+                    prod_form = title
+                    pdtCategoryData[position].put("isSelectedOp", true)
+                    pdtCategoryAdapter.notifyDataSetChanged()
+                } else {
+                    for (i in 0 until productCategoryData.size){
+                        productCategoryData[position].put("isSelectedOp", false)
+                    }
+
+                    var json = productCategoryAdatper.getItem(position)
+                    var type = json.getJSONObject("ProductCategory")
+                    val title = Utils.getString(type, "title")
+                    tendencyTV.text = title
+                    prod_form = title
+                    productCategoryData[position].put("isSelectedOp", true)
+                    productCategoryAdatper.notifyDataSetChanged()
+                }
 
                 alert.dismiss()
             }
@@ -224,6 +270,8 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+
+
                 var position = regionAdatper.getItem(position)
                 var type = position.getJSONObject("Region")
                 val title = Utils.getString(type, "name")
@@ -283,9 +331,56 @@ class AddGoodsActivity : RootActivity() {
         //등록버튼
         registerLL.setOnClickListener {
             if (modified_product_id != 0){
-                modifyProductInform()
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("수정하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            modifyProductInform()
+
+                            Utils.hideKeyboard(this)
+
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+
+                            Utils.hideKeyboard(this)
+
+
+                        })
+                val alert = builder.create()
+                alert.show()
+
             }else {
-                register_product()
+
+
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("등록하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            register_product()
+
+                            Utils.hideKeyboard(this)
+
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+
+                            Utils.hideKeyboard(this)
+
+
+                        })
+                val alert = builder.create()
+                alert.show()
+
+
             }
         }
 
@@ -685,6 +780,7 @@ class AddGoodsActivity : RootActivity() {
                     val category = response.getJSONArray("category")
                     val producttype = response.getJSONArray("producttype")
                     val productcategory = response.getJSONArray("productcategory")
+                    val pdtcategory = response.getJSONArray("pdtcategory")
                     val tradetype = response.getJSONArray("tradetype")
                     val region = response.getJSONArray("region")
 
@@ -709,6 +805,13 @@ class AddGoodsActivity : RootActivity() {
                         for (i in 0 until productcategory.length()) {
                             productCategoryData.add(productcategory.get(i) as JSONObject)
                             productCategoryData.get(i).put("isSelectedOp", false)
+                        }
+                    }
+
+                    if (pdtcategory.length() > 0 && pdtcategory != null) {
+                        for (i in 0 until pdtcategory.length()) {
+                            pdtCategoryData.add(pdtcategory.get(i) as JSONObject)
+                            pdtCategoryData.get(i).put("isSelectedOp", false)
                         }
                     }
 
@@ -779,7 +882,7 @@ class AddGoodsActivity : RootActivity() {
                 return
             }
 
-            if (images_path == null){
+            if (images_path!!.size == 0){
                 Toast.makeText(context, "상품 사진 등록은 필수 입니다.", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -840,8 +943,9 @@ class AddGoodsActivity : RootActivity() {
 
             MarketAction.add_market_product(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
-                    println("response :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
 
                     var intent = Intent()
                     intent.action = "GOODS_ADD"
@@ -851,11 +955,27 @@ class AddGoodsActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
                     println(responseString)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                     println(errorResponse)
+                }
+                override fun onStart() {
+                    // show dialog
+                    if (progressDialog != null) {
+
+                        progressDialog!!.show()
+                    }
+                }
+
+                override fun onFinish() {
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
                 }
             })
         }
@@ -883,7 +1003,7 @@ class AddGoodsActivity : RootActivity() {
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
                 if (imageIV is ImageView) {
                     val bitmap = imageIV.drawable as BitmapDrawable
-                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
                     seq++
                 }
             }
@@ -905,6 +1025,9 @@ class AddGoodsActivity : RootActivity() {
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
@@ -915,11 +1038,27 @@ class AddGoodsActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                 println(errorResponse)
+            }
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
             }
         })
     }

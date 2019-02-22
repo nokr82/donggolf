@@ -82,6 +82,8 @@ class MainDetailActivity : RootActivity() {
 
     val GALLERY = 500
 
+    var modify_division = ""
+
     var comment_path: Bitmap? = null
     var op_comments_id = -1
     lateinit var video:Uri
@@ -1315,6 +1317,9 @@ class MainDetailActivity : RootActivity() {
 //                    val selCateg = data!!.getIntExtra("CategoryID", 1)
 
                         videoVV.visibility = View.GONE
+
+
+                        modify_division = data!!.getStringExtra("id")
                         val id = data!!.getStringExtra("id")
                         getPost(id)
 //                    if (data!!.getStringExtra("reset") != null) {
@@ -1362,10 +1367,14 @@ class MainDetailActivity : RootActivity() {
     }
 
     override fun onBackPressed() {
-        var intent = Intent()
-        intent.putExtra("reset", "reset")
-        setResult(RESULT_OK, intent);
-        finish()
+        if (modify_division == "") {
+            finish()
+        } else {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
+            finish()
+        }
     }
 
 }
