@@ -29,7 +29,9 @@ class InquireActivity : RootActivity() {
         context = this
 
         phoneNum = PrefUtils.getStringPreference(context,"userPhone")
-        mobNumTV.text = phoneNum.substring(0,3) + "-" + phoneNum.substring(3,7) + "-" + phoneNum.substring(7)
+        if (phoneNum.length > 0) {
+            mobNumTV.text = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, 7) + "-" + phoneNum.substring(7)
+        }
 
         email = PrefUtils.getStringPreference(context, "email")
         ans_user_email.text = email

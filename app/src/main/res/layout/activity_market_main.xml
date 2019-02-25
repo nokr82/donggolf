@@ -55,31 +55,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">
-        <TextView
-            android:id="@+id/entireClassificationTV"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginLeft="40dp"
-            android:text="분류 전체"/>
-        <TextView
-            android:id="@+id/entireBrandTV"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginLeft="25dp"
-            android:text="브랜드 전체"/>
-        <TextView
-            android:id="@+id/entireTypeTV"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginLeft="25dp"
-            android:text="종류 전체"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/entireClassificationTV"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="분류 전체"/>
+            <TextView
+                android:id="@+id/entireBrandTV"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="브랜드 전체"/>
+            <TextView
+                android:id="@+id/entireTypeTV"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="종류 전체"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="right">
             <LinearLayout
                 android:id="@+id/addgoodsTV"
                 android:layout_marginTop="3dp"
@@ -99,7 +107,8 @@
                     android:text="상품등록"
                     android:textSize="11dp"/>
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
+
     </LinearLayout>
     <ImageView
         android:layout_width="match_parent"
@@ -108,6 +117,7 @@
 
     <GridView
         android:id="@+id/maingridGV"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="2"/>

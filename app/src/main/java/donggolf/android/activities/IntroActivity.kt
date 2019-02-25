@@ -1,5 +1,7 @@
 package donggolf.android.activities
 
+import android.app.Activity
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
@@ -49,12 +51,14 @@ class IntroActivity : RootActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
 
-        mAuth = FirebaseAuth.getInstance();
+//        mAuth = FirebaseAuth.getInstance();
 
-        val user = mAuth!!.getCurrentUser()
+//        val user = mAuth!!.getCurrentUser()
 
         this.context = this
-        progressDialog = ProgressDialog(context)
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
 
         // clear all notification
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -105,6 +109,7 @@ class IntroActivity : RootActivity() {
     private fun stopIntro() {
 
         val autoLogin = PrefUtils.getBooleanPreference(context, "auto")
+
 //        val first = PrefUtils.getBooleanPreference(context, "first")
 
         if (!autoLogin) {
@@ -112,6 +117,9 @@ class IntroActivity : RootActivity() {
 
             val intent = Intent(context, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.setAction((Intent.ACTION_MAIN))
+            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
 
         } else {
@@ -167,12 +175,18 @@ class IntroActivity : RootActivity() {
                             intent.putExtra("content_id", content_id.toInt())
                             intent.putExtra("friend_id", friend_id.toInt())
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.setAction((Intent.ACTION_MAIN))
+                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
 
                             finish()
                         } else {
                             var intent = Intent(context, LoginActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.setAction((Intent.ACTION_MAIN))
+                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
 //                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
@@ -191,5 +205,10 @@ class IntroActivity : RootActivity() {
         })
 
     }
+
+    override fun onNewIntent(intent: Intent?) {
+
+    }
+
 
 }

@@ -7,12 +7,14 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.base.Utils
 import donggolf.android.models.MutualFriendData
+import org.json.JSONObject
 
-class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<Map<String,Boolean>>) : ArrayAdapter<Map<String,Boolean>>(context,view, data) {
+class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<Map<String,Boolean>> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -32,23 +34,28 @@ class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<Map<String,B
             }
         }
 
-        var tmpData : Map<String,Boolean> = data.get(position)
+        var json = data.get(position)
 
-        //item.item_profileImg.setImageResource(tmpData.profileImg)
-        item.itemTV.setText(tmpData.keys.toString())
-        if (tmpData.getValue(tmpData.keys.toString()) == true){
-            item.itemRdo.setImageResource(R.drawable.btn_radio_on)
-        }else{
-            item.itemRdo.setImageResource(R.drawable.btn_radio_off)
+        var type = json.getJSONObject("Regions")
+
+        var name:String = Utils.getString(type,"name")
+        item.itemTV.text = name
+
+        var isSel = json.getBoolean("isSelectedOp")
+        if (isSel){
+            item.itemRdoon.visibility = View.VISIBLE
+            item.itemRdooff.visibility = View.GONE
+        } else {
+            item.itemRdooff.visibility = View.VISIBLE
+            item.itemRdoon.visibility = View.GONE
         }
-
 
         //item.item_relationIV.setImageResource(R.drawable.icon_second)
 
         return retView
     }
 
-    override fun getItem(position: Int): Map<String,Boolean> {
+    override fun getItem(position: Int): JSONObject {
 
         return data.get(position)
     }
@@ -71,10 +78,12 @@ class DlgRegionAdapter(context: Context, view: Int, data: ArrayList<Map<String,B
     class ViewHolder(v: View) {
 
         var itemTV : TextView
-        var itemRdo : ImageView
+        var itemRdoon : ImageView
+        var itemRdooff : ImageView
         init {
             itemTV = v.findViewById(R.id.itemTV)
-            itemRdo = v.findViewById(R.id.itemRdo)
+            itemRdoon = v.findViewById(R.id.itemRdoon)
+            itemRdooff = v.findViewById(R.id.itemRdooff)
         }
     }
 }

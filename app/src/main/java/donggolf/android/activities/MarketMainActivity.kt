@@ -6,8 +6,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AbsListView
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -39,9 +41,14 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var formData = ArrayList<JSONObject>() // 분류
 
     var values = ""
+    var product_type = ""
+    var form  = ""
+    var brand = ""
 
     var page = 1
     var totalPage = 1
+    var todayCount = 0
+    var monthCount = 0
     private var userScrolled = false
     private var lastItemVisibleFlag = false
     private var totalItemCountScroll = 0
@@ -54,11 +61,26 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }
-
+    internal var pullupReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all",page)
+            }
+        }
+    }
+    internal var deleteReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                getSecondHandMarketItems("all",page)
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_market_main)
@@ -67,6 +89,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         var filter1 = IntentFilter("GOODS_ADD")
         registerReceiver(reLoadDataReceiver, filter1)
+        var filter2 = IntentFilter("DELETE_OK")
+        registerReceiver(deleteReciver, filter2)
+        var filter3 = IntentFilter("PULL_UP")
+        registerReceiver(pullupReceiver, filter3)
 
         finishmLL.setOnClickListener {
             finish()
@@ -80,7 +106,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, brandData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
 
-        getSecondHandMarketItems("all")
+        getSecondHandMarketItems("all",1)
 
         //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
@@ -94,6 +120,19 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         addgoodsTV.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (todayCount >= 5){
+                Toast.makeText(context, "하루에 5개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }else if (monthCount >= 40) {
+                Toast.makeText(context, "한달에 40개 이상 등록하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             var intent = Intent(this, AddGoodsActivity::class.java)
             startActivity(intent)
         }
@@ -120,10 +159,17 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var json = productCategoryAdatper.getItem(position)
                 var type = json.getJSONObject("ProductCategory")
-                val title = Utils.getString(type, "title")
+                var title = Utils.getString(type, "title")
                 entireClassificationTV.text = title
-                values = title
-                formData[position].put("isSelectedOp", true)
+                if (title.equals("분류전체")){
+                    title = ""
+                }
+                form = title
+//                formData[position].put("isSelectedOp", true)
+                getSecondHandMarketItems("form",1)
+
+
+
                 productCategoryAdatper.notifyDataSetChanged()
 
                 alert.dismiss()
@@ -158,11 +204,16 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var json = categoryAdapter.getItem(position)
                 var type = json.getJSONObject("GoodsCategory")
-                val title = Utils.getString(type, "title")
+                var title = Utils.getString(type, "title")
                 entireBrandTV.text = title
-                values = title
-                brandData[position].put("isSelectedOp", true)
+                if (title.equals("브랜드전체")){
+                    title = ""
+                }
+                brand = title
+//                brandData[position].put("isSelectedOp", true)
                 categoryAdapter.notifyDataSetChanged()
+
+                getSecondHandMarketItems("brand",1)
 
                 alert.dismiss()
             }
@@ -196,12 +247,17 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
-                val title = Utils.getString(type, "title")
+                var title = Utils.getString(type, "title")
+                Log.d("타이틀",title)
                 entireTypeTV.text = title
-                values = title
-                productData[position].put("isSelectedOp", true)
-                productTypeAdapter.notifyDataSetChanged()
+                if (title.equals("종류전체")){
+                    title = ""
+                }
+                product_type = title
+//                productData[position].put("isSelectedOp", true)
 
+                productTypeAdapter.notifyDataSetChanged()
+                getSecondHandMarketItems("type",1)
                 alert.dismiss()
             }
 
@@ -211,6 +267,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         market_mngIV.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             startActivity(Intent(context,MarketManageActivity::class.java))
         }
 
@@ -250,6 +310,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                         }
                     }
 
+
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
                             brandData.add(category.get(i) as JSONObject)
@@ -273,11 +334,16 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
-    fun getSecondHandMarketItems(type : String){
+    //마켓 목록뽑기
+    fun getSecondHandMarketItems(type : String ,page :Int){
         val params = RequestParams()
         params.put("type", type)
         params.put("value", values)
         params.put("page", page)
+        params.put("product_type", product_type)
+        params.put("form", form)
+        params.put("brand", brand)
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
 
         MarketAction.get_market_product(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -286,8 +352,11 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok"){
                     val marketItems = response.getJSONArray("marketItems")
 
-                    page = response.getInt("page")
+                    Log.d("마켓목록",marketItems.toString())
+                    this@MarketMainActivity.page = response.getInt("page")
                     totalPage = response.getInt("totalPage")
+                    todayCount = response.getInt("todayCount")
+                    monthCount = response.getInt("monthCount")
 
                     if(page == 1) {
                         adapterData.clear()
@@ -328,7 +397,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 page++
                 lastcount = totalItemCountScroll
 
-                getSecondHandMarketItems("all")
+                getSecondHandMarketItems("all",page)
             }
         }
     }

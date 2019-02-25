@@ -46,9 +46,8 @@
                         android:textSize="13dp" />
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
                         <LinearLayout
                             android:id="@+id/btn_opDongchatMenu"
@@ -66,6 +65,7 @@
                     </RelativeLayout>
                 </LinearLayout>
 
+
             </LinearLayout>
 
             <ImageView
@@ -73,29 +73,194 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/line_0"/>
 
-
-
+            <LinearLayout
+                android:id="@+id/noticevisibleLL"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#ffffff">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/icon_notice_green"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"/>
+                <TextView
+                    android:id="@+id/noticeTV"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="공지사항"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="10dp"/>
+                <LinearLayout
+                    android:id="@+id/cancleLL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="10dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/btn_cancel"/>
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_weight="1">
                 <ListView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/chatCont"/>
+                    android:layout_height="match_parent"
+                    android:id="@+id/chatCont"
+                    android:transcriptMode="alwaysScroll"
+                    android:scrollbars="none"
+                    android:divider="@null"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:visibility="gone"
+                    android:layout_above="@+id/llLL"
+                    android:id="@+id/downnoticevisibleLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#ffffff">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/icon_notice_green"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"/>
+                    <TextView
+                        android:id="@+id/downnoticeTV"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="공지사항"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="10dp"/>
+                    <LinearLayout
+                        android:id="@+id/downcancleLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/btn_cancel"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_alignParentBottom="true">
+
+                    <LinearLayout
+                        android:id="@+id/llLL"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true">
+                        <LinearLayout
+                            android:id="@+id/gofindpictureLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp"
+                                android:layout_margin="10dp"
+                                android:layout_weight="3.2"
+                                android:background="@drawable/btn_add_photo" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/commentLL"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp">
+                            <RelativeLayout
+                                android:layout_width="45dp"
+                                android:layout_height="match_parent">
+                                <ImageView
+                                    android:id="@+id/addedImgIV"
+                                    android:layout_width="50dp"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:layout_margin="1dp"/>
+                                <ImageView
+                                    android:id="@+id/delIV"
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
+                                    android:background="@mipmap/btn_del_picture"
+                                    android:layout_alignParentRight="true"/>
+                                <ImageView
+                                    android:id="@+id/del2IV"
+                                    android:paddingBottom="7dp"
+                                    android:paddingLeft="7dp"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:background="@drawable/btn_del_picture"
+                                    android:visibility="gone"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/contentET"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:gravity="center"
+                            android:textSize="13dp"
+                            android:hint="입력"/>
+
+                        <TextView
+                            android:id="@+id/addchattingTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="등록"
+                            android:textColor="#0ED92F"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+            </RelativeLayout>
+
+
 
         </LinearLayout>
         <!--여기까지 채팅창-->
 
         <!--여기부터 오른쪽 메뉴 ; 서랍효과 낼 레이아웃을 DrawerLayout으로 감싼다 -->
         <LinearLayout
+            android:layout_gravity="right"
+            android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/dongchat_right_menu"
-            android:orientation="vertical"
-            android:layout_gravity="right"
-            android:gravity="right" >
+            android:orientation="vertical" >
             <LinearLayout
                 android:background="#ffffff"
                 android:layout_width="280dp"
@@ -123,6 +288,7 @@
 
                                 android:text="대화멤버 "/>
                             <TextView
+                                android:id="@+id/chatmembercountTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
@@ -135,6 +301,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="7"/>
                         <LinearLayout
+                            android:id="@+id/allviewLL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="right"
@@ -156,20 +323,32 @@
                 </LinearLayout><!--여기까지 맨윗단-->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:orientation="horizontal">
-                    <Gallery
+                    <LinearLayout
+                        android:id="@+id/memberlistLL"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"/>
-                    <TextView
-                        android:id="@+id/showMoreTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:layout_marginRight="20dp"
-                        android:text="..."/>
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:orientation="horizontal">
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/showMoreTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:textSize="12dp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:layout_marginRight="20dp"
+                            android:layout_alignParentRight="true"
+                            android:text="..."/>
+                    </RelativeLayout>
+
+
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/addChatMemberLL"
@@ -241,6 +420,7 @@
                         android:background="@drawable/line_1"/>
 
                     <LinearLayout
+                        android:id="@+id/chatSettingmemberLL"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
@@ -263,6 +443,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/line_1"/>
                     <LinearLayout
+                        android:id="@+id/chatvisibleLL"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp">
@@ -319,6 +500,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/line_1"/>
                 <LinearLayout
+                    android:id="@+id/chatsizeLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -331,13 +513,14 @@
                         android:textSize="13dp"
                         android:text="채팅방 글자 크기"/>
                     <TextView
+                        android:id="@+id/textsizeTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="right"
                         android:textSize="13dp"
                         android:textStyle="bold"
-                        android:text="아주 크게"/>
+                        android:text="보통"/>
                 </LinearLayout>
                 <ImageView
                     android:layout_width="match_parent"
@@ -373,13 +556,23 @@
                     android:padding="10dp"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginRight="25dp"
-                        android:src="@drawable/img_alarm_off"/>
+                        android:id="@+id/pushonIV"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@mipmap/img_alarm_off"
+                        android:layout_margin="15dp"/>
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:visibility="gone"
+                        android:id="@+id/pushoffIV"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@mipmap/icon_off_alarm"
+                        android:layout_margin="15dp"/>
+                    <ImageView
+                        android:id="@+id/outchatIV"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="15dp"
                         android:src="@drawable/btn_out_chat"/>
                 </LinearLayout>
 

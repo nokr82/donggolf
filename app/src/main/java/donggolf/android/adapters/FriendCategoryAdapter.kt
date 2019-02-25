@@ -42,7 +42,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         json.put("title",Utils.getString(category,"category"))
 
         item.cateTitleTV.text = Utils.getString(category,"category")
-        item.item_category_count.visibility = View.INVISIBLE
+        item.item_category_count.setText(Utils.getString(category,"peoplecnt"))
 
         var listFirst = true
         var alarmTxt = ""
@@ -57,6 +57,9 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
             }else{
                 alarmTxt += "/채팅"
             }
+            item.pushTV.visibility = View.VISIBLE
+        } else {
+            item.pushTV.visibility = View.GONE
         }
         if (Utils.getString(category,"login") == "y"){
             if (listFirst){
@@ -100,6 +103,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         var alarmListTV : TextView
         var item_category_count : TextView
         var btn_category_del : ImageView
+        var pushTV : TextView
 
         init {
 
@@ -107,6 +111,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
             alarmListTV = v.findViewById(R.id.alarmListTV)
             item_category_count = v.findViewById(R.id.item_category_count)
             btn_category_del = v.findViewById(R.id.btn_category_del)
+            pushTV = v.findViewById(R.id.pushTV)
 
         }
 

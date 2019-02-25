@@ -21,11 +21,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject>,FreeFragment:FreeFragment) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<JSONObject> = data
+    var FreeFragment:FreeFragment = FreeFragment
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -48,12 +49,19 @@ open class MainEditAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var SearchList = json.getJSONObject("SearchList")
+        var searchid = Utils.getString(SearchList,"id")
 
         var content:String = Utils.getString(SearchList,"content")
         item.main_edit_listitem_title.text = content
 
         var created = Utils.getString(SearchList,"created")
         item.main_edit_listitem_date.text = created
+
+        item.main_edit_listitem_delete.setOnClickListener {
+            FreeFragment.deleteSearchList(searchid)
+            removeItem(position)
+            notifyDataSetChanged()
+        }
 
         return retView
     }

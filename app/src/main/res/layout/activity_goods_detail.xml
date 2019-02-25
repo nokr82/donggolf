@@ -12,6 +12,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true">
@@ -75,7 +76,7 @@
                             android:id="@+id/tagTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="#타이틀 리스트 정품"
+                            android:text="# 태그없음"
                             android:textColor="#C9C9C9"
                             android:textSize="13dp"
                             android:textStyle="bold" />
@@ -137,8 +138,9 @@
                     android:padding="10dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
                         android:orientation="vertical">
 
                         <TextView
@@ -198,11 +200,13 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
 
+                    <LinearLayout
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:gravity="right">
                         <LinearLayout
+                            android:visibility="gone"
                             android:id="@+id/show_mng_dlgLL"
                             android:layout_width="40dp"
                             android:layout_height="match_parent"
@@ -217,7 +221,7 @@
                                 android:layout_gravity="center"
                                 android:background="@mipmap/btn_posting_option" />
                         </LinearLayout>
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
                 <!--날자랑 플러스표시-->
                 <TextView
@@ -280,16 +284,30 @@
 
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
-
-                        <TextView
+                        <LinearLayout
                             android:id="@+id/moresellerpostTV"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:orientation="vertical"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="20dp"
-                            android:gravity="center"
-                            android:text="판매자 글 더보기"
-                            android:textSize="15dp" />
+                            android:layout_marginRight="20dp">
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:gravity="center|right"
+                                android:text="판매자 글 더보기"
+                                android:textSize="15dp" />
+                            <TextView
+                                android:id="@+id/sellercountTV"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:gravity="center|right"
+                                android:layout_marginRight="40dp"
+                                android:text="(0)"
+                                android:textSize="15dp" />
+                        </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -428,6 +446,7 @@
                             android:background="@mipmap/register" />
 
                         <LinearLayout
+                            android:id="@+id/findLL"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
@@ -461,7 +480,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:text="제공 : 더치트(TheCheat.co.kr)"
+                        android:text="제공 : 경찰청 사이버안전국"
                         android:textSize="13dp" />
                 </LinearLayout>
 
@@ -471,7 +490,7 @@
 
                     <TextView
                         android:id="@+id/reportTV"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="20dp"

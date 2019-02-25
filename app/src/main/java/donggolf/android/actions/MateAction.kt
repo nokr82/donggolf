@@ -57,4 +57,16 @@ object MateAction {
     fun updateCategory(params: RequestParams, handler: JsonHttpResponseHandler){
         HttpClient.post("/mate/modify_category.json", params, handler)
     }
+
+    fun get_together_mate(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/get_together_mate.json", params, handler)
+    }
+
+    fun cancle_mate(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/cancle_mate.json", params, handler)
+    }
+
+    fun block_cancle(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/block_cancle.json", params, handler)
+    }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">donggolf</string>
+    <string name="app_name">동네골프</string>
 
     <!-- date formatter -->
     <string name="interval_day">%1$d일전</string>
@@ -18,10 +18,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main2">Main2Activity</string>
 
-    <string name="kakao_app_key">0ece568bf9a6e79d99947fe2a29a4881</string>
-    <string name="kakao_scheme">kakao0ece568bf9a6e79d99947fe2a29a4881</string>
-    <string name="kakaolink_host">market://details?id=donggolf.android</string>
 
     <string name="default_notification_channel_id">donggolf</string>
+    <string name="kakao_app_key">0ece568bf9a6e79d99947fe2a29a4881</string>
+    <string name="kakao_scheme">kakao0ece568bf9a6e79d99947fe2a29a4881</string>
+    <string name="kakaolink_host">kakaolink</string>
 
 </resources>

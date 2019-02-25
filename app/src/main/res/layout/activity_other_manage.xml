@@ -21,15 +21,15 @@
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_back" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="기타관리"
+                android:textSize="15dp"
+                android:textColor="#000000" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="기타관리"
-            android:textSize="15dp"
-            android:textColor="#000000" />
     </LinearLayout>
     <ImageView
         android:layout_width="match_parent"
@@ -234,13 +234,21 @@
             android:paddingLeft="20dp"
             android:paddingRight="10dp">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:padding="10dp"
                 android:textSize="13dp"
                 android:text="로그인상태"/>
+            <TextView
+                android:id="@+id/statusTV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#0EDA2F"
+                android:layout_marginRight="8dp"
+                android:text="자동"/>
 
         </LinearLayout>
     </LinearLayout>

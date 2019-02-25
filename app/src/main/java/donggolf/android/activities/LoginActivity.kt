@@ -10,9 +10,9 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.FirebaseUser
+//import com.google.firebase.firestore.FirebaseFirestore
 import donggolf.android.R
 import donggolf.android.actions.InfoAction
 import donggolf.android.base.PrefUtils
@@ -21,9 +21,9 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_login.*
 import android.provider.SyncStateContract.Helpers.update
 import android.content.pm.PackageManager
-import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
 import android.content.pm.PackageInfo
 import android.util.Base64
+import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.squareup.okhttp.internal.Util
@@ -40,8 +40,10 @@ class LoginActivity : RootActivity() {
 
     private lateinit var context: Context
     private var progressDialog: ProgressDialog? = null
-    private lateinit var mAuth: FirebaseAuth
-
+//    private lateinit var mAuth: FirebaseAuth
+    var sidotype = ""
+    var goguntype = ""
+    var region_id = ""
     var autoLogin = false
     var email = ""
     var password = ""
@@ -51,11 +53,17 @@ class LoginActivity : RootActivity() {
         setContentView(R.layout.activity_login)
 
         context = this
-        progressDialog = ProgressDialog(context)
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
+
+//        PrefUtils.setPreference(context, "sidotype", sidotype)
+//        PrefUtils.setPreference(context, "goguntype", goguntype)
+//        PrefUtils.setPreference(context, "region_id", region_id)
 
         //getKeyHash(context)
 
-        mAuth = FirebaseAuth.getInstance()
+//        mAuth = FirebaseAuth.getInstance()
 
         //PrefUtils.clear(context)
 
@@ -79,6 +87,27 @@ class LoginActivity : RootActivity() {
             movefinPassword()
         }
 
+        autologinRL.setOnClickListener {
+            if (checkIV.visibility == View.GONE) {
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("로그인상태를 유지하시겠습니까?\n타인의 개인정보 도용에 주의하시기 바랍니다.")
+
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                            checkIV.visibility = View.VISIBLE
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                        })
+                val alert = builder.create()
+                alert.show()
+            } else {
+                checkIV.visibility = View.GONE
+            }
+        }
+
         autologinCB.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder
@@ -94,8 +123,6 @@ class LoginActivity : RootActivity() {
                     })
             val alert = builder.create()
             alert.show()
-
-
         }
 
     }
@@ -141,12 +168,15 @@ class LoginActivity : RootActivity() {
                         val isActive = Utils.getString(member,"status")
                         if (isActive == "a") {
 
-                            if (autologinCB.isChecked) {
+                            if (checkIV.visibility == View.VISIBLE) {
                                 PrefUtils.setPreference(context, "email", email)
                                 PrefUtils.setPreference(context, "pass", password)
                                 PrefUtils.setPreference(context, "auto", true)
 
                             } else {
+                                PrefUtils.setPreference(context, "email", email)
+                                PrefUtils.setPreference(context, "pass", password)
+                                PrefUtils.setPreference(context, "auto", false)
                                 //PrefUtils.setPreference(context, "auto", false)
                             }
 
@@ -156,11 +186,35 @@ class LoginActivity : RootActivity() {
                             startActivity(Intent(context, MainActivity::class.java))
 
                             finish()
-                        } else {
-                            PrefUtils.setPreference(context,"isActiveAccount", "i")
-                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+
+                            val builder = AlertDialog.Builder(context)
+                            builder
+                                    .setMessage("휴면계정을 해제 하시겠습니까 ?")
+
+                                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+
+                                        updateDormancy(member_id)
+                                        dialog.cancel()
+
+                                    })
+                                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                                        PrefUtils.setPreference(context,"isActiveAccount", "i")
+                                        dialog.cancel()
+                                    })
+
+                            val alert = builder.create()
+                            alert.show()
+
+
+
+//                            PrefUtils.setPreference(context,"isActiveAccount", "i")
+//                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }
 
+                    }else{
+                        Toast.makeText(context,"일치하는 회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -177,8 +231,7 @@ class LoginActivity : RootActivity() {
     }
 
     fun nomemberlogin() {
-        val email = emailET.text.toString()
-        val password = passwordET.text.toString()
+        startActivity(Intent(context, MainActivity::class.java))
     }
 
     fun movefindid() {
@@ -198,6 +251,29 @@ class LoginActivity : RootActivity() {
         startActivity(Intent(this, RegisterActivity::class.java))
     }
 
+    fun updateDormancy(member_id:Int){
+        val params = RequestParams()
+        params.put("member_id", member_id)
+        params.put("type","status")
+        params.put("update", "a")
+        MemberAction.update_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok"){
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+/*
     companion object {
         fun setLoginData(context: Context, user: FirebaseUser?) {
             println("loginActivity user : $user")
@@ -223,7 +299,7 @@ class LoginActivity : RootActivity() {
             PrefUtils.setPreference(context, "nick", nick)
 
         }
-    }
+    }*/
 
     fun getKeyHash(context: Context) : String? {
         try {

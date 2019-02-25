@@ -27,9 +27,23 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="새글 알림 설정"
+            android:text="새글 알림 키워드 설정하기 ("
             android:textColor="#000000"
             android:textSize="15dp" />
+        <TextView
+            android:id="@+id/keywordcntTV"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="15dp"
+            android:gravity="center"
+            android:text="0"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="15dp"
+            android:gravity="center"
+            android:text="/15 )"/>
     </LinearLayout>
 
     <ImageView
@@ -93,6 +107,7 @@
 
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
@@ -104,7 +119,6 @@
             android:layout_marginLeft="20dp"
             android:text="설정 가능한 키워드"/>
         <TextView
-            android:id="@+id/keywordcntTV"
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,6 +135,7 @@
 
 
     <ListView
+        android:scrollbars="none"
         android:id="@+id/listviewLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

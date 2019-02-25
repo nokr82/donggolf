@@ -1,9 +1,13 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -15,8 +19,10 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_request_friend.*
+import kotlinx.android.synthetic.main.item_mate_manage.view.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayInputStream
 
 class RequestFriendActivity : RootActivity() {
 
@@ -30,6 +36,8 @@ class RequestFriendActivity : RootActivity() {
 
     val SELECT_CATEGORY = 101
 
+    var wait = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_friend)
@@ -41,32 +49,92 @@ class RequestFriendActivity : RootActivity() {
 
         val type = intent.getStringExtra("type")
         if (type == "waiting") {
-            println("type----$type")
+            wait = "wait"
             getFriendList("w", 0)
-        }/* else if (type == "block") {
-
-        } else if (type == "first") {
-            getFriendList("m",1)
+        } else if (type == "send"){
+            wait = "send"
+            titleTV.setText("보낸 친구 요청")
+            swc_alarm_req_frd.visibility = View.GONE
+            titlevatLL.visibility = View.GONE
+            getFriendList("w", 0)
         } else {
-            var cateID = intent.getIntExtra("category_id", 0)
-            getFriendList("m", cateID)
-        }*/
+            wait = "block"
+            titleTV.setText("차단 목록")
+            swc_alarm_req_frd.visibility = View.GONE
+            titlevatLL.visibility = View.GONE
+            getFriendList("b", 0)
+        }
+
+        requestFriends.setOnItemClickListener { parent, view, position, id ->
+            val item = mateRequestList.get(position)
+            val matemember = item.getJSONObject("MateMember")
+            val mate_id = Utils.getString(matemember,"id")
+            println("-----------------------------------$mate_id")
+            val mate_nick = Utils.getString(matemember,"nick")
+            val member = item.getJSONObject("Member")
+            val member_id = Utils.getString(member,"id")
+            val member_nick = Utils.getString(member,"nick")
+            val division = item.getString("division")
+
+            view.accLL.setOnClickListener {
+                val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
+                acceptItt.putExtra("mate_id",member_id)
+                startActivityForResult(acceptItt,SELECT_CATEGORY)
+            }
+
+            view.refuseLL.setOnClickListener {
+                refuse(member_id)
+            }
+
+            view.cancleLL.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("$mate_nick 님에게 보낸 친구 요청을 취소하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                            cancle(mate_id)
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                        })
+
+                val alert = builder.create()
+                alert.show()
+            }
+
+            view.blockcancleLL.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("$mate_nick 님을 차단해제 하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            block_cancle(mate_id)
+                            dialog.cancel()
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                        })
+
+                val alert = builder.create()
+                alert.show()
+            }
+
+            var intent = Intent(context, ProfileActivity::class.java)
+            if (wait == "wait"){
+                intent.putExtra("member_id", member_id)
+            } else {
+                intent.putExtra("member_id", mate_id)
+            }
+            startActivity(intent)
+
+        }
 
         //전체선택버튼
         frdReq_check_all.setOnClickListener {
             if (!checkAll){
                 checkAll = true
                 checkIcon.visibility = View.VISIBLE
-
-
-//                matesRequestAdapter.isCheckedMate = true
-//
-//                for (i in 0 until mateRequestList.size) {
-//                    matesRequestAdapter.isCheckedMate = true
-//
-//                }
-//
-//                matesRequestAdapter.notifyDataSetChanged()
 
             } else {
                 mateList.clear()
@@ -108,7 +176,6 @@ class RequestFriendActivity : RootActivity() {
 
             MateAction.rejectMateRequest(params, object : JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         Utils.alert(context,"선택한 대상의 요청을 거절했습니다")
@@ -143,7 +210,7 @@ class RequestFriendActivity : RootActivity() {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        getFriendList("w",0)
+                        getFriendList("b",0)
                     }
                 }
 
@@ -156,6 +223,19 @@ class RequestFriendActivity : RootActivity() {
                 }
             })
         }
+
+        waitTV.setOnClickListener {
+            wait = "wait"
+            getFriendList("w",0)
+
+        }
+
+        btn_back.setOnClickListener {
+            var intent = Intent()
+            setResult(Activity.RESULT_OK)
+            finish()
+            Utils.hideKeyboard(this)
+        }
     }
 
     fun getFriendList(status : String, category_id : Int) {
@@ -164,6 +244,13 @@ class RequestFriendActivity : RootActivity() {
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("status", status)
         params.put("category_id", category_id)
+        if (wait == "wait"){
+            params.put("wait", wait)
+        } else if (wait == "send"){
+            params.put("wait", "send")
+        } else {
+            params.put("wait", "send")
+        }
 
         MateAction.get_mates_list(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -171,12 +258,22 @@ class RequestFriendActivity : RootActivity() {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        val mates = response.getJSONArray("mates")
                         mateRequestList.clear()
+                        val mates = response.getJSONArray("mates")
+//                        wait = ""
+                        var division = ""
+                        if (wait == "wait"){
+                            division = "w"
+                        } else if (wait == "send"){
+                            division = "s"
+                        } else {
+                            division = "b"
+                        }
                         for (i in 0 until mates.length()) {
                             val mate = mates[i] as JSONObject
 
                             mate.put("check", false)
+                            mate.put("division", division)
 
                             mateRequestList.add(mate)
                         }
@@ -202,32 +299,43 @@ class RequestFriendActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK){
             when(requestCode) {
                 SELECT_CATEGORY -> {
-                    val selCateg = data!!.getIntExtra("CategoryID", 1)
+                    val selCateg = data!!.getStringExtra("CategoryID")
+                    val mate_id = data!!.getStringExtra("mate_id")
 
-                    acceptMates(selCateg)
+                    acceptMates(selCateg,mate_id)
                 }
             }
         }
     }
 
-    fun acceptMates(category_id: Int) {
-        mateList.clear()
-
-        for (i in 0 until mateRequestList.size) {
-            if(mateRequestList.get(i).getBoolean("check")) {
-                mateList.add(mateRequestList.get(i).getInt("mate_id"))
-            }
-        }
+    fun acceptMates(category_id: String,member_id:String) {
+//        mateList.clear()
+//
+//        for (i in 0 until mateRequestList.size) {
+//            if(mateRequestList.get(i).getBoolean("check")) {
+//                mateList.add(mateRequestList.get(i).getInt("mate_id"))
+//            }
+//        }
 
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id", mateList.get(0))
+//        params.put("mate_id", mateList)
+//        Log.d("메이트",mateList.toString())
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id",  member_id)
+        /*     if (mateList != null){
+                 if (mateList!!.size != 0){
+                     for (i in 0..mateList!!.size - 1){
+                         params.put("mate_id[" + i + "]",  mateList.get(i))
+     //                    params.put("mate_id[" + i + "]",  mateList.get(i))
+                     }
+                 }
+             }*/
         params.put("category_id", category_id)
         params.put("status", "m")
 
         MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+//              Log.d("리스븐",response.toString())
                 getFriendList("w",0)
             }
 
@@ -241,6 +349,87 @@ class RequestFriendActivity : RootActivity() {
         })
     }
 
+    fun refuse(mate_id :String){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
+        params.put("status", "r")
+
+        MateAction.rejectMateRequest(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    Utils.alert(context,"선택한 대상의 요청을 거절했습니다")
+                    getFriendList("w",0)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println("reject action error : $errorResponse")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println("reject error : $responseString")
+            }
+        })
+    }
+
+    fun cancle(mate_id:String){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
+        params.put("status", "rc")
+
+        MateAction.cancle_mate(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    Utils.alert(context,"선택한 대상의 친구신청을 취소했습니다")
+                    getFriendList("w",0)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println("reject action error : $errorResponse")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println("reject error : $responseString")
+            }
+        })
+    }
+
+
+    fun block_cancle(mate_id : String){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
+
+        MateAction.block_cancle(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    getFriendList("b",0)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+        })
+    }
+
+    override fun onBackPressed() {
+        Utils.hideKeyboard(context)
+        var intent = Intent()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
 
 
 

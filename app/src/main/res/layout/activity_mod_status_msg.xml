@@ -43,7 +43,8 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="10dp"
                 android:textSize="13dp"
-                android:text="확인"/>
+                android:textColor="#0ED92F"
+                android:text="등록"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -110,7 +111,7 @@
             android:textSize="12dp"
             android:textColor="#0ED92F"
             android:textStyle="bold"
-            android:text="60"/>
+            android:text="0"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

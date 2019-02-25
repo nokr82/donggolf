@@ -7,16 +7,17 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import donggolf.android.R
+import donggolf.android.activities.FriendSearchActivity
 import donggolf.android.base.Utils
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 import java.util.*
 
-class FriendSearchAdapter (context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+class FriendSearchAdapter (context: Context, view: Int, data: ArrayList<JSONObject>, friendSearchActivity: FriendSearchActivity) : ArrayAdapter<JSONObject>(context,view, data){
 
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<JSONObject> = data
+    var friendSearchActivity = friendSearchActivity
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -38,17 +39,26 @@ class FriendSearchAdapter (context: Context, view:Int, data: ArrayList<JSONObjec
 
         var json = data.get(position)
 
-        println("FriendSearchAdapter : $json")
 
-        //var SearchList = json.getJSONObject("MateSearch")
+        var SearchList = json.getJSONObject("MateSearch")
 
-        var content:String = Utils.getString(json,"keyword")
+        var searchid = Utils.getString(SearchList,"id")
+
+        var content:String = Utils.getString(SearchList,"keyword")
         item.main_edit_listitem_title.text = content
 
-        var created = SimpleDateFormat("MM-dd").parse(Utils.getString(json,"created")).toString()
+//        var created = SimpleDateFormat("MM-dd").parse(Utils.getString(json,"created")).toString()
 
         //val dateFormat = SimpleDateFormat("MM-dd", Locale.KOREA)
-        item.main_edit_listitem_date.text = created
+        item.main_edit_listitem_date.text = Utils.getString(SearchList,"created")
+
+
+
+        item.main_edit_listitem_delete.setOnClickListener {
+            friendSearchActivity.deleteSearchList(searchid)
+            removeItem(position)
+            notifyDataSetChanged()
+        }
 
         return retView
     }

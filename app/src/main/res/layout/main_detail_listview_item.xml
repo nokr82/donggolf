@@ -15,14 +15,15 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:visibility="gone"/>
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/main_detail_comment_profileIV"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="7dp"
             android:background="@drawable/icon_profile"/>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
@@ -60,6 +61,21 @@
                 android:textSize="12dp"
                 android:textColor="#CDCDCD"/>
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right">
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/itemimageIV"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:scaleType="centerCrop"
+            android:background="#000000"/>
     </LinearLayout>
 
 </LinearLayout>

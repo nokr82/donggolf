@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.opengl.Visibility
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -23,21 +20,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import donggolf.android.R
-import donggolf.android.R.drawable.btn_write
 import donggolf.android.actions.ContentAction
-import donggolf.android.actions.SearchAction
 import donggolf.android.activities.*
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
-import donggolf.android.base.Utils
-import donggolf.android.models.Content
-import donggolf.android.models.Photo
-import donggolf.android.models.Search
-import donggolf.android.models.Text
-import kotlinx.android.synthetic.main.activity_add_post.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import org.json.JSONObject
 
 open class MainFragment : Fragment() {
@@ -73,6 +60,8 @@ open class MainFragment : Fragment() {
     var member_id = -1 //로그인 회원 아이디 값
     private val SELECT_PICTURE: Int = 101
 
+
+    var member_cnt = ""
 
     lateinit var pagerAdapter: PagerAdapter
 

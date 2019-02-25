@@ -22,6 +22,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/titleTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -29,6 +30,7 @@
             android:textSize="15dp"
             android:textColor="#000000" />
         <RelativeLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -62,6 +64,7 @@
         android:layout_height="4dp"
         android:background="@drawable/line_0" />
     <ListView
+        android:scrollbars="none"
         android:id="@+id/findpictre_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>

@@ -2,6 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -48,7 +49,7 @@ class AddGoodsActivity : RootActivity() {
     private var addPicturesLL: LinearLayout? = null
 
     private val imgSeq = 0
-
+    var sk: String? = null
     var pk: String? = null
     var images_path: ArrayList<String>? = null
     var images: ArrayList<Bitmap>? = null
@@ -59,12 +60,14 @@ class AddGoodsActivity : RootActivity() {
     private lateinit var categoryAdapter: GoodsCategoryAdapter
     private lateinit var productTypeAdapter: ProductTypeAdaapter
     private lateinit var productCategoryAdatper: ProductCategoryAdapter
+    private lateinit var pdtCategoryAdapter: PdtCategoryAdapter
     private lateinit var tradeTypeAdatper: TradeTypeAdapater
     private lateinit var regionAdatper: RegionAdapter
 
     private var categoryData = ArrayList<JSONObject>()
     private var productData = ArrayList<JSONObject>()
     private var productCategoryData = ArrayList<JSONObject>()
+    private var pdtCategoryData = ArrayList<JSONObject>()
     private var tradeTypeData = ArrayList<JSONObject>()
     private var regionData = ArrayList<JSONObject>()
     //var category = 1
@@ -82,11 +85,17 @@ class AddGoodsActivity : RootActivity() {
     var todayCount = 0
     var monthCount = 0
 
+    private var progressDialog: ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_goods)
 
         context = this
+
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
@@ -94,11 +103,14 @@ class AddGoodsActivity : RootActivity() {
         images = ArrayList()
         images_url = ArrayList()
 
+
+
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, categoryData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, productCategoryData)
         tradeTypeAdatper = TradeTypeAdapater(context, R.layout.item_dlg_market_sel_op, tradeTypeData)
         regionAdatper = RegionAdapter(context, R.layout.item_dlg_market_sel_op, regionData)
+        pdtCategoryAdapter = PdtCategoryAdapter(context, R.layout.item_dlg_market_sel_op, pdtCategoryData)
 
         getCategory()
 
@@ -128,10 +140,16 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                for (i in 0 until productData.size){
+                    productData[position].put("isSelectedOp", false)
+                }
+
+
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
                 producttypeTV.text = title
+                tendencyTV.text = "선택"
                 prod_type = title
                 productData[position].put("isSelectedOp", true)
                 productTypeAdapter.notifyDataSetChanged()
@@ -160,6 +178,10 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+                for (i in 0 until categoryData.size){
+                    categoryData[position].put("isSelectedOp", false)
+                }
+
                 var json = categoryAdapter.getItem(position)
                 var type = json.getJSONObject("GoodsCategory")
                 val title = Utils.getString(type, "title")
@@ -186,19 +208,43 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_marketLV.visibility = View.VISIBLE
             dialogView.dlg_exitIV.visibility = View.VISIBLE
             dialogView.dlg_titleTV.visibility = View.VISIBLE
-            dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            val product = producttypeTV.text.toString()
+            if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
+                dialogView.dlg_marketLV.adapter = pdtCategoryAdapter
+             } else {
+                dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            }
+
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                var json = productCategoryAdatper.getItem(position)
-                var type = json.getJSONObject("ProductCategory")
-                val title = Utils.getString(type, "title")
-                tendencyTV.text = title
-                prod_form = title
-                productCategoryData[position].put("isSelectedOp", true)
-                productCategoryAdatper.notifyDataSetChanged()
+                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
+
+                    for (i in 0 until pdtCategoryData.size){
+                        pdtCategoryData[position].put("isSelectedOp", false)
+                    }
+                    var json = pdtCategoryAdapter.getItem(position)
+                    var type = json.getJSONObject("PdtCategory")
+                    val title = Utils.getString(type, "title")
+                    tendencyTV.text = title
+                    prod_form = title
+                    pdtCategoryData[position].put("isSelectedOp", true)
+                    pdtCategoryAdapter.notifyDataSetChanged()
+                } else {
+                    for (i in 0 until productCategoryData.size){
+                        productCategoryData[position].put("isSelectedOp", false)
+                    }
+
+                    var json = productCategoryAdatper.getItem(position)
+                    var type = json.getJSONObject("ProductCategory")
+                    val title = Utils.getString(type, "title")
+                    tendencyTV.text = title
+                    prod_form = title
+                    productCategoryData[position].put("isSelectedOp", true)
+                    productCategoryAdatper.notifyDataSetChanged()
+                }
 
                 alert.dismiss()
             }
@@ -224,6 +270,8 @@ class AddGoodsActivity : RootActivity() {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+
+
                 var position = regionAdatper.getItem(position)
                 var type = position.getJSONObject("Region")
                 val title = Utils.getString(type, "name")
@@ -265,6 +313,10 @@ class AddGoodsActivity : RootActivity() {
                     pay_wayLL.visibility = View.GONE
                 }
 
+                if (title == "안전거래(준비중입니다)"){
+                    Toast.makeText(context, "준비중입니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnItemClickListener
+                }
                 alert.dismiss()
             }
 
@@ -279,9 +331,56 @@ class AddGoodsActivity : RootActivity() {
         //등록버튼
         registerLL.setOnClickListener {
             if (modified_product_id != 0){
-                modifyProductInform()
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("수정하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            modifyProductInform()
+
+                            Utils.hideKeyboard(this)
+
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+
+                            Utils.hideKeyboard(this)
+
+
+                        })
+                val alert = builder.create()
+                alert.show()
+
             }else {
-                register_product()
+
+
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("등록하시겠습니까 ?")
+
+                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+                            register_product()
+
+                            Utils.hideKeyboard(this)
+
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+
+
+                            Utils.hideKeyboard(this)
+
+
+                        })
+                val alert = builder.create()
+                alert.show()
+
+
             }
         }
 
@@ -332,11 +431,13 @@ class AddGoodsActivity : RootActivity() {
                                 val img_uri = Utils.getString(tmpImg, "img_uri")
                                 val image = Config.url + img_uri
 
-                                images_path!!.add(img_uri)
+                                reset2(image,i)
 
-                                var imgView = View.inflate(context, R.layout.item_addgoods, null)
-                                ImageLoader.getInstance().displayImage(image, imgView.addedImgIV, Utils.UILoptionsProfile)
-                                addPicturesLL?.addView(imgView)
+//                                images_path!!.add(img_uri)
+//
+//                                var imgView = View.inflate(context, R.layout.item_addgoods, null)
+//                                ImageLoader.getInstance().displayImage(image, imgView.addedImgIV, Utils.UILoptionsProfile)
+//                                addPicturesLL?.addView(imgView)
                             }
                         }
                     }
@@ -359,7 +460,10 @@ class AddGoodsActivity : RootActivity() {
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
 
-                var intent = Intent(context, FindPictureGridActivity::class.java)
+//                var intent = Intent(context, FindPictureGridActivity::class.java)
+                var intent = Intent(context, FindPictureActivity::class.java);
+                intent.putExtra("image","image")
+
                 startActivityForResult(intent, SELECT_PICTURE)
 
             }
@@ -495,12 +599,51 @@ class AddGoodsActivity : RootActivity() {
             }
         }
         val bitmap = BitmapFactory.decodeFile(str)
-        val v = View.inflate(context, R.layout.item_add_image, null)
-        val imageIV = v.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+        val v = View.inflate(context, R.layout.item_addgoods, null)
+        val imageIV = v.findViewById<View>(R.id.addedImgIV) as ImageView
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
         imageIV.setImageBitmap(bitmap)
         delIV.tag = i
 
+        if (imgSeq == 0) {
+            addPicturesLL!!.addView(v)
+        }
+
+    }
+
+    fun reset2(str: String, i: Int) {
+//        val options = BitmapFactory.Options()
+//        options.inJustDecodeBounds = true
+//        BitmapFactory.decodeFile(str, options)
+//        options.inJustDecodeBounds = false
+//        options.inSampleSize = 1
+//        if (options.outWidth > 96) {
+//            val ws = options.outWidth / 96 + 1
+//            if (ws > options.inSampleSize) {
+//                options.inSampleSize = ws
+//            }
+//        }
+//        if (options.outHeight > 96) {
+//            val hs = options.outHeight / 96 + 1
+//            if (hs > options.inSampleSize) {
+//                options.inSampleSize = hs
+//            }
+//        }
+        println("------imagespath ---- $str")
+//        images_path.add(str)
+        var add_file = Utils.getImage(context.contentResolver, str)
+        val bitmap = BitmapFactory.decodeFile(str)
+        var v = View.inflate(context, R.layout.item_addgoods, null)
+//        val imageIV = v.findViewById(R.id.addedImgIV) as ImageView
+        val delIV = v.findViewById<View>(R.id.delIV) as ImageView
+        ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
+        delIV.tag = i
+        delIV.setOnClickListener {
+            addPicturesLL!!.removeView(v)
+//            Log.d("아이디값",delids.toString())
+
+//            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
+        }
         if (imgSeq == 0) {
             addPicturesLL!!.addView(v)
         }
@@ -518,8 +661,8 @@ class AddGoodsActivity : RootActivity() {
                     images_path!!.removeAt(tag)
 
                     for (k in images_url!!.indices) {
-                        val vv = View.inflate(context, R.layout.item_add_image, null)
-                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val vv = View.inflate(context, R.layout.item_addgoods, null)
+                        val imageIV = vv.findViewById<View>(R.id.addedImgIV) as ImageView
                         val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
                         delIV.visibility = View.GONE
                         val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
@@ -567,8 +710,8 @@ class AddGoodsActivity : RootActivity() {
                     images_id!!.removeAt(tag)
 
                     for (k in images_url!!.indices) {
-                        val vv = View.inflate(context, R.layout.item_add_image, null)
-                        val imageIV = vv.findViewById<View>(R.id.imageIV) as SelectableRoundedImageView
+                        val vv = View.inflate(context, R.layout.item_addgoods, null)
+                        val imageIV = vv.findViewById<View>(R.id.addedImgIV) as ImageView
                         val delIV = vv.findViewById<View>(R.id.delIV) as ImageView
                         delIV.visibility = View.GONE
                         val del2IV = vv.findViewById<View>(R.id.del2IV) as ImageView
@@ -637,6 +780,7 @@ class AddGoodsActivity : RootActivity() {
                     val category = response.getJSONArray("category")
                     val producttype = response.getJSONArray("producttype")
                     val productcategory = response.getJSONArray("productcategory")
+                    val pdtcategory = response.getJSONArray("pdtcategory")
                     val tradetype = response.getJSONArray("tradetype")
                     val region = response.getJSONArray("region")
 
@@ -661,6 +805,13 @@ class AddGoodsActivity : RootActivity() {
                         for (i in 0 until productcategory.length()) {
                             productCategoryData.add(productcategory.get(i) as JSONObject)
                             productCategoryData.get(i).put("isSelectedOp", false)
+                        }
+                    }
+
+                    if (pdtcategory.length() > 0 && pdtcategory != null) {
+                        for (i in 0 until pdtcategory.length()) {
+                            pdtCategoryData.add(pdtcategory.get(i) as JSONObject)
+                            pdtCategoryData.get(i).put("isSelectedOp", false)
                         }
                     }
 
@@ -716,6 +867,11 @@ class AddGoodsActivity : RootActivity() {
                 return
             }
 
+            if (prod_form == "" || prod_form == null){
+                Toast.makeText(context, "형태/성향은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             if (prod_regoin == "" || prod_regoin == null){
                 Toast.makeText(context, "지역은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
                 return
@@ -725,6 +881,13 @@ class AddGoodsActivity : RootActivity() {
                 Toast.makeText(context, "거래방법은 필수 선택입니다.", Toast.LENGTH_SHORT).show()
                 return
             }
+
+            if (images_path!!.size == 0){
+                Toast.makeText(context, "상품 사진 등록은 필수 입니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+
 
             when (delivery_typeRG.checkedRadioButtonId) {
                 R.id.seller_payRB -> {
@@ -763,6 +926,7 @@ class AddGoodsActivity : RootActivity() {
 //            }
 //        }
 
+
             if (images_path != null) {
                 if (images_path!!.size != 0) {
                     for (i in 0..images_path!!.size - 1) {
@@ -779,8 +943,9 @@ class AddGoodsActivity : RootActivity() {
 
             MarketAction.add_market_product(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
-                    println("response :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
 
                     var intent = Intent()
                     intent.action = "GOODS_ADD"
@@ -790,11 +955,27 @@ class AddGoodsActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
                     println(responseString)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                     println(errorResponse)
+                }
+                override fun onStart() {
+                    // show dialog
+                    if (progressDialog != null) {
+
+                        progressDialog!!.show()
+                    }
+                }
+
+                override fun onFinish() {
+                    if (progressDialog != null) {
+                        progressDialog!!.dismiss()
+                    }
                 }
             })
         }
@@ -822,7 +1003,7 @@ class AddGoodsActivity : RootActivity() {
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
                 if (imageIV is ImageView) {
                     val bitmap = imageIV.drawable as BitmapDrawable
-                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
+                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
                     seq++
                 }
             }
@@ -844,6 +1025,9 @@ class AddGoodsActivity : RootActivity() {
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
@@ -854,11 +1038,27 @@ class AddGoodsActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
                 println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
                 println(errorResponse)
+            }
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
+            }
+
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
             }
         })
     }

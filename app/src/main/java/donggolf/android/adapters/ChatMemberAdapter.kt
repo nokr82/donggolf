@@ -6,15 +6,20 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
+import donggolf.android.base.Utils
 import donggolf.android.models.MutualFriendData
+import org.json.JSONObject
 import kotlin.collections.ArrayList
 
-class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<MutualFriendData>) : ArrayAdapter<MutualFriendData>(context,view, data) {
+class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
 
     private lateinit var item: ViewHolder
     var view:Int = view
-    var data:ArrayList<MutualFriendData> = data
+    var data:ArrayList<JSONObject> = data
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -34,18 +39,30 @@ class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<MutualFrie
             }
         }
 
-        var tmpData : MutualFriendData = data.get(position)
+        var json= data.get(position)
 
-        //item.item_profileImg.setImageResource(tmpData.profileImg)
-        item.item_nickNameTV.setText(tmpData.nickName)
-        item.item_authorizationTV.setText(tmpData.condition)
+        var room = json.getJSONObject("Chatroom")
+        val founder = Utils.getString(room,"member_id")
 
-        //item.item_relationIV.setImageResource(R.drawable.icon_second)
+        var member = json.getJSONObject("Member")
+        var nick:String = Utils.getString(member,"nick")
+        var member_id = Utils.getString(member,"id")
+
+        var image = Config.url + Utils.getString(member, "profile_img")
+        ImageLoader.getInstance().displayImage(image, item.item_profileImg, Utils.UILoptionsUserProfile)
+
+        item.item_nickNameTV.setText(nick)
+
+        if (founder == member_id){
+//            item.item_authorizationTV.setText("개설자")
+        } else {
+            item.item_authorizationTV.setText("")
+        }
 
         return retView
     }
 
-    override fun getItem(position: Int): MutualFriendData? {
+    override fun getItem(position: Int): JSONObject? {
 
         return data.get(position)
     }
@@ -67,16 +84,16 @@ class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<MutualFrie
 
     class ViewHolder(v: View) {
 
-        var item_profileImg : ImageView
+        var item_profileImg : CircleImageView
         var item_nickNameTV : TextView
         var item_relationIV : ImageView
         var item_authorizationTV : TextView
 
         init {
-            item_profileImg = v.findViewById(R.id.item_profileImg)
-            item_nickNameTV = v.findViewById(R.id.item_nickNameTV)
-            item_relationIV = v.findViewById(R.id.item_relationIV)
-            item_authorizationTV = v.findViewById(R.id.item_authorizationTV)
+            item_profileImg = v.findViewById(R.id.item_profileImg) as CircleImageView
+            item_nickNameTV = v.findViewById(R.id.item_nickNameTV) as TextView
+            item_relationIV = v.findViewById(R.id.item_relationIV) as ImageView
+            item_authorizationTV = v.findViewById(R.id.item_authorizationTV) as TextView
         }
     }
 }

@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import android.widget.*
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.R.id.main_edit_listitem_title
 import donggolf.android.actions.MarketAction
 import donggolf.android.actions.PostAction
 import donggolf.android.actions.SearchAction
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.fragment.FreeFragment
 import org.json.JSONObject
@@ -61,6 +63,10 @@ open class SelectMemberAdapter(context: Context, view:Int, data:ArrayList<JSONOb
             item.check_add_mem.visibility = View.GONE
         }
 
+
+        var image = Config.url + Utils.getString(member, "profile_img")
+        ImageLoader.getInstance().displayImage(image, item.friends_profile, Utils.UILoptionsUserProfile)
+
 //        item.check_sel_mem.setOnClickListener {
 //            isSel = !isSel
 //
@@ -96,14 +102,14 @@ open class SelectMemberAdapter(context: Context, view:Int, data:ArrayList<JSONOb
 
         var check_sel_mem : ImageView
         var check_add_mem : ImageView
-        var friends_profile : ImageView
+        var friends_profile : de.hdodenhof.circleimageview.CircleImageView
         var friend_name : TextView
         var relation : ImageView
 
         init {
             check_sel_mem = v.findViewById<View>(R.id.check_sel_mem) as ImageView
             check_add_mem = v.findViewById<View>(R.id.check_add_mem) as ImageView
-            friends_profile = v.findViewById<View>(R.id.friends_profile) as ImageView
+            friends_profile = v.findViewById<View>(R.id.friends_profile) as de.hdodenhof.circleimageview.CircleImageView
             friend_name = v.findViewById<View>(R.id.friend_name) as TextView
             relation = v.findViewById<View>(R.id.relation) as ImageView
         }

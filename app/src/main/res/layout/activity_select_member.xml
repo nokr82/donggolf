@@ -22,6 +22,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_back" />
             <TextView
+                android:id="@+id/titleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -61,34 +62,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:orientation="horizontal"
         android:paddingLeft="10dp">
-        <!--<Gallery
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/del_member_list"/>-->
-        <RelativeLayout
-            android:layout_width="50dp"
-            android:layout_height="50dp">
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/icon_profiles"/>
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/btn_del_picture"/>
-        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/chatmemberlistLL"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal">
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:paddingLeft="10dp">
         <RelativeLayout
@@ -99,7 +89,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
                 android:background="@drawable/box_search" />
             <ImageView
                 android:layout_width="20dp"
@@ -108,37 +98,52 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/icon_search"/>
             <EditText
+                android:id="@+id/searchET"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="35dp"
-                android:hint="검색어를 입력하세요"
+                android:hint="닉네임을 입력하세요"
                 android:textSize="15dp"
                 android:singleLine="true"
                 android:background="@null"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/btn_del_searchword"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="280dp"/>
+            <LinearLayout
+                android:id="@+id/removesearchLL"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="23dp"
+                android:gravity="center"
+                android:layout_alignParentRight="true">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/btn_del_searchword"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"/>
+            </LinearLayout>
         </RelativeLayout>
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/searchTV"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_margin="10dp"
-            android:background="@drawable/btn_ok"
-            android:text="검색"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:textStyle="bold"
-            android:textSize="10dp"
-            android:textColor="#FFFFFF"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_margin="10dp"
+                android:background="@drawable/btn_ok"
+                android:text="검색"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="10dp"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
     </LinearLayout>
 
     <ListView
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/selMemList"/>

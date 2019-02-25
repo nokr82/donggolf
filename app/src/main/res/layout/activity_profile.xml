@@ -13,8 +13,7 @@
         <LinearLayout
             android:id="@+id/profBack"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="match_parent">
             <ImageView
                 android:layout_width="11dp"
                 android:layout_height="17dp"
@@ -22,6 +21,7 @@
                 android:background="@drawable/btn_back" />
         </LinearLayout>
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -77,8 +77,8 @@
                 android:id="@+id/profileCnt"/>-->
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/icon_profile_l"
                 android:id="@+id/otherPrfImgIV"/>
@@ -91,12 +91,14 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/btn_add_photo" />
+
             <TextView
                 android:id="@+id/txPhotoCnt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="0dp"
                 android:text="15"
                 android:textColor="#C9C9C9"
                 android:textSize="12dp" />
@@ -120,6 +122,8 @@
         android:text="부천,인천,구로"
         android:id="@+id/txUserRegion" />
     <LinearLayout
+        android:id="@+id/knowTogether"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -143,7 +147,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/statusMessage"
+        android:id="@+id/statusMessageTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -164,10 +168,10 @@
             android:gravity="center"
             android:orientation="vertical">
             <RelativeLayout
+                android:id="@+id/click_chat"
                 android:layout_width="70dp"
                 android:layout_height="70dp">
                 <ImageView
-                    android:id="@+id/click_chat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_circle" />
@@ -178,12 +182,14 @@
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentTop="true">
                     <ImageView
+                        android:id="@+id/profile_opIV"
                         android:layout_width="20dp"
                         android:layout_height="18dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:background="@drawable/btn_chat_on" />
+                        android:src="@drawable/btn_chat_on"/>
                     <TextView
+                        android:id="@+id/profile_opTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
@@ -192,6 +198,7 @@
                 </RelativeLayout>
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -323,6 +330,7 @@
                     android:background="@drawable/box_notice"
                     android:gravity="center"
                     android:text="999"
+                    android:id="@+id/friendCountTV"
                     android:textColor="#ffffff"
                     android:textSize="11dp" />
             </RelativeLayout>

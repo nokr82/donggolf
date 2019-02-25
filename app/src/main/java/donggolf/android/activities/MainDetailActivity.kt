@@ -1,11 +1,15 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.*
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
+import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.MotionEvent
@@ -13,40 +17,31 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.ImageView
+import android.widget.MediaController
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
-import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.actions.*
+import donggolf.android.actions.CommentAction.write_comments
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.*
-import donggolf.android.models.Content
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import kotlinx.android.synthetic.main.dlg_post_menu.view.*
-import kotlinx.android.synthetic.main.item_chat_member_list.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.ByteArrayInputStream
+import java.io.IOException
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
-
     private  var commentList = ArrayList<JSONObject>()
     private var commentBlockList = ArrayList<JSONObject>()
 
@@ -58,7 +53,7 @@ class MainDetailActivity : RootActivity() {
     var adPosition = 0
 
     var PICTURE_DETAIL = 1
-
+    var editComments  = false
     var detailowner: String? = ""
 
     var pressStartTime: Long?  = 0
@@ -70,6 +65,7 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
+    var p_comments_id = -1
 
     var login_id = 0
     var writer = "0"
@@ -77,14 +73,33 @@ class MainDetailActivity : RootActivity() {
     var commentType = ""
     var commentParent = ""
     var blockYN = ""
+    var cht_yn = ""
+    var cmt_yn = ""
+
+    var MODIFYS = 70
 
     var x = 0.0f
+
+    val GALLERY = 500
+
+    var modify_division = ""
+
+    var comment_path: Bitmap? = null
+    var op_comments_id = -1
+    lateinit var video:Uri
+
+    var freind = "0"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
 
+
+
         detail_add_commentTV.paintFlags = detail_add_commentTV.paintFlags or Paint.FAKE_BOLD_TEXT_FLAG
+
+
+
 
         context = this
         intent = intent
@@ -99,8 +114,63 @@ class MainDetailActivity : RootActivity() {
 
         commentAdapter.notifyDataSetChanged()
 
+        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+        var mediaController: MediaController = MediaController(this);
+        videoVV.setMediaController(mediaController)
+
+        videoviewTV.setOnClickListener {
+            if (videoviewTV.text.toString() == "동영상 보기") {
+                videoVV.visibility = View.VISIBLE
+                videoVV.start()
+                videoVV.setVideoURI(video)
+                videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+                videoviewTV.setText("동영상 숨기기")
+                pagerVP.visibility = View.GONE
+            } else {
+                videoviewTV.setText("동영상 보기")
+                videoVV.visibility = View.GONE
+                pagerVP.visibility = View.VISIBLE
+            }
+        }
+
+        leftIV.setOnClickListener {
+            if (adPosition-1 < 0){
+                Toast.makeText(context,"마지막 사진입니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            adPosition -= 1
+            pagerVP.setCurrentItem(adPosition)
+        }
+
+        rightIV.setOnClickListener {
+
+            if (adPosition+1 == adverImagePaths.size){
+                Toast.makeText(context,"마지막 사진입니다.", Toast.LENGTH_SHORT).show()
+                adPosition = adverImagePaths.size-1
+                return@setOnClickListener
+            } else if (adPosition < adverImagePaths.size-1){
+                adPosition += 1
+            }
+            pagerVP.setCurrentItem(adPosition)
+        }
+
+        main_detail_gofindpicture.setOnClickListener {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+            startActivityForResult(galleryIntent, GALLERY)
+        }
+
+        profileIV.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", writer)
+            startActivity(intent)
+        }
+
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
+
 
             var commenter = commentList[position].getInt("cmt_wrt_id")
 
@@ -117,6 +187,11 @@ class MainDetailActivity : RootActivity() {
             if (commenter == login_id){
                 dialogView.dlg_comment_delTV.visibility = View.VISIBLE
                 dialogView.dlg_comment_delTV.setOnClickListener {
+                    if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                        Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
                     val params = RequestParams()
                     params.put("cont_id", content_id)
                     params.put("commenter", commenter)
@@ -150,6 +225,11 @@ class MainDetailActivity : RootActivity() {
 
             //댓글복사
             dialogView.dlg_comment_copyTV.setOnClickListener {
+
+                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
 
                 //클립보드 사용 코드
                 val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -230,17 +310,30 @@ class MainDetailActivity : RootActivity() {
                 }
             }
 
-
-
             true
         }
 
 
         //댓글 달기
         detail_add_commentTV.setOnClickListener {
-            var comment = Utils.getString(cmtET)
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            val params = RequestParams()
+            var comment = Utils.getString(cmtET)
+            if (comment == "" || comment == null){
+                Toast.makeText(context,"빈칸은 입력하실 수 없습니다.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (cmt_yn == "N"){
+                Toast.makeText(context,"댓글이 차단된 게시물 입니다.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            writeComments()
+          /*  val params = RequestParams()
             params.put("cont_id", content_id)
             params.put("member_id", login_id)
             params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
@@ -248,17 +341,27 @@ class MainDetailActivity : RootActivity() {
             params.put("type", commentType)
             params.put("parent", commentParent)
 
+            if (comment_path != null){
+                params.put("file", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+            }
+
             CommentAction.comment_at_content(params,object :JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     println(response)
                     val result = response!!.getString("result")
+                    Log.d("결과",response.toString())
                     if (result == "ok"){
                         val comments = response.getJSONObject("comments")
                         commentList.add(comments)
                         commentAdapter.notifyDataSetChanged()
                         cmtET.setText("")
                         cmtET.hint = ""
+                        getComments()
                         Utils.hideKeyboard(this@MainDetailActivity)
+                        addedImgIV.setImageResource(0)
+                        commentLL.visibility = View.GONE
+                        main_detail_gofindpicture.visibility = View.VISIBLE
+                        comment_path = null
                     }
                 }
 
@@ -269,11 +372,43 @@ class MainDetailActivity : RootActivity() {
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
                     println(responseString)
                 }
-            })
-        }
+            })*/
 
-        //대댓글
+        }
+        commentListLV.setOnItemClickListener { adapterView, view, i, l ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+                var data = commentList.get(i)
+                Log.d("데이데이",data.toString())
+            val contentcomment = data.getJSONObject("ContentComment")
+
+            val comments_id = Utils.getInt(contentcomment, "id")
+
+                p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+                op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+                var user_nick =  Utils.getString(contentcomment,"nick")
+            if (p_comments_id!=-1){
+                op_comments_id = p_comments_id
+                cmtET.requestFocus()
+                Utils.showKeyboard(context)
+                cmtET.hint = user_nick+ "님의 댓글에 대댓글"
+            }else if (comments_id != -1) {
+                    p_comments_id = comments_id
+                    cmtET.requestFocus()
+                    Utils.showKeyboard(context)
+                    cmtET.hint = user_nick+ "님의 댓글에 답글"
+                }
+
+        }
+     /*   //대댓글
         commentListLV.setOnItemClickListener { parent, view, position, id ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+
             val data = commentList.get(position).getJSONObject("ContentComment")
 
             var parentType = Utils.getString(data,"type")
@@ -287,7 +422,7 @@ class MainDetailActivity : RootActivity() {
                 cmtET.hint = Utils.getString(data,"nick") + "님의 대댓글에 답글"
             }
 
-        }
+        }*/
 
         //이미지 관련 어댑터
         adverAdapter = FullScreenImageAdapter(this, adverImagePaths)
@@ -318,7 +453,7 @@ class MainDetailActivity : RootActivity() {
 
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->{
-                       x = event.x
+                        x = event.x
                     }
 
                     MotionEvent.ACTION_CANCEL->{
@@ -341,6 +476,7 @@ class MainDetailActivity : RootActivity() {
                                 val id = intent.getStringExtra("id")
                                 var intent = Intent(context, PictureDetailActivity::class.java)
                                 intent.putExtra("id", id)
+                                intent.putExtra("adPosition",adPosition)
                                 if (adverImagePaths != null){
                                     intent.putExtra("paths",adverImagePaths)
                                 }
@@ -357,15 +493,13 @@ class MainDetailActivity : RootActivity() {
         })
 
         finishLL.setOnClickListener {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
             finish()
         }
-
-        main_detail_gofindpicture.setOnClickListener {
-//            MoveFindPictureActivity()
-        }
-
         plusBT.setOnClickListener {
-//            relativ_RL.visibility = View.VISIBLE
+            //            relativ_RL.visibility = View.VISIBLE
             visibleMenu()
         }
 
@@ -379,21 +513,27 @@ class MainDetailActivity : RootActivity() {
             builder.setMessage("신고하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
                             var params = RequestParams()
                             params.put("content_id", content_id)
                             params.put("member_id", login_id)
+                            params.put("type", 1)
 
                             PostAction.add_report(params, object : JsonHttpResponseHandler() {
-                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                            val result = response!!.getString("result")
-                                            if (result == "yes") {
-                                                Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
-                                            }else {
-                                                Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
-                                            }
+                                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                    val result = response!!.getString("result")
+                                    if (result == "yes") {
+                                        Toast.makeText(context, "이미 신고하셨습니다.", Toast.LENGTH_SHORT).show()
+                                    }else {
+                                        Toast.makeText(context, "신고 완료.", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
@@ -413,6 +553,11 @@ class MainDetailActivity : RootActivity() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
 
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
@@ -457,6 +602,12 @@ class MainDetailActivity : RootActivity() {
             builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
+                        if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                            return@OnClickListener
+                        }
+
+
                         if (intent.getStringExtra("id") != null) {
                             val content_id = intent.getStringExtra("id")
 
@@ -491,6 +642,11 @@ class MainDetailActivity : RootActivity() {
         }
 
         likeLL.setOnClickListener {
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (intent.getStringExtra("id") != null) {
                 val content_id = intent.getStringExtra("id")
 
@@ -559,8 +715,19 @@ class MainDetailActivity : RootActivity() {
 
         }
 
-        getPost()
-        getLooker()
+        delIV.setOnClickListener {
+            addedImgIV.setImageResource(0)
+            commentLL.visibility = View.GONE
+            main_detail_gofindpicture.visibility = View.VISIBLE
+            comment_path = null
+        }
+
+        if (intent.getStringExtra("id") != null){
+            val id = intent.getStringExtra("id")
+            getPost(id)
+            getLooker(id)
+        }
+
     }
 
     //이미지 자세히 보기 액티비티
@@ -574,7 +741,7 @@ class MainDetailActivity : RootActivity() {
             val intent = Intent(this, AddPostActivity::class.java)
             intent.putExtra("category",2)
             intent.putExtra("id",id)
-            startActivity(intent)
+            startActivityForResult(intent,MODIFYS)
         }
     }
 
@@ -592,10 +759,17 @@ class MainDetailActivity : RootActivity() {
                         params.put("content_id",id)
                         params.put("deleted","Y")
 
+                        println("------content_id =-====== $id")
+
                         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
                             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                                var intent = Intent()
+                                intent.putExtra("reset", "reset")
+                                setResult(RESULT_OK, intent);
                                 finish()
+
                             }
 
                             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -603,8 +777,6 @@ class MainDetailActivity : RootActivity() {
                             }
 
                         })
-
-                        finish()
 
                     }
 
@@ -615,7 +787,68 @@ class MainDetailActivity : RootActivity() {
         alert.show()
 
     }
+    //댓글
+    fun writeComments() {
+        var comment = Utils.getString(cmtET)
+        val params = RequestParams()
+        params.put("member_id",login_id)
+        params.put("cont_id", content_id)
+        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("comment", comment)
+        params.put("p_comments_id", p_comments_id)
+        params.put("op_comments_id", op_comments_id)
+        if (comment_path != null){
+            params.put("file", ByteArrayInputStream(Utils.getByteArray(comment_path)))
+        }
+        write_comments(params, object : JsonHttpResponseHandler() {
 
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+
+                try {
+                    val result = response!!.getString("result")
+                    if ("ok" == result) {
+                        getPost(content_id.toString())
+                        Utils.hideKeyboard(context)
+                        cmtET.setText("")
+                        cmtET.hint = ""
+                        p_comments_id = -1
+                        op_comments_id = -1
+                        addedImgIV.setImageResource(0)
+                        commentLL.visibility = View.GONE
+                        main_detail_gofindpicture.visibility = View.VISIBLE
+                        comment_path = null
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
+                super.onSuccess(statusCode, headers, response)
+            }
+
+            private fun error() {
+                Utils.alert(context, "조회중 장애가 발생하였습니다.")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
+
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {
+                // show dialog
+
+            }
+
+            override fun onFinish() {
+
+            }
+        })
+    }
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val dx = x1 - x2
         val dy = y1 - y2
@@ -627,9 +860,7 @@ class MainDetailActivity : RootActivity() {
         return px / resources.displayMetrics.density
     }
 
-    fun getPost(){
-        if (intent.getStringExtra("id") != null){
-            val id = intent.getStringExtra("id")
+    fun getPost(id:String){
             login_id = PrefUtils.getIntPreference(context, "member_id")
 
             var params = RequestParams()
@@ -641,6 +872,7 @@ class MainDetailActivity : RootActivity() {
                     try {
                         val result = response!!.getString("result")
                         if (result == "ok") {
+                            likeMembersLL.removeAllViews()
 
                             val data = response.getJSONObject("Content")
 
@@ -655,8 +887,16 @@ class MainDetailActivity : RootActivity() {
                             val Looker = response.getJSONArray("Looker")
                             val Like = response.getJSONArray("Like")
                             val Comments = response.getJSONArray("Comments")
-                            val cht_yn = Utils.getString(data,"cht_yn")
-                            val cmt_yn = Utils.getString(data,"cmt_yn")
+                            cht_yn = Utils.getString(data,"cht_yn")
+                            cmt_yn = Utils.getString(data,"cmt_yn")
+
+
+                            freind = Utils.getString(data,"freind")
+                            Log.d("친구",freind)
+                            if (freind == "0"){
+                                freindIV.setBackgroundResource(R.drawable.icon_second)
+                            }
+
 
                             val likeDiv = response.getString("LikeDiv")
 
@@ -669,12 +909,14 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+                            println("------detail imagedatas.size ${imageDatas.length()}")
+
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
 
                                 for (i in 0 until tags.length()){
                                     var json = tags.get(i) as JSONObject
-                                    var MemberTags = json.getJSONObject("MemberTags")
+                                    var MemberTags = json.getJSONObject("ContentsTags")
                                     val division = Utils.getString(MemberTags,"division")
 
                                     if (division == "1"){
@@ -686,6 +928,9 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
+                                println("-------------visible")
+                                imageRL.visibility = View.VISIBLE
+                                pagerVP.visibility = View.VISIBLE
                                 var imagePaths: ArrayList<String> = ArrayList<String>()
 
                                 for (i in 0 until imageDatas.length()){
@@ -696,6 +941,22 @@ class MainDetailActivity : RootActivity() {
                                     if (type == 1) {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
+                                    } else {
+                                        val path = Utils.getString(contentFile, "image_uri")
+                                        videoviewTV.text = "동영상 숨기기"
+                                        videoviewTV.visibility = View.VISIBLE
+                                        videoVV.visibility = View.VISIBLE
+                                        leftIV.visibility = View.GONE
+                                        rightIV.visibility = View.GONE
+                                        pagerVP.visibility = View.GONE
+                                        video = Uri.parse(Config.url + path)
+                                        videoVV.start()
+                                        videoVV.setVideoURI(video)
+                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
+//                                        videoVV.visibility = View.VISIBLE
+//                                        videoVV.start()
+//                                        videoVV.setVideoURI(video)
+//                                        videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
                                     }
                                 }
 
@@ -708,6 +969,14 @@ class MainDetailActivity : RootActivity() {
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
+
+                                if (adverImagePaths.size > 1){
+                                    if (videoVV.visibility != View.VISIBLE){
+                                        leftIV.visibility = View.VISIBLE
+                                        rightIV.visibility = View.VISIBLE
+                                    } 
+                                }
+
                             } else {
                                 imageRL.visibility = View.GONE
                             }
@@ -726,9 +995,15 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (cmt_yn == "Y"){
+                                main_detail_gofindpicture.visibility = View.VISIBLE
+                                detail_add_commentTV.visibility = View.VISIBLE
+                                cmtLL.visibility = View.VISIBLE
                                 cmtTV.visibility = View.GONE
                                 cmtET.visibility = View.VISIBLE
                             } else {
+                                main_detail_gofindpicture.visibility = View.GONE
+                                detail_add_commentTV.visibility = View.GONE
+                                cmtLL.visibility = View.GONE
                                 cmtTV.visibility = View.VISIBLE
                                 cmtET.visibility = View.GONE
                             }
@@ -739,6 +1014,16 @@ class MainDetailActivity : RootActivity() {
                             val nick = Utils.getString(member, "nick")
                             val status_msg = Utils.getString(member, "status_msg")
                             val profile_img = Utils.getString(member, "profile_img")
+                            val sex = Utils.getString(member,"sex")
+                            if (sex == "0"){
+                                nickNameTV.setTextColor(Color.parseColor("#000000"))
+                            }
+
+
+
+                            if (member_id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
+                                freindIV.visibility = View.GONE
+                            }
 
                             nickNameTV.text = nick
                             statusmsgTV.text = status_msg
@@ -791,11 +1076,9 @@ class MainDetailActivity : RootActivity() {
                 }
             })
 
-        }
     }
 
-    fun getLooker(){
-        val id = intent.getStringExtra("id")
+    fun getLooker(id:String){
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
         var params = RequestParams()
@@ -821,7 +1104,7 @@ class MainDetailActivity : RootActivity() {
     fun getComments() {
         val params = RequestParams()
         params.put("cont_id", content_id)
-        params.put("writer", writer)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -829,6 +1112,7 @@ class MainDetailActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
+                    commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
                         //commentList.get(i).put("changedBlockYN", "N")
@@ -881,12 +1165,22 @@ class MainDetailActivity : RootActivity() {
 
             dialogView.addfavoriteTV.visibility = View.VISIBLE
             dialogView.reportTV.visibility = View.VISIBLE
-            dialogView.addFriendTV.visibility =View.VISIBLE
+//            dialogView.addFriendTV.visibility =View.VISIBLE
+            if (freind.toInt() > 0){
+                dialogView.addFriendTV.visibility =View.GONE
+            } else {
+                dialogView.addFriendTV.visibility =View.VISIBLE
+            }
 
             dialogView.addfavoriteTV.setOnClickListener {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("보관하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+
+                            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                return@OnClickListener
+                            }
 
                             if (intent.getStringExtra("id") != null) {
                                 val content_id = intent.getStringExtra("id")
@@ -925,6 +1219,11 @@ class MainDetailActivity : RootActivity() {
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
                             if (intent.getStringExtra("id") != null) {
+                                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                    return@OnClickListener
+                                }
+
                                 val content_id = intent.getStringExtra("id")
 
                                 var params = RequestParams()
@@ -955,41 +1254,50 @@ class MainDetailActivity : RootActivity() {
             }
 
             dialogView.addFriendTV.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
-                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                val intent = Intent(context, ProfileActivity::class.java)
+                intent.putExtra("member_id", writer)
+                intent.putExtra("type", 1)
+                context.startActivity(intent)
 
-                            if (intent.getStringExtra("id") != null) {
-                                val content_id = intent.getStringExtra("id")
+                /*    val builder = AlertDialog.Builder(context)
+                    builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
+                            .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                                if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                                    Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                                    return@OnClickListener
+                                }
 
-                                var params = RequestParams()
-                                params.put("content_id", content_id)
-                                params.put("mate_id", writer)
-                                params.put("member_id", login_id)
-                                params.put("category_id",0)
-                                params.put("status","w")
+                                if (intent.getStringExtra("id") != null) {
+                                    val content_id = intent.getStringExtra("id")
 
-                                PostAction.add_friend(params, object : JsonHttpResponseHandler() {
-                                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                        val result = response!!.getString("result")
-                                        if (result == "yes") {
-                                            Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
-                                        }else {
-                                            Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                    var params = RequestParams()
+                                    params.put("content_id", content_id)
+                                    params.put("mate_id", writer)
+                                    params.put("member_id", login_id)
+                                    params.put("category_id",0)
+                                    params.put("status","w")
+
+                                    PostAction.add_friend(params, object : JsonHttpResponseHandler() {
+                                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                            val result = response!!.getString("result")
+                                            if (result == "yes") {
+                                                Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                            }else {
+                                                Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
+                                            }
                                         }
-                                    }
 
-                                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
 
-                                    }
-                                })
+                                        }
+                                    })
 
-                            }
-                            alert.dismiss()
-                        })
-                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-                val alert = builder.create()
-                alert.show()
+                                }
+                                alert.dismiss()
+                            })
+                            .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                    val alert = builder.create()
+                    alert.show()*/
             }
         }
     }
@@ -997,6 +1305,76 @@ class MainDetailActivity : RootActivity() {
     override fun finish() {
         super.finish()
         Utils.hideKeyboard(context)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                MODIFYS -> {
+                    if (data!!.getStringExtra("reset") != null) {
+
+//                    val selCateg = data!!.getIntExtra("CategoryID", 1)
+
+                        videoVV.visibility = View.GONE
+
+
+                        modify_division = data!!.getStringExtra("id")
+                        val id = data!!.getStringExtra("id")
+                        getPost(id)
+//                    if (data!!.getStringExtra("reset") != null) {
+
+//                    }
+                    }
+                }
+
+                GALLERY -> {
+                    if (data != null)
+                    {
+
+                        val contentURI = data.data
+
+                        try
+                        {
+                            commentLL.visibility = View.VISIBLE
+                            main_detail_gofindpicture.visibility = View.GONE
+
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+
+                                cursor.close()
+
+                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
+                                addedImgIV.setImageBitmap(comment_path)
+
+                            }
+
+                        }
+                        catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+
+
+
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (modify_division == "") {
+            finish()
+        } else {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
+            finish()
+        }
     }
 
 }

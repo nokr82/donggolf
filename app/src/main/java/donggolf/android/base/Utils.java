@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -46,6 +47,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -356,6 +358,67 @@ public class Utils {
         return null;
     }
 
+    public static Bitmap noResizeImage(ContentResolver resolver, String imageIdOrPath) {
+        try {
+            String photoPath = null;
+            int orientation = 0;
+
+            try {
+                int uid = Integer.parseInt(imageIdOrPath);
+                String[] proj = { Images.Media.DATA, Images.Media.ORIENTATION };
+
+                String selection = Images.Media._ID + " = " + uid;
+
+                Cursor cursor = Images.Media.query(resolver, Images.Media.EXTERNAL_CONTENT_URI, proj, selection, Images.Media.DATE_ADDED + " DESC");
+                if (cursor != null && cursor.moveToFirst()) {
+                    photoPath = cursor.getString(cursor.getColumnIndex(proj[0]));
+                    orientation = cursor.getInt(cursor.getColumnIndex(proj[1]));
+                }
+                cursor.close();
+
+            } catch (NumberFormatException e) {
+                photoPath = imageIdOrPath;
+
+                // rotation
+                ExifInterface exif;
+                try {
+                    exif = new ExifInterface(photoPath);
+                    int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                    orientation = Utils.exifOrientationToDegrees(exifOrientation);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+
+            // 비트맵 이미지로 가져온다
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(photoPath), null, options);
+
+            // Calculate inSampleSize
+//            int reqSize = 654;
+//            if (orientation == 90 || orientation == 270) {
+//                options.inSampleSize = Utils.calculateInSampleSizeByHeight(options, reqSize);
+//            } else if (orientation == 0 || orientation == 180) {
+//                options.inSampleSize = Utils.calculateInSampleSizeByWidth(options, reqSize);
+//            }
+
+            // System.out.println("options.inSampleSize : " + options.inSampleSize + ", orientation : " + orientation);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            Bitmap bm = BitmapFactory.decodeStream(new FileInputStream(photoPath), null, options);
+            return Utils.rotate(bm, orientation);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
     public static Bitmap getImage(Context context, ContentResolver resolver, String imageIdOrPath, int i) {
         try {
             String photoPath = null;
@@ -416,6 +479,8 @@ public class Utils {
 
         return null;
     }
+
+
 
 
     public static Bitmap getImage(ContentResolver resolver, String imageIdOrPath, int reqSize) {
@@ -1000,21 +1065,39 @@ public class Utils {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
+    public static  byte[] getByteArrayFromImageView(ImageView imageView)
+    {
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
+        Bitmap bitmap;
+        if(bitmapDrawable==null){
+            imageView.buildDrawingCache();
+            bitmap = imageView.getDrawingCache();
+            imageView.buildDrawingCache(false);
+        }else
+        {
+            bitmap = bitmapDrawable .getBitmap();
+        }
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
+    }
+
     public static DisplayImageOptions UILoptions = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
-        // .showImageOnLoading(R.drawable.background_8041c6fe)
-        // .showImageForEmptyUri(R.drawable.background_8041c6fe)
-            // .showImageOnFail(R.drawable.background_8041c6fe)
+         .showImageOnLoading(R.drawable.noimage)
+         .showImageForEmptyUri(R.drawable.noimage)
+             .showImageOnFail(R.drawable.noimage)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
-
+//        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
     public static DisplayImageOptions UILoptionsProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
              .showImageOnLoading(R.drawable.noimage)
             .showImageForEmptyUri(R.drawable.noimage)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
 
     public static DisplayImageOptions UILoptionsUserProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
@@ -1022,7 +1105,8 @@ public class Utils {
             .showImageForEmptyUri(R.drawable.icon_profile)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
-        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
+            .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
 
     public static String fullDateTime(String created) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
@@ -1034,6 +1118,15 @@ public class Utils {
             e.printStackTrace();
         }
         return created;
+    }
+
+    public static String todayStr() {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.KOREA);
+
+        Date d = new Date();
+        return sdf1.format(d);
+
     }
 
     public static byte[] getByteArray(InputStream is) {

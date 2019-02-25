@@ -10,25 +10,27 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/finishBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/finishBT"
                 android:layout_width="11dp"
                 android:layout_height="17dp"
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_back" />
-        </LinearLayout>
+
 
         <TextView
+            android:id="@+id/areaTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="부천/경기/인천"
             android:textSize="15dp"
             android:textColor="#000000" />
-
+        </LinearLayout>
         <TextView
+            android:id="@+id/member_cntTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="골퍼 9999명"
@@ -71,10 +73,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@drawable/box_search"
             android:layout_marginRight="60dp"
             android:layout_marginTop="10dp"
@@ -100,17 +102,24 @@
                     android:layout_marginLeft="10dp"
                     android:background="@null"
                     android:singleLine="true"
+                    android:imeOptions="actionSearch"
                     android:hint="아이디 또는 '#' 태그"
                     android:textSize="12dp" />
             </LinearLayout>
-            <Button
+
+            <LinearLayout
                 android:id="@+id/btn_txDel"
-                android:layout_width="11.33dp"
-                android:layout_height="11.33dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/btn_del_searchword_selector" />
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="11.33dp"
+                    android:layout_height="11.33dp"
+                    android:background="@drawable/btn_del_searchword_selector" />
+            </LinearLayout>
         </RelativeLayout>
 
 
@@ -136,6 +145,7 @@
         android:layout_height="match_parent">
         <ListView
             android:id="@+id/frdResultLV"
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -148,11 +158,12 @@
             android:layout_marginRight="8dp"
             android:orientation="vertical"
             android:background="@drawable/boarder_707070_background_ffffff"
-            android:visibility="gone">
+            android:visibility="gone"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="25dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -165,18 +176,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp">
-                    <TextView
+                    <LinearLayout
                         android:id="@+id/main_edit_close"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="닫기"
-                        android:layout_margin="5dp"
-                        android:textSize="9.33dp"
                         android:layout_alignParentRight="true"
-                        android:textColor="#000000"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="닫기"
+                            android:layout_margin="5dp"
+                            android:textSize="9.33dp"
+                            android:textColor="#000000"/>
+                    </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
             <ListView
+                android:scrollbars="none"
                 android:id="@+id/frd_editLV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

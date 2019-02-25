@@ -26,5 +26,64 @@ object ChattingAction {
         HttpClient.post("/chatting/chatting.json", params, handler)
     }
 
+    fun add_chat_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/add_chat_member.json", params, handler)
+    }
+
+    fun set_chatting_setting(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_chatting_setting.json", params, handler)
+    }
+
+    fun set_push(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_push.json", params, handler)
+    }
+
+    fun delete_chat_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/delete_chat_member.json", params, handler)
+    }
+
+    fun set_text_size(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_text_size.json", params, handler)
+    }
+
+    fun set_block(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_block.json", params, handler)
+    }
+
+    fun delete_chatting_room(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/delete_chatting_room.json", params, handler)
+    }
+
+    fun set_notice(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_notice.json", params, handler)
+    }
+
+    fun get_announcement(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/get_announcement.json", params, handler)
+    }
+
+    fun get_chat_member(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/get_chat_member.json", params, handler)
+    }
+
+    fun set_dongchat_block(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_dongchat_block.json", params, handler)
+    }
+
+    fun set_title(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_title.json", params, handler)
+    }
+
+    fun set_dong_image(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_dong_image.json", params, handler)
+    }
+
+    fun set_notice_yn(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_notice_yn.json", params, handler)
+    }
+
+    fun set_all_push(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_all_push.json", params, handler)
+    }
 
 }

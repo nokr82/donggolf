@@ -14,6 +14,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true">
@@ -43,6 +44,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_marginRight="30dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -81,6 +83,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="9999"
                                 android:textColor="#CDCDCD"
+                                android:layout_marginLeft="2dp"
                                 android:textSize="10dp" />
 
                             <ImageView
@@ -96,6 +99,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="9999"
                                 android:textColor="#CDCDCD"
+                                android:layout_marginLeft="2dp"
                                 android:textSize="10dp" />
 
                             <ImageView
@@ -110,6 +114,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="9999"
+                                android:layout_marginLeft="2dp"
                                 android:textColor="#CDCDCD"
                                 android:textSize="10dp" />
                         </LinearLayout>
@@ -181,11 +186,12 @@
                                             android:layout_height="wrap_content"
                                             android:maxLength="7"
                                             android:textColor="#EF5C34"
-                                            android:textSize="10.67dp" />
+                                            android:textSize="13dp" />
 
                                         <ImageView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
+                                            android:id="@+id/freindIV"
+                                            android:layout_width="23dp"
+                                            android:layout_height="13dp"
                                             android:layout_gravity="center"
                                             android:layout_marginLeft="5dp"
                                             android:layout_marginTop="1dp"
@@ -221,18 +227,60 @@
 
                             <android.support.v4.view.ViewPager
                                 android:id="@+id/pagerVP"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
-
-                            <VideoView
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:visibility="gone" />
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true" />
+                            <VideoView
+                                android:id="@+id/videoVV"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility="gone"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerInParent="true"/>
+
+
+                            <TextView
+                                android:id="@+id/leftIV"
+                                android:text="〈"
+                                android:visibility="gone"
+                                android:layout_width="30dp"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:textSize="30dp"
+                                android:textColor="#000000"
+                                android:textStyle="bold"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true" />
+                            <TextView
+                                android:id="@+id/rightIV"
+                                android:layout_width="30dp"
+                                android:visibility="gone"
+                                android:layout_height="50dp"
+                                android:gravity="center"
+                                android:textSize="30dp"
+                                android:textColor="#000000"
+                                android:textStyle="bold"
+                                android:text="〉"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"/>
+
+                            <TextView
+                                android:id="@+id/videoviewTV"
+                                android:visibility="gone"
+                                android:layout_width="wrap_content"
+                                android:textColor="#ffffff"
+                                android:layout_height="wrap_content"
+                                android:text="동영상 보기"
+                                android:layout_alignParentRight="true"
+                                android:textStyle="bold"/>
 
                             <LinearLayout
                                 android:id="@+id/circleLL"
                                 android:layout_width="match_parent"
-                                android:layout_height="7.35dp"
+                                android:layout_height="15dp"
                                 android:layout_alignParentBottom="true"
                                 android:layout_marginBottom="7dp"
                                 android:gravity="center"
@@ -301,6 +349,7 @@
 
                     </RelativeLayout>
                 </RelativeLayout>
+
 
                 <TextView
                     android:id="@+id/hashtagTV"
@@ -397,33 +446,82 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:orientation="horizontal">
-
-                <ImageView
+                <LinearLayout
                     android:id="@+id/main_detail_gofindpicture"
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_margin="10dp"
-                    android:layout_weight="3.2"
-                    android:background="@drawable/btn_add_photo" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
-                <EditText
-                    android:id="@+id/cmtET"
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_margin="10dp"
+                        android:layout_weight="3.2"
+                        android:background="@drawable/btn_add_photo" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/commentLL"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp">
+                    <RelativeLayout
+                        android:layout_width="45dp"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:id="@+id/addedImgIV"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:layout_margin="1dp"/>
+                        <ImageView
+                            android:id="@+id/delIV"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:background="@mipmap/btn_del_picture"
+                            android:layout_alignParentRight="true"/>
+                        <ImageView
+                            android:id="@+id/del2IV"
+                            android:paddingBottom="7dp"
+                            android:paddingLeft="7dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"
+                            android:background="@drawable/btn_del_picture"
+                            android:visibility="gone"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cmtLL"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/cmtET"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:background="@null"
                     android:hint="댓글을 남겨주세요"
                     android:paddingLeft="5dp"
                     android:singleLine="true"
                     android:textSize="13dp" />
 
+
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/cmtTV"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="30dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="댓글이 차단된 상태입니다"
@@ -442,6 +540,8 @@
                     android:layout_weight="3"
                     android:gravity="center"
                     android:text="등록"
+                    android:visibility="visible"
+
                     android:textColor="#0EDA2F"
                     android:textSize="13dp" />
             </LinearLayout>

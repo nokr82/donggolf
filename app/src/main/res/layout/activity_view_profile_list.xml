@@ -36,7 +36,7 @@
                 android:id="@+id/albumPageTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="(0/15)"
+                android:text="(0/0)"
                 android:layout_marginLeft="8dp"
                 android:textColor="#ffffff"
                 android:textSize="15dp"/>

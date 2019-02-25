@@ -3,9 +3,7 @@ package donggolf.android.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -54,6 +52,7 @@ import donggolf.android.models.Photo
 import donggolf.android.models.Users
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_findid.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
 import org.json.JSONException
@@ -63,8 +62,9 @@ import java.io.IOException
 import java.lang.Exception
 
 class InfoFragment : Fragment(){
+    lateinit var myContext: Context
+    private var progressDialog: ProgressDialog? = null
 
-    var ctx: Context? = null
 
     val SELECT_PROFILE = 104
     val SELECT_STATUS = 105
@@ -73,13 +73,22 @@ class InfoFragment : Fragment(){
     val REGION_CHANGE = 108
 
     private val GALLERY = 1
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                member_info()
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
-
-        val ctx = context
-        if (null != ctx) {
-            doSomethingWithContext(ctx)
+        this.myContext = container!!.context
+        progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
+        progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
+        progressDialog!!.setCancelable(false)
+        if (null != myContext) {
+            doSomethingWithContext(myContext)
         }
 
 
@@ -89,123 +98,41 @@ class InfoFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //프로필 세팅
-        var member_id = PrefUtils.getIntPreference(context, "member_id")
-        ////
+    }
 
-        /*val defaultOptions = DisplayImageOptions.Builder()
-                .cacheOnDisc(true).cacheInMemory(true)
-                .imageScaleType(ImageScaleType.EXACTLY)
-                .displayer(object : FadeInBitmapDisplayer(300){}).build()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        val config = ImageLoaderConfiguration.Builder(
-                context)
-                .defaultDisplayImageOptions(defaultOptions)
-                .memoryCache(object : WeakMemoryCache(){})
-                .discCacheSize(100 * 1024 * 1024).build()
-*/
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(ctx))
+        var filter1 = IntentFilter("REGION_CHANGE")
+        myContext.registerReceiver(reloadReciver, filter1)
+
+        var filter2 = IntentFilter("DELETE_IMG")
+        myContext.registerReceiver(reloadReciver, filter2)
 
 
-        ////
+        member_info()
 
-        //Action 으로 정보 가져오기
-        val params = RequestParams()
-        params.put("member_id", member_id)
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
-                try {
-                    println("InfoFrag :: $response")
-                    val result = response.getString("result")
-
-                    if (result == "ok") {
-
-                        val member = response.getJSONObject("Member")
-
-                        textDate.text = Utils.getString(member,"created").substringBefore(" ")
-                        txUserName.text = Utils.getString(member,"nick")
-
-                        //지역
-                        var region = ""
-
-                        if (Utils.getString(member,"region1") != null) {
-                            region += Utils.getString(member,"region1") + ","
-                        }
-                        if (Utils.getString(member,"region2") != null) {
-                            region += Utils.getString(member,"region2") + ","
-                        }
-                        if (Utils.getString(member,"region3") != null) {
-                            region += Utils.getString(member,"region3")
-                        }
-
-                        if (region.substring(region.length-1) == ","){
-                            region = region.substring(0, region.length-2)
-                        }
-                        txUserRegion.text = region
-
-                        //상메
-                        var statusMessage = Utils.getString(member,"status_msg")
-                        if (statusMessage != null) {
-                            infoStatusMsg.text = statusMessage
-                        }
-
-                        knowTogether.visibility = View.GONE
-
-                        //해시태그
-                        val data = response.getJSONArray("MemberTags")
-                        if (data != null) {
-                            var string_tag = ""
-                            for (i in 0 until data.length()) {
-                                var json = data[i] as JSONObject
-                                val memberTag = json.getJSONObject("MemberTag")
-
-                                string_tag += "#" + Utils.getString(memberTag, "tag") + " "
-                            }
-                            hashtagTV.text = string_tag
-                        }
-
-                        //프로필 이미지
-                        val imgData = response.getJSONArray("MemberImgs")
-                        mngTXPhotoCnt.text = imgData.length().toString()
-
-                        //val tmpProfileImage = imgData.getJSONObject(0)
-                        val img_uri = Utils.getString(member,"profile_img")//small_uri
-                        val image = Config.url + img_uri
-
-                        ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
-
-                    }
-                } catch (e : JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
-            }
-        })
-
+        mychatFL.setOnClickListener {
+            var intent = Intent()
+            intent.action = "MY_CHATTING"
+            myContext!!.sendBroadcast(intent)
+        }
 
         //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
-
             var intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }
 
         addProfImg.setOnClickListener {
-
             choosePhotoFromGallary()
-
-            /*var intent = Intent(activity, SelectProfileImgActivity::class.java)
-            //var intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, SELECT_PROFILE)*/
         }
 
         imgProfile.setOnClickListener {
             var intent = Intent(activity, ViewProfileListActivity::class.java)
-            intent.putExtra("viewAlbumUser", member_id)
+            intent.putExtra("viewAlbumUser", PrefUtils.getIntPreference(context, "member_id"))
             startActivity(intent)
         }
 
@@ -235,7 +162,7 @@ class InfoFragment : Fragment(){
         }
 
         setRegion.setOnClickListener {
-            var intent = Intent(activity, AreaRangeActivity::class.java)
+            var intent = Intent(activity, AreaMyRangeActivity::class.java)
             intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
@@ -249,9 +176,11 @@ class InfoFragment : Fragment(){
             val intent = Intent(activity, FriendManageActivity::class.java)
             startActivity(intent)
         }
-
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
 
     private fun choosePhotoFromGallary() {
         val galleryIntent = Intent(Intent.ACTION_PICK,
@@ -260,7 +189,119 @@ class InfoFragment : Fragment(){
         startActivityForResult(galleryIntent, GALLERY)
     }
 
+fun member_info(){
+    val params = RequestParams()
+    params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
+    MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+
+        override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+            if (progressDialog != null) {
+                progressDialog!!.dismiss()
+            }
+
+            val result = response!!.getString("result")
+            if (result == "ok") {
+                val member = response.getJSONObject("Member")
+
+                val friendCount = response.getString("friendCount")
+                val contentCount = response.getString("contentCount")
+                val chatCount = response.getInt("chatCount")
+                chatcountTV.setText(chatCount.toString())
+                postcountTV.setText(contentCount)
+                friendCountTV.setText(friendCount)
+
+                textDate.text = Utils.getString(member,"created").substringBefore(" ")
+                txUserName.text = Utils.getString(member,"nick")
+
+                //지역
+                var region = ""
+
+                if (Utils.getString(member,"region1") != null && Utils.getString(member,"region1") != "") {
+                    region += Utils.getString(member,"region1") + ","
+                }
+                if (Utils.getString(member,"region2") != null && Utils.getString(member,"region2") != "") {
+                    region += Utils.getString(member,"region2") + ","
+                }
+                if (Utils.getString(member,"region3") != null && Utils.getString(member,"region3") != "") {
+                    region += Utils.getString(member,"region3")
+                }
+
+                if (Utils.getString(member,"region1") == "전국"){
+                    region = "전국"
+                }
+
+                /*       if (region.substring(region.length-1) == ","){
+                           region = region.substring(0, region.length-2)
+                       }*/
+                txUserRegion.text = region
+
+                //상메
+                var statusMessage = Utils.getString(member,"status_msg")
+                if (statusMessage != null) {
+                    infoStatusMsg.text = statusMessage
+                }
+
+                knowTogether.visibility = View.GONE
+
+                //해시태그
+                val data = response.getJSONArray("MemberTags")
+                if (data != null) {
+                    var string_tag = ""
+                    for (i in 0 until data.length()) {
+                        var json = data[i] as JSONObject
+                        val memberTag = json.getJSONObject("MemberTag")
+
+                        string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+                    }
+                    hashtagTV.text = string_tag
+                }
+
+                //프로필 이미지
+                val imgData = response.getJSONArray("MemberImgs")
+                mngTXPhotoCnt.text = imgData.length().toString()
+
+                //val tmpProfileImage = imgData.getJSONObject(0)
+                val img_uri = Utils.getString(member,"profile_img")//small_uri
+                val image = Config.url + img_uri
+
+                ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
+
+            }
+
+        }
+
+        private fun error() {
+            Utils.alert(context, "조회중 장애가 발생하였습니다.")
+        }
+
+        override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
+            if (progressDialog != null) {
+                progressDialog!!.dismiss()
+            }
+
+            // System.out.println(responseString);
+
+            throwable.printStackTrace()
+            error()
+        }
+
+        override fun onStart() {
+            // show dialog
+            if (progressDialog != null) {
+
+                progressDialog!!.show()
+            }
+        }
+
+        override fun onFinish() {
+            if (progressDialog != null) {
+                progressDialog!!.dismiss()
+            }
+        }
+    })
+
+}
 
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -270,39 +311,42 @@ class InfoFragment : Fragment(){
 
             when (requestCode) {
                 SELECT_PROFILE -> {
-                    getTempUserInformation("image")
+                    member_info()
                 }
                 SELECT_STATUS -> {
-                    getTempUserInformation("status_msg")
+                    member_info()
                 }
                 MODIFY_NAME -> {
-                    getTempUserInformation("nick")
+                    member_info()
                 }
                 MODIFY_TAG -> {
-                    getTempUserInformation("tag")
-
+                    member_info()
                 }
                 REGION_CHANGE -> {
-                    getTempUserInformation("region")
+                    member_info()
                 }
                 GALLERY -> {
                     if (data != null)
                     {
                         val contentURI = data.data
                         Log.d("uri",contentURI.toString())
-                        //content://media/external/images/media/1200
 
                         try
                         {
-                            //갤러리에서 가져온 이미지를 프로필에 세팅
-                            var thumbnail = MediaStore.Images.Media.getBitmap(ctx!!.contentResolver, contentURI)
-                            val resized = Utils.resizeBitmap(thumbnail, 4000)
-                            imgProfile.setImageBitmap(resized)
+                            val selectedImageUri = data.data
+                            var bt :Bitmap? = null
 
-                            //전송하기 위한 전처리
-                            //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-                            val bitmap = imgProfile.drawable as BitmapDrawable
-                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
+                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+
+                            val cursor =
+                                    context!!.contentResolver.query(selectedImageUri!!, filePathColumn, null, null, null)
+                            if (cursor!!.moveToFirst()) {
+                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                                val picturePath = cursor.getString(columnIndex)
+                                bt = Utils.getImage(context!!.contentResolver,picturePath)
+                                cursor.close()
+                            }
+                            val img = ByteArrayInputStream(Utils.getByteArray(bt))
 
                             //이미지 전송
                             val params = RequestParams()
@@ -313,7 +357,8 @@ class InfoFragment : Fragment(){
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                     //getTempUserInformation("image")
-                                    println(response)
+                                    member_info()
+//                                    imgProfile.setImageBitmap(bt)
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -330,7 +375,7 @@ class InfoFragment : Fragment(){
                         }
                         catch (e: IOException) {
                             e.printStackTrace()
-                            Toast.makeText(ctx, "바꾸기실패", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(myContext, "바꾸기실패", Toast.LENGTH_SHORT).show()
                         }
 
                     }
@@ -339,6 +384,12 @@ class InfoFragment : Fragment(){
         }
 
     }
+
+    fun updateprofile(bt:Bitmap){
+
+    }
+
+
 
     fun getTempUserInformation(type : String) {
 
@@ -391,13 +442,14 @@ class InfoFragment : Fragment(){
                                 txUserName.text = newNick
                             }
                             "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-2)
+                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-1)
+
                             }
                             "tag" -> {
                                 var taglist = ""
                                 for (i in 0..memberTags.length()-1){
                                     val data = memberTags[i] as JSONObject
-                                    taglist += "#${Utils.getString(data,"tag")} "
+                                    taglist += "#"+Utils.getString(data,"tag")
                                     println(taglist)
                                 }
                                 hashtagTV.text = taglist
@@ -421,7 +473,7 @@ class InfoFragment : Fragment(){
                                 val image = Config.url + img_uri
 
                                 val uri = Uri.parse(image)
-                                val inputStream = ctx!!.contentResolver.openInputStream(uri)
+                                val inputStream = myContext!!.contentResolver.openInputStream(uri)
                                 val btm = BitmapFactory.decodeStream(inputStream)
                                 val resized = Utils.resizeBitmap(btm, 100)
                                 imgProfile.setImageBitmap(resized)
@@ -452,8 +504,10 @@ class InfoFragment : Fragment(){
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context
-        this.ctx = context
+        this.myContext = context
     }
+
+
 
 
 

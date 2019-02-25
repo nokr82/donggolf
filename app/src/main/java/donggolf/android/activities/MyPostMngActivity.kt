@@ -1,12 +1,15 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
@@ -16,7 +19,6 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_my_post_mng.*
-import kotlinx.android.synthetic.main.item_my_post_manage.*
 import kotlinx.android.synthetic.main.item_my_post_manage.view.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -26,6 +28,8 @@ class MyPostMngActivity : RootActivity() {
 
     lateinit var context : Context
     var member_id = 0
+    var type = ""
+    var nick = ""
 
     //adapter 3개 연결
     lateinit var myPostAdapter : MyPostAdapter
@@ -42,6 +46,16 @@ class MyPostMngActivity : RootActivity() {
 
         context = this
         member_id = PrefUtils.getIntPreference(context,"member_id")
+
+        var intent = getIntent()
+
+        if (intent.getStringExtra("founder") != null){
+            member_id = intent.getStringExtra("founder").toInt()
+            println("-----------member_id$member_id")
+            type = intent.getStringExtra("type")
+            nick = intent.getStringExtra("nick")
+            titleTV.setText(nick)
+        }
 
         btn_back.setOnClickListener {
             finish()
@@ -84,7 +98,12 @@ class MyPostMngActivity : RootActivity() {
                             }
                             myPostAdapter.notifyDataSetChanged()
 
-                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
+                            if (nick != ""){
+                                myPost_myPostTV.text = nick + "님의 게시물(" + data.length() +")"
+                            } else {
+                                myPost_myPostTV.text = "내 게시물(" + data.length() +")"
+                            }
+//                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
                         }
 
                     } catch (e: JSONException) {
@@ -100,6 +119,17 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myPostLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
+
+            MoveMainDetailActivity(content_id)
+        }
+
+
+
+
 
         myCommentTab.setOnClickListener {
             //뷰
@@ -149,7 +179,13 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myCommentLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myCommentPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
 
+            MoveMainDetailActivity(content_id)
+        }
         myStorePostTab.setOnClickListener {
             //뷰
             setTabInit()
@@ -172,14 +208,14 @@ class MyPostMngActivity : RootActivity() {
 
                             val data = response!!.getJSONArray("contents")
 
-                                myStoredPostList.clear()
-                                for (i in 0 until data.length()) {
-                                    myStoredPostList.add(data[i] as JSONObject)
-                                    myStoredPostList.get(i).put("willDel", false)
-                                }
-                                myStoredPostAdapter.notifyDataSetChanged()
+                            myStoredPostList.clear()
+                            for (i in 0 until data.length()) {
+                                myStoredPostList.add(data[i] as JSONObject)
+                                myStoredPostList.get(i).put("willDel", false)
+                            }
+                            myStoredPostAdapter.notifyDataSetChanged()
 
-                                myPost_storeTV.text = "보관 글(" + data.length() + ")"
+                            myPost_storeTV.text = "보관 글(" + data.length() + ")"
 
                         }
 
@@ -196,9 +232,17 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+        myStorePostLV.setOnItemClickListener { parent, view, position, id ->
+            val data = myStoredPostList.get(position)
+            val content = data.getJSONObject("Content")
+            var content_id =  Utils.getString(content,"id")
 
+            MoveMainDetailActivity(content_id)
+        }
         //보관글 지우기
         myStorePostLV.setOnItemLongClickListener { parent, view, position, id ->
+
+
             myStoredPostList[position].put("willDel",true)
             myStoredPostAdapter.notifyDataSetChanged()
 
@@ -208,6 +252,11 @@ class MyPostMngActivity : RootActivity() {
             var contIdx = Utils.getString(contentOb,"id")
 
             view.item_btn_del.setOnClickListener {
+
+                if (PrefUtils.getIntPreference(context,"member_id") != member_id){
+                    Toast.makeText(context,"타인의 게시물을 삭제할수없습니다", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 val params = RequestParams()
                 params.put("content_id", contIdx)
                 params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
@@ -267,7 +316,13 @@ class MyPostMngActivity : RootActivity() {
                             myPostList[i].put("willDel", false)
                         }
                         myPostAdapter.notifyDataSetChanged()
-                        myPost_myPostTV.text = "내 게시글(" + data.length() +")"
+
+                        if (nick != ""){
+                            myPost_myPostTV.text = nick + "님의 게시물(" + data.length() +")"
+                        } else {
+                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
+                        }
+//                        myPost_myPostTV.text = "내 게시글(" + data.length() +")"
                     }
 
                 } catch (e: JSONException) {
@@ -284,6 +339,17 @@ class MyPostMngActivity : RootActivity() {
         })
     }
 
+
+
+    fun MoveMainDetailActivity(id : String){
+        var intent: Intent = Intent(context, MainDetailActivity::class.java)
+        intent.putExtra("id",id)
+        startActivity(intent)
+    }
+
+
+
+
     fun setTabInit() {
         myPost_myPostTV.setTextColor(Color.parseColor("#000000"))
         myPost_commentTV.setTextColor(Color.parseColor("#000000"))
@@ -297,7 +363,14 @@ class MyPostMngActivity : RootActivity() {
         myCommentLV.visibility = View.GONE
         myStorePostLV.visibility = View.GONE
 
-        myPost_myPostTV.text = "내 게시글"
+//        myPost_myPostTV.text = "내 게시글"
+        if (nick != ""){
+            myPost_myPostTV.text = nick + "님의 게시물"
+        } else {
+            myPost_myPostTV.text = "내 게시물"
+        }
+
+
         myPost_commentTV.text = "댓글단 글"
         myPost_storeTV.text = "보관 글"
     }

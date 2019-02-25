@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -54,6 +55,11 @@ class FriendGrpDetailSettingActivity : RootActivity() {
         category_id = intent.getIntExtra("cate_id", 0)
 
         changeCategNameLL.setOnClickListener {
+            if (title == "1촌 골퍼"){
+                Toast.makeText(context,"1촌 골퍼는 카테고리명을 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
             dialogView.dlgTitle.text = "카테고리 이름변경"
@@ -172,6 +178,10 @@ class FriendGrpDetailSettingActivity : RootActivity() {
     fun loadData() {
         val params = RequestParams()
         params.put("category_id",category_id)
+
+        if (category_id == -1){
+            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        }
 
         MateAction.category_detail(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -305,6 +315,8 @@ class FriendGrpDetailSettingActivity : RootActivity() {
             params.put("login", login)
             params.put("open_mate", open_mate)
             params.put("new_market", new_market)
+
+            println("-----new_post : $new_post chat : $chat login : $login open_mate : $open_mate new_market $new_market")
         }
 
         MateAction.updateCategory(params, object : JsonHttpResponseHandler(){
