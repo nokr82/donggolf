@@ -3,10 +3,7 @@ package donggolf.android.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import donggolf.android.R
 import donggolf.android.base.Utils
 import donggolf.android.models.FriendCategory
@@ -43,6 +40,14 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
 
         item.cateTitleTV.text = Utils.getString(category,"category")
         item.item_category_count.setText(Utils.getString(category,"peoplecnt"))
+
+        if (Utils.getString(category,"peoplecnt") == "0"){
+            item.btn_category_del.visibility = View.VISIBLE
+            item.item_category_count.visibility = View.GONE
+        } else {
+            item.btn_category_del.visibility = View.GONE
+            item.item_category_count.visibility = View.VISIBLE
+        }
 
         var listFirst = true
         var alarmTxt = ""
@@ -104,6 +109,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         var item_category_count : TextView
         var btn_category_del : ImageView
         var pushTV : TextView
+        var category_del_LL : LinearLayout
 
         init {
 
@@ -112,6 +118,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
             item_category_count = v.findViewById(R.id.item_category_count)
             btn_category_del = v.findViewById(R.id.btn_category_del)
             pushTV = v.findViewById(R.id.pushTV)
+            category_del_LL = v.findViewById(R.id.category_del_LL)
 
         }
 

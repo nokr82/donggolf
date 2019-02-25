@@ -24,6 +24,7 @@
             android:textStyle="bold"
             android:text="동네 채팅방 만들기"/>
         <TextView
+            android:id="@+id/cntTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1/5"
@@ -337,7 +338,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="13dp"
                     android:textStyle="bold"
-                    android:text="운영정책[보기]"/>
+                    android:text="동네골프 운영정책[보기]"/>
                 </LinearLayout>
                 <TextView
                     android:layout_width="wrap_content"

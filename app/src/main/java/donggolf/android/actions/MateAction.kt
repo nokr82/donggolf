@@ -69,4 +69,8 @@ object MateAction {
     fun block_cancle(params: RequestParams, handler: JsonHttpResponseHandler){
         HttpClient.post("/mate/block_cancle.json", params, handler)
     }
+
+    fun delete_category(params: RequestParams, handler: JsonHttpResponseHandler){
+        HttpClient.post("/mate/delete_category.json", params, handler)
+    }
 }

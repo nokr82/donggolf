@@ -2,8 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,6 +19,7 @@ import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_manage.*
 import kotlinx.android.synthetic.main.dialog_add_category.view.*
+import kotlinx.android.synthetic.main.item_friend_category_list.view.*
 import org.json.JSONObject
 
 class FriendManageActivity : RootActivity() {
@@ -30,11 +30,22 @@ class FriendManageActivity : RootActivity() {
     lateinit var context : Context
     val RESET = 1000
 
+    internal var resetReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                getCategoryList()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_manage)
 
         context = this
+
+        var filter1 = IntentFilter("RESET_CATEGORY")
+        registerReceiver(resetReceiver, filter1)
 
         frdMngAdapter = FriendCategoryAdapter(context, R.layout.item_friend_category_list, friendCategoryData)
         friendCategoryLV.adapter = frdMngAdapter
@@ -74,9 +85,25 @@ class FriendManageActivity : RootActivity() {
         friendCategoryLV.setOnItemClickListener { parent, view, position, id ->
             val data = friendCategoryData.get(position)
             val category = data.getJSONObject("MateCategory")
+            val id = Utils.getString(category,"id")
+            view.category_del_LL.setOnClickListener {
+                if (id == "-1"){
+                    Toast.makeText(context,"일촌골퍼는 삭제하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("정말로 이 카테고리를 삭제 하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            delete_category(Utils.getString(category,"id"))
+                            friendCategoryData.removeAt(position)
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            }
 
             val intent = Intent(context, FriendCategoryDetailActivity::class.java)
-            intent.putExtra("category_id", Utils.getInt(category,"id"))
+            intent.putExtra("category_id", id.toInt())
             intent.putExtra("category_title", Utils.getString(category,"category"))
             startActivityForResult(intent,RESET)
         }
@@ -193,16 +220,43 @@ class FriendManageActivity : RootActivity() {
         })
     }
 
+    fun delete_category(id : String){
+        val params = RequestParams()
+        params.put("id", id)
+
+        MateAction.delete_category(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                   getCategoryList()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+        })
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
             when(requestCode) {
                 RESET -> {
-                    getCategoryList()
+                    if (data!!.getStringExtra("reset") != null) {
+                        getCategoryList()
+                    }
                 }
             }
         }
     }
+
+
 
 
 }

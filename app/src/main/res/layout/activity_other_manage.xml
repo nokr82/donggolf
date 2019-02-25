@@ -276,6 +276,14 @@
                 android:padding="10dp"
                 android:textSize="13dp"
                 android:text="계정상태"/>
+            <TextView
+                android:id="@+id/accountstatusTV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#0EDA2F"
+                android:layout_marginRight="8dp"
+                android:text="활성"/>
         </LinearLayout>
     </LinearLayout>
     <ImageView

@@ -90,6 +90,22 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
+        item.myimageIV.setOnClickListener {
+            val type = Utils.getString(chatting,"type")
+            println("--------typ[e====== $type")
+            if (type == "i"){
+                val img = Utils.getString(chatting,"img")
+                val imglist:ArrayList<String> = ArrayList<String>()
+                imglist.add(img)
+                var intent = Intent(context, PictureDetailActivity::class.java)
+                intent.putExtra("id", id)
+                intent.putExtra("adPosition",0)
+                intent.putExtra("paths",imglist)
+                intent.putExtra("type","chat")
+                context.startActivity(intent)
+            }
+        }
+
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
         }

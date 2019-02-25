@@ -427,7 +427,8 @@ class RequestFriendActivity : RootActivity() {
     override fun onBackPressed() {
         Utils.hideKeyboard(context)
         var intent = Intent()
-        setResult(Activity.RESULT_OK)
+        intent.putExtra("reset","reset")
+        setResult(Activity.RESULT_OK,intent)
         finish()
     }
 

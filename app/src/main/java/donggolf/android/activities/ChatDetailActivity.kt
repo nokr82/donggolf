@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -186,6 +188,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         finishaLL.setOnClickListener {
             finish()
+            Utils.hideKeyboard(this)
         }
 
         addchattingTV.setOnClickListener {
@@ -373,13 +376,34 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 //            val galleryIntent = Intent(Intent.ACTION_PICK,
 //                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
-            var intent = Intent(context, FindPictureActivity::class.java);
-            intent.putExtra("image","image")
-
-            startActivityForResult(intent, GALLERY)
+            permissionimage()
         }
 
 
+
+    }
+
+    private fun permissionimage() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                var intent = Intent(context, FindPictureActivity::class.java);
+                intent.putExtra("image","image")
+
+                startActivityForResult(intent, GALLERY)
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
 
     }
 

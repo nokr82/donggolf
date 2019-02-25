@@ -57,6 +57,7 @@ class AddDongChatActivity : RootActivity() {
     var background:Bitmap? = null
 
     var secretcode = ""
+    var todaycount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +77,7 @@ class AddDongChatActivity : RootActivity() {
         }
 
         gotermLL.setOnClickListener {
-            val intent = Intent(this, TermSpecifActivity::class.java)
+            val intent = Intent(this, OperatingActivity::class.java)
             startActivity(intent)
         }
 
@@ -108,6 +109,16 @@ class AddDongChatActivity : RootActivity() {
                         getGugun(parent_id.toInt())
                     }
                 }
+
+                var name = leftregionTV.text.toString()
+                if (name == "전국"){
+                    rightregionTV.setText("전국")
+                    region_id = "0"
+                } else {
+                    rightregionTV.setText("선택해주세요")
+                    region_id = "-1"
+                }
+
                 alert.dismiss()
             }
 
@@ -265,6 +276,11 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
+        if (region_id == "-1"){
+            Utils.alert(context, "지역 선택은 필수 입니다다.")
+           return
+        }
+
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("title", title)
@@ -297,6 +313,9 @@ class AddDongChatActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    setResult(Activity.RESULT_OK,intent)
                     finish()
                 }
             }
@@ -341,6 +360,7 @@ class AddDongChatActivity : RootActivity() {
     fun getBigCity(){
 
         val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
 
@@ -352,6 +372,9 @@ class AddDongChatActivity : RootActivity() {
                         bigcitylist.add(datalist.get(i) as JSONObject)
                         bigcitylist[i].put("isSelectedOp",false)
                     }
+
+                    todaycount = response!!.getInt("todayCount")
+                    cntTV.setText(todaycount.toString() + "/5")
 
                     cityadapter.notifyDataSetChanged()
                 }

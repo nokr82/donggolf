@@ -15,7 +15,9 @@ class PersonalInfoTernsActivity : RootActivity() {
 
         if (intent.getStringExtra("rule") != null){
             titleTV.setText("장터사용 원칙")
-            val url = Config.url + "/agree/agree4"
+            val url = Config.url + "/agree/agree6"
+
+            println("-----url : $url")
 
             personalWV.settings.javaScriptEnabled = true
             personalWV.loadUrl(url)

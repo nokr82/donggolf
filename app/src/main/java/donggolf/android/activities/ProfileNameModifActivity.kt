@@ -1,7 +1,9 @@
 package donggolf.android.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -80,39 +82,58 @@ class ProfileNameModifActivity : RootActivity() {
         })
 
         nick_ok.setOnClickListener {
-            //DB에 저장하고 finish
-            if (nameET.text.toString().length > 0){
+            nick = nameET.text.toString()
+            if (nick == "" || nick == null){
                 Toast.makeText(context,"이름 입력은 필수 입력입니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            nick = nameET.text.toString()
 
-            //Do table update action
-            val params = RequestParams()
-            params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-            params.put("update", nick)
-            params.put("type", "nick")
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("정말로 변경하시겠습니까 ?")
 
-            //php구현 아직 안함
-            MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    try {
-                        val result = response!!.getString("result")
-                        if (result == "ok") {
-                            var intent = Intent()
-                            setResult(RESULT_OK,intent)
-                            finish()
-                        }
-                    }catch (e : JSONException) {
-                        e.printStackTrace()
-                    }
-                }
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                        //DB에 저장하고 finish
 
-                }
-            })
+                        //Do table update action
+                        val params = RequestParams()
+                        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+                        params.put("update", nick)
+                        params.put("type", "nick")
+
+                        //php구현 아직 안함
+                        MemberAction.update_info(params, object : JsonHttpResponseHandler() {
+                            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                try {
+                                    val result = response!!.getString("result")
+                                    if (result == "ok") {
+                                        var intent = Intent()
+                                        setResult(RESULT_OK,intent)
+                                        finish()
+                                    }
+                                }catch (e : JSONException) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+                            }
+                        })
+
+
+
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        finish()
+                    })
+
+            val alert = builder.create()
+            alert.show()
         }
 
     }

@@ -1,6 +1,8 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -56,10 +58,23 @@ class NoticeManageActivity : RootActivity() {
 
         finishLL.setOnClickListener {
             finish()
+            Utils.hideKeyboard(this)
         }
 
         saveTV.setOnClickListener {
-            set_notice()
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("공지사항을 등록하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        set_notice()
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+
+            val alert = builder.create()
+            alert.show()
         }
 
     }
@@ -99,7 +114,6 @@ class NoticeManageActivity : RootActivity() {
                         val item = response.getJSONObject("announcement")
                         val Announcement = item.getJSONObject("Announcement")
                         val Chatroom = item.getJSONObject("Chatroom")
-
 
                         val readcount = Utils.getString(Announcement,"readcount")
                         readcountTV.setText(readcount + "명 읽음")
@@ -151,6 +165,7 @@ class NoticeManageActivity : RootActivity() {
 
     fun set_notice(){
         val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("room_id", room_id)
         val notice = founderTV.text.toString()
         if (notice == null || notice == ""){

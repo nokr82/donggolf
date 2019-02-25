@@ -246,8 +246,6 @@ class RegisterActivity : RootActivity() {
         params.put("sex", gender)
         params.put("nick", nickName)
 
-        println("---- email: $email passwd : $password phone : $phone gender : $gender nick : $nickName")
-
         MemberAction.join_member(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

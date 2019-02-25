@@ -19,11 +19,13 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
+import donggolf.android.adapters.PictureDetailViewAdapter
 import donggolf.android.adapters.ProfileSlideViewAdapter
 import donggolf.android.base.*
 import kotlinx.android.synthetic.main.activity_view_profile_list.*
 import org.json.JSONException
 import org.json.JSONObject
+import uk.co.senab.photoview.PhotoView
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,8 +33,8 @@ class ViewProfileListActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    //private lateinit var pagerAdapter: PictureDetailViewAdapter
-    private lateinit var pagerAdapter: ProfileSlideViewAdapter
+    private lateinit var pagerAdapter: PictureDetailViewAdapter
+//    private lateinit var pagerAdapter: ProfileSlideViewAdapter
 
     var profileImagePaths = ArrayList<String>()
     var getImages : ArrayList<Bitmap> = ArrayList()
@@ -80,10 +82,11 @@ class ViewProfileListActivity : RootActivity() {
         progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
         progressDialog!!.setCancelable(false)
 
-        //pagerAdapter = PictureDetailViewAdapter()
-        pagerAdapter = ProfileSlideViewAdapter(this, profileImagePaths,selected)
+        pagerAdapter = PictureDetailViewAdapter()
+//        pagerAdapter = ProfileSlideViewAdapter(this, profileImagePaths,selected,context)
 
         albumVP.adapter = pagerAdapter
+
 
         getMyProfile()
 
@@ -153,6 +156,17 @@ class ViewProfileListActivity : RootActivity() {
 
                         getImages.add(btm)*/
 
+                    }
+
+                    for (i in 0 until profileImagePaths.size) {
+                        val iv = PhotoView(context)
+                        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(profileImagePaths.get(i), iv, Utils.UILoptions)
+
+                        if (i == 0) {
+                            pagerAdapter.addView(iv, i)
+                        } else {
+                            pagerAdapter.addView(iv)
+                        }
                     }
 
                     pagerAdapter.notifyDataSetChanged()

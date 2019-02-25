@@ -66,7 +66,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var goguntype = "전국"
     var goguntype2 = "전국"
     var membercnt = ""
-    var region_id = "1001"
+    var region_id = "0"
     var region_id2 = ""
 
     internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {

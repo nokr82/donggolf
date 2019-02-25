@@ -100,6 +100,11 @@ class ChangePasswordActivity : RootActivity() {
                                 Toast.makeText(context, "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_LONG).show()
 //                                                        Utils.alert(context,"비밀번호가 성공적으로 변경되었습니다.")
                                 finish()
+
+                                PrefUtils.setPreference(context, "pass", Utils.getString(newPass1ET))
+
+//                                PrefUtils.clear(context)
+
                                 Utils.hideKeyboard(context)
                             }
                         } catch (e:JSONException) {

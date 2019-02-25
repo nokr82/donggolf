@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -374,13 +376,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
         }
 
         gofindpictureLL.setOnClickListener {
-            var intent = Intent(context, FindPictureActivity::class.java);
-            intent.putExtra("image","image")
-
-//            val galleryIntent = Intent(Intent.ACTION_PICK,
-//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-            startActivityForResult(intent, GALLERY)
+            permissionimage()
         }
 
         delIV.setOnClickListener {
@@ -390,6 +386,33 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 //            comment_path = null
             comment_path.clear()
         }
+
+    }
+
+    private fun permissionimage() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                var intent = Intent(context, FindPictureActivity::class.java);
+                intent.putExtra("image","image")
+
+//            val galleryIntent = Intent(Intent.ACTION_PICK,
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+                startActivityForResult(intent, GALLERY)
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
 
     }
 
@@ -422,14 +445,6 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             max_count = Utils.getInt(chatroom,"max_count")
                             people_count = Utils.getInt(chatroom,"peoplecount")
 
-                            if (notice != null && notice.length > 0){
-                                noticeTV.setText(notice)
-                                downnoticeTV.setText(notice)
-                            } else {
-                                noticeTV.setText("공지사항이 없습니다.")
-                                downnoticeTV.setText("공지사항이 없습니다.")
-                            }
-
                             if (top_yn == "Y"){
                                 downnoticevisibleLL.visibility = View.GONE
                                 noticevisibleLL.visibility = View.VISIBLE
@@ -445,6 +460,16 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                                     downnoticevisibleLL.visibility = View.GONE
                                     noticevisibleLL.visibility = View.GONE
                                 }
+                            }
+
+                            if (notice != null && notice.length > 0){
+                                noticeTV.setText(notice)
+                                downnoticeTV.setText(notice)
+                            } else {
+                                noticeTV.setText("공지사항이 없습니다.")
+                                downnoticeTV.setText("공지사항이 없습니다.")
+                                noticevisibleLL.visibility = View.GONE
+                                downnoticevisibleLL.visibility = View.GONE
                             }
 
                             nicknameTV.setText(title + "(" + members.length().toString() + ")")
@@ -1007,7 +1032,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
     fun set_notice_yn(type:String){
 
         val params = RequestParams()
-        params.put("room_id",PrefUtils.getIntPreference(context,"room_id"))
+        params.put("room_id",room_id)
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("type", type)
 

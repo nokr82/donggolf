@@ -33,6 +33,10 @@ class OtherManageActivity : RootActivity() {
             statusTV.setText("수동")
         }
 
+        if (isActive == "i"){
+            accountstatusTV.setText("비활성성")
+       }
+
         setpasswordLL.setOnClickListener {
             var intent = Intent(context, ChangePasswordActivity::class.java)
             startActivity(intent)

@@ -24,7 +24,7 @@
             android:layout_marginRight="10dp"
             android:src="@drawable/btn_cancel"/>
         </LinearLayout>
-        <android.support.v4.view.ViewPager
+        <ImageView
             android:id="@+id/backgroundVP"
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -66,15 +66,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp">
 
+                    <LinearLayout
+                        android:background="@drawable/background_border_radius5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="10dp">
                     <TextView
+                        android:padding="3dp"
                         android:id="@+id/dongcreatedTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="시작일 "
                         android:textSize="13dp"
                         android:textStyle="bold"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:textColor="#000000"
+                        android:layout_alignParentBottom="true"/>
+                    </LinearLayout>
+
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profileIV"
@@ -108,9 +117,11 @@
                     android:textSize="20dp" />
 
                 <ImageView
+                    android:id="@+id/setroomtitleIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
+                    android:layout_marginLeft="2dp"
                     android:src="@drawable/btn_change_name" />
             </LinearLayout>
 
@@ -191,12 +202,25 @@
                 android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:layout_marginBottom="20dp">
-                <TextView
+                <LinearLayout
+                    android:id="@+id/introduceLL"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:text="채팅방 소개" />
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:text="채팅방 소개" />
+
+                    <ImageView
+                        android:id="@+id/introduceIV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginLeft="2dp"
+                        android:src="@drawable/btn_change_name" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/introduceTV"
                     android:layout_width="match_parent"

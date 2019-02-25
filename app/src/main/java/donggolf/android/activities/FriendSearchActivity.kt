@@ -149,10 +149,8 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
-//                    activity.maintitleLL.visibility=View.GONE
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     userScrolled = false
-//                    activity.maintitleLL.visibility=View.VISIBLE
                 }
 
                 if (!frdResultLV.canScrollVertically(-1)) {

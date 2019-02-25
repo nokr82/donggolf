@@ -40,7 +40,7 @@ class MutualAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
         }
 
         val json = data.get(position)
-        val member = json.getJSONObject("Member")
+        val member = json.getJSONObject("MateMember")
 
         item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
         item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")

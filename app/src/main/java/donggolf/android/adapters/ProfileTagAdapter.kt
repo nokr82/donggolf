@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import donggolf.android.R
 import donggolf.android.base.Utils
@@ -73,10 +74,12 @@ open class ProfileTagAdapter(context: Context, view:Int, data:ArrayList<String>)
 
         var titleTagTV : TextView
         var removeIV : ImageView
+        var removeLL : LinearLayout
 
         init {
             titleTagTV = v.findViewById<View>(R.id.titleTagTV) as TextView
             removeIV = v.findViewById<View>(R.id.removeIV) as ImageView
+            removeLL = v.findViewById<View>(R.id.removeLL) as LinearLayout
 
 
         }

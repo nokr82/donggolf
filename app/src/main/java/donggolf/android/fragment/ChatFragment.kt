@@ -54,8 +54,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var viewpagerChat : ViewPager
 
     val RESET = 1000
-
     val CHATRESET = 1001
+    val ADDCHAT = 1002
+
+    var todayCount = 0
 
     internal var resetChattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -317,8 +319,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
 
         adddongchatIV.setOnClickListener {
+            if (todayCount == 5){
+                Toast.makeText(context, "하루에 5개 이상 채팅방을 생성하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             var intent = Intent(activity, AddDongChatActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent,ADDCHAT)
         }
 
 
@@ -361,6 +368,14 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
 
+                    todayCount = response!!.getInt("todayCount")
+                    val mychat_count = response!!.getInt("mychat_count")
+                    val dongchat_count = response!!.getInt("dongchat_count")
+                    chatcountTV.setText(mychat_count.toString())
+                    dongchatcountTV.setText(dongchat_count.toString())
+                    mychatcountTV.setText(mychat_count.toString())
+                    dongcountTV.setText(dongchat_count.toString())
+
                     if (type == 1) {
                         if (adapterData != null) {
                             adapterData.clear()
@@ -372,11 +387,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             }
                         }
 
-                        if (type == 1) {
-                            chatcountTV.setText(adapterData.size.toString())
-                        } else {
-                            dongcountTV.setText(adapterData.size.toString())
-                        }
+//                        if (type == 1) {
+//                            chatcountTV.setText(adapterData.size.toString())
+//                        } else {
+//                            dongcountTV.setText(adapterData.size.toString())
+//                        }
                         chat_list.adapter = adapter
                         adapter.notifyDataSetChanged()
                     } else {
@@ -426,6 +441,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                 CHATRESET -> {
                     getmychat(1)
+                }
+
+                ADDCHAT -> {
+                    if (data!!.getStringExtra("reset") != null){
+                        getmychat(1)
+                    }
                 }
             }
         }

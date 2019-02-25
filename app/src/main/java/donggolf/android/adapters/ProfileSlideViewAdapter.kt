@@ -12,13 +12,15 @@ import android.widget.RelativeLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
 import donggolf.android.base.Utils
+import uk.co.senab.photoview.PhotoView
 import java.util.*
 
-class ProfileSlideViewAdapter(activity: Activity, imagePaths: ArrayList<String>, selected : LinkedList<String>) : PagerAdapter() {
+class ProfileSlideViewAdapter(activity: Activity, imagePaths: ArrayList<String>, selected : LinkedList<String>, context: Context) : PagerAdapter() {
 
     private val _activity: Activity = activity
     private val _imagePaths: ArrayList<String> = imagePaths
     private lateinit var inflater: LayoutInflater
+    private val context = context
 
 
     override fun getCount(): Int {
@@ -30,13 +32,13 @@ class ProfileSlideViewAdapter(activity: Activity, imagePaths: ArrayList<String>,
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val imgDisplay: ImageView
+        val imgDisplay =  PhotoView(context)
 
         inflater = _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false)
 
-        imgDisplay = viewLayout.findViewById(R.id.imgDisplay)
-        imgDisplay.scaleType = ImageView.ScaleType.FIT_CENTER
+//        imgDisplay = viewLayout.findViewById(R.id.imgDisplay)
+//        imgDisplay.scaleType = ImageView.ScaleType.FIT_CENTER
 
         ImageLoader.getInstance().displayImage(_imagePaths.get(position), imgDisplay, Utils.UILoptionsProfile)
 

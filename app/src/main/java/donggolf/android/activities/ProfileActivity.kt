@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
+import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.PostAction
 import donggolf.android.base.Config
@@ -32,7 +33,8 @@ class ProfileActivity : RootActivity() {
     var member_id = ""
     var mate_ids: ArrayList<String> = ArrayList<String>()
     var type = -1
-
+    var matediv = 0
+    var chat_id = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,26 +51,36 @@ class ProfileActivity : RootActivity() {
         //타입이 1이면 친구신청으로
         type = intent.getIntExtra("type",-1)
 
+        if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
+            knowTogether.visibility = View.GONE
+        }
+
         member_info(member_id)
         mate_ids.add(member_id)
 
         if (type ==1){
             profile_opIV.setImageResource(R.mipmap.btn_add_friend)
-            profile_opTV.text = "친구요청"
+            profile_opTV.text = "친구신청"
         } else {
 
         }
 
+        knowTogether.setOnClickListener {
+            val intent = Intent(context, MutualActivity::class.java)
+            intent.putExtra("mate_id", member_id)
+            startActivity(intent)
+        }
+
 
         click_chat.setOnClickListener {
-
-            if (type==1){
+            val profileTV = profile_opTV.text.toString()
+            val nick = txUserName.text.toString()
+            if (profileTV == "친구신청"){
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
 
                             if (member_id != null) {
-
 
                                 var params = RequestParams()
                                 params.put("mate_id", member_id)
@@ -98,19 +110,32 @@ class ProfileActivity : RootActivity() {
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
                 alert.show()
-            }else{
-                val nick = txUserName.text.toString()
-
+            } else if(profileTV == "채팅"){
+                if (matediv == 0){
+                    Toast.makeText(context, "1촌이 아니시면 채팅을 하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                } else {
+                   chk_chat()
+                }
+            } else if (profileTV == "차단취소"){
                 val builder = AlertDialog.Builder(context)
-                builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
+                builder.setMessage(nick + "님을 차단취소 하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-                            addchat()
+                            block_cancle(member_id)
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                val alert = builder.create()
+                alert.show()
+            } else if (profileTV == "신청취소"){
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage(nick + "님을 친구신청을 취소 하시겠습니까 ?").setCancelable(false)
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            cancle(member_id)
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
                 alert.show()
             }
-
         }
 
 
@@ -133,11 +158,6 @@ class ProfileActivity : RootActivity() {
             startActivity(intent)
         }
 
-
-
-
-
-
         click_friend.setOnClickListener {
             val intent = Intent(context, MutualActivity::class.java)
             intent.putExtra("mate_id", member_id)
@@ -154,6 +174,7 @@ class ProfileActivity : RootActivity() {
     fun member_info(member_id:String){
         val params = RequestParams()
         params.put("member_id", member_id)
+        params.put("my_id",PrefUtils.getIntPreference(context, "member_id"))
 
         MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
@@ -161,6 +182,9 @@ class ProfileActivity : RootActivity() {
                     val result = response.getString("result")
 
                     if (result == "ok") {
+
+                        profile_opIV.setImageResource(R.drawable.btn_chat_on)
+                        profile_opTV.setText("채팅")
 
                         val member = response.getJSONObject("Member")
 
@@ -205,7 +229,7 @@ class ProfileActivity : RootActivity() {
                             statusMessageTV.text = statusMessage
                         }
 
-                        knowTogether.visibility = View.GONE
+//                        knowTogether.visibility = View.GONE
 
                         //해시태그
                         val data = response.getJSONArray("MemberTags")
@@ -230,6 +254,91 @@ class ProfileActivity : RootActivity() {
 
                         ImageLoader.getInstance().displayImage(image, otherPrfImgIV, Utils.UILoptionsProfile)
 
+                        knowTogether.visibility = View.VISIBLE
+
+                        var mateCount = Utils.getInt(member,"mate_cnt")
+                        if (mateCount > 0){
+                            mutualTV.setText("내 1촌 ${mateCount.toString()}명과 아는 사람")
+                        }
+
+                        matediv = response.getInt("mateDiv")
+                        if (matediv > 0){
+                            imgRelation.setBackgroundResource(R.drawable.icon_first)
+                        } else {
+                            imgRelation.setBackgroundResource(R.drawable.icon_second)
+                            profile_opIV.setImageResource(R.mipmap.btn_add_friend)
+                            profile_opTV.text = "친구신청"
+                        }
+
+                        if (mateCount == 0 && matediv == 0 ){
+                            knowTogether.visibility = View.GONE
+                            profile_opIV.setImageResource(R.mipmap.btn_add_friend)
+                            profile_opTV.text = "친구요청"
+                        }
+
+                        val status = Utils.getString(member,"status")
+                        if (status == "b"){
+                            profile_opIV.setImageResource(R.drawable.btn_block)
+                            profile_opTV.text = "차단취소"
+                        } else if (status == "w"){
+                            profile_opIV.setImageResource(R.drawable.btn_add_friend_cancel)
+                            profile_opTV.text = "신청취소"
+                        }
+
+
+                        println("------ mateCount : $mateCount mateDiv : $matediv")
+
+
+                    }
+                } catch (e : JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
+                println(errorResponse.toString())
+            }
+        })
+
+    }
+
+    fun chk_chat(){
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("mate_id",member_id)
+
+        ChattingAction.chk_chat(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject) {
+                try {
+                    val result = response.getString("result")
+
+                    if (result == "ok") {
+                        val chatroom = response.getJSONObject("chatroom")
+                        val room = chatroom.getJSONObject("Chatroom")
+                        val id = Utils.getString(room,"id")
+                        val founder = Utils.getString(room,"member_id")
+                        val type = Utils.getString(room, "type")
+
+                        if (type == "1"){
+                            var intent = Intent(context, ChatDetailActivity::class.java)
+                            intent.putExtra("division", 1)
+                            intent.putExtra("id", id)
+                            intent.putExtra("founder", founder)
+                            startActivity(intent)
+                        }
+
+                    } else if (result == "empty"){
+                        val nick = txUserName.text.toString()
+
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage(nick + "님과 채팅을 하시겠습니까 ?").setCancelable(false)
+                                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                                    addchat()
+                                })
+                                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                        val alert = builder.create()
+                        alert.show()
                     }
                 } catch (e : JSONException) {
                     e.printStackTrace()
@@ -276,6 +385,58 @@ class ProfileActivity : RootActivity() {
         })
 
     }
+
+    fun cancle(mate_id:String){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
+        params.put("status", "rc")
+
+        MateAction.cancle_mate(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    Utils.alert(context,"선택한 대상의 친구신청을 취소했습니다")
+                    member_info(member_id)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println("reject action error : $errorResponse")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println("reject error : $responseString")
+            }
+        })
+    }
+
+
+    fun block_cancle(mate_id : String){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("mate_id", mate_id)
+
+        MateAction.block_cancle(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                println(response)
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    member_info(member_id)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+        })
+    }
+
+
 
 
 }

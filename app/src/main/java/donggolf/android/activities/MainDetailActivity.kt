@@ -693,8 +693,20 @@ class MainDetailActivity : RootActivity() {
                             var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
                             profileIV.tag = Utils.getInt(like, "id")
 
+                            var member_id = Utils.getString(member,"id")
+
                             var image = Config.url + Utils.getString(member, "profile_img")
                             ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+                            view.setOnClickListener {
+                                if (PrefUtils.getIntPreference(context, "member_id") == member_id.toInt()){
+                                    Toast.makeText(context,"본인 프로필에는 이동하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                    return@setOnClickListener
+                                }
+                                val intent = Intent(context, ProfileActivity::class.java)
+                                intent.putExtra("member_id", member_id)
+                                startActivity(intent)
+                            }
 
                             likeMembersLL.addView(view)
 
@@ -1059,6 +1071,17 @@ class MainDetailActivity : RootActivity() {
                                 var image = Config.url + Utils.getString(likeMember, "profile_img")
 
                                 ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsProfile)
+
+                                view.setOnClickListener {
+                                    if (PrefUtils.getIntPreference(context, "member_id") == member_id.toInt()){
+                                        Toast.makeText(context,"본인 프로필에는 이동하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        return@setOnClickListener
+                                    }
+
+                                    val intent = Intent(context, ProfileActivity::class.java)
+                                    intent.putExtra("member_id", id)
+                                    startActivity(intent)
+                                }
 
                                 likeMembersLL.addView(view)
                             }

@@ -144,7 +144,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         progressDialog = ProgressDialog(context, R.style.progressDialogTheme)
         progressDialog!!.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large)
