@@ -85,11 +85,11 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         if (p_comments_id != -1){
             if (op_comments_id != -1) {
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
 
             }else{
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
             }
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE
