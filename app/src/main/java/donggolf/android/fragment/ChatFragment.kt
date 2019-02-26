@@ -686,4 +686,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (timer != null) {
+            timer!!.cancel()
+        }
+    }
+
 }
