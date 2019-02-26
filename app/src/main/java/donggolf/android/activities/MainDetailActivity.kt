@@ -65,7 +65,7 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
-    var p_comments_id = -1
+
 
     var login_id = 0
     var writer = "0"
@@ -86,6 +86,7 @@ class MainDetailActivity : RootActivity() {
 
     var comment_path: Bitmap? = null
     var op_comments_id = -1
+    var p_comments_id = -1
     lateinit var video:Uri
 
     var freind = "0"
@@ -861,6 +862,8 @@ class MainDetailActivity : RootActivity() {
             }
         })
     }
+
+
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val dx = x1 - x2
         val dy = y1 - y2
