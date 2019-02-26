@@ -756,7 +756,7 @@ class GoodsDetailActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("market_id", product_id)
         params.put("comment", comment)
         params.put("parent", commentParent)

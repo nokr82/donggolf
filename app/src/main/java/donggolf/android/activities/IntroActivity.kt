@@ -162,7 +162,7 @@ class IntroActivity : RootActivity() {
                             val member_id = Utils.getInt(member, "id")
 
                             PrefUtils.setPreference(context, "member_id", member_id)
-                            PrefUtils.setPreference(context,"login_nick", Utils.getString(member,"nick"))
+                            PrefUtils.setPreference(context,"nick", Utils.getString(member,"nick"))
                             PrefUtils.setPreference(context, "email", Utils.getString(member, "email"))
                             PrefUtils.setPreference(context, "pass", Utils.getString(member, "passwd"))
                             PrefUtils.setPreference(context, "auto", true)

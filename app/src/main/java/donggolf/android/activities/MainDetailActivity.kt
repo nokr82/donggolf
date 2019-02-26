@@ -805,7 +805,7 @@ class MainDetailActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id",login_id)
         params.put("cont_id", content_id)
-        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("comment", comment)
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)

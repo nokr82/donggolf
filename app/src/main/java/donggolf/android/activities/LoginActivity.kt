@@ -163,7 +163,7 @@ class LoginActivity : RootActivity() {
 
                         println("member_id -------$member_id")
                         PrefUtils.setPreference(context, "member_id", member_id)
-                        PrefUtils.setPreference(context,"login_nick", Utils.getString(member,"nick"))
+                        PrefUtils.setPreference(context,"nickname", Utils.getString(member,"nick"))
 
                         val isActive = Utils.getString(member,"status")
                         if (isActive == "a") {
