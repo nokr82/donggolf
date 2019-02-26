@@ -80,6 +80,7 @@
                 android:layout_weight="20"
                 android:background="@null"
                 android:textSize="14dp"
+                android:maxLength="60"
                 android:hint="상태메시지를 입력해주세요"/>
             <ImageView
                 android:id="@+id/statusTxDel"

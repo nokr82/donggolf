@@ -128,7 +128,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (difference > 0){
             item.readTV.setText(difference.toString())
-        } else if (difference == 0){
+        } else {
             item.readTV.setText("")
         }
 

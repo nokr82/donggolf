@@ -149,6 +149,16 @@ class AreaMyRangeActivity : RootActivity() {
             val regionView = View.inflate(context, R.layout.item_area,null)
             regionView.regionNameTV.text = name
 
+            if (nowIndex == 4){
+                Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                areaCnt.text = "3"
+                return@setOnItemClickListener
+//                update_info()
+            } else {
+                tmpRegionLL.addView(regionView)
+                areaCnt.text = "${actArea.toString()}"
+            }
+
             areaCnt.setText(nowIndex.toString())
             gugunList[position].put("isSelectedOp",true)
             GridAdapter.notifyDataSetChanged()
@@ -170,12 +180,6 @@ class AreaMyRangeActivity : RootActivity() {
                 tmpRegionLL.removeView(regionView)
                 gugunList[position].put("isSelectedOp",false)
                 GridAdapter.notifyDataSetChanged()
-            }
-            if (nowIndex == 3){
-//                update_info()
-            } else {
-                tmpRegionLL.addView(regionView)
-                areaCnt.text = "${actArea.toString()}"
             }
 
 
