@@ -427,6 +427,10 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     val members = response!!.getJSONArray("chatmember")
+                    var my_top_yn = ""
+                    var my_notice_yn = ""
+                    var mynotice = ""
+
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
@@ -445,31 +449,10 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                             max_count = Utils.getInt(chatroom,"max_count")
                             people_count = Utils.getInt(chatroom,"peoplecount")
 
-                            if (top_yn == "Y"){
-                                downnoticevisibleLL.visibility = View.GONE
-                                noticevisibleLL.visibility = View.VISIBLE
-                            } else {
-                                downnoticevisibleLL.visibility = View.VISIBLE
-                                noticevisibleLL.visibility = View.GONE
-                            }
-
                             if (id == PrefUtils.getIntPreference(context,"member_id").toString()){
-                                println("-----notice_yn $notice_yn")
-
-                                if (notice_yn == "Y"){
-                                    downnoticevisibleLL.visibility = View.GONE
-                                    noticevisibleLL.visibility = View.GONE
-                                }
-                            }
-
-                            if (notice != null && notice.length > 0){
-                                noticeTV.setText(notice)
-                                downnoticeTV.setText(notice)
-                            } else {
-                                noticeTV.setText("공지사항이 없습니다.")
-                                downnoticeTV.setText("공지사항이 없습니다.")
-                                noticevisibleLL.visibility = View.GONE
-                                downnoticevisibleLL.visibility = View.GONE
+                                my_notice_yn = notice_yn
+                                my_top_yn = top_yn
+                                mynotice = notice
                             }
 
                             nicknameTV.setText(title + "(" + members.length().toString() + ")")
@@ -528,6 +511,32 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
                         }
                     }
+
+                    if (my_top_yn == "Y"){
+                        downnoticevisibleLL.visibility = View.GONE
+                        noticevisibleLL.visibility = View.VISIBLE
+                    } else {
+                        downnoticevisibleLL.visibility = View.VISIBLE
+                        noticevisibleLL.visibility = View.GONE
+                    }
+
+                    if (my_notice_yn == "Y"){
+                        downnoticevisibleLL.visibility = View.GONE
+                        noticevisibleLL.visibility = View.GONE
+                    }
+
+                    if (mynotice != null && mynotice.length > 0){
+                        noticeTV.setText(mynotice)
+                        downnoticeTV.setText(mynotice)
+                    } else {
+                        noticeTV.setText("공지사항이 없습니다.")
+                        downnoticeTV.setText("공지사항이 없습니다.")
+                        noticevisibleLL.visibility = View.GONE
+                        downnoticevisibleLL.visibility = View.GONE
+                    }
+
+
+
                     chatmembercountTV.setText(members.length().toString())
 
                 }
@@ -561,7 +570,7 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
 
             for (i in 0..comment_path!!.size - 1){
 
-                var bt: Bitmap = Utils.noResizeImage(context.contentResolver, comment_path!!.get(i))
+                var bt: Bitmap = Utils.getImage(context.contentResolver, comment_path!!.get(i))
 
                 params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
             }
@@ -960,16 +969,16 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
 
+                    if (comment_path != null){
+                        comment_path.clear()
+                    }
+
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
                         comment_path!!.add(str)
 
                         val add_file = Utils.getImage(context.contentResolver, str)
-                    }
-
-                    if (comment_path != null){
-                        comment_path.clear()
                     }
 
                     add_chatting()

@@ -74,6 +74,7 @@
                 android:background="@drawable/line_0"/>
 
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/noticevisibleLL"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
