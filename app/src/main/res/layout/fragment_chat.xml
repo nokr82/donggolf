@@ -86,16 +86,45 @@
                 android:layout_width="180dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"/>
+            <LinearLayout
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="70dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="90dp"
                 android:textSize="13dp"
                 android:textColor="#ffffff"
                 android:text="동네 채팅"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text="("/>
+                <TextView
+                    android:id="@+id/dongchatcountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text="0"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text=")"/>
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -114,15 +143,41 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="210dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
-                android:textSize="13dp"
-                android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:text="내 채팅"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:text="내 채팅("/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:text=""/>
+                <TextView
+                    android:id="@+id/mychatcountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:text="0"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="13dp"
+                    android:textColor="#ffffff"
+                    android:text=")"/>
+            </LinearLayout>
 
 
             <ImageView
@@ -142,8 +197,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp">
+                    android:gravity="center_vertical">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -185,12 +239,19 @@
         </android.support.v4.view.ViewPager>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
             <ListView
                 android:scrollbars="none"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/chat_list"/>
+            <ListView
+                android:visibility="gone"
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/dong_chat_list"/>
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

@@ -12,10 +12,7 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -52,12 +49,21 @@ class ChatFragment : android.support.v4.app.Fragment() {
     lateinit var txTownChat : TextView
     lateinit var chat_list : ListView
     lateinit var viewpagerChat : ViewPager
+    lateinit var dong_chat_list : ListView
 
     val RESET = 1000
     val CHATRESET = 1001
     val ADDCHAT = 1002
 
     var todayCount = 0
+
+    private var page = 1
+    private var totalPage = 0
+    private val visibleThreshold = 10
+    private var userScrolled = false
+    private var lastItemVisibleFlag = false
+    private var lastcount = 0
+    private var totalItemCountScroll = 0
 
     internal var resetChattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -98,6 +104,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         txTownChat = view.findViewById(R.id.txTownChat)*/
 
         chat_list = view.findViewById(R.id.chat_list)
+        dong_chat_list = view.findViewById(R.id.dong_chat_list)
 
         viewpagerChat = view.findViewById(R.id.viewpagerChat)
 
@@ -109,6 +116,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         dongAdapter = DongChatAdapter(ctx!!,R.layout.item_my_chat_list,dongAdapterData)
 
         chat_list.adapter = adapter
+        dong_chat_list.adapter = dongAdapter
 
         var isMyChat = true
 
@@ -116,6 +124,87 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)
+
+        dong_chat_list.setOnItemClickListener { parent, view, position, id ->
+            var json = dongAdapterData.get(position)
+            var room = json.getJSONObject("Chatroom")
+            val id = Utils.getString(room, "id")
+            val founder = Utils.getString(room, "member_id")
+            val type = Utils.getString(room, "type")
+            val block_code = Utils.getString(room, "block_code")
+
+            if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
+                if (type == "1") {
+                    var intent = Intent(activity, ChatDetailActivity::class.java)
+                    intent.putExtra("division", 1)
+                    intent.putExtra("id", id)
+                    intent.putExtra("founder", founder)
+                    startActivityForResult(intent, RESET)
+                } else {
+                    var intent = Intent(activity, DongchatProfileActivity::class.java)
+                    intent.putExtra("room_id", id)
+                    startActivityForResult(intent, RESET)
+                }
+            } else {
+                if (block_code != null && block_code.length > 0) {
+                    val builder = AlertDialog.Builder(ctx!!)
+                    val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+                    builder.setView(dialogView)
+                    val alert = builder.show()
+
+                    dialogView.dlgTitle.setText("비공개 코드 입력")
+                    dialogView.categoryTitleET.setHint("코드를 입력해 주세요.")
+                    dialogView.codevisibleLL.visibility = View.GONE
+
+                    dialogView.btn_title_clear.setOnClickListener {
+                        dialogView.blockcodeTV.setText("")
+                    }
+
+                    dialogView.cancleTV.setOnClickListener {
+                        alert.dismiss()
+                    }
+
+                    dialogView.okTV.setOnClickListener {
+                        val code = dialogView.categoryTitleET.text.toString()
+                        if (code == null || code == "") {
+                            Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+
+                        if (code == block_code) {
+                            if (type == "1") {
+                                var intent = Intent(activity, ChatDetailActivity::class.java)
+                                intent.putExtra("division", 1)
+                                intent.putExtra("id", id)
+                                intent.putExtra("founder", founder)
+                                startActivity(intent)
+                            } else {
+                                var intent = Intent(activity, DongchatProfileActivity::class.java)
+                                intent.putExtra("room_id", id)
+                                startActivity(intent)
+                            }
+                        } else {
+                            Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+
+                        alert.dismiss()
+                    }
+                } else {
+                    if (type == "1") {
+                        var intent = Intent(activity, ChatDetailActivity::class.java)
+                        intent.putExtra("division", 1)
+                        intent.putExtra("id", id)
+                        intent.putExtra("founder", founder)
+                        startActivity(intent)
+                    } else {
+                        var intent = Intent(activity, DongchatProfileActivity::class.java)
+                        intent.putExtra("room_id", id)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
             if (myChatOnRL.visibility == View.VISIBLE) {
@@ -279,6 +368,82 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
         }
 
+        chat_list.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    userScrolled = true
+//                    activity.maintitleLL.visibility=View.GONE
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    userScrolled = false
+//                    activity.maintitleLL.visibility=View.VISIBLE
+                }
+
+                if (!chat_list.canScrollVertically(-1)) {
+                    page=1
+
+                    if (myChatOnRL.visibility == View.VISIBLE) {
+                        getmychat(1)
+                    } else {
+                        getmychat(2)
+                    }
+
+                } else if (!chat_list.canScrollVertically(1)) {
+                    if (totalPage > page) {
+                        page++
+                        lastcount = totalItemCountScroll
+                        if (myChatOnRL.visibility == View.VISIBLE) {
+                            getmychat(1)
+                        } else {
+                            getmychat(2)
+                        }
+                    }
+                }
+            }
+        })
+
+        dong_chat_list.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    userScrolled = true
+//                    activity.maintitleLL.visibility=View.GONE
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    userScrolled = false
+//                    activity.maintitleLL.visibility=View.VISIBLE
+                }
+
+                if (!dong_chat_list.canScrollVertically(-1)) {
+                    page=1
+
+                    if (myChatOnRL.visibility == View.VISIBLE) {
+                        getmychat(1)
+                    } else {
+                        getmychat(2)
+                    }
+
+                } else if (!dong_chat_list.canScrollVertically(1)) {
+                    if (totalPage > page) {
+                        page++
+                        lastcount = totalItemCountScroll
+                        if (myChatOnRL.visibility == View.VISIBLE) {
+                            getmychat(1)
+                        } else {
+                            getmychat(2)
+                        }
+                    }
+                }
+            }
+        })
+
         addmychatIV.setOnClickListener {
             var intent = Intent(activity, SelectMemberActivity::class.java)
             intent.putExtra("new","new")
@@ -300,6 +465,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
             if (PrefUtils.getStringPreference(context,"region_id") != null) {
                 myChatOnRL.visibility = View.GONE
                 townChatOnRL.visibility = View.VISIBLE
+                chat_list.visibility = View.GONE
+                dong_chat_list.visibility = View.VISIBLE
+                page = 1
                 getmychat(2)
             } else {
                 Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
@@ -310,6 +478,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         ChatOnRL.setOnClickListener {
             myChatOnRL.visibility = View.VISIBLE
             townChatOnRL.visibility = View.GONE
+            chat_list.visibility = View.VISIBLE
+            dong_chat_list.visibility = View.GONE
+            page = 1
             getmychat(1)
         }
 
@@ -340,6 +511,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     fun getmychat(type : Int){
 
         val params = RequestParams()
+        params.put("page", page)
 
         if (type == 1) {
             if (PrefUtils.getIntPreference(context, "member_id") == -1) {
@@ -377,9 +549,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     dongcountTV.setText(dongchat_count.toString())
 
                     if (type == 1) {
-                        if (adapterData != null) {
+                        if (page == 1){
                             adapterData.clear()
                         }
+                        totalPage = response.getInt("totalPage");
+                        page = response.getInt("page");
+
                         val chatlist = response!!.getJSONArray("chatlist")
                         if (chatlist.length() > 0 && chatlist != null) {
                             for (i in 0 until chatlist.length()) {
@@ -392,20 +567,23 @@ class ChatFragment : android.support.v4.app.Fragment() {
 //                        } else {
 //                            dongcountTV.setText(adapterData.size.toString())
 //                        }
-                        chat_list.adapter = adapter
                         adapter.notifyDataSetChanged()
                     } else {
-                        if (dongAdapterData != null){
+                        if (page == 1){
                             dongAdapterData.clear()
+                        }
+                        totalPage = response.getInt("totalPage");
+                        page = response.getInt("page");
+
+                        if (dongAdapterData != null){
                             val chatlist = response!!.getJSONArray("chatlist")
                             if (chatlist.length() > 0 && chatlist != null) {
                                 for (i in 0 until chatlist.length()) {
                                     dongAdapterData.add(chatlist.get(i) as JSONObject)
                                 }
                             }
-                            dongcountTV.setText(dongAdapterData.size.toString())
+//                            dongcountTV.setText(dongAdapterData.size.toString())
                         }
-                        chat_list.adapter = dongAdapter
                         dongAdapter.notifyDataSetChanged()
                     }
                 }
@@ -432,19 +610,27 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     if (data!!.getStringExtra("reset") != null){
                         var division = data!!.getStringExtra("division")
                         if (division == "my"){
+                            adapterData.clear()
+                            page = 1
                             getmychat(1)
                         } else {
+                            dongAdapterData.clear()
+                            page = 1
                             getmychat(2)
                         }
                     }
                 }
 
                 CHATRESET -> {
+                    adapterData.clear()
+                    page = 1
                     getmychat(1)
                 }
 
                 ADDCHAT -> {
                     if (data!!.getStringExtra("reset") != null){
+                        adapterData.clear()
+                        page = 1
                         getmychat(1)
                     }
                 }

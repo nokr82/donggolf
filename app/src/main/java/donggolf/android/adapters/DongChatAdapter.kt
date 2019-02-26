@@ -79,6 +79,8 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     item.timeTV.setText(since)
                 }
             }
+        } else {
+            item.timeTV.setText("")
         }
 
 //        if (friend == 0){

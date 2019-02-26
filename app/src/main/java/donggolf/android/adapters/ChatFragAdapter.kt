@@ -110,6 +110,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.chatcontentTV.setText("")
         }
 
+//        val created = Utils.getString(room,"created")
         val created = Utils.getString(room,"created")
         val today = Utils.todayStr()
         if (created != null && created.length > 0){
@@ -131,6 +132,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     item.timeTV.setText(since)
                 }
             }
+        } else {
+            item.timeTV.setText("")
         }
 
         if (chatmember.length() == 2){
