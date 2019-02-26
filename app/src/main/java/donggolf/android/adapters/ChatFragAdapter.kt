@@ -115,7 +115,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
         } else if(content == ""){
-            item.chatcontentTV.setText(room_created)
+            item.chatcontentTV.setText("")
             item.readIV.visibility = View.GONE
         }
 

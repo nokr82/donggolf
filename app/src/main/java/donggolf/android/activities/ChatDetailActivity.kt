@@ -942,6 +942,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     add_chatting()
 
+                    timerStart()
 
                     if (data != null)
                     {
