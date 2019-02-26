@@ -71,19 +71,24 @@
                 android:layout_marginLeft="175dp"
                 android:src="@mipmap/btn_make_chat"/>
 
-            <ImageView
+            <LinearLayout
                 android:id="@+id/adddongchatIV"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="175dp"
                 android:layout_marginRight="20dp"
-                android:src="@mipmap/btn_make_chat"/>
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@mipmap/btn_make_chat"/>
+            </LinearLayout>
 
 
             <ImageView
                 android:id="@+id/dongChatOnRL"
-                android:layout_width="180dp"
+                android:layout_width="160dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"/>
             <LinearLayout
