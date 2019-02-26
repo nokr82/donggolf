@@ -831,7 +831,7 @@ class GoodsDetailActivity : RootActivity() {
 
 
     //기존댓글
-       fun getcomment(){
+    fun getcomment(){
         val params = RequestParams()
         params.put("market_id", product_id)
 
@@ -863,7 +863,8 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
     }
-      fun addcomment(){
+    
+    fun addcomment(){
           if (PrefUtils.getIntPreference(context, "member_id") == -1){
               Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
               return
