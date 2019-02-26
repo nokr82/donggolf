@@ -253,6 +253,8 @@ class RegisterActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     finish()
+                } else if (result == "overlap"){
+
                 }
             }
 

@@ -2,6 +2,8 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.graphics.Color
+import android.media.ThumbnailUtils
+import android.provider.MediaStore
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -80,9 +82,14 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         if (image_uri != null){
             if (image_uri != "") {
-                item.profileIV.visibility = View.VISIBLE
+                var image_type = Utils.getString(Content,"image_type")
                 var image = Config.url + image_uri
-                ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+                if (image_type == "1") {
+                    item.profileIV.visibility = View.VISIBLE
+                    ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+                } else {
+
+                }
             } else {
                 item.profileIV.visibility = View.GONE
             }

@@ -84,7 +84,7 @@ class OtherManageActivity : RootActivity() {
             params.put("update", status)
 
             dialogView.dlg_activeLL.setOnClickListener {
-                status = "a"
+                params.put("update", "a")
                 dialogView.rdo_activeIV.setImageResource(R.drawable.btn_radio_on)
                 dialogView.rdo_inactiveIV.setImageResource(R.drawable.btn_radio_off)
 
@@ -93,6 +93,9 @@ class OtherManageActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if (result == "ok"){
                             alert.dismiss()
+                            isActive = "a"
+                            PrefUtils.setPreference(context,"isActiveAccount","a")
+                            accountstatusTV.setText("활성")
                         }
                     }
 
@@ -108,6 +111,8 @@ class OtherManageActivity : RootActivity() {
 
             dialogView.dlg_inactiveLL.setOnClickListener {
                 status = "i"
+                params.put("update", "i")
+
                 dialogView.rdo_activeIV.setImageResource(R.drawable.btn_radio_off)
                 dialogView.rdo_inactiveIV.setImageResource(R.drawable.btn_radio_on)
 
@@ -116,6 +121,9 @@ class OtherManageActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if (result == "ok"){
                             alert.dismiss()
+                            isActive = "i"
+                            PrefUtils.setPreference(context,"isActiveAccount","i")
+                            accountstatusTV.setText("휴면")
                         }
                     }
 

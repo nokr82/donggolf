@@ -85,7 +85,14 @@ class ChangePasswordActivity : RootActivity() {
             return
         }
 
-        if (tpPw.length < 4 || tpPw.length > 16){
+        val newpas = newPass1ET.text.toString()
+
+        if (newpas == "" || newpas == null){
+            Utils.alert(context, "변경하실 비밀번호를 입력해주세요.")
+            return
+        }
+
+        if (newpas.length < 4 || newpas.length > 16){
             Utils.alert(context, "비밀번호는 4 ~ 16 글자만 입력하실 수 있습니다.")
             return
         }
