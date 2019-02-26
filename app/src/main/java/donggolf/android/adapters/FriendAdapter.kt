@@ -42,9 +42,13 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
         val json = data.get(position)
         val member = json.getJSONObject("Member")
         val friend = Utils.getString(member,"friend")
+        val mate_cnt = Utils.getString(member,"mate_cnt")
 
         if (friend == "0"){
             item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
+            if (mate_cnt == "0"){
+                item.main_detail_listitem_firstimage.visibility = View.GONE
+            }
         } else {
             item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_first)
         }

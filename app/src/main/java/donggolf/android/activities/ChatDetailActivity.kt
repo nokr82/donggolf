@@ -21,10 +21,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
 import donggolf.android.adapters.ChattingAdapter
-import donggolf.android.base.Config
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
+import donggolf.android.base.*
+import donggolf.android.models.ImagesPath
+import donggolf.android.models.TmpContent
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
@@ -188,6 +187,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         finishaLL.setOnClickListener {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
             finish()
             Utils.hideKeyboard(this)
         }
@@ -1008,6 +1010,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+        finish()
+
     }
 
 }

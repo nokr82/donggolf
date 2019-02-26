@@ -85,6 +85,11 @@ class ChangePasswordActivity : RootActivity() {
             return
         }
 
+        if (tpPw.length < 4 || tpPw.length > 16){
+            Utils.alert(context, "비밀번호는 4 ~ 16 글자만 입력하실 수 있습니다.")
+            return
+        }
+
         if (tempPass == tpPw){
             if (Utils.getString(newPass1ET) == Utils.getString(newPass2ET)) {
                 val params = RequestParams()
