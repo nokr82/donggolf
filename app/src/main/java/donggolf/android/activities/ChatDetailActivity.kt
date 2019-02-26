@@ -709,6 +709,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     val members = response!!.getJSONArray("chatmember")
                     var roomtitle = ""
+                    memberlistLL.removeAllViews()
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject

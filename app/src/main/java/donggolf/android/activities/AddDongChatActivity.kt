@@ -13,6 +13,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Adapter
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -191,7 +193,8 @@ class AddDongChatActivity : RootActivity() {
         }
 
         profileRL.setOnClickListener {
-            chooseProfile()
+//            chooseProfile()
+            permissionprofile()
         }
 
         profiledtIV.setOnClickListener {
@@ -202,7 +205,8 @@ class AddDongChatActivity : RootActivity() {
         }
 
         backgroundRV.setOnClickListener {
-            chooseBackground()
+//            chooseBackground()
+            permissionbackground()
         }
 
         backgrounddtIV.setOnClickListener {
@@ -538,6 +542,48 @@ class AddDongChatActivity : RootActivity() {
 
     }
 
+
+    private fun permissionprofile() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                chooseProfile()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
+
+    private fun permissionbackground() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                chooseBackground()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
 
 
 

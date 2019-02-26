@@ -35,11 +35,12 @@
             android:background="@null"/>
         <LinearLayout
             android:id="@+id/btn_title_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:gravity="center">
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="10dp"
+                android:layout_height="15dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/btn_del_category_name"/>
         </LinearLayout>

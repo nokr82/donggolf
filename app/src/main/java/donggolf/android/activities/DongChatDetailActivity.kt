@@ -431,6 +431,8 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                     var my_notice_yn = ""
                     var mynotice = ""
 
+                    memberlistLL.removeAllViews()
+
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject

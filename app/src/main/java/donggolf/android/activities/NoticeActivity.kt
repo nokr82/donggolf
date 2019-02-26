@@ -83,8 +83,13 @@ class NoticeActivity : RootActivity() {
                 producttypeTV.text = title
                 producttypeTV.text = "선택"
                 main_edit_search.setText(title)
-                productData[position].put("isSelectedOp", true)
-                productTypeAdapter.notifyDataSetChanged()
+//                for (i in 0 until productData.size) {
+//                    productData.add(productData.get(i) as JSONObject)
+//                    productData.get(i).put("isSelectedOp", false)
+//                }
+
+//                productData[position].put("isSelectedOp", true)
+//                productTypeAdapter.notifyDataSetChanged()
                 alert.dismiss()
             }
 

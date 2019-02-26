@@ -879,6 +879,7 @@ class MainDetailActivity : RootActivity() {
             params.put("id",id)
             params.put("member_id",login_id)
 
+
             PostAction.get_post(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     try {
@@ -904,9 +905,16 @@ class MainDetailActivity : RootActivity() {
 
 
                             freind = Utils.getString(data,"freind")
+                            val mate_cnt = Utils.getString(data,"mate_cnt")
                             Log.d("친구",freind)
                             if (freind == "0"){
-                                freindIV.setBackgroundResource(R.drawable.icon_second)
+                                if (mate_cnt.toInt() > 0){
+                                    freindIV.setBackgroundResource(R.drawable.icon_second)
+                                }
+                            }
+
+                            if (mate_cnt == "0"){
+                                freindIV.visibility = View.GONE
                             }
 
 

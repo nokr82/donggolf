@@ -102,6 +102,7 @@ class DongchatProfileActivity : RootActivity() {
             } else {
                 if (people_count == max_count) {
                     Toast.makeText(context,"정원초과 입니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 } else if (people_count < max_count){
                     val intent = Intent(context, DongChatDetailActivity::class.java)
                     intent.putExtra("room_id", room_id)

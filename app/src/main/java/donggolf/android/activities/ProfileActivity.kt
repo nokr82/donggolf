@@ -278,7 +278,7 @@ class ProfileActivity : RootActivity() {
                         if (mateCount == 0 && matediv == 0 ){
                             knowTogether.visibility = View.GONE
                             profile_opIV.setImageResource(R.mipmap.btn_add_friend)
-                            profile_opTV.text = "친구요청"
+                            profile_opTV.text = "친구신청"
                         }
 
                         val status = Utils.getString(member,"status")

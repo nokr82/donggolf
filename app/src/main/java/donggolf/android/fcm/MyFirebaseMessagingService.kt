@@ -73,6 +73,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         var notificationBuilder = NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(resources,R.drawable.logo_png))
                 .setSmallIcon(R.drawable.alarm_resize)
                 .setContentTitle(title)
                 .setContentText(body)
@@ -97,6 +98,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val gnotificationBuilder = NotificationCompat.Builder(this, channelId)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources,R.drawable.logo_png))
                     .setSmallIcon(R.mipmap.dongne_golf_logo)
                     .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.dongne_golf_logo))
                     .setGroup(group)
