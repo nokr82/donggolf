@@ -94,4 +94,8 @@ object ChattingAction {
         HttpClient.post("/chatting/set_introduce.json", params, handler)
     }
 
+    fun set_in_yn(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_in_yn.json", params, handler)
+    }
+
 }

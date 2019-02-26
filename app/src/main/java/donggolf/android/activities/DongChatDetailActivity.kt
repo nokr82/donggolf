@@ -968,7 +968,9 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                         val add_file = Utils.getImage(context.contentResolver, str)
                     }
 
-                    println("----comment_path size ${comment_path.size}")
+                    if (comment_path != null){
+                        comment_path.clear()
+                    }
 
                     add_chatting()
 

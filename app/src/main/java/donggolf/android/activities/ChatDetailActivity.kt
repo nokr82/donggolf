@@ -130,6 +130,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             room_id = intent.getStringExtra("id")
             timerStart()
             detail_chatting()
+            set_in_yn("Y")
         }
 
         var author = intent.getStringExtra("Author")
@@ -577,6 +578,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         if (timer != null) {
             timer!!.cancel()
         }
+
+        set_in_yn("N")
     }
 
 
@@ -910,6 +913,28 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
+    fun set_in_yn(in_yn:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("in_yn",in_yn)
+
+        ChattingAction.set_in_yn(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -930,6 +955,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
 
+                    if (comment_path != null){
+                        comment_path.clear()
+                    }
+
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
@@ -938,9 +967,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         val add_file = Utils.getImage(context.contentResolver, str)
                     }
 
-                    println("----comment_path size ${comment_path.size}")
-
                     add_chatting()
+                    set_in_yn("Y")
 
                     timerStart()
 
