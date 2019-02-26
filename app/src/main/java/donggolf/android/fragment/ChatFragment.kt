@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Handler
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import org.json.JSONObject
+import java.util.*
 
 class ChatFragment : android.support.v4.app.Fragment() {
 
@@ -77,6 +79,18 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
+    internal var loadDataHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: android.os.Message) {
+            if (townChatOnRL.visibility == View.VISIBLE){
+                getmychat(2)
+            } else {
+                getmychat(1)
+            }
+        }
+    }
+
+    private var timer: Timer? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -89,6 +103,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
         val currentUser = mAuth!!.getCurrentUser()
 
         val db = FirebaseFirestore.getInstance()
+
+        timerStart()
 
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
@@ -613,10 +629,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             adapterData.clear()
                             page = 1
                             getmychat(1)
+                            timerStart()
                         } else {
                             dongAdapterData.clear()
                             page = 1
                             getmychat(2)
+                            timerStart()
                         }
                     }
                 }
@@ -625,6 +643,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     adapterData.clear()
                     page = 1
                     getmychat(1)
+                    timerStart()
                 }
 
                 ADDCHAT -> {
@@ -632,6 +651,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         adapterData.clear()
                         page = 1
                         getmychat(1)
+                        timerStart()
                     }
                 }
             }
@@ -643,6 +663,26 @@ class ChatFragment : android.support.v4.app.Fragment() {
         super.onDestroy()
         if (resetChattingReciver != null) {
             context!!.unregisterReceiver(resetChattingReciver)
+        }
+    }
+
+    fun timerStart(){
+        val task = object : TimerTask() {
+            override fun run() {
+                loadDataHandler.sendEmptyMessage(0)
+            }
+        }
+
+        timer = Timer()
+        timer!!.schedule(task, 0, 1000)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if (timer != null) {
+            timer!!.cancel()
         }
     }
 
