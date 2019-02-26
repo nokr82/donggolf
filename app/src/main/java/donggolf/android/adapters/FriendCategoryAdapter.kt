@@ -42,10 +42,10 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         item.item_category_count.setText(Utils.getString(category,"peoplecnt"))
 
         if (Utils.getString(category,"peoplecnt") == "0"){
-            item.btn_category_del.visibility = View.VISIBLE
+            item.category_del_LL.visibility = View.VISIBLE
             item.item_category_count.visibility = View.GONE
         } else {
-            item.btn_category_del.visibility = View.GONE
+            item.category_del_LL.visibility = View.GONE
             item.item_category_count.visibility = View.VISIBLE
         }
 
@@ -110,6 +110,7 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         var btn_category_del : ImageView
         var pushTV : TextView
         var category_del_LL : LinearLayout
+
 
         init {
 

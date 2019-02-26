@@ -73,6 +73,11 @@ class ProfileActivity : RootActivity() {
 
 
         click_chat.setOnClickListener {
+            if (PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
+                Toast.makeText(context, "자신은 요청하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val profileTV = profile_opTV.text.toString()
             val nick = txUserName.text.toString()
             if (profileTV == "친구신청"){
@@ -285,9 +290,11 @@ class ProfileActivity : RootActivity() {
                             profile_opTV.text = "신청취소"
                         }
 
-
-                        println("------ mateCount : $mateCount mateDiv : $matediv")
-
+                        if (PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
+                            knowTogether.visibility = View.GONE
+                            profile_opIV.setImageResource(R.drawable.btn_chat_on)
+                            profile_opTV.text = "채팅"
+                        }
 
                     }
                 } catch (e : JSONException) {
