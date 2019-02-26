@@ -57,6 +57,14 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val member = json.getJSONObject("Member")
         val chatmember = room.getJSONArray("Chatmember")
         var nick = ""
+        val readdiv = Utils.getString(room,"readdiv")
+        val room_created = Utils.getString(room,"room_created")
+        if (readdiv == "0"){
+            item.readIV.visibility = View.VISIBLE
+        } else {
+            item.readIV.visibility = View.GONE
+        }
+
 
         item.addNickLL.removeAllViews()
 
@@ -107,7 +115,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
         } else if(content == ""){
-            item.chatcontentTV.setText("")
+            item.chatcontentTV.setText(room_created)
+            item.readIV.visibility = View.GONE
         }
 
 //        val created = Utils.getString(room,"created")
@@ -210,6 +219,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var pushoffIV : ImageView
         var pushonIV : ImageView
         var addNickLL: LinearLayout
+        var readIV : ImageView
 
         init {
             profPhoto = v.findViewById<View>(R.id.profPhoto) as CircleImageView
@@ -223,6 +233,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             pushoffIV = v.findViewById<View>(R.id.pushoffIV) as ImageView
             pushonIV = v.findViewById<View>(R.id.pushonIV) as ImageView
             addNickLL = v.findViewById<View>(R.id.addNickLL) as LinearLayout
+            readIV = v.findViewById<View>(R.id.readIV) as ImageView
 
         }
     }

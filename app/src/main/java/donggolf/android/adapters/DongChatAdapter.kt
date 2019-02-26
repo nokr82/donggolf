@@ -51,11 +51,19 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val member = json.getJSONObject("Member")
         val chatmember = json.getJSONArray("Chatmember")
         var nick = ""
+        val room_created = Utils.getString(room,"room_created")
+        var readdiv = Utils.getString(room,"readdiv")
+        if (readdiv == "0"){
+            item.readIV.visibility = View.VISIBLE
+        } else {
+            item.readIV.visibility = View.GONE
+        }
 
         if (content != null && content.length > 0){
             item.chatcontentTV.setText(content)
         } else if(content == ""){
-            item.chatcontentTV.setText("")
+            item.chatcontentTV.setText(room_created)
+            item.readIV.visibility = View.GONE
         }
 
         val created = Utils.getString(room,"created")
@@ -80,7 +88,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 }
             }
         } else {
-            item.timeTV.setText("")
+            item.timeTV.setText(room_created)
         }
 
 //        if (friend == 0){
@@ -139,7 +147,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var nofriendIV: ImageView
         var pushoffIV : ImageView
         var pushonIV : ImageView
-
+        var readIV : ImageView
         init {
             profPhoto = v.findViewById<View>(R.id.profPhoto) as CircleImageView
             isOnLine = v.findViewById<View>(R.id.isOnLine) as ImageView
@@ -151,6 +159,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             nofriendIV = v.findViewById<View>(R.id.nofriendIV) as ImageView
             pushoffIV = v.findViewById<View>(R.id.pushoffIV) as ImageView
             pushonIV = v.findViewById<View>(R.id.pushonIV) as ImageView
+            readIV = v.findViewById<View>(R.id.readIV) as ImageView
 
 
         }

@@ -11,7 +11,7 @@
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:gravity="left"
-            android:text="푸시알림 받기"/>
+            android:text="알림설정"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

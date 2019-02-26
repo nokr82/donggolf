@@ -80,21 +80,23 @@ class SetAlarmActivity : RootActivity() {
                     dialogView.pushoffIV.visibility = View.VISIBLE
                     dialogView.silentIV.visibility = View.GONE
                 }
-                Toast.makeText(context, "채팅방 알림이 설정 되었습니다.", Toast.LENGTH_SHORT).show()
             }
 
             dialogView.dlg_comment_blockLL.setOnClickListener {
                 set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"C")
+                Toast.makeText(context, "채팅방 알림이 설정 되었습니다.", Toast.LENGTH_SHORT).show()
                 alert.dismiss()
             }
 
             dialogView.dlg_prod_modLL.setOnClickListener {
                 set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"Y")
+                Toast.makeText(context, "채팅방 알림이 설정 되었습니다.", Toast.LENGTH_SHORT).show()
                 alert.dismiss()
             }
 
             dialogView.dlg_comment_delLL.setOnClickListener {
                 set_push(room_id,PrefUtils.getIntPreference(context,"member_id").toString(),"N")
+                Toast.makeText(context, "채팅방 알림이 설정 되었습니다.", Toast.LENGTH_SHORT).show()
                 alert.dismiss()
             }
 

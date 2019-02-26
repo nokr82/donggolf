@@ -50,10 +50,24 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
         val member = json.getJSONObject("Member")
+        val member_id = Utils.getString(member,"id")
         val chatmember = json.getJSONObject("Chatmember")
         val chatmember_id = Utils.getString(chatmember,"member_id")
         val push_yn = Utils.getString(chatmember,"push_yn")
         val type = Utils.getString(room,"type")
+
+        if (friend == 0){
+            item.nofriendIV.visibility = View.VISIBLE
+            item.friendIV.visibility = View.GONE
+        } else {
+            item.nofriendIV.visibility = View.GONE
+            item.friendIV.visibility = View.VISIBLE
+        }
+
+        if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
+            item.friendIV.visibility = View.GONE
+            item.nofriendIV.visibility = View.GONE
+        }
 
         if (PrefUtils.getIntPreference(context,"member_id") == chatmember_id.toInt()) {
             if (push_yn == "Y") {
@@ -74,13 +88,6 @@ open class SetAlarmAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.contentTV.setText(content)
         }
 
-        if (friend == 0){
-            item.nofriendIV.visibility = View.VISIBLE
-            item.friendIV.visibility = View.GONE
-        } else {
-            item.nofriendIV.visibility = View.GONE
-            item.friendIV.visibility = View.VISIBLE
-        }
 
         item.nickTV.setText(title)
 

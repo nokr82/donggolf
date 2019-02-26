@@ -142,6 +142,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.mycontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.myimageIV, Utils.UILoptionsUserProfile)
+            } else {
+                item.myimageIV.visibility = View.GONE
+                item.mycontentTV.visibility = View.VISIBLE
             }
 
         } else {
@@ -155,6 +158,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.usercontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.userimageIV, Utils.UILoptionsUserProfile)
+            } else {
+                item.userimageIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
             }
 
             val today = Utils.todayStr()
