@@ -22,6 +22,7 @@ import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.ChattingAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -60,6 +61,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var market_id = -1
     var content_id = -1
     var friend_id = -1
+    var room_id = -1
+
     var AREA_OK = 101
     var sidotype = "전국"
     var sidotype2 = "전국"
@@ -88,6 +91,20 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
     }
 
+    internal var chattingLoadReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                room_id = intent.getIntExtra("room_id", -1)
+
+                if (room_id > 0) {
+
+                    detail_chatting()
+                }
+
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -102,11 +119,15 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         var filter2 = IntentFilter("MY_CHATTING")
         registerReceiver(mychattingReciver, filter2)
 
+        var filter3 = IntentFilter("LOAD_CHATTING")
+        registerReceiver(chattingLoadReceiver, filter3)
+
 
         is_push = intent.getBooleanExtra("is_push", false)
         market_id = intent.getIntExtra("market_id", -1)
         content_id = intent.getIntExtra("content_id", -1)
         friend_id = intent.getIntExtra("friend_id", -1)
+        room_id = intent.getIntExtra("room_id", -1)
 
         if(is_push) {
             handlePush()
@@ -534,6 +555,16 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     override fun onDestroy() {
         super.onDestroy()
 
+        if (mychattingReciver != null) {
+            context!!.unregisterReceiver(mychattingReciver)
+        }
+        if (chattingLoadReceiver != null) {
+            context!!.unregisterReceiver(chattingLoadReceiver)
+        }
+        if (reloadReciver != null) {
+            context!!.unregisterReceiver(reloadReciver)
+        }
+
 //        progressDialog!!.dismiss()
     }
 
@@ -553,8 +584,47 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             var intent = Intent(context, RequestFriendActivity::class.java)
             intent.putExtra("type","waiting")
             startActivity(intent)
+        } else if (room_id > 0) {
+            // chatting
+            detail_chatting()
         }
 
+    }
+
+    fun detail_chatting(){
+        val params = RequestParams()
+        params.put("room_id", room_id)
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok") {
+
+                    val room = response.getJSONObject("chatroom")
+                    val members = response.getJSONArray("chatmember")
+                    val lastChatting = response.getJSONObject("lastChatting")
+
+                    var intent = Intent()
+                    intent.putExtra("room_id", Utils.getInt(room, "id"))
+                    intent.putExtra("room_type", Utils.getInt(room, "type"))
+                    intent.putExtra("chatting_type", Utils.getString(lastChatting, "type"))
+                    intent.putExtra("content", Utils.getString(lastChatting, "content"))
+                    intent.putExtra("chat_created", Utils.getString(lastChatting, "created"))
+                    intent.action = "CHATTING"
+                    sendBroadcast(intent)
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
     }
 
     override fun onBackPressed() {
@@ -568,8 +638,19 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     }
 
+    override fun onNewIntent(intent2: Intent?) {
+        super.onNewIntent(intent2)
 
+        if (intent2 != null) {
 
+            room_id = intent2.getIntExtra("room_id", -1)
 
+            if (room_id > 0) {
+                detail_chatting()
+            }
+
+        }
+
+    }
 
 }

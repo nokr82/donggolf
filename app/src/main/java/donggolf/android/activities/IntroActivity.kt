@@ -41,6 +41,7 @@ class IntroActivity : RootActivity() {
     private var chatting_member_id:String = "-1"
     private var content_id:String = "-1"
     private var friend_id:String = "-1"
+    private var room_id:String = "-1"
     private var is_push:Boolean = false
 
     protected var _splashTime = 2000 // time to display the splash screen in ms
@@ -71,6 +72,7 @@ class IntroActivity : RootActivity() {
                 chatting_member_id = buldle.getString("chatting_member_id")
                 content_id = buldle.getString("content_id")
                 friend_id = buldle.getString("friend_id")
+                room_id = buldle.getString("room_id")
                 is_push = buldle.getBoolean("FROM_PUSH")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -174,6 +176,7 @@ class IntroActivity : RootActivity() {
                             intent.putExtra("market_id", market_id.toInt())
                             intent.putExtra("content_id", content_id.toInt())
                             intent.putExtra("friend_id", friend_id.toInt())
+                            intent.putExtra("room_id", Utils.getInt(room_id))
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 //                            intent.setAction((Intent.ACTION_MAIN))
 //                            intent.addCategory(Intent.CATEGORY_LAUNCHER)

@@ -64,8 +64,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             intent.putExtra("chatting_member_id", data["chatting_member_id"])
             intent.putExtra("content_id", data["content_id"])
             intent.putExtra("friend_id", data["friend_id"])
+            intent.putExtra("room_id", data["room_id"])
             intent.putExtra("FROM_PUSH", true)
 
+        } else {
+
+            if(data["room_id"] != null) {
+                var intent2 = Intent()
+                intent2.action = "LOAD_CHATTING"
+                intent2.putExtra("room_id", data["room_id"]!!.toInt())
+                sendBroadcast(intent2)
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, 0)
@@ -154,5 +163,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private val TAG = "MyFirebaseMsgService"
     }
+
+
 
 }
