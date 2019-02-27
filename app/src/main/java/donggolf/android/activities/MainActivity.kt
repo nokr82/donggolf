@@ -369,8 +369,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         infoIV.setBackgroundResource(R.drawable.img_line_1)
     }
 
-
-
     private fun updateUI(currentUser: FirebaseUser?) {
 //        mAuth!!.signInWithCustomToken(mCustomToken)
 //                .addOnCompleteListener(this) { task ->
