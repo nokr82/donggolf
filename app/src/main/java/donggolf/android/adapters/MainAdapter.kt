@@ -96,24 +96,25 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                 var image = Config.url + uri
                 if (image_type == "1") {
                     item.profileIV.visibility = View.VISIBLE
-                    item.videoVV.visibility = View.GONE
+                    item.videoLL.visibility = View.GONE
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
                 } else {
-                    item.videoVV.visibility = View.GONE
-                    item.profileIV.visibility = View.VISIBLE
+                    item.videoLL.visibility = View.VISIBLE
+                    item.videoVV.isEnabled = false
+                    item.profileIV.visibility = View.GONE
 
                     var uri = Uri.parse(Config.url + uri)
                     item.videoVV.setVideoURI(uri)
                     item.videoVV.seekTo(1)
-                    item.videoVV.start()
+//                    item.videoVV.start()
                 }
             } else {
                 item.profileIV.visibility = View.GONE
-                item.videoVV.visibility = View.GONE
+                item.videoLL.visibility = View.GONE
             }
         } else {
             item.profileIV.visibility = View.GONE
-            item.videoVV.visibility = View.GONE
+            item.videoLL.visibility = View.GONE
         }
 
         if (profile != null){
@@ -160,6 +161,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profileIV: ImageView
         var main_item_image : CircleImageView
         var videoVV: VideoView
+        var videoLL: LinearLayout
 
         init {
 
@@ -173,6 +175,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
             main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
             videoVV = v.findViewById<View>(R.id.videoVV) as VideoView
+            videoLL = v.findViewById<View>(R.id.videoLL) as LinearLayout
 
         }
 
