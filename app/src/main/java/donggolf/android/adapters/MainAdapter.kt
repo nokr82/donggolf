@@ -1,7 +1,9 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
@@ -10,13 +12,20 @@ import android.view.ViewGroup
 import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
-import donggolf.android.R
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.Text
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.collections.ArrayList
+import android.support.v4.os.HandlerCompat.postDelayed
+import java.lang.IllegalArgumentException
+import java.lang.RuntimeException
+import com.kakao.auth.StringSet.file
+import android.graphics.Bitmap
+import donggolf.android.R
+import donggolf.android.base.DownloadFileAsyncTask
+
 
 open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
 
@@ -27,6 +36,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
     var text:Text = Text()
     var photo:JSONArray = JSONArray()
     var video:ArrayList<String> = ArrayList<String>()
+
+
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -88,8 +99,12 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                     item.videoVV.visibility = View.GONE
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
                 } else {
-                    item.videoVV.visibility = View.VISIBLE
-                    item.profileIV.visibility = View.GONE
+                    item.videoVV.visibility = View.GONE
+                    item.profileIV.visibility = View.VISIBLE
+
+                    val bMap = ThumbnailUtils.createVideoThumbnail(image.toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND)
+                    item.profileIV.setImageBitmap(bMap)
+
                 }
             } else {
                 item.profileIV.visibility = View.GONE
@@ -104,7 +119,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             var image = Config.url + profile
             ImageLoader.getInstance().displayImage(image, item.main_item_image, Utils.UILoptionsUserProfile)
         } else {
-            item.main_item_image.setImageResource(R.drawable.icon_profiles)
+            item.main_item_image.setImageResource(donggolf.android.R.drawable.icon_profiles)
         }
 
 
@@ -162,9 +177,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
 
     }
-
-
-
 
 
 }

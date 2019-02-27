@@ -373,12 +373,22 @@ class ProfileActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    val lastid = response!!.getString("lastid")
                     var intent = Intent()
                     intent.putExtra("finish","finish")
                     intent.action = "RESET_CHATTING"
                     sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
+
+                    val founder = PrefUtils.getIntPreference(context,"member_id")
+
+                    var intentst = Intent(context, ChatDetailActivity::class.java)
+                    intentst.putExtra("division", 1)
+                    intentst.putExtra("id", lastid)
+                    intentst.putExtra("founder", founder.toString())
+                    startActivity(intentst)
+
                 }
             }
 
