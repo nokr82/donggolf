@@ -645,9 +645,17 @@ class GoodsDetailActivity : RootActivity() {
                         show_mng_dlgLL.visibility = View.VISIBLE
                     }
 
-                    categoryTV.text = "[${Utils.getString(market,"form").substringBefore(" ")}형]" +
-                            "[${Utils.getString(market,"form").substringAfter(" ")}용]" +
-                            " ${Utils.getString(market,"brand")} > ${Utils.getString(market,"product_type")}"
+                    if (Utils.getString(market,"form").equals("여성용")||Utils.getString(market,"form").equals("남성용")||Utils.getString(market,"form").equals("공용")){
+                        categoryTV.text = "[${Utils.getString(market,"form")}]" +
+                                " ${Utils.getString(market,"brand")} > ${Utils.getString(market,"product_type")}"
+                    }else{
+                        categoryTV.text = "[${Utils.getString(market,"form").substringBefore(" ")}형]" +
+                                "[${Utils.getString(market,"form").substringAfter(" ")}용]" +
+                                " ${Utils.getString(market,"brand")} > ${Utils.getString(market,"product_type")}"
+                    }
+
+
+
                     brand = Utils.getString(market,"brand")
                     product_type = Utils.getString(market,"product_type")
                     tagTV.text = "# ${Utils.getString(market,"brand")} 정품"

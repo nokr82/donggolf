@@ -145,12 +145,12 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                     val selection = MediaStore.Video.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
-
+                    cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
+                        
                         println(" cursor : " + cursor.count)
                     } else {
-                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
+//                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
                     }
 //                    cursor = MediaStore.Images.Media.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, MediaStore.Video.Media.DATE_ADDED + " DESC")
                     if (cursor != null && cursor.moveToFirst()) {

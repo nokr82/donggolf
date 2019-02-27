@@ -1,6 +1,9 @@
 package donggolf.android.adapters
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.View
@@ -9,16 +12,21 @@ import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.activities.FriendReqSelectCategoryActivity
+import donggolf.android.activities.ProfileActivity
+import donggolf.android.activities.RequestFriendActivity
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 import java.util.ArrayList
 
-class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
+class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,requestFriendActivity: RequestFriendActivity,wait:String) : ArrayAdapter<JSONObject>(context,view, data) {
 
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<JSONObject> = data
+    var requestFriendActivity = requestFriendActivity
+    var wait = wait
 
 //    var isCheckedMate = false
 
@@ -47,10 +55,12 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
 
 
         val matemember = json.getJSONObject("MateMember")
+        var mate_id = Utils.getString(matemember,"id")
         var mateprofile = Utils.getString(matemember,"profile_img")
         var mate_gender = Utils.getString(matemember,"sex")
 
         val member = json.getJSONObject("Member")
+        val member_id = Utils.getString(member,"id")
         val profile = Utils.getString(member,"profile_img")
         val member_gender = Utils.getString(member,"sex")
 
@@ -123,6 +133,62 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>)
 
 //            isCheckedMate = !isCheckedMate
 
+        }
+
+        item.mates_profileIV.setOnClickListener {
+            var intent = Intent(context, ProfileActivity::class.java)
+            if (wait == "wait"){
+                intent.putExtra("member_id", member_id)
+            } else {
+                intent.putExtra("member_id", mate_id)
+            }
+            context.startActivity(intent)
+        }
+
+        item.accLL.setOnClickListener {
+            val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
+            acceptItt.putExtra("mate_id",member_id)
+            context.startActivity(acceptItt)
+            removeItem(position)
+            notifyDataSetChanged()
+        }
+
+        item.refuseLL.setOnClickListener {
+            requestFriendActivity.refuse(member_id)
+        }
+
+        item.cancleLL.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("${Utils.getString(matemember,"nick")} 님에게 보낸 친구 요청을 취소하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                        requestFriendActivity.cancle(Utils.getString(matemember,"id"))
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+
+            val alert = builder.create()
+            alert.show()
+        }
+
+        item.blockcancleLL.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("${Utils.getString(matemember,"nick")} 님을 차단해제 하시겠습니까 ?")
+
+                    .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+                        requestFriendActivity.block_cancle(Utils.getString(matemember,"id"))
+                        dialog.cancel()
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+
+            val alert = builder.create()
+            alert.show()
         }
 
 

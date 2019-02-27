@@ -72,7 +72,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var sex = Utils.getString(member,"sex")
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
-        var image_uri = Utils.getString(Content,"image_uri")
+        var uri = Utils.getString(Content,"image_uri")
 
         val since = Utils.since(created)
 
@@ -90,29 +90,31 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_comment_count.text = cmt_cnt.toString()
         item.main_item_lately.text = since.toString()
 
-        if (image_uri != null){
-            if (image_uri != "") {
+        if (uri != null){
+            if (uri != "") {
                 var image_type = Utils.getString(Content,"image_type")
-                var image = Config.url + image_uri
+                var image = Config.url + uri
                 if (image_type == "1") {
                     item.profileIV.visibility = View.VISIBLE
-                    item.videoVV.visibility = View.GONE
+                    item.videoLL.visibility = View.GONE
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
                 } else {
-                    item.videoVV.visibility = View.GONE
-                    item.profileIV.visibility = View.VISIBLE
+                    item.videoLL.visibility = View.VISIBLE
+                    item.videoVV.isEnabled = false
+                    item.profileIV.visibility = View.GONE
 
-                    val bMap = ThumbnailUtils.createVideoThumbnail(image.toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND)
-                    item.profileIV.setImageBitmap(bMap)
-
+                    var uri = Uri.parse(Config.url + uri)
+                    item.videoVV.setVideoURI(uri)
+                    item.videoVV.seekTo(1)
+//                    item.videoVV.start()
                 }
             } else {
                 item.profileIV.visibility = View.GONE
-                item.videoVV.visibility = View.GONE
+                item.videoLL.visibility = View.GONE
             }
         } else {
             item.profileIV.visibility = View.GONE
-            item.videoVV.visibility = View.GONE
+            item.videoLL.visibility = View.GONE
         }
 
         if (profile != null){
@@ -159,6 +161,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profileIV: ImageView
         var main_item_image : CircleImageView
         var videoVV: VideoView
+        var videoLL: LinearLayout
 
         init {
 
@@ -172,6 +175,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
             main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
             videoVV = v.findViewById<View>(R.id.videoVV) as VideoView
+            videoLL = v.findViewById<View>(R.id.videoLL) as LinearLayout
 
         }
 

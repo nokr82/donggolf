@@ -9,6 +9,7 @@ import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
 import donggolf.android.activities.PictureDetailActivity
+import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
@@ -119,7 +120,12 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
         }
 
-
+        item.main_detail_comment_profileIV.setOnClickListener {
+            val member_id = Utils.getString(Member, "id")
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", member_id)
+            context.startActivity(intent)
+        }
 
 
         return retView
