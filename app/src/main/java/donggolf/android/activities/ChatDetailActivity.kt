@@ -43,6 +43,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     var mate_id: ArrayList<String> = ArrayList<String>()
     var mate_nick:ArrayList<String> = ArrayList<String>()
     var division = 0
+    var chat_member_id = 0
 
     var room_id = ""
     var founder = ""
@@ -711,12 +712,19 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     var roomtitle = ""
                     memberlistLL.removeAllViews()
                     if (members != null && members.length() > 0){
+                        if (members.length() > 2){
+                            chatblockLL.visibility = View.GONE
+                        }
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
                             val chatmember = item.getJSONObject("Chatmember")
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
                             val id = Utils.getString(chatmember,"member_id")
+                            if (PrefUtils.getIntPreference(context,"member_id") != id.toInt()){
+                                chat_member_id = id.toInt()
+                            }
+
 //                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
                             val nick = Utils.getString(memberinfo,"nick")
@@ -890,11 +898,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("room_id", room_id)
-        params.put("block_yn","Y")
+        params.put("mate_id",chat_member_id)
+        params.put("block_yn","N")
 
         ChattingAction.set_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
+                println("-----result : $result")
                 if (result == "block") {
                     Toast.makeText(context,"이미 차단한 대화방 입니다.",Toast.LENGTH_SHORT).show()
                 } else if (result == "ok"){
