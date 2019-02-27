@@ -391,9 +391,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
-
-                timerEnd()
-
                 var intent = Intent(context, FindPictureActivity::class.java);
                 intent.putExtra("image","image")
                 startActivityForResult(intent, GALLERY)
@@ -663,15 +660,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         timer = Timer()
         timer!!.schedule(task, 0, 1000)
-
-    }
-
-    fun timerEnd(){
-
-        if(timer != null) {
-            timer!!.cancel()
-            loadDataHandler.removeMessages(0)
-        }
 
     }
 
