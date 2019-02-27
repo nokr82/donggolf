@@ -13,18 +13,20 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.activities.FriendReqSelectCategoryActivity
+import donggolf.android.activities.ProfileActivity
 import donggolf.android.activities.RequestFriendActivity
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 import java.util.ArrayList
 
-class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,requestFriendActivity: RequestFriendActivity) : ArrayAdapter<JSONObject>(context,view, data) {
+class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,requestFriendActivity: RequestFriendActivity,wait:String) : ArrayAdapter<JSONObject>(context,view, data) {
 
     private lateinit var item: ViewHolder
     var view:Int = view
     var data:ArrayList<JSONObject> = data
     var requestFriendActivity = requestFriendActivity
+    var wait = wait
 
 //    var isCheckedMate = false
 
@@ -53,6 +55,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,
 
 
         val matemember = json.getJSONObject("MateMember")
+        var mate_id = Utils.getString(matemember,"id")
         var mateprofile = Utils.getString(matemember,"profile_img")
         var mate_gender = Utils.getString(matemember,"sex")
 
@@ -130,6 +133,16 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,
 
 //            isCheckedMate = !isCheckedMate
 
+        }
+
+        item.mates_profileIV.setOnClickListener {
+            var intent = Intent(context, ProfileActivity::class.java)
+            if (wait == "wait"){
+                intent.putExtra("member_id", member_id)
+            } else {
+                intent.putExtra("member_id", mate_id)
+            }
+            context.startActivity(intent)
         }
 
         item.accLL.setOnClickListener {
