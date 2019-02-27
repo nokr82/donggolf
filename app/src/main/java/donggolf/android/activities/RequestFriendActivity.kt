@@ -44,7 +44,7 @@ class RequestFriendActivity : RootActivity() {
 
         context = this
 
-        matesRequestAdapter = MateManageAdapter(context, R.layout.item_mate_manage, mateRequestList)
+        matesRequestAdapter = MateManageAdapter(context, R.layout.item_mate_manage, mateRequestList,this)
         requestFriends.adapter = matesRequestAdapter
 
         val type = intent.getStringExtra("type")
@@ -69,56 +69,55 @@ class RequestFriendActivity : RootActivity() {
             val item = mateRequestList.get(position)
             val matemember = item.getJSONObject("MateMember")
             val mate_id = Utils.getString(matemember,"id")
-            println("-----------------------------------$mate_id")
             val mate_nick = Utils.getString(matemember,"nick")
             val member = item.getJSONObject("Member")
             val member_id = Utils.getString(member,"id")
             val member_nick = Utils.getString(member,"nick")
             val division = item.getString("division")
 
-            view.accLL.setOnClickListener {
-                val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
-                acceptItt.putExtra("mate_id",member_id)
-                startActivityForResult(acceptItt,SELECT_CATEGORY)
-            }
-
-            view.refuseLL.setOnClickListener {
-                refuse(member_id)
-            }
-
-            view.cancleLL.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                builder
-                        .setMessage("$mate_nick 님에게 보낸 친구 요청을 취소하시겠습니까 ?")
-
-                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
-                            cancle(mate_id)
-                        })
-                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
-                        })
-
-                val alert = builder.create()
-                alert.show()
-            }
-
-            view.blockcancleLL.setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                builder
-                        .setMessage("$mate_nick 님을 차단해제 하시겠습니까 ?")
-
-                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
-                            block_cancle(mate_id)
-                            dialog.cancel()
-                        })
-                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
-                        })
-
-                val alert = builder.create()
-                alert.show()
-            }
+//            view.accLL.setOnClickListener {
+//                val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
+//                acceptItt.putExtra("mate_id",member_id)
+//                startActivityForResult(acceptItt,SELECT_CATEGORY)
+//            }
+//
+//            view.refuseLL.setOnClickListener {
+//                refuse(member_id)
+//            }
+//
+//            view.cancleLL.setOnClickListener {
+//                val builder = AlertDialog.Builder(context)
+//                builder
+//                        .setMessage("$mate_nick 님에게 보낸 친구 요청을 취소하시겠습니까 ?")
+//
+//                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+//                            dialog.cancel()
+//                            cancle(mate_id)
+//                        })
+//                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+//                            dialog.cancel()
+//                        })
+//
+//                val alert = builder.create()
+//                alert.show()
+//            }
+//
+//            view.blockcancleLL.setOnClickListener {
+//                val builder = AlertDialog.Builder(context)
+//                builder
+//                        .setMessage("$mate_nick 님을 차단해제 하시겠습니까 ?")
+//
+//                        .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
+//                            block_cancle(mate_id)
+//                            dialog.cancel()
+//                        })
+//                        .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
+//                            dialog.cancel()
+//                        })
+//
+//                val alert = builder.create()
+//                alert.show()
+//            }
 
             var intent = Intent(context, ProfileActivity::class.java)
             if (wait == "wait"){
@@ -299,10 +298,11 @@ class RequestFriendActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK){
             when(requestCode) {
                 SELECT_CATEGORY -> {
-                    val selCateg = data!!.getStringExtra("CategoryID")
-                    val mate_id = data!!.getStringExtra("mate_id")
-
-                    acceptMates(selCateg,mate_id)
+//                    val selCateg = data!!.getStringExtra("CategoryID")
+//                    val mate_id = data!!.getStringExtra("mate_id")
+//
+//                    acceptMates(selCateg,mate_id)
+                    finish()
                 }
             }
         }
