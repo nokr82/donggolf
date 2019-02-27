@@ -88,7 +88,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 }
             }
         } else {
-            item.timeTV.setText(room_created)
+//            item.timeTV.setText(room_created)
         }
 
 //        if (friend == 0){
