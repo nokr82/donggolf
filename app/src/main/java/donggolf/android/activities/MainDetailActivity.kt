@@ -381,26 +381,26 @@ class MainDetailActivity : RootActivity() {
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                 return@setOnItemClickListener
             }
-                var data = commentList.get(i)
-                Log.d("데이데이",data.toString())
+            var data = commentList.get(i)
+            Log.d("데이데이",data.toString())
             val contentcomment = data.getJSONObject("ContentComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")
 
-                p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
-                op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
-                var user_nick =  Utils.getString(contentcomment,"nick")
+            p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+            var user_nick =  Utils.getString(contentcomment,"nick")
             if (p_comments_id!=-1){
                 op_comments_id = p_comments_id
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
                 cmtET.hint = user_nick+ "님의 댓글에 대댓글"
             }else if (comments_id != -1) {
-                    p_comments_id = comments_id
-                    cmtET.requestFocus()
-                    Utils.showKeyboard(context)
-                    cmtET.hint = user_nick+ "님의 댓글에 답글"
-                }
+                p_comments_id = comments_id
+                cmtET.requestFocus()
+                Utils.showKeyboard(context)
+                cmtET.hint = user_nick+ "님의 댓글에 답글"
+            }
 
         }
      /*   //대댓글

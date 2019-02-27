@@ -6,6 +6,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
@@ -161,6 +162,8 @@ class GoodsDetailActivity : RootActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
+
+
 
         show_mng_dlgLL.setOnClickListener {
             popupDialogView()
@@ -457,6 +460,34 @@ class GoodsDetailActivity : RootActivity() {
             true
         }
 
+        market_commentLV.setOnItemClickListener { adapterView, view, i, l ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+            var data = commentList.get(i)
+            Log.d("데이데이",data.toString())
+            val marketcomment = data.getJSONObject("MarketComment")
+
+            val comments_id = Utils.getInt(marketcomment, "id")
+
+            p_comments_id = Utils.getInt(marketcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(marketcomment,"op_comments_id")
+            var user_nick =  Utils.getString(marketcomment,"nick")
+            if (p_comments_id!=-1){
+                op_comments_id = p_comments_id
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 대댓글"
+            }else if (comments_id != -1) {
+                p_comments_id = comments_id
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 답글"
+            }
+
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -740,13 +771,13 @@ class GoodsDetailActivity : RootActivity() {
     }
 
 
-   /* //새로운댓글
+    //새로운댓글
     fun getcomment() {
         val params = RequestParams()
         params.put("market_id", product_id)
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
+        MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 println(response)
                 val result = response!!.getString("result")
@@ -783,19 +814,20 @@ class GoodsDetailActivity : RootActivity() {
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)
 
-        write_comments(params, object : JsonHttpResponseHandler() {
+        MarketAction.add_market_comment(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                 try {
                     val result = response!!.getString("result")
                     if ("ok" == result) {
-                        getProductData()
                         Utils.hideKeyboard(context)
                         commentET.setText("")
                         commentET.hint = ""
                         p_comments_id = -1
                         op_comments_id = -1
+                        getProductData()
+                        getcomment()
                     }
 
                 } catch (e: JSONException) {
@@ -827,10 +859,10 @@ class GoodsDetailActivity : RootActivity() {
 
             }
         })
-    }*/
+    }
 
 
-    //기존댓글
+  /*  //기존댓글
     fun getcomment(){
         val params = RequestParams()
         params.put("market_id", product_id)
@@ -863,7 +895,7 @@ class GoodsDetailActivity : RootActivity() {
             }
         })
     }
-    
+
     fun addcomment(){
           if (PrefUtils.getIntPreference(context, "member_id") == -1){
               Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
@@ -907,6 +939,6 @@ class GoodsDetailActivity : RootActivity() {
               }
           })
 
-      }
+      }*/
 
 }

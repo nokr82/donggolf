@@ -1,10 +1,15 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.nostra13.universalimageloader.core.ImageLoader
 import donggolf.android.R
+import donggolf.android.activities.PictureDetailActivity
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -48,7 +53,7 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         var typeAdt = Utils.getString(comment,"type")
 
-        if (typeAdt == "r"){
+ /*       if (typeAdt == "r"){
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
             item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
 
@@ -59,7 +64,8 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE
 
-        }
+        }*/
+
 
         var comment_memberID = Utils.getInt(comment,"member_id")
         data.put("cmt_wrt_id", comment_memberID)
@@ -70,6 +76,29 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (cbyn == "Y"){
             isBlocked = data.getString("block_yn")
         }*/
+        var p_comments_id = Utils.getInt(comment,"p_comments_id")
+        var op_comments_id = Utils.getInt(comment,"op_comments_id")
+        if (p_comments_id != -1){
+            if (op_comments_id != -1) {
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+
+            }else{
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+            }
+        } else {
+            item.main_detail_comment_typeIV.visibility = View.GONE
+        }
+
+        val freind = Utils.getString(comment,"freind")
+
+        println("-=------freind : $freind")
+        if (freind == "0"){
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+        } else {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+        }
 
         if (isBlocked == "Y") {
             item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
@@ -78,6 +107,20 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
             notifyDataSetChanged()
         }
+        val Member = data.getJSONObject("Member")
+        val profile_img = Utils.getString(Member,"profile_img")
+        if (profile_img != null){
+            var image = Config.url + profile_img
+            ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
+        }
+
+        var gender = Utils.getString(Member,"sex")
+        if (gender == "0"){
+            item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
+        }
+
+
+
 
         return retView
     }
