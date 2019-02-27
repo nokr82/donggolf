@@ -2,13 +2,10 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
-import android.os.Messenger
 import android.support.v4.view.ViewPager
-import android.telephony.SmsManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -20,22 +17,21 @@ import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
+import donggolf.android.actions.CommentAction
+import donggolf.android.actions.CommentAction.write_comments
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.GoodsComAdapter
-import donggolf.android.adapters.MainDeatilAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_add_goods.*
 import kotlinx.android.synthetic.main.activity_goods_detail.*
-import kotlinx.android.synthetic.main.dlg_comment_menu.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import kotlinx.android.synthetic.main.dlg_simple_radio_option.view.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.ArrayList
 
 class GoodsDetailActivity : RootActivity() {
@@ -79,6 +75,9 @@ class GoodsDetailActivity : RootActivity() {
     var product_type = ""
 
     var PICTURE_DETAIL = 1
+
+    var op_comments_id = -1
+    var p_comments_id = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,6 +162,8 @@ class GoodsDetailActivity : RootActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
+
+
 
         show_mng_dlgLL.setOnClickListener {
             popupDialogView()
@@ -459,6 +460,34 @@ class GoodsDetailActivity : RootActivity() {
             true
         }
 
+        market_commentLV.setOnItemClickListener { adapterView, view, i, l ->
+            if (PrefUtils.getIntPreference(context, "member_id") == -1){
+                Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+            var data = commentList.get(i)
+            Log.d("데이데이",data.toString())
+            val marketcomment = data.getJSONObject("MarketComment")
+
+            val comments_id = Utils.getInt(marketcomment, "id")
+
+            p_comments_id = Utils.getInt(marketcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(marketcomment,"op_comments_id")
+            var user_nick =  Utils.getString(marketcomment,"nick")
+            if (p_comments_id!=-1){
+                op_comments_id = p_comments_id
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 대댓글"
+            }else if (comments_id != -1) {
+                p_comments_id = comments_id
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 답글"
+            }
+
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -741,37 +770,25 @@ class GoodsDetailActivity : RootActivity() {
         })
     }
 
-    fun addcomment(){
-        if (PrefUtils.getIntPreference(context, "member_id") == -1){
-            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
-            return
-        }
 
-        var comment = Utils.getString(commentET)
-
-        if (comment == null || comment == ""){
-            Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+    //새로운댓글
+    fun getcomment() {
         val params = RequestParams()
-        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-        params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("market_id", product_id)
-        params.put("comment", comment)
-        params.put("parent", commentParent)
-        params.put("type", commentType)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        MarketAction.add_market_comment(params,object :JsonHttpResponseHandler(){
+        MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
-                    commentET.setText("")
-                    val comments = response.getJSONObject("comments")
-                    commentList.add(comments)
+                    val comments = response.getJSONArray("comments")
+                    commentList.clear()
+                    for (i in 0 until comments.length()){
+                        commentList.add(comments[i] as JSONObject)
+                        //commentList.get(i).put("changedBlockYN", "N")
+                    }
                     commentAdapter.notifyDataSetChanged()
-                    Utils.hideKeyboard(this@GoodsDetailActivity)
                 }
             }
 
@@ -783,9 +800,69 @@ class GoodsDetailActivity : RootActivity() {
                 println(responseString)
             }
         })
-
     }
 
+    fun addcomment() {
+        var comment = Utils.getString(commentET)
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+        params.put("market_id", product_id)
+        params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
+        params.put("comment", comment)
+        params.put("parent", commentParent)
+        params.put("type", commentType)
+        params.put("p_comments_id", p_comments_id)
+        params.put("op_comments_id", op_comments_id)
+
+        MarketAction.add_market_comment(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+
+                try {
+                    val result = response!!.getString("result")
+                    if ("ok" == result) {
+                        Utils.hideKeyboard(context)
+                        commentET.setText("")
+                        commentET.hint = ""
+                        p_comments_id = -1
+                        op_comments_id = -1
+                        getProductData()
+                        getcomment()
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
+                super.onSuccess(statusCode, headers, response)
+            }
+
+            private fun error() {
+                Utils.alert(context, "조회중 장애가 발생하였습니다.")
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
+
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {
+                // show dialog
+
+            }
+
+            override fun onFinish() {
+
+            }
+        })
+    }
+
+
+  /*  //기존댓글
     fun getcomment(){
         val params = RequestParams()
         params.put("market_id", product_id)
@@ -819,6 +896,49 @@ class GoodsDetailActivity : RootActivity() {
         })
     }
 
+    fun addcomment(){
+          if (PrefUtils.getIntPreference(context, "member_id") == -1){
+              Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+              return
+          }
 
+          var comment = Utils.getString(commentET)
+
+          if (comment == null || comment == ""){
+              Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+              return
+          }
+
+          val params = RequestParams()
+          params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+          params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
+          params.put("market_id", product_id)
+          params.put("comment", comment)
+          params.put("parent", commentParent)
+          params.put("type", commentType)
+
+          MarketAction.add_market_comment(params,object :JsonHttpResponseHandler(){
+              override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                  println(response)
+                  val result = response!!.getString("result")
+                  if (result == "ok"){
+                      commentET.setText("")
+                      val comments = response.getJSONObject("comments")
+                      commentList.add(comments)
+                      commentAdapter.notifyDataSetChanged()
+                      Utils.hideKeyboard(this@GoodsDetailActivity)
+                  }
+              }
+
+              override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                  println(errorResponse)
+              }
+
+              override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                  println(responseString)
+              }
+          })
+
+      }*/
 
 }
