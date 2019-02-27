@@ -25,5 +25,4 @@ object CommentAction {
         HttpClient.post("/comment/block_commenter.json", params, handler)
     }
 
-
 }
