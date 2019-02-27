@@ -107,6 +107,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             if (id == room_id) {
                                 chatroom.put("contents", content)
                                 chatroom.put("created", chat_created)
+                                chatroom.put("readdiv", "1")
+                                break
                             }
 
                         }
@@ -124,6 +126,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             if (id == room_id) {
                                 chatroom.put("contents", content)
                                 chatroom.put("created", chat_created)
+                                chatroom.put("readdiv", "1")
+                                break
                             }
 
                         }
