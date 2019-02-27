@@ -331,7 +331,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
        val imgBuilder = ContentObject.newBuilder("동네골프",
                Config.url + "/data/member/5c3cb2dc-c8a8-4351-9b29-16b9ac1f19c8",
                LinkObject.newBuilder().setWebUrl(url).setMobileWebUrl(url).build())
-               .setDescrption("동네골프")
+               .setDescrption("[동네골프]에서 "+PrefUtils.getStringPreference(context,"nickname")+"님이 초대장을 보내셨습니다.")
                .build()
 
 
