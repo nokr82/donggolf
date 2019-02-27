@@ -52,6 +52,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     var first_id = -1
     var last_id = -1
 
+    var room_type = -1
+
     private  var memberList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  var chattingList:ArrayList<JSONObject> = ArrayList<JSONObject>()
     private lateinit var adapter: ChattingAdapter
@@ -626,9 +628,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
 
+        var type = ""
+
         if (comment_path.size > 0) {
             //            params.put("img", ByteArrayInputStream(Utils.getByteArray(comment_path)))
-            params.put("type", "i")
+            type = "i"
+
+            params.put("type", type)
+
 //            comment_path = null
 
             for (i in 0..comment_path!!.size - 1){
@@ -639,15 +646,19 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
         } else {
-            params.put("type", "c")
+            type = "c"
+
+            params.put("type", type)
         }
 
         ChattingAction.add_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
+
                 if (result == "block") {
                     Toast.makeText(context,"차단당한 게시물 입니다.", Toast.LENGTH_SHORT).show()
                 }
+
                 comment_path.clear()
             }
 
@@ -793,6 +804,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+
+                    val room = response.getJSONObject("chatroom")
+                    room_type = Utils.getInt(room, "type")
+
                     memberlistLL.removeAllViews()
                     if (mate_nick != null){
                         mate_nick.clear()
@@ -1123,10 +1138,34 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     }
 
     override fun onBackPressed() {
-        var intent = Intent()
-        intent.putExtra("reset", "reset")
-        setResult(RESULT_OK, intent);
+//        var intent = Intent()
+//        intent.putExtra("reset", "reset")
+//        setResult(RESULT_OK, intent);
         finish()
+
+    }
+
+    override fun finish() {
+        super.finish()
+
+        if (chattingList.size > 0) {
+            val data = chattingList[chattingList.size - 1]
+
+            val chatting = data.getJSONObject("Chatting")
+
+            val content = Utils.getString(chatting, "content")
+            val chatting_type = Utils.getString(chatting, "type")
+            val chat_created = Utils.getString(chatting, "created")
+
+            var intent = Intent()
+            intent.putExtra("room_id", room_id.toInt())
+            intent.putExtra("room_type", room_type)
+            intent.putExtra("content", content)
+            intent.putExtra("chatting_type", chatting_type)
+            intent.putExtra("chat_created", chat_created)
+            setResult(Activity.RESULT_OK, intent)
+
+        }
 
     }
 

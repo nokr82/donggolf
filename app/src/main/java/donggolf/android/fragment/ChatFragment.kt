@@ -37,21 +37,21 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     private var mAuth: FirebaseAuth? = null
 
-    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  var dongAdapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var adapterData: ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var dongAdapterData: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
-    private  lateinit var  adapter : ChatFragAdapter
-    private  lateinit var  dongAdapter : DongChatAdapter
+    private lateinit var adapter: ChatFragAdapter
+    private lateinit var dongAdapter: DongChatAdapter
 
-    lateinit var tabMyChat : ImageView
-    lateinit var tabTownChat : ImageView
-    lateinit var btn_myChat_mng : ImageView
-    lateinit var btn_make_chat : ImageView
-    lateinit var txMyChat : TextView
-    lateinit var txTownChat : TextView
-    lateinit var chat_list : ListView
-    lateinit var viewpagerChat : ViewPager
-    lateinit var dong_chat_list : ListView
+    lateinit var tabMyChat: ImageView
+    lateinit var tabTownChat: ImageView
+    lateinit var btn_myChat_mng: ImageView
+    lateinit var btn_make_chat: ImageView
+    lateinit var txMyChat: TextView
+    lateinit var txTownChat: TextView
+    lateinit var chat_list: ListView
+    lateinit var viewpagerChat: ViewPager
+    lateinit var dong_chat_list: ListView
 
     val RESET = 1000
     val CHATRESET = 1001
@@ -70,7 +70,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     internal var resetChattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
-                if (townChatOnRL.visibility == View.VISIBLE){
+                if (townChatOnRL.visibility == View.VISIBLE) {
                     getmychat(2)
                 } else {
                     getmychat(1)
@@ -155,7 +155,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
-            if (townChatOnRL.visibility == View.VISIBLE){
+            if (townChatOnRL.visibility == View.VISIBLE) {
                 getmychat(2)
             } else {
                 getmychat(1)
@@ -164,6 +164,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
     }
 
     private var timer: Timer? = null
+
+    private var CHATTING_DETAIL = 100
+    private var DONGNE_DETAIL = 200
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -198,12 +201,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         viewpagerChat = view.findViewById(R.id.viewpagerChat)
 
-        var dataObj : JSONObject = JSONObject();
+        var dataObj: JSONObject = JSONObject();
 
         ctx = context
 
-        adapter = ChatFragAdapter(ctx!!,R.layout.item_my_chat_list,adapterData)
-        dongAdapter = DongChatAdapter(ctx!!,R.layout.item_my_chat_list,dongAdapterData)
+        adapter = ChatFragAdapter(ctx!!, R.layout.item_my_chat_list, adapterData)
+        dongAdapter = DongChatAdapter(ctx!!, R.layout.item_my_chat_list, dongAdapterData)
 
         chat_list.adapter = adapter
         dong_chat_list.adapter = dongAdapter
@@ -270,7 +273,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                 intent.putExtra("division", 1)
                                 intent.putExtra("id", id)
                                 intent.putExtra("founder", founder)
-                                startActivity(intent)
+                                startActivityForResult(intent, CHATTING_DETAIL)
                             } else {
                                 var intent = Intent(activity, DongchatProfileActivity::class.java)
                                 intent.putExtra("room_id", id)
@@ -289,7 +292,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         intent.putExtra("division", 1)
                         intent.putExtra("id", id)
                         intent.putExtra("founder", founder)
-                        startActivity(intent)
+                        startActivityForResult(intent, CHATTING_DETAIL)
                     } else {
                         var intent = Intent(activity, DongchatProfileActivity::class.java)
                         intent.putExtra("room_id", id)
@@ -352,7 +355,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, CHATTING_DETAIL)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
@@ -371,7 +374,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivity(intent)
+                            startActivityForResult(intent, CHATTING_DETAIL)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
@@ -431,7 +434,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, CHATTING_DETAIL)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
@@ -450,7 +453,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivity(intent)
+                            startActivityForResult(intent, CHATTING_DETAIL)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
@@ -477,7 +480,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
 
                 if (!chat_list.canScrollVertically(-1)) {
-                    page=1
+                    page = 1
 
                     if (myChatOnRL.visibility == View.VISIBLE) {
                         getmychat(1)
@@ -515,7 +518,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
 
                 if (!dong_chat_list.canScrollVertically(-1)) {
-                    page=1
+                    page = 1
 
                     if (myChatOnRL.visibility == View.VISIBLE) {
                         getmychat(1)
@@ -539,7 +542,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         addmychatIV.setOnClickListener {
             var intent = Intent(activity, SelectMemberActivity::class.java)
-            intent.putExtra("new","new")
+            intent.putExtra("new", "new")
             startActivity(intent)
         }
 
@@ -555,7 +558,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 //        }
 
         dongChatOnRL.setOnClickListener {
-            if (PrefUtils.getStringPreference(context,"region_id") != null) {
+            if (PrefUtils.getStringPreference(context, "region_id") != null) {
                 myChatOnRL.visibility = View.GONE
                 townChatOnRL.visibility = View.VISIBLE
                 chat_list.visibility = View.GONE
@@ -579,17 +582,17 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         chatsettingIV.setOnClickListener {
             var intent = Intent(activity, SetAlarmActivity::class.java)
-            startActivityForResult(intent,CHATRESET)
+            startActivityForResult(intent, CHATRESET)
         }
 
         adddongchatIV.setOnClickListener {
-            if (todayCount == 5){
+            if (todayCount == 5) {
                 Toast.makeText(context, "하루에 5개 이상 채팅방을 생성하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             var intent = Intent(activity, AddDongChatActivity::class.java)
-            startActivityForResult(intent,ADDCHAT)
+            startActivityForResult(intent, ADDCHAT)
         }
 
 
@@ -601,7 +604,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     }
 
 
-    fun getmychat(type : Int){
+    fun getmychat(type: Int) {
 
         val params = RequestParams()
         params.put("page", page)
@@ -617,8 +620,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         params.put("type", type)
 
-        if (type == 2){
-            if (PrefUtils.getStringPreference(context,"region_id") != null) {
+        if (type == 2) {
+            if (PrefUtils.getStringPreference(context, "region_id") != null) {
                 var region_id = PrefUtils.getStringPreference(context, "region_id")
                 var region_id2 = PrefUtils.getStringPreference(context, "region_id2")
                 params.put("region", region_id)
@@ -628,7 +631,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
         }
 
-        ChattingAction.load_chatting(params, object : JsonHttpResponseHandler(){
+        ChattingAction.load_chatting(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
@@ -642,7 +645,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     dongcountTV.setText(dongchat_count.toString())
 
                     if (type == 1) {
-                        if (page == 1){
+                        if (page == 1) {
                             adapterData.clear()
                         }
                         totalPage = response.getInt("totalPage");
@@ -662,13 +665,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
 //                        }
                         adapter.notifyDataSetChanged()
                     } else {
-                        if (page == 1){
+                        if (page == 1) {
                             dongAdapterData.clear()
                         }
                         totalPage = response.getInt("totalPage");
                         page = response.getInt("page");
 
-                        if (dongAdapterData != null){
+                        if (dongAdapterData != null) {
                             val chatlist = response!!.getJSONArray("chatlist")
                             if (chatlist.length() > 0 && chatlist != null) {
                                 for (i in 0 until chatlist.length()) {
@@ -692,7 +695,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         })
     }
 
-    fun load_add_new_chatting(room_id : Int){
+    fun load_add_new_chatting(room_id: Int) {
 
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
@@ -700,7 +703,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         params.put("region", PrefUtils.getStringPreference(context, "region_id"))
         params.put("region2", PrefUtils.getStringPreference(context, "region_id2"))
 
-        ChattingAction.load_add_chatting(params, object : JsonHttpResponseHandler(){
+        ChattingAction.load_add_chatting(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
 
@@ -740,17 +743,16 @@ class ChatFragment : android.support.v4.app.Fragment() {
         })
     }
 
-    @SuppressLint("NewApi")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
                 RESET -> {
-                    if (data!!.getStringExtra("reset") != null){
+                    if (data!!.getStringExtra("reset") != null) {
                         var division = data!!.getStringExtra("division")
-                        if (division == "my"){
+                        if (division == "my") {
                             adapterData.clear()
                             page = 1
                             getmychat(1)
@@ -772,12 +774,54 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
 
                 ADDCHAT -> {
-                    if (data!!.getStringExtra("reset") != null){
+                    if (data!!.getStringExtra("reset") != null) {
                         adapterData.clear()
                         page = 1
                         getmychat(1)
                         timerStart()
                     }
+                }
+
+                CHATTING_DETAIL -> {
+
+                    if (data != null) {
+                        val room_id = data.getIntExtra("room_id", -1)
+                        val room_type = data.getIntExtra("room_type", -1)
+
+                        if (room_id > 0) {
+
+                            var content = data.getStringExtra("content")
+                            val chatting_type = data.getStringExtra("chatting_type")
+                            val chat_created = data.getStringExtra("chat_created")
+
+                            if (chatting_type == "i") {
+                                content = "사진"
+                            }
+
+                            for (i in 0 until adapterData.size) {
+                                val obj = adapterData[i]
+                                val chatroom = obj.getJSONObject("Chatroom")
+
+                                val id = Utils.getInt(chatroom, "id")
+
+                                if (id == room_id) {
+                                    chatroom.put("contents", content)
+                                    chatroom.put("created", chat_created)
+                                    chatroom.put("readdiv", "1")
+                                    adapterData.removeAt(i)
+                                    adapterData.add(0, obj)
+                                    break
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+                DONGNE_DETAIL -> {
+
+
                 }
             }
         }
@@ -794,7 +838,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
-    fun timerStart(){
+    fun timerStart() {
         val task = object : TimerTask() {
             override fun run() {
                 loadDataHandler.sendEmptyMessage(0)
