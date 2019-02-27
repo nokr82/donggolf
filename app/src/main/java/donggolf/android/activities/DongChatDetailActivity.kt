@@ -569,10 +569,11 @@ class DongChatDetailActivity : RootActivity() , AbsListView.OnScrollListener{
                                     textsizeTV.setText("아주 크게")
                                 }
 
-                                mate_id.add(id)
-                                memberList.add(memberinfo)
-                                mate_nick.add(nick)
                             }
+
+                            mate_id.add(id)
+                            memberList.add(memberinfo)
+                            mate_nick.add(nick)
 
                         }
                     }
