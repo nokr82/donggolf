@@ -200,10 +200,9 @@
 
                                     <TextView
                                         android:id="@+id/statusmsgTV"
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="300dp"
                                         android:layout_height="wrap_content"
                                         android:textColor="#AFAFAF"
-                                        android:layout_marginRight="20dp"
                                         android:textSize="8.67dp" />
                                 </LinearLayout>
                             </LinearLayout>

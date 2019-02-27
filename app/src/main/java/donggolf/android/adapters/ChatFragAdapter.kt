@@ -46,6 +46,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var json = data.get(position)
 
         var room = json.getJSONObject("Chatroom")
+        var room_member_id = Utils.getString(room,"member_id")
         var peoplecount = Utils.getString(room,"peoplecount")
         var profileimg = Utils.getString(room,"profileimg")
         var room_type = Utils.getString(room,"type")
@@ -158,6 +159,11 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.firstIV.visibility = View.GONE
             item.countTV.visibility = View.VISIBLE
             item.countTV.setText("("+peoplecount.toString()+")")
+        }
+
+        if (room_member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
+            item.nofriendIV.visibility = View.GONE
+            item.firstIV.visibility = View.GONE
         }
 
         if (title != null && title.length > 0) {
