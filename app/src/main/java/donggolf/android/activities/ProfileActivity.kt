@@ -94,6 +94,7 @@ class ProfileActivity : RootActivity() {
                                 params.put("status","w")
                                 PostAction.add_friend(params, object : JsonHttpResponseHandler() {
                                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                                        member_info(member_id)
                                         val result = response!!.getString("result")
                                         if (result == "yes") {
                                             Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
