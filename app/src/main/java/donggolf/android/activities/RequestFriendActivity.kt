@@ -44,7 +44,7 @@ class RequestFriendActivity : RootActivity() {
 
         context = this
 
-        matesRequestAdapter = MateManageAdapter(context, R.layout.item_mate_manage, mateRequestList,this)
+        matesRequestAdapter = MateManageAdapter(context, R.layout.item_mate_manage, mateRequestList,this,wait)
         requestFriends.adapter = matesRequestAdapter
 
         val type = intent.getStringExtra("type")
@@ -119,13 +119,13 @@ class RequestFriendActivity : RootActivity() {
 //                alert.show()
 //            }
 
-            var intent = Intent(context, ProfileActivity::class.java)
-            if (wait == "wait"){
-                intent.putExtra("member_id", member_id)
-            } else {
-                intent.putExtra("member_id", mate_id)
-            }
-            startActivity(intent)
+//            var intent = Intent(context, ProfileActivity::class.java)
+//            if (wait == "wait"){
+//                intent.putExtra("member_id", member_id)
+//            } else {
+//                intent.putExtra("member_id", mate_id)
+//            }
+//            startActivity(intent)
 
         }
 
