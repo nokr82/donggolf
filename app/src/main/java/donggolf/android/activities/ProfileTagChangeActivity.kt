@@ -107,7 +107,7 @@ class ProfileTagChangeActivity : RootActivity() {
         })
 
         tagList.setOnItemClickListener { parent, view, position, id ->
-            view.removeIV.setOnClickListener {
+            view.removeLL.setOnClickListener {
 
                 val taglist = adapterData.get(position)
 //                delList.add(oldTagID)
@@ -121,7 +121,31 @@ class ProfileTagChangeActivity : RootActivity() {
         }
 
         confirmRL.setOnClickListener {
-            updateTag()
+
+            tag = Utils.getString(hashtagET)
+
+            if("" == tag || null == tag || tag!!.isEmpty()) {
+
+                Toast.makeText(context, "태그를 입력해주세요.", Toast.LENGTH_LONG).show()
+
+                return@setOnClickListener
+
+            } else {
+
+                Utils.hideKeyboard(context!!)
+
+                adapterData.add(tag!!)
+
+                //sTag.add(tag!!)
+
+                updateTag()
+
+                adapter.notifyDataSetChanged()
+
+                hashtagET.setText("")
+            }
+
+//            updateTag()
         }
 
         //입력관련 처리
@@ -174,6 +198,9 @@ class ProfileTagChangeActivity : RootActivity() {
         }
 
         clearIV.setOnClickListener {
+
+
+
             hashtagET.setText("")
         }
 

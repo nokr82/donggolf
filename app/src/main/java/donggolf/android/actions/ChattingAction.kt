@@ -86,4 +86,16 @@ object ChattingAction {
         HttpClient.post("/chatting/set_all_push.json", params, handler)
     }
 
+    fun chk_chat(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/chk_chat.json", params, handler)
+    }
+
+    fun set_introduce(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_introduce.json", params, handler)
+    }
+
+    fun set_in_yn(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_in_yn.json", params, handler)
+    }
+
 }

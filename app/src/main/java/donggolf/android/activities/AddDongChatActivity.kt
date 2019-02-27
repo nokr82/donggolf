@@ -13,6 +13,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Adapter
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -57,6 +59,7 @@ class AddDongChatActivity : RootActivity() {
     var background:Bitmap? = null
 
     var secretcode = ""
+    var todaycount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +79,7 @@ class AddDongChatActivity : RootActivity() {
         }
 
         gotermLL.setOnClickListener {
-            val intent = Intent(this, TermSpecifActivity::class.java)
+            val intent = Intent(this, OperatingActivity::class.java)
             startActivity(intent)
         }
 
@@ -108,6 +111,16 @@ class AddDongChatActivity : RootActivity() {
                         getGugun(parent_id.toInt())
                     }
                 }
+
+                var name = leftregionTV.text.toString()
+                if (name == "전국"){
+                    rightregionTV.setText("전국")
+                    region_id = "0"
+                } else {
+                    rightregionTV.setText("선택해주세요")
+                    region_id = "-1"
+                }
+
                 alert.dismiss()
             }
 
@@ -180,7 +193,8 @@ class AddDongChatActivity : RootActivity() {
         }
 
         profileRL.setOnClickListener {
-            chooseProfile()
+//            chooseProfile()
+            permissionprofile()
         }
 
         profiledtIV.setOnClickListener {
@@ -191,7 +205,8 @@ class AddDongChatActivity : RootActivity() {
         }
 
         backgroundRV.setOnClickListener {
-            chooseBackground()
+//            chooseBackground()
+            permissionbackground()
         }
 
         backgrounddtIV.setOnClickListener {
@@ -265,6 +280,11 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
+        if (region_id == "-1"){
+            Utils.alert(context, "지역 선택은 필수 입니다다.")
+           return
+        }
+
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
         params.put("title", title)
@@ -297,6 +317,9 @@ class AddDongChatActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    setResult(Activity.RESULT_OK,intent)
                     finish()
                 }
             }
@@ -341,6 +364,7 @@ class AddDongChatActivity : RootActivity() {
     fun getBigCity(){
 
         val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
 
@@ -352,6 +376,9 @@ class AddDongChatActivity : RootActivity() {
                         bigcitylist.add(datalist.get(i) as JSONObject)
                         bigcitylist[i].put("isSelectedOp",false)
                     }
+
+                    todaycount = response!!.getInt("todayCount")
+                    cntTV.setText(todaycount.toString() + "/5")
 
                     cityadapter.notifyDataSetChanged()
                 }
@@ -515,6 +542,48 @@ class AddDongChatActivity : RootActivity() {
 
     }
 
+
+    private fun permissionprofile() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                chooseProfile()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
+
+    private fun permissionbackground() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                chooseBackground()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
+
+    }
 
 
 

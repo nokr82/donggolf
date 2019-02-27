@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="230dp"
     android:padding="10dp"
     android:orientation="vertical">
 
@@ -34,6 +34,17 @@
             android:id="@+id/profileIV"
             android:layout_width="120dp"
             android:scaleType="centerCrop"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="30dp"
+            android:gravity="right"/>
+
+        <VideoView
+            android:id="@+id/videoVV"
+            android:layout_width="120dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
             android:layout_height="match_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginRight="30dp"

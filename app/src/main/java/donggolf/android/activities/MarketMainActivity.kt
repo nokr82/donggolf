@@ -15,10 +15,7 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
-import donggolf.android.adapters.GoodsCategoryAdapter
-import donggolf.android.adapters.MarketMainAdapter
-import donggolf.android.adapters.ProductCategoryAdapter
-import donggolf.android.adapters.ProductTypeAdaapter
+import donggolf.android.adapters.*
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
@@ -34,11 +31,13 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     lateinit var productTypeAdapter: ProductTypeAdaapter
     lateinit var productCategoryAdatper: ProductCategoryAdapter
     lateinit var categoryAdapter: GoodsCategoryAdapter//brand
+    lateinit var genderAdatper: PdtCategoryAdapter
 
     private  var adapterData = ArrayList<JSONObject>()
     var productData = ArrayList<JSONObject>()//type 종류
     var brandData = ArrayList<JSONObject>() // 브랜드
     var formData = ArrayList<JSONObject>() // 분류
+    private var genderData = ArrayList<JSONObject>()
 
     var values = ""
     var product_type = ""
@@ -105,6 +104,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, formData)
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, brandData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
+        genderAdatper = PdtCategoryAdapter(context, R.layout.item_dlg_market_sel_op, genderData)
 
         getSecondHandMarketItems("all",1)
 
@@ -151,26 +151,47 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             dialogView.dlg_marketLV.visibility = View.VISIBLE
             dialogView.dlg_exitIV.visibility = View.VISIBLE
             dialogView.dlg_titleTV.visibility = View.VISIBLE
-            dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            var product = entireTypeTV.text.toString()
+            if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ) {
+                dialogView.dlg_marketLV.adapter = genderAdatper
+            } else {
+                dialogView.dlg_marketLV.adapter = productCategoryAdatper
+            }
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                var json = productCategoryAdatper.getItem(position)
-                var type = json.getJSONObject("ProductCategory")
-                var title = Utils.getString(type, "title")
-                entireClassificationTV.text = title
-                if (title.equals("분류전체")){
-                    title = ""
-                }
-                form = title
+
+                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
+                    var json = genderAdatper.getItem(position)
+                    var type = json.getJSONObject("PdtCategory")
+                    var title = Utils.getString(type, "title")
+                    entireClassificationTV.setText(title)
+                    if (title.equals("분류전체")){
+                        title = ""
+                    }
+                    form = title
+                    getSecondHandMarketItems("form",1)
+                    genderAdatper.notifyDataSetChanged()
+
+                } else {
+                    var json = productCategoryAdatper.getItem(position)
+                    var type = json.getJSONObject("ProductCategory")
+                    var title = Utils.getString(type, "title")
+                    entireClassificationTV.text = title
+                    if (title.equals("분류전체")){
+                        title = ""
+                    }
+                    form = title
 //                formData[position].put("isSelectedOp", true)
-                getSecondHandMarketItems("form",1)
+                    getSecondHandMarketItems("form",1)
 
 
 
-                productCategoryAdatper.notifyDataSetChanged()
+                    productCategoryAdatper.notifyDataSetChanged()
+                }
+
 
                 alert.dismiss()
             }
@@ -259,6 +280,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 productTypeAdapter.notifyDataSetChanged()
                 getSecondHandMarketItems("type",1)
                 alert.dismiss()
+                entireClassificationTV.setText("분류 전체")
             }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
@@ -294,6 +316,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             formData.clear()
         }
 
+        if (genderData != null) {
+            genderData.clear()
+        }
+
         MarketAction.load_category(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -302,6 +328,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                     val category = response.getJSONArray("category")
                     val productType = response.getJSONArray("producttype")
                     val productForm = response.getJSONArray("productcategory")
+                    val pdtcategory = response.getJSONArray("pdtcategory")
 
                     if (productType.length() > 0 && productType != null) {
                         for (i in 0 until productType.length()) {
@@ -322,6 +349,13 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                         for (i in 0 until productForm.length()) {
                             formData.add(productForm.get(i) as JSONObject)
                             formData.get(i).put("isSelectedOp", false)
+                        }
+                    }
+
+                    if (pdtcategory.length() > 0 && pdtcategory != null) {
+                        for (i in 0 until pdtcategory.length()) {
+                            genderData.add(pdtcategory.get(i) as JSONObject)
+                            genderData.get(i).put("isSelectedOp", false)
                         }
                     }
 

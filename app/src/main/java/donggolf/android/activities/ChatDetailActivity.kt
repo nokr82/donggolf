@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -19,10 +21,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
 import donggolf.android.adapters.ChattingAdapter
-import donggolf.android.base.Config
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import donggolf.android.base.Utils
+import donggolf.android.base.*
+import donggolf.android.models.ImagesPath
+import donggolf.android.models.TmpContent
 import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.dlg_set_text_size.view.*
 import org.json.JSONException
@@ -128,6 +129,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             room_id = intent.getStringExtra("id")
             timerStart()
             detail_chatting()
+            set_in_yn("Y")
         }
 
         var author = intent.getStringExtra("Author")
@@ -185,7 +187,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         finishaLL.setOnClickListener {
+            var intent = Intent()
+            intent.putExtra("reset", "reset")
+            setResult(RESULT_OK, intent);
             finish()
+            Utils.hideKeyboard(this)
         }
 
         addchattingTV.setOnClickListener {
@@ -373,13 +379,34 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 //            val galleryIntent = Intent(Intent.ACTION_PICK,
 //                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
-            var intent = Intent(context, FindPictureActivity::class.java);
-            intent.putExtra("image","image")
-
-            startActivityForResult(intent, GALLERY)
+            permissionimage()
         }
 
 
+
+    }
+
+    private fun permissionimage() {
+
+        val permissionlistener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                var intent = Intent(context, FindPictureActivity::class.java);
+                intent.putExtra("image","image")
+
+                startActivityForResult(intent, GALLERY)
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
+                .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check();
 
     }
 
@@ -553,6 +580,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         if (timer != null) {
             timer!!.cancel()
         }
+
+        set_in_yn("N")
     }
 
 
@@ -680,6 +709,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     val members = response!!.getJSONArray("chatmember")
                     var roomtitle = ""
+                    memberlistLL.removeAllViews()
                     if (members != null && members.length() > 0){
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
@@ -886,6 +916,28 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
+    fun set_in_yn(in_yn:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("in_yn",in_yn)
+
+        ChattingAction.set_in_yn(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -906,6 +958,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
 
+                    if (comment_path != null){
+                        comment_path.clear()
+                    }
+
                     for (i in 0..(item!!.size - 1)) {
                         val str = item[i]
 
@@ -914,10 +970,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         val add_file = Utils.getImage(context.contentResolver, str)
                     }
 
-                    println("----comment_path size ${comment_path.size}")
-
                     add_chatting()
+                    set_in_yn("Y")
 
+                    timerStart()
 
                     if (data != null)
                     {
@@ -955,6 +1011,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+        finish()
+
     }
 
 }

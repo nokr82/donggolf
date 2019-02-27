@@ -1,6 +1,7 @@
 package donggolf.android.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -11,6 +12,7 @@ import donggolf.android.actions.MateAction
 import donggolf.android.adapters.MutualAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_mutual.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -47,10 +49,19 @@ class MutualActivity : RootActivity() {
 
         finishLL.setOnClickListener {
             finish()
+            Utils.hideKeyboard(this)
         }
 
+        mutualList.setOnItemClickListener { parent, view, position, id ->
+            val item = adapter.getItem(position)
+            val member = item.getJSONObject("MateMember")
+            val member_id = Utils.getString(member,"id")
 
 
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("member_id", member_id)
+            startActivity(intent)
+        }
 
 
     }

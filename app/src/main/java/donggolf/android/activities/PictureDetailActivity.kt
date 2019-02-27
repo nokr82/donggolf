@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_main_detail.*
 import kotlinx.android.synthetic.main.activity_picture_detail.*
 import org.json.JSONArray
 import org.json.JSONObject
+import uk.co.senab.photoview.PhotoView
 import uk.co.senab.photoview.PhotoViewAttacher
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,7 +60,7 @@ class PictureDetailActivity : RootActivity() {
 
                     if (intent.getStringExtra("type") != null) {
                         for (i in 0 until adverImagePaths.size) {
-                            val iv = ImageView(context)
+                            val iv = PhotoView(context)
                             com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(Config.url + adverImagePaths.get(i), iv, Utils.UILoptions)
 
                             if (i == 0) {
@@ -73,9 +74,8 @@ class PictureDetailActivity : RootActivity() {
                     } else {
 
                         for (i in 0 until adverImagePaths.size) {
-                            val iv = ImageView(context)
+                            val iv = PhotoView(context)
 
-//                        val photoViewAttacher = PhotoViewAttacher(iv)
 //                        photoViewAttacher.scaleType = ImageView.ScaleType.CENTER_CROP
 
                             com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(adverImagePaths.get(i), iv, Utils.UILoptions)

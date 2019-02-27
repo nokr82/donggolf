@@ -163,7 +163,7 @@ class RegisterActivity : RootActivity() {
                             emailET.setText("")
                             Utils.alert(context, response!!.getString("result"))
                         }else{
-                            finish()
+//                            finish()
                         }
                     } catch (e : JSONException) {
                         e.printStackTrace()
@@ -246,8 +246,6 @@ class RegisterActivity : RootActivity() {
         params.put("sex", gender)
         params.put("nick", nickName)
 
-        println("---- email: $email passwd : $password phone : $phone gender : $gender nick : $nickName")
-
         MemberAction.join_member(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -255,6 +253,9 @@ class RegisterActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     finish()
+                } else if (result == "overlap"){
+                    Toast.makeText(context, "동일한 핸드폰 번호가 있습니다.", Toast.LENGTH_SHORT).show()
+                    return
                 }
             }
 

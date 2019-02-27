@@ -85,6 +85,18 @@ class ChangePasswordActivity : RootActivity() {
             return
         }
 
+        val newpas = newPass1ET.text.toString()
+
+        if (newpas == "" || newpas == null){
+            Utils.alert(context, "변경하실 비밀번호를 입력해주세요.")
+            return
+        }
+
+        if (newpas.length < 4 || newpas.length > 16){
+            Utils.alert(context, "비밀번호는 4 ~ 16 글자만 입력하실 수 있습니다.")
+            return
+        }
+
         if (tempPass == tpPw){
             if (Utils.getString(newPass1ET) == Utils.getString(newPass2ET)) {
                 val params = RequestParams()
@@ -100,6 +112,11 @@ class ChangePasswordActivity : RootActivity() {
                                 Toast.makeText(context, "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_LONG).show()
 //                                                        Utils.alert(context,"비밀번호가 성공적으로 변경되었습니다.")
                                 finish()
+
+                                PrefUtils.setPreference(context, "pass", Utils.getString(newPass1ET))
+
+//                                PrefUtils.clear(context)
+
                                 Utils.hideKeyboard(context)
                             }
                         } catch (e:JSONException) {

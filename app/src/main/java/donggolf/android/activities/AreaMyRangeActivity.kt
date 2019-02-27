@@ -65,6 +65,19 @@ class AreaMyRangeActivity : RootActivity() {
 
         getBigCity()
 
+        accTV.setOnClickListener {
+            if (actArea == 0){
+                userRG1 = "전국"
+                userRG2 = "전국"
+                userRG3 = "전국"
+                update_info()
+                Toast.makeText(context, "전국으로 변경 되었습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            update_info()
+        }
+
         adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
         arealistLV.adapter = adapter
         arealistLV.setOnItemClickListener { parent, view, position, id ->
@@ -104,7 +117,8 @@ class AreaMyRangeActivity : RootActivity() {
                 }
 
                 if (nowIndex == 3){
-                    update_info()
+                    Toast.makeText(context, "최대 3개까지 선택하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnItemClickListener
                 } else {
                     tmpRegionLL.addView(regionView)
                     areaCnt.text = "${actArea.toString()}"
@@ -135,6 +149,16 @@ class AreaMyRangeActivity : RootActivity() {
             val regionView = View.inflate(context, R.layout.item_area,null)
             regionView.regionNameTV.text = name
 
+            if (nowIndex == 4){
+                Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                areaCnt.text = "3"
+                return@setOnItemClickListener
+//                update_info()
+            } else {
+                tmpRegionLL.addView(regionView)
+                areaCnt.text = "${actArea.toString()}"
+            }
+
             areaCnt.setText(nowIndex.toString())
             gugunList[position].put("isSelectedOp",true)
             GridAdapter.notifyDataSetChanged()
@@ -157,12 +181,6 @@ class AreaMyRangeActivity : RootActivity() {
                 gugunList[position].put("isSelectedOp",false)
                 GridAdapter.notifyDataSetChanged()
             }
-            if (nowIndex == 3){
-                update_info()
-            } else {
-                tmpRegionLL.addView(regionView)
-                areaCnt.text = "${actArea.toString()}"
-            }
 
 
         }
@@ -179,11 +197,9 @@ class AreaMyRangeActivity : RootActivity() {
                 gridGV.visibility = View.GONE
             }
 
-
         }
 
     }
-
 
     fun update_info(){
         val params = RequestParams()

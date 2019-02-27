@@ -7,14 +7,16 @@
     android:orientation="vertical"
     tools:context=".activities.GoodsDetailActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <ScrollView
             android:scrollbars="none"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:fillViewport="true">
 
             <LinearLayout
@@ -458,9 +460,9 @@
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="90dp"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:hint="숫자 또는 계좌번호를 입력하세요."
                                 android:inputType="number"
+                                android:singleLine="true"
                                 android:textSize="12dp" />
                         </LinearLayout>
 
@@ -468,7 +470,6 @@
                             android:id="@+id/findBT"
                             android:layout_width="44dp"
                             android:layout_height="31dp"
-                            android:layout_alignParentRight="true"
                             android:layout_marginRight="10dp"
                             android:background="@drawable/btn_guest_selector"
                             android:gravity="center"
@@ -500,43 +501,33 @@
                         android:textColor="#ffffff" />
                 </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="60dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="70dp"
-                    android:gravity="center"
-                    android:text="(주)동네골프는 중고거래를 위한 시스템만 제공하여 물품판매와 내용에 관해서는 일체의 책임을 지지 않습니다."
-                    android:textColor="#c9c9c9"
-                    android:textSize="15dp" />
+
 
                 <donggolf.android.base.ExpandableHeightListView
                     android:id="@+id/market_commentLV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp" />
+                    android:layout_height="wrap_content"
+                  />
             </LinearLayout>
+
 
         </ScrollView>
 
 
-        <!--댓글 입력창-->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="30dp"
-            android:background="@mipmap/line_1" />
-
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <!--댓글 입력창-->
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="0.5dp"
+    android:background="#707070"/>
+        <LinearLayout
+            android:id="@+id/cmtLL"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
             android:background="#ffffff"
             android:orientation="horizontal">
 
@@ -557,6 +548,7 @@
                 android:background="#c9c9c9" />
 
             <TextView
+                android:background="#ffffff"
                 android:id="@+id/addcommentTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -569,7 +561,21 @@
                 android:textSize="13dp" />
 
         </LinearLayout>
-    </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#707070"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:text="(주)동네골프는 중고거래를 위한 시스템만 제공하여 물품판매와 내용에 관해서는 일체의 책임을 지지 않습니다."
+            android:textColor="#c9c9c9"
+            android:textSize="15dp" />
+        </LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

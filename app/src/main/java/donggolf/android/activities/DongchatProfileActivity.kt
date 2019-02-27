@@ -43,6 +43,8 @@ class DongchatProfileActivity : RootActivity() {
     var room_id = ""
 
     var Image_path = ArrayList<String>()
+    var backgroundPath = ""
+    var profilePath = ""
 
     private lateinit var backgroundAdapter: FullScreenImageAdapter
 
@@ -76,6 +78,7 @@ class DongchatProfileActivity : RootActivity() {
 
         backLL.setOnClickListener {
             finish()
+            Utils.hideKeyboard(this)
         }
 
 
@@ -99,6 +102,7 @@ class DongchatProfileActivity : RootActivity() {
             } else {
                 if (people_count == max_count) {
                     Toast.makeText(context,"정원초과 입니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 } else if (people_count < max_count){
                     val intent = Intent(context, DongChatDetailActivity::class.java)
                     intent.putExtra("room_id", room_id)
@@ -108,12 +112,46 @@ class DongchatProfileActivity : RootActivity() {
 
         }
 
+
+        backgroundVP.setOnClickListener {
+            println("-------backgroundPath : $backgroundPath")
+            if (backgroundPath == ""){
+                return@setOnClickListener
+            }
+            val imglist:ArrayList<String> = ArrayList<String>()
+            imglist.add(backgroundPath)
+            var intent = Intent(context, PictureDetailActivity::class.java)
+            intent.putExtra("id", "")
+            intent.putExtra("adPosition",0)
+            intent.putExtra("paths",imglist)
+            intent.putExtra("type","chat")
+            startActivity(intent)
+
+        }
+
+        profileIV.setOnClickListener {
+            println("-------profilePath : $profilePath")
+            if (profilePath == ""){
+                return@setOnClickListener
+            }
+
+            val imglist:ArrayList<String> = ArrayList<String>()
+            imglist.add(profilePath)
+            var intent = Intent(context, PictureDetailActivity::class.java)
+            intent.putExtra("id", "")
+            intent.putExtra("adPosition",0)
+            intent.putExtra("paths",imglist)
+            intent.putExtra("type","chat")
+            startActivity(intent)
+        }
+
+
         room_id = intent.getStringExtra("room_id")
 
         detail_chatting()
 
-        backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
-        backgroundVP.adapter = backgroundAdapter
+//        backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
+//        backgroundVP.adapter = backgroundAdapter
 
 //        setnoticeTV.setOnClickListener {
 //            val builder = AlertDialog.Builder(this)
@@ -181,13 +219,56 @@ class DongchatProfileActivity : RootActivity() {
             startActivityForResult(intent,SET_NOTICE)
         }
 
-        setroomtitleTV.setOnClickListener {
+        introduceLL.setOnClickListener {
+            if (founder_id.toInt() != PrefUtils.getIntPreference(context,"member_id")){
+                return@setOnClickListener
+            }
+
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
             builder.setView(dialogView)
             val alert = builder.show()
 
-            dialogView.dlgtextTV.setText("변경할 코드을 입력하세요")
+            dialogView.dlgtextTV.setText("변경할 내용을 입력하세요")
+            dialogView.dlgTitle.setText("채팅방 소개 입력")
+            dialogView.categoryTitleET.setHint("변경할 소개내용을 입력해 주세요.")
+            val title = introduceTV.text.toString()
+            dialogView.settitleTV.setText("현재 채팅방 소개는 ")
+            dialogView.blockcodeTV.setText(title)
+
+            dialogView.btn_title_clear.setOnClickListener {
+                dialogView.blockcodeTV.setText("")
+            }
+
+            dialogView.cancleTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.okTV.setOnClickListener {
+                val code = dialogView.categoryTitleET.text.toString()
+                if (code == null || code == ""){
+                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                set_introduce(code)
+                alert.dismiss()
+            }
+
+        }
+
+        setroomtitleTV.setOnClickListener {
+            if (founder_id.toInt() != PrefUtils.getIntPreference(context,"member_id")){
+                return@setOnClickListener
+            }
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+
+            dialogView.dlgtextTV.setText("변경할 내용을 입력하세요")
+            dialogView.categoryTitleET.setHint("변경할 제목을 입력해 주세요.")
             dialogView.dlgTitle.setText("제목 입력")
             val title = roomtitleTV.text.toString()
             dialogView.settitleTV.setText("현재 채팅방 제목은 ")
@@ -263,18 +344,23 @@ class DongchatProfileActivity : RootActivity() {
 
                             people_count = Utils.getString(chatroom,"peoplecount").toInt()
                             max_count = Utils.getString(chatroom,"max_count").toInt()
-                            val getnotice = Utils.getString(chatroom,"notice")
-                            if (getnotice != null && getnotice.length > 0){
+                            notice = Utils.getString(chatroom,"notice")
+                            if (notice != null && notice.length > 0){
                                 noticeTV.setText(notice)
-                                notice = getnotice
+                                notice = notice
                             }
 
                             chatMemberids.add(member_id)
                             membercountTV.setText("("+people_count.toString() + "/" + max_count.toString()+")")
                             if (background != null && background.length > 0){
-                                Image_path.add(Config.url + Utils.getString(chatroom,"background"))
+//                                Image_path.add(Config.url + Utils.getString(chatroom,"background"))
+                                backgroundPath = Utils.getString(chatroom,"background")
                             }
 
+                            val backgroundimage = Config.url + Utils.getString(chatroom, "background")
+                            ImageLoader.getInstance().displayImage(backgroundimage, backgroundVP, Utils.UILoptionsProfile)
+
+                            profilePath = Utils.getString(chatroom, "intro")
                             val introimage = Config.url + intro
 
                             ImageLoader.getInstance().displayImage(introimage, profileIV, Utils.UILoptionsProfile)
@@ -297,8 +383,9 @@ class DongchatProfileActivity : RootActivity() {
 
                             if (PrefUtils.getIntPreference(context,"member_id") != Utils.getInt(chatroom,"member_id")){
                                 setnoticeTV.visibility = View.GONE
-                                setroomtitleTV.visibility = View.GONE
+                                setroomtitleIV.visibility = View.GONE
                                 setimageIV.visibility = View.GONE
+                                introduceIV.visibility = View.GONE
                             }
 
                             if (Utils.getInt(chatroom,"member_id") == Utils.getInt(memberinfo,"id")){
@@ -312,7 +399,7 @@ class DongchatProfileActivity : RootActivity() {
                         }
 
                     }
-                    backgroundAdapter.notifyDataSetChanged()
+//                    backgroundAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -410,6 +497,34 @@ class DongchatProfileActivity : RootActivity() {
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         roomtitleTV.setText(title)
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun set_introduce(introduce: String){
+        val params = RequestParams()
+        params.put("room_id", room_id)
+        params.put("introduce", introduce)
+
+        ChattingAction.set_introduce(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        introduceTV.setText(introduce)
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()

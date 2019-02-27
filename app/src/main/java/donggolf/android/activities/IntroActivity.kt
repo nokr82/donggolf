@@ -117,9 +117,9 @@ class IntroActivity : RootActivity() {
 
             val intent = Intent(context, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            intent.setAction((Intent.ACTION_MAIN))
-            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            intent.setAction((Intent.ACTION_MAIN))
+//            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
 
         } else {
@@ -162,7 +162,7 @@ class IntroActivity : RootActivity() {
                             val member_id = Utils.getInt(member, "id")
 
                             PrefUtils.setPreference(context, "member_id", member_id)
-                            PrefUtils.setPreference(context,"login_nick", Utils.getString(member,"nick"))
+                            PrefUtils.setPreference(context,"nick", Utils.getString(member,"nick"))
                             PrefUtils.setPreference(context, "email", Utils.getString(member, "email"))
                             PrefUtils.setPreference(context, "pass", Utils.getString(member, "passwd"))
                             PrefUtils.setPreference(context, "auto", true)
@@ -175,18 +175,18 @@ class IntroActivity : RootActivity() {
                             intent.putExtra("content_id", content_id.toInt())
                             intent.putExtra("friend_id", friend_id.toInt())
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            intent.setAction((Intent.ACTION_MAIN))
-                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            intent.setAction((Intent.ACTION_MAIN))
+//                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
 
                             finish()
                         } else {
                             var intent = Intent(context, LoginActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            intent.setAction((Intent.ACTION_MAIN))
-                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            intent.setAction((Intent.ACTION_MAIN))
+//                            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
 //                            Toast.makeText(context,"휴면 계정입니다. 문의해주세요.", Toast.LENGTH_SHORT).show()
                         }

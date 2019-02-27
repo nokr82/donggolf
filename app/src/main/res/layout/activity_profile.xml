@@ -121,16 +121,17 @@
         android:textSize="15dp"
         android:text="부천,인천,구로"
         android:id="@+id/txUserRegion" />
+
     <LinearLayout
-        android:id="@+id/knowTogether"
         android:visibility="gone"
+        android:id="@+id/knowTogether"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_margin="10dp">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="10dp"
+            android:layout_width="30dp"
+            android:layout_height="15dp"
             android:id="@+id/imgRelation"
             android:background="@drawable/icon_first"
             android:layout_marginRight="5dp" />
@@ -143,7 +144,7 @@
             android:paddingRight="15dp"
             android:paddingLeft="15dp"
             android:id="@+id/mutualTV"
-            android:text="내 1촌 5명과 아는 사람" />
+            android:text="내 1촌 0명과 아는 사람" />
     </LinearLayout>
 
     <TextView

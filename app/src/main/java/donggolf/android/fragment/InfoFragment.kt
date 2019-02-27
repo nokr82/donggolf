@@ -218,13 +218,13 @@ fun member_info(){
                 var region = ""
 
                 if (Utils.getString(member,"region1") != null && Utils.getString(member,"region1") != "") {
-                    region += Utils.getString(member,"region1") + ","
+                    region += Utils.getString(member,"region1")
                 }
                 if (Utils.getString(member,"region2") != null && Utils.getString(member,"region2") != "") {
-                    region += Utils.getString(member,"region2") + ","
+                    region += "," + Utils.getString(member,"region2")
                 }
                 if (Utils.getString(member,"region3") != null && Utils.getString(member,"region3") != "") {
-                    region += Utils.getString(member,"region3")
+                    region += "," + Utils.getString(member,"region3")
                 }
 
                 if (Utils.getString(member,"region1") == "전국"){

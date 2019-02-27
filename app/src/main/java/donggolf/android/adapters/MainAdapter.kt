@@ -2,11 +2,12 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.graphics.Color
+import android.media.ThumbnailUtils
+import android.net.Uri
+import android.provider.MediaStore
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
@@ -80,14 +81,23 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         if (image_uri != null){
             if (image_uri != "") {
-                item.profileIV.visibility = View.VISIBLE
+                var image_type = Utils.getString(Content,"image_type")
                 var image = Config.url + image_uri
-                ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+                if (image_type == "1") {
+                    item.profileIV.visibility = View.VISIBLE
+                    item.videoVV.visibility = View.GONE
+                    ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+                } else {
+                    item.videoVV.visibility = View.VISIBLE
+                    item.profileIV.visibility = View.GONE
+                }
             } else {
                 item.profileIV.visibility = View.GONE
+                item.videoVV.visibility = View.GONE
             }
         } else {
             item.profileIV.visibility = View.GONE
+            item.videoVV.visibility = View.GONE
         }
 
         if (profile != null){
@@ -133,6 +143,8 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var main_item_like_count : TextView
         var profileIV: ImageView
         var main_item_image : CircleImageView
+        var videoVV: VideoView
+
         init {
 
             main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
@@ -144,6 +156,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
             profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
             main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
+            videoVV = v.findViewById<View>(R.id.videoVV) as VideoView
 
         }
 

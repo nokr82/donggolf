@@ -90,6 +90,22 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
+        item.myimageIV.setOnClickListener {
+            val type = Utils.getString(chatting,"type")
+            println("--------typ[e====== $type")
+            if (type == "i"){
+                val img = Utils.getString(chatting,"img")
+                val imglist:ArrayList<String> = ArrayList<String>()
+                imglist.add(img)
+                var intent = Intent(context, PictureDetailActivity::class.java)
+                intent.putExtra("id", id)
+                intent.putExtra("adPosition",0)
+                intent.putExtra("paths",imglist)
+                intent.putExtra("type","chat")
+                context.startActivity(intent)
+            }
+        }
+
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
         }
@@ -112,7 +128,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (difference > 0){
             item.readTV.setText(difference.toString())
-        } else if (difference == 0){
+        } else {
             item.readTV.setText("")
         }
 
@@ -126,6 +142,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.mycontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.myimageIV, Utils.UILoptionsUserProfile)
+            } else {
+                item.myimageIV.visibility = View.GONE
+                item.mycontentTV.visibility = View.VISIBLE
             }
 
         } else {
@@ -139,6 +158,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.usercontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.userimageIV, Utils.UILoptionsUserProfile)
+            } else {
+                item.userimageIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
             }
 
             val today = Utils.todayStr()

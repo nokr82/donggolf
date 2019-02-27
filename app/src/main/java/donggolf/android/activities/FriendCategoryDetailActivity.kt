@@ -207,10 +207,13 @@ class FriendCategoryDetailActivity : RootActivity() {
         if(resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 MOVEtoCATEGORY -> {
-                    val selCateg = data!!.getStringExtra("CategoryID")
-                    val category_id = data!!.getStringExtra("category_id")
-                    //println("category id : $selCateg")
-                    moveMateOtherCategory(selCateg,category_id)
+
+                    if (data!!.getStringExtra("CategoryID") != null && data!!.getStringExtra("category_id") != null) {
+                        val selCateg = data!!.getStringExtra("CategoryID")
+                        val category_id = data!!.getStringExtra("category_id")
+                        //println("category id : $selCateg")
+                        moveMateOtherCategory(selCateg, category_id)
+                    }
                 }
 
                 CATEGORY_SETTING -> {
@@ -312,7 +315,8 @@ class FriendCategoryDetailActivity : RootActivity() {
     override fun onBackPressed() {
         Utils.hideKeyboard(context)
         var intent = Intent()
-        setResult(Activity.RESULT_OK)
+        intent.putExtra("reset","reset")
+        setResult(Activity.RESULT_OK,intent)
         finish()
     }
 

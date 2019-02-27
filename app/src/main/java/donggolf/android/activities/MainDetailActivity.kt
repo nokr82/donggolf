@@ -65,7 +65,7 @@ class MainDetailActivity : RootActivity() {
     val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
-    var p_comments_id = -1
+
 
     var login_id = 0
     var writer = "0"
@@ -86,6 +86,7 @@ class MainDetailActivity : RootActivity() {
 
     var comment_path: Bitmap? = null
     var op_comments_id = -1
+    var p_comments_id = -1
     lateinit var video:Uri
 
     var freind = "0"
@@ -380,26 +381,26 @@ class MainDetailActivity : RootActivity() {
                 Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                 return@setOnItemClickListener
             }
-                var data = commentList.get(i)
-                Log.d("데이데이",data.toString())
+            var data = commentList.get(i)
+            Log.d("데이데이",data.toString())
             val contentcomment = data.getJSONObject("ContentComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")
 
-                p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
-                op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
-                var user_nick =  Utils.getString(contentcomment,"nick")
+            p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+            var user_nick =  Utils.getString(contentcomment,"nick")
             if (p_comments_id!=-1){
                 op_comments_id = p_comments_id
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
                 cmtET.hint = user_nick+ "님의 댓글에 대댓글"
             }else if (comments_id != -1) {
-                    p_comments_id = comments_id
-                    cmtET.requestFocus()
-                    Utils.showKeyboard(context)
-                    cmtET.hint = user_nick+ "님의 댓글에 답글"
-                }
+                p_comments_id = comments_id
+                cmtET.requestFocus()
+                Utils.showKeyboard(context)
+                cmtET.hint = user_nick+ "님의 댓글에 답글"
+            }
 
         }
      /*   //대댓글
@@ -693,8 +694,20 @@ class MainDetailActivity : RootActivity() {
                             var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
                             profileIV.tag = Utils.getInt(like, "id")
 
+                            var member_id = Utils.getString(member,"id")
+
                             var image = Config.url + Utils.getString(member, "profile_img")
                             ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+                            view.setOnClickListener {
+                                if (PrefUtils.getIntPreference(context, "member_id") == member_id.toInt()){
+                                    Toast.makeText(context,"본인 프로필에는 이동하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                    return@setOnClickListener
+                                }
+                                val intent = Intent(context, ProfileActivity::class.java)
+                                intent.putExtra("member_id", member_id)
+                                startActivity(intent)
+                            }
 
                             likeMembersLL.addView(view)
 
@@ -793,7 +806,7 @@ class MainDetailActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id",login_id)
         params.put("cont_id", content_id)
-        params.put("nick", PrefUtils.getStringPreference(context,"login_nick"))
+        params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("comment", comment)
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)
@@ -849,6 +862,8 @@ class MainDetailActivity : RootActivity() {
             }
         })
     }
+
+
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val dx = x1 - x2
         val dy = y1 - y2
@@ -866,6 +881,7 @@ class MainDetailActivity : RootActivity() {
             var params = RequestParams()
             params.put("id",id)
             params.put("member_id",login_id)
+
 
             PostAction.get_post(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -892,9 +908,16 @@ class MainDetailActivity : RootActivity() {
 
 
                             freind = Utils.getString(data,"freind")
+                            val mate_cnt = Utils.getString(data,"mate_cnt")
                             Log.d("친구",freind)
                             if (freind == "0"){
-                                freindIV.setBackgroundResource(R.drawable.icon_second)
+                                if (mate_cnt.toInt() > 0){
+                                    freindIV.setBackgroundResource(R.drawable.icon_second)
+                                }
+                            }
+
+                            if (mate_cnt == "0"){
+                                freindIV.visibility = View.GONE
                             }
 
 
@@ -1059,6 +1082,17 @@ class MainDetailActivity : RootActivity() {
                                 var image = Config.url + Utils.getString(likeMember, "profile_img")
 
                                 ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsProfile)
+
+                                view.setOnClickListener {
+                                    if (PrefUtils.getIntPreference(context, "member_id") == member_id.toInt()){
+                                        Toast.makeText(context,"본인 프로필에는 이동하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        return@setOnClickListener
+                                    }
+
+                                    val intent = Intent(context, ProfileActivity::class.java)
+                                    intent.putExtra("member_id", id)
+                                    startActivity(intent)
+                                }
 
                                 likeMembersLL.addView(view)
                             }
