@@ -935,7 +935,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("room_id", room_id)
-        params.put("last_id",last_id)
+        params.put("chat_id",last_id)
 
         ChattingAction.delete_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
