@@ -391,9 +391,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
+
+                timerEnd()
+
                 var intent = Intent(context, FindPictureActivity::class.java);
                 intent.putExtra("image","image")
-
                 startActivityForResult(intent, GALLERY)
             }
 
@@ -480,15 +482,23 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(0, data)
-                            chattingList.get(i).put("text_size",text_size)
+
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(0, data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
+
                         }
 
                     } else {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(data)
-                            chattingList.get(i).put("text_size",text_size)
+
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
+
                             chatLV.setSelection(adapter.count - 1)
                         }
                     }
@@ -512,6 +522,28 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
         })
 
+    }
+
+    fun insertCheckData(data: JSONObject) : Boolean {
+
+        val check_id = Utils.getInt(data, "id")
+
+        var add = true
+
+        for (i in 0 until chattingList.size) {
+            val data = chattingList[i]
+            val chat = data.getJSONObject("Chatting")
+
+            val id = Utils.getInt(chat, "id")
+
+            if (check_id == id) {
+                add = false
+                break
+            }
+
+        }
+
+        return add
     }
 
     fun readCount(){
@@ -631,6 +663,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         timer = Timer()
         timer!!.schedule(task, 0, 1000)
+
+    }
+
+    fun timerEnd(){
+
+        if(timer != null) {
+            timer!!.cancel()
+            loadDataHandler.removeMessages(0)
+        }
 
     }
 
