@@ -451,13 +451,20 @@
                             android:id="@+id/findLL"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
-
+                            <TextView
+                                android:id="@+id/findBT"
+                                android:layout_width="44dp"
+                                android:layout_height="31dp"
+                                android:background="@drawable/btn_guest_selector"
+                                android:gravity="center"
+                                android:text="검색"
+                                android:textColor="#ffffff" />
                             <EditText
                                 android:id="@+id/findET"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
+                                android:paddingLeft="10dp"
                                 android:layout_marginRight="90dp"
                                 android:background="@null"
                                 android:hint="숫자 또는 계좌번호를 입력하세요."
@@ -466,15 +473,7 @@
                                 android:textSize="12dp" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/findBT"
-                            android:layout_width="44dp"
-                            android:layout_height="31dp"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/btn_guest_selector"
-                            android:gravity="center"
-                            android:text="검색"
-                            android:textColor="#ffffff" />
+
                     </RelativeLayout>
 
                     <TextView
