@@ -107,7 +107,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             if (id == room_id) {
                                 chatroom.put("contents", content)
                                 chatroom.put("created", chat_created)
-                                chatroom.put("readdiv", "1")
+                                chatroom.put("readdiv", "0")
                                 break
                             }
 
@@ -126,7 +126,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             if (id == room_id) {
                                 chatroom.put("contents", content)
                                 chatroom.put("created", chat_created)
-                                chatroom.put("readdiv", "1")
+                                chatroom.put("readdiv", "0")
                                 break
                             }
 
@@ -537,7 +537,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 //            if (PrefUtils.getStringPreference(context,"region_id") != null) {
 //                myChatOnRL.visibility = View.GONE
 //                townChatOnRL.visibility = View.VISIBLE
-//                getmychat(2)
+//                getmychat(2)`
 //            } else {
 //                Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
 //            }
