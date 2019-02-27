@@ -17,12 +17,8 @@
         android:required="true" />
 
     <application
-        android:launchMode="singleInstance"
-        android:excludeFromRecents="true"
-        android:taskAffinity=""
         android:name=".base.GlobalApplication"
-        android:allowBackup="false"
-        android:hardwareAccelerated="true"
+        android:allowBackup="true"
         android:icon="@drawable/logo_png"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo_png"
@@ -57,7 +53,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -66,13 +61,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustPan|stateHidden">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="golf" />
-            </intent-filter><!-- 로그인 -->
         </activity>
         <activity
             android:name=".activities.LoginActivity"
