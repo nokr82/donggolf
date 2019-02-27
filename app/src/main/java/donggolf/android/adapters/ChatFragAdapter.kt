@@ -179,6 +179,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (room_type == "1") {
             var image = Config.url + profileimg
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
+            item.countTV.visibility = View.GONE
         } else {
             var image = Config.url + Utils.getString(room, "intro")
             ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)

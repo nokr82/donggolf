@@ -613,7 +613,16 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("room_id", room_id)
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+
+        if (mate_id.size > 0){
+            for (i in 0..mate_id!!.size - 1){
+                params.put("mate_ids[" + i + "]", mate_id.get(i))
+            }
+        }
+
         params.put("mate_id", mate_id)
+
+
         params.put("nick",PrefUtils.getStringPreference(dialogContext, "nickname"))
         params.put("content",content)
 
