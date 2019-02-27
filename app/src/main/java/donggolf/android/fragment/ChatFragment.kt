@@ -115,6 +115,21 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                     } else {
 
+                        for (i in 0 until dongAdapterData.size) {
+                            val data = dongAdapterData[i]
+                            val chatroom = data.getJSONObject("Chatroom")
+
+                            val id = Utils.getInt(chatroom, "id")
+
+                            if (id == room_id) {
+                                chatroom.put("contents", content)
+                                chatroom.put("created", chat_created)
+                            }
+
+                        }
+
+                        dongAdapter.notifyDataSetChanged()
+
                     }
 
                 }
