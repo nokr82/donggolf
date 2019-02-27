@@ -28,6 +28,9 @@
         android:roundIcon="@drawable/logo_png"
         android:supportsRtl="true"
         android:theme="@style/NoTitleDialog">
+        <activity android:name=".activities.OperatingActivity"
+            android:theme="@style/NoTitleDialog"></activity>
+
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -39,17 +42,12 @@
             </intent-filter>
         </service>
 
-
-
-
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
 
         <activity
             android:name=".activities.IntroActivity"
@@ -67,9 +65,15 @@
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
-        <!-- 로그인 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="golf" />
+            </intent-filter><!-- 로그인 -->
+        </activity>
         <activity
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
@@ -110,11 +114,10 @@
             android:name=".activities.AreaMyRangeActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
         <activity
             android:name=".activities.MainDetailActivity"
-            android:theme="@style/NoTitleDialog"
             android:screenOrientation="portrait"
+            android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.PictureDetailActivity"
@@ -124,18 +127,18 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.FriendSearchActivity"
-            android:launchMode="singleTop"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustPan|stateHidden" >
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
-                <action android:name = "android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme = "@string/kakao_scheme"
-                    android:host = "@string/kakaolink_host"/>
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.MarketMainActivity"
@@ -207,8 +210,7 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.PersonalInfoTernsActivity"
-            android:theme="@style/NoTitleDialog" />
-        <!-- <activity -->
+            android:theme="@style/NoTitleDialog" /> <!-- <activity -->
         <!-- android:name=".Main2Activity" -->
         <!-- android:label="@string/title_activity_main2" /> -->
         <activity
@@ -216,8 +218,9 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.ChatDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden"  />
         <activity
             android:name=".activities.Notice2Activity"
             android:theme="@style/NoTitleDialog" />
@@ -269,11 +272,13 @@
         <activity
             android:name=".activities.DongchatProfileActivity"
             android:theme="@style/NoTitleDialog" />
-        <activity android:name=".activities.ViewAlbumActivity"
-            android:theme="@style/NoTitleDialog"/>
-        <activity android:name=".activities.NoticeManageActivity"
+        <activity
+            android:name=".activities.ViewAlbumActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.NoticeManageActivity"
             android:theme="@style/NoTitleDialog"
-            android:windowSoftInputMode="adjustResize|stateHidden" ></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 
 </manifest>
