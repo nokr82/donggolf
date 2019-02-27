@@ -231,7 +231,8 @@ class RequestFriendActivity : RootActivity() {
 
         btn_back.setOnClickListener {
             var intent = Intent()
-            setResult(Activity.RESULT_OK)
+            intent.putExtra("reset","reset")
+            setResult(Activity.RESULT_OK,intent)
             finish()
             Utils.hideKeyboard(this)
         }
