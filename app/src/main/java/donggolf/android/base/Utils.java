@@ -56,6 +56,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1859,5 +1860,10 @@ public class Utils {
     }
 
 
-
+    public static int getInt(String str) {
+        if(str != null && str != "" && str.length() < 1) {
+            return Integer.parseInt(str);
+        }
+        return -1;
+    }
 }

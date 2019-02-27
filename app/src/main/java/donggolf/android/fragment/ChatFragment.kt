@@ -79,6 +79,50 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
+    internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                val room_id = intent.getIntExtra("room_id", -1)
+                val room_type = intent.getIntExtra("room_type", -1)
+
+                if (room_id > 0) {
+
+                    var content = intent.getStringExtra("content")
+                    val chatting_type = intent.getStringExtra("chatting_type")
+                    val chat_created = intent.getStringExtra("chat_created")
+
+                    if (chatting_type == "i") {
+                        content = "사진"
+                    }
+
+                    if (room_type == 1) {
+
+                        for (i in 0 until adapterData.size) {
+                            val data = adapterData[i]
+                            val chatroom = data.getJSONObject("Chatroom")
+
+                            val id = Utils.getInt(chatroom, "id")
+
+                            if (id == room_id) {
+                                chatroom.put("contents", content)
+                                chatroom.put("created", chat_created)
+                            }
+
+                        }
+
+                        adapter.notifyDataSetChanged()
+
+                    } else {
+
+                    }
+
+                }
+
+            }
+        }
+    }
+
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
             if (townChatOnRL.visibility == View.VISIBLE){
@@ -140,6 +184,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)
+
+        var filter2 = IntentFilter("CHATTING")
+        ctx!!.registerReceiver(chattingReciver, filter2)
 
         dong_chat_list.setOnItemClickListener { parent, view, position, id ->
             var json = dongAdapterData.get(position)
@@ -663,6 +710,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         super.onDestroy()
         if (resetChattingReciver != null) {
             context!!.unregisterReceiver(resetChattingReciver)
+        }
+        if (chattingReciver != null) {
+            context!!.unregisterReceiver(chattingReciver)
         }
     }
 

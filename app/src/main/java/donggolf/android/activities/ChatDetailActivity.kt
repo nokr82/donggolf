@@ -61,6 +61,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
             chatting()
+            readCount()
         }
     }
 
@@ -393,7 +394,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onPermissionGranted() {
                 var intent = Intent(context, FindPictureActivity::class.java);
                 intent.putExtra("image","image")
-
                 startActivityForResult(intent, GALLERY)
             }
 
@@ -480,15 +480,23 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(0, data)
-                            chattingList.get(i).put("text_size",text_size)
+
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(0, data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
+
                         }
 
                     } else {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(data)
-                            chattingList.get(i).put("text_size",text_size)
+
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
+
                             chatLV.setSelection(adapter.count - 1)
                         }
                     }
@@ -499,11 +507,92 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-
-                    if (list.length() > 0) {
-                        (adapter as BaseAdapter).notifyDataSetChanged()
-                    }
+                    (adapter as BaseAdapter).notifyDataSetChanged()
                 }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+
+    }
+
+    fun insertCheckData(data: JSONObject) : Boolean {
+
+        val check_id = Utils.getInt(data, "id")
+
+        var add = true
+
+        for (i in 0 until chattingList.size) {
+            val data = chattingList[i]
+            val chat = data.getJSONObject("Chatting")
+
+            val id = Utils.getInt(chat, "id")
+
+            if (check_id == id) {
+                add = false
+                break
+            }
+
+        }
+
+        return add
+    }
+
+    fun readCount(){
+
+        if (chattingList.size < 1) {
+            return
+        }
+
+        val first_data = chattingList[0]
+        val first_chat = first_data.getJSONObject("Chatting")
+        val first_id = Utils.getInt(first_chat, "id")
+
+        val last_data = chattingList[chattingList.size - 1]
+        val last_chat = last_data.getJSONObject("Chatting")
+        val last_id = Utils.getInt(last_chat, "id")
+
+        val params = RequestParams()
+        params.put("first_id", first_id)
+        params.put("last_id", last_id)
+        params.put("room_id", room_id)
+
+        ChattingAction.chatting_read_count(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    val list = response.getJSONArray("list")
+
+                    for (i in 0 until list.length()) {
+                        val data = list[i] as JSONObject
+                        val chatting = data.getJSONObject("Chatting")
+
+                        val id = Utils.getInt(chatting, "id")
+
+                        for (j in 0 until chattingList.size) {
+                            val data2 = chattingList[j]
+                            val chatting2 = data2.getJSONObject("Chatting")
+
+                            val id2 = Utils.getInt(chatting2, "id")
+
+                            if (id == id2) {
+                                chatting2.put("peoplecount", Utils.getInt(chatting, "peoplecount"))
+                                chatting2.put("read_count", Utils.getInt(chatting, "read_count"))
+                                break
+                            }
+                        }
+
+                    }
+
+                }
+
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
