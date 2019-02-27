@@ -524,7 +524,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
             }
-        })
+        }) 
 
         addmychatIV.setOnClickListener {
             var intent = Intent(activity, SelectMemberActivity::class.java)
