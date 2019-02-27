@@ -6,6 +6,10 @@ import donggolf.android.base.HttpClient
 
 object ChattingAction {
 
+    fun load_add_chatting(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/load_add_chatting.json", params, handler)
+    }
+
     fun add_chat(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/chatting/add_chat.json", params, handler)
     }

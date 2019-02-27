@@ -88,6 +88,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                 if (room_id > 0) {
 
+                    var has = false
+
                     var content = intent.getStringExtra("content")
                     val chatting_type = intent.getStringExtra("chatting_type")
                     val chat_created = intent.getStringExtra("chat_created")
@@ -96,26 +98,27 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         content = "사진"
                     }
 
-                    if (room_type == 1) {
+                    for (i in 0 until adapterData.size) {
+                        val data = adapterData[i]
+                        val chatroom = data.getJSONObject("Chatroom")
 
-                        for (i in 0 until adapterData.size) {
-                            val data = adapterData[i]
-                            val chatroom = data.getJSONObject("Chatroom")
+                        val id = Utils.getInt(chatroom, "id")
 
-                            val id = Utils.getInt(chatroom, "id")
-
-                            if (id == room_id) {
-                                chatroom.put("contents", content)
-                                chatroom.put("created", chat_created)
-                                chatroom.put("readdiv", "0")
-                                break
-                            }
-
+                        if (id == room_id) {
+                            has = true
+                            chatroom.put("contents", content)
+                            chatroom.put("created", chat_created)
+                            chatroom.put("readdiv", "0")
+                            adapterData.removeAt(i)
+                            adapterData.add(0, data)
+                            break
                         }
 
-                        adapter.notifyDataSetChanged()
+                    }
 
-                    } else {
+                    adapter.notifyDataSetChanged()
+
+                    if (room_type != 1) {
 
                         for (i in 0 until dongAdapterData.size) {
                             val data = dongAdapterData[i]
@@ -124,9 +127,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             val id = Utils.getInt(chatroom, "id")
 
                             if (id == room_id) {
+                                has = true
                                 chatroom.put("contents", content)
                                 chatroom.put("created", chat_created)
                                 chatroom.put("readdiv", "0")
+                                dongAdapterData.removeAt(i)
+                                dongAdapterData.add(0, data)
                                 break
                             }
 
@@ -135,6 +141,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         dongAdapter.notifyDataSetChanged()
 
                     }
+
+                    if (!has) {
+                        load_add_new_chatting(room_id)
+                    }
+
 
                 }
 
@@ -668,6 +679,54 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                         dongAdapter.notifyDataSetChanged()
                     }
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    fun load_add_new_chatting(room_id : Int){
+
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("room_id", room_id)
+        params.put("region", PrefUtils.getStringPreference(context, "region_id"))
+        params.put("region2", PrefUtils.getStringPreference(context, "region_id2"))
+
+        ChattingAction.load_add_chatting(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+
+                if (result == "ok") {
+
+                    val room = response.getJSONObject("room")
+                    val chatroom = room.getJSONObject("Chatroom")
+
+                    val mychat_count = response!!.getInt("mychat_count")
+                    val dongchat_count = response!!.getInt("dongchat_count")
+
+                    chatcountTV.setText(mychat_count.toString())
+                    dongchatcountTV.setText(dongchat_count.toString())
+                    mychatcountTV.setText(mychat_count.toString())
+                    dongcountTV.setText(dongchat_count.toString())
+
+                    val type = Utils.getInt(chatroom, "type")
+
+                    adapterData.add(0, room)
+                    adapter.notifyDataSetChanged()
+
+                    if (type != 1) {
+                        dongAdapterData.add(0, room)
+                        dongAdapter.notifyDataSetChanged()
+                    }
+
                 }
             }
 

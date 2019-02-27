@@ -55,7 +55,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
-        val member = json.getJSONObject("Member")
         val chatmember = room.getJSONArray("Chatmember")
         var nick = ""
         val readdiv = Utils.getString(room,"readdiv")
