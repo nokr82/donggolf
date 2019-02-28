@@ -312,9 +312,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
             }
 
-            room.put("readdiv", "1")
-            dongAdapter.notifyDataSetChanged()
-
         }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -389,11 +386,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivity(intent)
+                            startActivityForResult(intent, RESET)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
-                            startActivity(intent)
+                            startActivityForResult(intent, RESET)
                         }
                     }
                 }

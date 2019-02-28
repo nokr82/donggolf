@@ -65,6 +65,9 @@ class DongchatProfileActivity : RootActivity() {
 
     var chatMemberids:ArrayList<String> = ArrayList<String>()
 
+    val DONG_CHAT = 300
+    var DONG_CHAT_RESULT = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dongchat_profile)
@@ -80,7 +83,6 @@ class DongchatProfileActivity : RootActivity() {
             finish()
             Utils.hideKeyboard(this)
         }
-
 
         joinDongChatRL.setOnClickListener {
             var chkData = false
@@ -98,7 +100,7 @@ class DongchatProfileActivity : RootActivity() {
             if (chkData == true){
                 val intent = Intent(context, DongChatDetailActivity::class.java)
                 intent.putExtra("room_id", room_id)
-                startActivity(intent)
+                startActivityForResult(intent, DONG_CHAT)
             } else {
                 if (people_count == max_count) {
                     Toast.makeText(context,"정원초과 입니다.", Toast.LENGTH_SHORT).show()
@@ -106,7 +108,7 @@ class DongchatProfileActivity : RootActivity() {
                 } else if (people_count < max_count){
                     val intent = Intent(context, DongChatDetailActivity::class.java)
                     intent.putExtra("room_id", room_id)
-                    startActivity(intent)
+                    startActivityForResult(intent, DONG_CHAT)
                 }
             }
 
@@ -677,6 +679,10 @@ class DongchatProfileActivity : RootActivity() {
                     }
                 }
 
+                DONG_CHAT -> {
+                    DONG_CHAT_RESULT = true
+                }
+
             }
         }
     }
@@ -689,6 +695,16 @@ class DongchatProfileActivity : RootActivity() {
         progressDialog!!.setCancelable(false)
     }
 
+    override fun finish() {
+        super.finish()
+
+        if (DONG_CHAT_RESULT) {
+            var intent = Intent()
+            intent.putExtra("reset","reset")
+            intent.putExtra("division","dong")
+            setResult(RESULT_OK, intent);
+        }
+    }
 
 
 

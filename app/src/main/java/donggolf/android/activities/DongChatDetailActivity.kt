@@ -179,6 +179,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         }
 
+        finishaLL.setOnClickListener {
+            finish()
+        }
+
         chatsizeLL.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_set_text_size, null)
@@ -281,7 +285,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val lastMSG = chattingList.get(chattingList.size - 1)
                             val chatting = lastMSG.getJSONObject("Chatting")
                             val last_id = Utils.getInt(chatting, "id")
-                            delete_chat_member(last_id)
+                            delete_chat_member(last_id, "out")
                             finish()
                         })
                         .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
@@ -945,17 +949,22 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
-    fun delete_chat_member(last_id: Int) {
+    fun delete_chat_member(last_id: Int, type: String) {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         params.put("room_id", room_id)
         params.put("last_id", last_id)
+        params.put("type", type)
 
         ChattingAction.delete_chat_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    intent.putExtra("division","dong")
+                    setResult(RESULT_OK, intent);
+                    finish()
                 }
             }
 
@@ -1143,6 +1152,15 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 println(errorResponse)
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (resetReceiver != null) {
+            context.unregisterReceiver(resetReceiver)
+        }
+
     }
 
 }
