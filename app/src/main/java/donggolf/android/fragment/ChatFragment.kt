@@ -1,6 +1,5 @@
 package donggolf.android.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -163,6 +162,16 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
+
+    internal var reloadchatReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                getmychat(2)
+            }
+        }
+    }
+
+
     private var timer: Timer? = null
 
     private var CHATTING_DETAIL = 100
@@ -220,6 +229,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var filter2 = IntentFilter("CHATTING")
         ctx!!.registerReceiver(chattingReciver, filter2)
+
+        var filter3 = IntentFilter("CHAT_CHANGE")
+        ctx!!.registerReceiver(reloadchatReciver, filter3)
+
 
         dong_chat_list.setOnItemClickListener { parent, view, position, id ->
             var json = dongAdapterData.get(position)
@@ -835,6 +848,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
         if (chattingReciver != null) {
             context!!.unregisterReceiver(chattingReciver)
+        }
+        if (reloadchatReciver != null) {
+            context!!.unregisterReceiver(reloadchatReciver)
         }
     }
 
