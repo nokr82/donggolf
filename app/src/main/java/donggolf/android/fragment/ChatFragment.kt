@@ -398,7 +398,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
 
-                room.put("readdiv", "0")
+                room.put("readdiv", "1")
 
             } else {
                 var json = dongAdapterData.get(position)
@@ -479,7 +479,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
-                room.put("readdiv", "0")
+                room.put("readdiv", "1")
             }
 
             adapter.notifyDataSetChanged()
