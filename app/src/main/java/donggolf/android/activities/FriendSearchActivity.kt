@@ -6,21 +6,14 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Bundle
-import donggolf.android.R
-import donggolf.android.base.RootActivity
-import kotlinx.android.synthetic.main.activity_friend_search.*
-import android.util.Log
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import donggolf.android.adapters.FriendAdapter
-import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_friend_search.view.*
 import android.content.pm.PackageManager
-import com.google.android.gms.common.util.ClientLibraryUtils.getPackageInfo
+import android.os.Bundle
 import android.provider.ContactsContract
 import android.telephony.SmsManager
 import android.util.Base64
+import android.util.Log
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.AbsListView
 import android.widget.Toast
 import com.kakao.auth.ErrorCode
@@ -30,28 +23,36 @@ import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.kakaotalk.callback.TalkResponseCallback
 import com.kakao.kakaotalk.response.KakaoTalkProfile
 import com.kakao.kakaotalk.v2.KakaoTalkService
-import com.kakao.message.template.*
+import com.kakao.message.template.ButtonObject
+import com.kakao.message.template.ContentObject
+import com.kakao.message.template.FeedTemplate
+import com.kakao.message.template.LinkObject
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeResponseCallback
 import com.kakao.usermgmt.response.model.UserProfile
 import com.kakao.util.exception.KakaoException
+import com.kakao.util.helper.Utility.getPackageInfo
 import com.kakao.util.helper.log.Logger
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
+import donggolf.android.R
 import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.PostAction
+import donggolf.android.adapters.FriendAdapter
 import donggolf.android.adapters.FriendSearchAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
+import donggolf.android.base.RootActivity
+import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_friend_search.*
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -393,7 +394,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     }
 
    fun getKeyHash(context: Context): String? {
-        val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES.toString())
+        val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES)
 
         if (packageInfo == null) {
             return null
