@@ -507,8 +507,13 @@ fun member_info(){
         this.myContext = context
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
 
+        if (reloadReciver != null) {
+            context!!.unregisterReceiver(reloadReciver)
+        }
 
-
+    }
 
 }

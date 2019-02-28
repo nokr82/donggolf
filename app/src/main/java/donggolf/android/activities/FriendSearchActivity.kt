@@ -312,11 +312,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
             dialogView.inviteKaKaO.setOnClickListener {
 
-                try {
-                    shareKakao()
-                } catch (ke: Exception) {
-                    ke.printStackTrace()
-                }
+                shareKakao()
 
                 alert.dismiss()
             }
@@ -327,6 +323,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
    fun shareKakao() {
        getKeyHash(context)
+
        val url = "market://details?id=donggolf.android"
        val imgBuilder = ContentObject.newBuilder("동네골프",
                Config.url + "/data/member/5c3cb2dc-c8a8-4351-9b29-16b9ac1f19c8",
@@ -352,18 +349,6 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
            }
        })
-
-       /*
-            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
-
-                KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-                kakaoTalkLinkMessageBuilder.addText("우리 동네 할인 식품 알림 서비스\n\n회원가입 없이 위치 기반으로 우리 동네 할인 식품을 만나보세요!");
-//                    kakaoTalkLinkMessageBuilder.addAppButton("식세끼 바로가기");
-                kakaoTalkLinkMessageBuilder.addWebButton("식세끼 바로가기", "http://eat-master.co.kr/market/open?id=-1");
-//                    kakaoTalkLinkMessageBuilder.addWebLink("http://eat-master.co.kr/market/open?id=-1");
-                kakaoTalkLinkMessageBuilder.addImage("http://13.124.13.37/data/ad/recommend_img", 934, 501);
-                kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, context);
-                */
 
    }
 

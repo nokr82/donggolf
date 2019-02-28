@@ -1169,4 +1169,12 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (resetReceiver != null) {
+            context.unregisterReceiver(resetReceiver)
+        }
+    }
+
 }
