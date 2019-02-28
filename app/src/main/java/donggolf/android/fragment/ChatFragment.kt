@@ -175,9 +175,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     private var timer: Timer? = null
 
-    private var CHATTING_DETAIL = 100
-    private var DONGNE_DETAIL = 200
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -287,7 +284,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                 intent.putExtra("division", 1)
                                 intent.putExtra("id", id)
                                 intent.putExtra("founder", founder)
-                                startActivityForResult(intent, CHATTING_DETAIL)
+                                startActivity(intent)
                             } else {
                                 var intent = Intent(activity, DongchatProfileActivity::class.java)
                                 intent.putExtra("room_id", id)
@@ -306,7 +303,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         intent.putExtra("division", 1)
                         intent.putExtra("id", id)
                         intent.putExtra("founder", founder)
-                        startActivityForResult(intent, CHATTING_DETAIL)
+                        startActivity(intent)
                     } else {
                         var intent = Intent(activity, DongchatProfileActivity::class.java)
                         intent.putExtra("room_id", id)
@@ -314,6 +311,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
             }
+
+            room.put("readdiv", "0")
+            dongAdapter.notifyDataSetChanged()
+
         }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -369,7 +370,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivityForResult(intent, CHATTING_DETAIL)
+                                    startActivity(intent)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
@@ -388,7 +389,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivityForResult(intent, CHATTING_DETAIL)
+                            startActivity(intent)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
@@ -396,6 +397,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
+
+                room.put("readdiv", "0")
+
             } else {
                 var json = dongAdapterData.get(position)
                 var room = json.getJSONObject("Chatroom")
@@ -448,7 +452,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivityForResult(intent, CHATTING_DETAIL)
+                                    startActivity(intent)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
@@ -467,7 +471,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivityForResult(intent, CHATTING_DETAIL)
+                            startActivity(intent)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
@@ -475,7 +479,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
+                room.put("readdiv", "0")
             }
+
+            adapter.notifyDataSetChanged()
+
         }
 
         chat_list.setOnScrollListener(object : AbsListView.OnScrollListener {
@@ -821,47 +829,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
 
-                CHATTING_DETAIL -> {
-
-                    if (data != null) {
-                        val room_id = data.getIntExtra("room_id", -1)
-                        val room_type = data.getIntExtra("room_type", -1)
-
-                        if (room_id > 0) {
-
-                            var content = data.getStringExtra("content")
-                            val chatting_type = data.getStringExtra("chatting_type")
-                            val chat_created = data.getStringExtra("chat_created")
-
-                            if (chatting_type == "i") {
-                                content = "사진"
-                            }
-
-                            for (i in 0 until adapterData.size) {
-                                val obj = adapterData[i]
-                                val chatroom = obj.getJSONObject("Chatroom")
-
-                                val id = Utils.getInt(chatroom, "id")
-
-                                if (id == room_id) {
-                                    chatroom.put("contents", content)
-                                    chatroom.put("created", chat_created)
-                                    chatroom.put("readdiv", "1")
-                                    adapterData.removeAt(i)
-                                    adapterData.add(0, obj)
-                                    break
-                                }
-
-                            }
-                        }
-                    }
-
-                }
-
-                DONGNE_DETAIL -> {
-
-
-                }
             }
         }
 
