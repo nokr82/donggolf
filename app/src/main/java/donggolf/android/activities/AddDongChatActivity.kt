@@ -302,8 +302,6 @@ class AddDongChatActivity : RootActivity() {
             Utils.alert(context, "대문/배경사진은 필수 입력입니다.")
             return
         } else {
-
-
             params.put("background", ByteArrayInputStream(Utils.getByteArray(background)))
         }
         params.put("type", "2")
