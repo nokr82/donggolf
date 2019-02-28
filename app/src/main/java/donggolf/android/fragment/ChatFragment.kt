@@ -188,7 +188,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         val db = FirebaseFirestore.getInstance()
 
-        timerStart()
+//        timerStart()
 
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
@@ -284,11 +284,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                 intent.putExtra("division", 1)
                                 intent.putExtra("id", id)
                                 intent.putExtra("founder", founder)
-                                startActivity(intent)
+                                startActivityForResult(intent, RESET)
                             } else {
                                 var intent = Intent(activity, DongchatProfileActivity::class.java)
                                 intent.putExtra("room_id", id)
-                                startActivity(intent)
+                                startActivityForResult(intent, RESET)
                             }
                         } else {
                             Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
@@ -303,11 +303,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         intent.putExtra("division", 1)
                         intent.putExtra("id", id)
                         intent.putExtra("founder", founder)
-                        startActivity(intent)
+                        startActivityForResult(intent, RESET)
                     } else {
                         var intent = Intent(activity, DongchatProfileActivity::class.java)
                         intent.putExtra("room_id", id)
-                        startActivity(intent)
+                        startActivityForResult(intent, RESET)
                     }
                 }
             }
@@ -367,11 +367,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, RESET)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, RESET)
                                 }
                             } else {
                                 Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
@@ -449,11 +449,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                                     intent.putExtra("division", 1)
                                     intent.putExtra("id", id)
                                     intent.putExtra("founder", founder)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, RESET)
                                 } else {
                                     var intent = Intent(activity, DongchatProfileActivity::class.java)
                                     intent.putExtra("room_id", id)
-                                    startActivity(intent)
+                                    startActivityForResult(intent, RESET)
                                 }
                             } else {
                                 Toast.makeText(context, "코드가 다릅니다", Toast.LENGTH_SHORT).show()
@@ -468,11 +468,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivity(intent)
+                            startActivityForResult(intent, RESET)
                         } else {
                             var intent = Intent(activity, DongchatProfileActivity::class.java)
                             intent.putExtra("room_id", id)
-                            startActivity(intent)
+                            startActivityForResult(intent, RESET)
                         }
                     }
                 }
@@ -794,18 +794,19 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             when (requestCode) {
                 RESET -> {
+                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("result")}")
                     if (data!!.getStringExtra("reset") != null) {
                         var division = data!!.getStringExtra("division")
                         if (division == "my") {
                             adapterData.clear()
                             page = 1
                             getmychat(1)
-                            timerStart()
+//                            timerStart()
                         } else {
                             dongAdapterData.clear()
                             page = 1
                             getmychat(2)
-                            timerStart()
+//                            timerStart()
                         }
                     }
                 }
@@ -814,7 +815,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     adapterData.clear()
                     page = 1
                     getmychat(1)
-                    timerStart()
+//                    timerStart()
                 }
 
                 ADDCHAT -> {
@@ -822,7 +823,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         adapterData.clear()
                         page = 1
                         getmychat(1)
-                        timerStart()
+//                        timerStart()
                     }
                 }
 

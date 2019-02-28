@@ -698,8 +698,10 @@ class DongchatProfileActivity : RootActivity() {
     override fun finish() {
         super.finish()
 
-        if (DONG_CHAT_RESULT) {
-            var intent = Intent()
+        println("DONG_CHAT_RESULT::::::::::::::::::::::::::::::$DONG_CHAT_RESULT")
+
+        if (DONG_CHAT_RESULT == true) {
+            var intent = getIntent()
             intent.putExtra("reset","reset")
             intent.putExtra("division","dong")
             setResult(RESULT_OK, intent);

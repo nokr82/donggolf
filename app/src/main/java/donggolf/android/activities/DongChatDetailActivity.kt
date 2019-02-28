@@ -286,7 +286,6 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val chatting = lastMSG.getJSONObject("Chatting")
                             val last_id = Utils.getInt(chatting, "id")
                             delete_chat_member(last_id, "out")
-                            finish()
                         })
                         .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
@@ -525,7 +524,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             }
 
                             nicknameTV.setText(title + "(" + members.length().toString() + ")")
-                            founder_id = Utils.getString(memberinfo, "id")
+                            founder_id = Utils.getString(chatroom, "member_id")
 
                             if (visible == "1") {
                                 radio_public.setImageResource(R.drawable.btn_radio_on)
@@ -963,6 +962,8 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     var intent = Intent()
                     intent.putExtra("reset","reset")
                     intent.putExtra("division","dong")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
                 }
@@ -991,6 +992,8 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     var intent = Intent()
                     intent.putExtra("reset", "reset")
                     intent.putExtra("division", "dong")
+                    intent.action = "CHATTING_RESET"
+                    sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
                 }
