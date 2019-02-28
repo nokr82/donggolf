@@ -300,14 +300,17 @@ class FindPictureActivity : RootActivity() {
                 }
 
                 SELECT_VIDEO -> {
+                    var ids = data?.getIntegerArrayListExtra("ids")
                     var item = data?.getStringArrayExtra("videos")
                     var name = data?.getStringArrayExtra("displayname")
 
                     var intent = Intent()
                     intent.putExtra("videos", item)
                     intent.putExtra("displayname", name)
+                    intent.putExtra("ids", ids)
 
                     Log.d("yjs", "findpicture : " + item)
+                    Log.d("yjs", "video_ids : " + ids)
 
                     setResult(RESULT_OK,intent)
                     finish()

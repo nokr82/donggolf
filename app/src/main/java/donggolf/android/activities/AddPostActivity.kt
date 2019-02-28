@@ -951,6 +951,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -992,6 +993,7 @@ class AddPostActivity : RootActivity() {
     var result: ArrayList<String> = ArrayList<String>()
     private var displaynamePaths: ArrayList<String> = ArrayList<String>()
     private var videoPaths: ArrayList<String> = ArrayList<String>()
+    private var videoIds: ArrayList<Int> = ArrayList<Int>()
     private var videos: ArrayList<Bitmap>? = ArrayList()
     var hashtag: ArrayList<String> = ArrayList<String>()
     val user = HashMap<String, Any>()
@@ -1027,6 +1029,9 @@ class AddPostActivity : RootActivity() {
 
     var MODIFYY = 100
     var temp_yn = ""
+
+    var album_video = false
+    var video_id = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1331,6 +1336,9 @@ class AddPostActivity : RootActivity() {
                     videoPaths.add(tmpImagesPath.get(i).path!!)
                 } else if (tmpImagesPath.get(i).type == 3) {
                     hashtag.add(tmpImagesPath.get(i).path!!)
+                } else if (tmpImagesPath.get(i).type == 4) {
+                    videoIds.add(tmpImagesPath.get(i).path!!.toInt())
+                    album_video = true
                 }
             }
         }
@@ -1465,7 +1473,19 @@ class AddPostActivity : RootActivity() {
          } else {
             if (videoPaths != null){
                 if (videoPaths.size != 0){
+
+                    val options = BitmapFactory.Options()
+                    options.inSampleSize = 1
+
                     for (i in 0..videoPaths.size - 1){
+
+                        if (album_video) {
+                            val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
+                            params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
+                        } else {
+                            val bitmap = Utils.retriveVideoFrameFromVideo(videoPaths[i])
+                            params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
+                        }
 
                         val file = File(videoPaths.get(i))
                         var bytes = file.readBytes()
@@ -1600,7 +1620,19 @@ class AddPostActivity : RootActivity() {
 
         if (videoPaths != null){
             if (videoPaths.size != 0){
+
+                val options = BitmapFactory.Options()
+                options.inSampleSize = 1
+
                 for (i in 0..videoPaths.size - 1){
+
+                    if (album_video) {
+                        val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
+                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
+                    } else {
+                        val bitmap = Utils.retriveVideoFrameFromVideo(videoPaths[i])
+                            params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
+                    }
 
                     val file = File(videoPaths.get(i))
                     println("----------videoPath ${videoPaths.get(i)}")
@@ -1627,6 +1659,7 @@ class AddPostActivity : RootActivity() {
 
 //                    params.put("videos[" + i + "]",  ByteArrayInputStream(videofile))
                     params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+
                 }
             }
         }
@@ -1924,6 +1957,7 @@ class AddPostActivity : RootActivity() {
                                         videoVV.setVideoURI(uri)
                                         videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
                                         videoPaths.add(path)
+                                        album_video = false
                                         video_image.add(image)
                                     }
                                 }
@@ -2025,6 +2059,7 @@ class AddPostActivity : RootActivity() {
 
                 }
                 SELECT_VIDEO -> {
+                    var video_ids = data?.getIntegerArrayListExtra("ids")
                     var item = data?.getStringArrayExtra("videos")
                     var name = data?.getStringArrayExtra("displayname")
 
@@ -2063,6 +2098,12 @@ class AddPostActivity : RootActivity() {
                         }
 
                     }
+                    for (i in 0..(video_ids!!.size - 1)) {
+                        val str = video_ids[i]
+                        videoIds.add(str)
+                    }
+
+                    album_video = true
 
                     var intent = Intent();
 
@@ -2285,6 +2326,14 @@ class AddPostActivity : RootActivity() {
                                 val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
                                 println("hastag ${hastag.path}")
                                 dbManager.insertimagespath(hastag)
+                            }
+                        }
+
+                        if (videoIds != null && videoIds.size > 0 ) {
+                            for (i in 0 until videoIds.size){
+                                val video_ids = ImagesPath(0,member_id.toString(),videoIds[i].toString(),4)
+                                println("videoIds ${video_ids.path}")
+                                dbManager.insertimagespath(video_ids)
                             }
                         }
 

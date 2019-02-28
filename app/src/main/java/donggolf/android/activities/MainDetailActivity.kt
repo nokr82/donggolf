@@ -965,7 +965,7 @@ class MainDetailActivity : RootActivity() {
                                         val path = Utils.getString(contentFile, "image_uri")
                                         imagePaths.add(path)
                                     } else {
-                                        val path = Utils.getString(contentFile, "image_uri")
+                                        val path = Utils.getString(contentFile, "video_uri")
                                         videoviewTV.text = "동영상 숨기기"
                                         videoviewTV.visibility = View.VISIBLE
                                         videoVV.visibility = View.VISIBLE

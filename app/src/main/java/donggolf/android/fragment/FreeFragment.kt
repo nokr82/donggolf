@@ -35,14 +35,7 @@ import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
 import org.json.JSONException
 import org.json.JSONObject
 
-open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
-    override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+open class FreeFragment : Fragment() {
 
     var ctx: Context? = null
 
@@ -194,44 +187,51 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         main_edit_listview.adapter = editadapter
 
         main_listview.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
-
+            override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+                totalItemCountScroll = totalItemCount
             }
 
             override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
-//                    activity.maintitleLL.visibility=View.GONE
-                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
                     userScrolled = false
-//                    activity.maintitleLL.visibility=View.VISIBLE
-                }
 
-                if (!main_listview.canScrollVertically(-1)) {
-                    page=1
-                    var keyword = main_edit_search.text.toString()
-                    if (keyword == null || keyword == "") {
-                        mainData("")
-                    } else {
-                        mainData(keyword)
-                    }
-                } else if (!main_listview.canScrollVertically(1)) {
+                    //화면이 바닥에 닿았을때
                     if (totalPage > page) {
                         page++
                         lastcount = totalItemCountScroll
-                        var keyword = main_edit_search.text.toString()
-                        if (keyword == null || keyword == "") {
-                            mainData("")
-                        } else {
-                            mainData(keyword)
-                        }
+
+                        mainData(Utils.getString(main_edit_search))
                     }
+
                 }
+
+//                if (!main_listview.canScrollVertically(-1)) {
+//                    page=1
+//                    var keyword = main_edit_search.text.toString()
+//                    if (keyword == null || keyword == "") {
+//                        mainData("")
+//                    } else {
+//                        mainData(keyword)
+//                    }
+//                } else if (!main_listview.canScrollVertically(1)) {
+//                    if (totalPage > page) {
+//                        page++
+//                        lastcount = totalItemCountScroll
+//                        var keyword = main_edit_search.text.toString()
+//                        if (keyword == null || keyword == "") {
+//                            mainData("")
+//                        } else {
+//                            mainData(keyword)
+//                        }
+//                    }
+//                }
+
             }
         })
-
-
 
         main_listview.setOnItemClickListener { parent, view, position, id ->
 
@@ -355,7 +355,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
         startActivityForResult(intent, DETAIL);
     }
 
-
     fun mainData(keyWord: String) {
         val params = RequestParams()
         var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
@@ -389,9 +388,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
 
                     totalPage = response.getInt("totalPage");
                     page = response.getInt("page");
-
-                    println("-------page $page")
-                    println("-------totalpage $totalPage")
 
                     val list = response!!.getJSONArray("content")
 
@@ -510,8 +506,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
                                 adapter.notifyDataSetChanged()
                             }
 
-                            Log.d("리스트",list.toString())
-                            println("-------------------------")
                             for (i in 0..(list.length()-1)){
                                 val Content = list.get(i) as JSONObject
                                 adapterData.add(Content as JSONObject)
@@ -545,11 +539,6 @@ open class FreeFragment : Fragment() , AbsListView.OnScrollListener{
             context!!.unregisterReceiver(DeletePostReceiver)
         }
     }
-
-
-
-
-
 
     override fun onPause() {
         super.onPause()

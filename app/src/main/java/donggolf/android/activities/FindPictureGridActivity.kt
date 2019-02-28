@@ -293,6 +293,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             dialog.cancel()
 
 
+                            val ids = ArrayList<Int>(selected.size)
                             val result = arrayOfNulls<String>(selected.size)
                             val name = arrayOfNulls<String>(selected.size)
 
@@ -323,13 +324,17 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             } else {
 
                                 for (strPo in selected) {
-                                    result[idx++] = videoList[Integer.parseInt(strPo)].videoPath
-                                    name[idxn++] = videoList[Integer.parseInt(strPo)].displayName
+                                    ids.add(videoList[Integer.parseInt(strPo)].videoID)
+                                    result[idx] = videoList[Integer.parseInt(strPo)].videoPath
+                                    name[idxn] = videoList[Integer.parseInt(strPo)].displayName
+                                    idx++
+                                    idxn++
                                 }
 
                                 val returnIntent = Intent()
                                 returnIntent.putExtra("videos", result)
                                 returnIntent.putExtra("displayname", name)
+                                returnIntent.putExtra("ids", ids)
                                 setResult(RESULT_OK, returnIntent)
                                 finish()
                             }

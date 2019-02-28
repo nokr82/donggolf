@@ -23,6 +23,7 @@ import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import com.kakao.auth.StringSet.file
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import donggolf.android.R
 import donggolf.android.base.DownloadFileAsyncTask
 
@@ -92,29 +93,30 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         if (uri != null){
             if (uri != "") {
-                var image_type = Utils.getString(Content,"image_type")
-                var image = Config.url + uri
-                if (image_type == "1") {
-                    item.profileIV.visibility = View.VISIBLE
-                    item.videoLL.visibility = View.GONE
-                    ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
-                } else {
-                    item.videoLL.visibility = View.VISIBLE
-                    item.videoVV.isEnabled = false
-                    item.profileIV.visibility = View.GONE
 
-                    var uri = Uri.parse(Config.url + uri)
-                    item.videoVV.setVideoURI(uri)
-                    item.videoVV.seekTo(1)
-//                    item.videoVV.start()
-                }
+                item.profileIV.visibility = View.VISIBLE
+
+                var image_type = Utils.getString(Content,"image_type")
+
+                var image = Config.url + uri
+
+//                if (image_type == "1") {
+                    ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+//                } else {
+//
+////                    val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image,0);
+//                    println("image::::::::::::::::::::::::::::::::::::$image")
+////                    val bitmapThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, photo.videoID.toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
+//                    // val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image, MediaStore.Video.Thumbnails.MINI_KIND)
+//                    val bitmapThumb = Utils.retriveVideoFrameFromVideo(image)
+//                    item.profileIV.setImageBitmap(bitmapThumb)
+//                }
+
             } else {
                 item.profileIV.visibility = View.GONE
-                item.videoLL.visibility = View.GONE
             }
         } else {
             item.profileIV.visibility = View.GONE
-            item.videoLL.visibility = View.GONE
         }
 
         if (profile != null){
@@ -160,8 +162,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var main_item_like_count : TextView
         var profileIV: ImageView
         var main_item_image : CircleImageView
-        var videoVV: VideoView
-        var videoLL: LinearLayout
 
         init {
 
@@ -174,8 +174,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
             profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
             main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
-            videoVV = v.findViewById<View>(R.id.videoVV) as VideoView
-            videoLL = v.findViewById<View>(R.id.videoLL) as LinearLayout
 
         }
 
