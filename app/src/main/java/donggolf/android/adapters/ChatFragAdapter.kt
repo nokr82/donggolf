@@ -55,7 +55,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val title = Utils.getString(room,"title")
         val friend = Utils.getInt(room,"friend")
         val content = Utils.getString(room,"contents")
-        val chatmember = room.getJSONArray("Chatmember")
+//        val chatmember = room.getJSONArray("Chatmember")
+        val chatmember = json.getJSONArray("Chatmember")
         var nick = ""
         val readdiv = Utils.getString(room,"readdiv")
         val room_created = Utils.getString(room,"room_created")
@@ -64,7 +65,6 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         } else {
             item.readIV.visibility = View.GONE
         }
-
 
         item.addNickLL.removeAllViews()
 

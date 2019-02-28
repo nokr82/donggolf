@@ -108,8 +108,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val gnotificationBuilder = NotificationCompat.Builder(this, channelId)
                     .setLargeIcon(BitmapFactory.decodeResource(resources,R.drawable.logo_png))
-                    .setSmallIcon(R.mipmap.dongne_golf_logo)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.dongne_golf_logo))
+                    .setSmallIcon(R.mipmap.logo_png)
                     .setGroup(group)
                     .setGroupSummary(true)
                     .setAutoCancel(true)

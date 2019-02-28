@@ -44,7 +44,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     private val SELECT_PICTURE: Int = 101
 
-    private val BACK_PRESSED_TERM:Long = 1000 * 2
+    private val BACK_PRESSED_TERM: Long = 1000 * 2
     private var backPressedTime: Long = -1
 
     val user = HashMap<String, Any>()
@@ -129,20 +129,20 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         friend_id = intent.getIntExtra("friend_id", -1)
         room_id = intent.getIntExtra("room_id", -1)
 
-        if(is_push) {
+        if (is_push) {
             handlePush()
         }
 
-        if (PrefUtils.getStringPreference(context, "sidotype") != null){
+        if (PrefUtils.getStringPreference(context, "sidotype") != null) {
             sidotype = PrefUtils.getStringPreference(context, "sidotype")
 //            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
-            goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+            goguntype = PrefUtils.getStringPreference(context, "goguntype")
 //            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
-            region_id  =PrefUtils.getStringPreference(context, "region_id")
+            region_id = PrefUtils.getStringPreference(context, "region_id")
 //            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
 
 //            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
-            areaTV.text = sidotype+" " +goguntype
+            areaTV.text = sidotype + " " + goguntype
         } else {
             PrefUtils.setPreference(context, "sidotype", sidotype)
 //            PrefUtils.setPreference(context, "sidotype2", sidotype2)
@@ -152,11 +152,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 //            PrefUtils.setPreference(context, "region_id2", region_id2)
         }
 
-        if (sidotype=="전국"&&goguntype=="전국"){
-            areaTV.text ="전국"
-        }else{
+        if (sidotype == "전국" && goguntype == "전국") {
+            areaTV.text = "전국"
+        } else {
 //            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
-            areaTV.text = sidotype+" " +goguntype
+            areaTV.text = sidotype + " " + goguntype
         }
 
 
@@ -229,8 +229,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         noticeRV.setOnClickListener {
             //            frags.currentItem = 2
-            if (PrefUtils.getIntPreference(context, "member_id") == -1){
-                Toast.makeText(context,"비회원은 이용하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+            if (PrefUtils.getIntPreference(context, "member_id") == -1) {
+                Toast.makeText(context, "비회원은 이용하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 //            setButtonImage()
@@ -239,8 +239,8 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
         infoRL.setOnClickListener {
-            if (PrefUtils.getIntPreference(context, "member_id") == -1){
-                Toast.makeText(context,"비회원은 이용하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+            if (PrefUtils.getIntPreference(context, "member_id") == -1) {
+                Toast.makeText(context, "비회원은 이용하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             setButtonImage()
@@ -273,7 +273,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         val params = RequestParams()
         params.put("sidotype", sidotype)
         params.put("goguntype", goguntype)
-        if (goguntype2 != ""){
+        if (goguntype2 != "") {
             params.put("goguntype2", goguntype2)
         }
 
@@ -288,7 +288,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                     }
 
 
-                }catch (e:JSONException) {
+                } catch (e: JSONException) {
                     e.printStackTrace()
                 }
             }
@@ -304,26 +304,25 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     }
 
 
-
-    fun MoveAddPostActivity(){
+    fun MoveAddPostActivity() {
         var intent = Intent(context, AddPostActivity::class.java);
-        intent.putExtra("category",1)
+        intent.putExtra("category", 1)
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
-    fun MoveMainDetailActivity(id : String){
+    fun MoveMainDetailActivity(id: String) {
         var intent: Intent = Intent(this, MainDetailActivity::class.java)
-        intent.putExtra("id",id)
+        intent.putExtra("id", id)
         startActivity(intent)
     }
 
-    fun MoveAreaRangeActivity(){
+    fun MoveAreaRangeActivity() {
         var intent: Intent = Intent(this, AreaRangeActivity::class.java)
         intent.putExtra("region_type", "content_filter")
-        startActivityForResult(intent,AREA_OK)
+        startActivityForResult(intent, AREA_OK)
     }
 
-    fun MoveMarketMainActivity(){
+    fun MoveMarketMainActivity() {
         var intent: Intent = Intent(this, MarketMainActivity::class.java)
         startActivity(intent)
     }
@@ -331,46 +330,48 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        when(requestCode) {
-            AREA_OK -> {
-                if(resultCode == Activity.RESULT_OK) {
-                    sidotype  = data!!.getStringExtra("sidotype")
-                    PrefUtils.setPreference(context, "sidotype", sidotype)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                AREA_OK -> {
+                    if (data != null) {
+                        sidotype = data!!.getStringExtra("sidotype")
+                        PrefUtils.setPreference(context, "sidotype", sidotype)
 //                    sidotype2  = data!!.getStringExtra("sidotype2")
 //                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
-                    goguntype =  data!!.getStringExtra("goguntype")
-                    PrefUtils.setPreference(context, "goguntype", goguntype)
+                        goguntype = data!!.getStringExtra("goguntype")
+                        PrefUtils.setPreference(context, "goguntype", goguntype)
 //                    goguntype2 =  data!!.getStringExtra("goguntype2")
 //                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
-                    region_id = data!!.getStringExtra("region_id")
-                    PrefUtils.setPreference(context, "region_id", region_id)
+                        region_id = data!!.getStringExtra("region_id")
+                        PrefUtils.setPreference(context, "region_id", region_id)
 //                    region_id2 = data!!.getStringExtra("region_id2")
 //                    PrefUtils.setPreference(context, "region_id2", region_id2)
-                    Log.d("시도",sidotype)
+                        Log.d("시도", sidotype)
 
-                    sidotype = PrefUtils.getStringPreference(context, "sidotype")
+                        sidotype = PrefUtils.getStringPreference(context, "sidotype")
 //                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
-                    goguntype  =PrefUtils.getStringPreference(context, "goguntype")
+                        goguntype = PrefUtils.getStringPreference(context, "goguntype")
 //                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
-                    region_id = PrefUtils.getStringPreference(context,"region_id")
+                        region_id = PrefUtils.getStringPreference(context, "region_id")
 //                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
-                    member_cnt()
-                    var intent = Intent()
-                    intent.action = "MSG_NEXT"
-                    context.sendBroadcast(intent)
+                        member_cnt()
+                        var intent = Intent()
+                        intent.action = "MSG_NEXT"
+                        context.sendBroadcast(intent)
 
-                    if (sidotype == "전국"){
-                        areaTV.text =  sidotype
-                    } else if (sidotype == "세종특별자치시"){
+                        if (sidotype == "전국") {
+                            areaTV.text = sidotype
+                        } else if (sidotype == "세종특별자치시") {
 //                        areaTV.text =  sidotype +"/ "+ sidotype2+" " +goguntype2
-                        areaTV.text =  sidotype
-                    }
+                            areaTV.text = sidotype
+                        }
 //                    else if (sidotype2 == "세종특별자치시"){
 //                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2
 //                    }
-                    else {
+                        else {
 //                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
-                        areaTV.text =  sidotype+" " +goguntype
+                            areaTV.text = sidotype + " " + goguntype
+                        }
                     }
 
                 }
@@ -379,7 +380,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     }
 
-    fun setButtonImage(){
+    fun setButtonImage() {
         homeBT.setBackgroundResource(R.drawable.btn_main_off)
         homeIV.setBackgroundResource(R.drawable.img_line_1)
         chatBT.setBackgroundResource(R.drawable.btn_chatting_off)
@@ -570,7 +571,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     fun handlePush() {
 
-        if(content_id > 0) {
+        if (content_id > 0) {
             // 게시글 관련 푸쉬
             var intent = Intent(context, MainDetailActivity::class.java)
             intent.putExtra("id", content_id.toString())
@@ -582,7 +583,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             startActivity(intent)
         } else if (friend_id > 0) {
             var intent = Intent(context, RequestFriendActivity::class.java)
-            intent.putExtra("type","waiting")
+            intent.putExtra("type", "waiting")
             startActivity(intent)
         } else if (room_id > 0) {
             // chatting
@@ -591,12 +592,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
     }
 
-    fun detail_chatting(){
+    fun detail_chatting() {
         val params = RequestParams()
         params.put("room_id", room_id)
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
+        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {

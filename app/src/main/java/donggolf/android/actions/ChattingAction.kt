@@ -18,6 +18,11 @@ object ChattingAction {
         HttpClient.post("/chatting/load_chatting.json", params, handler)
     }
 
+    // 새로운 거 - 20190228
+    fun new_load_chatting(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/new_load_chatting.json", params, handler)
+    }
+
     fun detail_chatting(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/chatting/detail_chatting.json", params, handler)
     }

@@ -61,6 +61,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
     private var page = 1
     private var totalPage = 0
     private val visibleThreshold = 10
+
     private var userScrolled = false
     private var lastItemVisibleFlag = false
     private var lastcount = 0
@@ -478,8 +479,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
 
         chat_list.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
-
+            override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+                totalItemCountScroll = totalItemCount
             }
 
             override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
@@ -487,11 +489,20 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
 //                    activity.maintitleLL.visibility=View.GONE
-                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
                     userScrolled = false
 //                    activity.maintitleLL.visibility=View.VISIBLE
+
+                    //화면이 바닥에 닿았을때
+                    if (totalPage > page) {
+                        page++;
+                        lastcount = totalItemCountScroll;
+
+                        getmychat(1)
+                    }
                 }
 
+                /*
                 if (!chat_list.canScrollVertically(-1)) {
                     page = 1
 
@@ -512,11 +523,15 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
+                */
             }
         })
 
         dong_chat_list.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
+
+            override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                lastItemVisibleFlag = totalItemCount > 0 && firstVisibleItem + visibleItemCount >= totalItemCount
+                totalItemCountScroll = totalItemCount
 
             }
 
@@ -525,11 +540,20 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
 //                    activity.maintitleLL.visibility=View.GONE
-                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
                     userScrolled = false
 //                    activity.maintitleLL.visibility=View.VISIBLE
+
+                    //화면이 바닥에 닿았을때
+                    if (totalPage > page) {
+                        page++;
+                        lastcount = totalItemCountScroll;
+
+                        getmychat(2)
+                    }
                 }
 
+                /*
                 if (!dong_chat_list.canScrollVertically(-1)) {
                     page = 1
 
@@ -550,6 +574,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
                     }
                 }
+                */
+
             }
         })
 
@@ -644,7 +670,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
         }
 
-        ChattingAction.load_chatting(params, object : JsonHttpResponseHandler() {
+        ChattingAction.new_load_chatting(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
@@ -756,7 +782,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {

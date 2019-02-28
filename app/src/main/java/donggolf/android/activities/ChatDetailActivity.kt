@@ -96,7 +96,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         division = intent.getIntExtra("division",0)
         member_id = PrefUtils.getIntPreference(context,"member_id")
-        chattitleTV.setText(chatTitle)
 
         adapter = ChattingAdapter(this, R.layout.item_opponent_words, chattingList)
 
@@ -148,7 +147,14 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         btn_opMenu.setOnClickListener {
+
+            Utils.hideKeyboard(this)
+
             drawerMenu.openDrawer(chat_right_menu)
+        }
+
+        chat_right_menu.setOnClickListener {
+            drawerMenu.closeDrawer(chat_right_menu)
         }
 
         chatLV.setOnItemClickListener { parent, view, position, id ->
@@ -386,8 +392,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             permissionimage()
         }
 
-
-
     }
 
     private fun permissionimage() {
@@ -476,8 +480,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok") {
                     val list = response.getJSONArray("list")
                     val room = response.getJSONObject("chatroom")
-                    val roomtitle = Utils.getString(room,"title")
-                    chattitleTV.setText(roomtitle)
+
+//                    val roomtitle = Utils.getString(room,"title")
+//                    chattitleTV.setText(roomtitle)
 
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
@@ -887,10 +892,12 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     }
 
-                    if (roomtitle == "") {
+                    if (room_type == 1) {
                         for (i in 0 until mate_nick.size) {
                             roomtitle += mate_nick.get(i) + " "
                         }
+                    } else {
+                        roomtitle = Utils.getString(room, "title")
                     }
 
                     chattitleTV.setText(roomtitle)
@@ -1031,11 +1038,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
     }
@@ -1138,10 +1145,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     }
 
     override fun onBackPressed() {
-//        var intent = Intent()
-//        intent.putExtra("reset", "reset")
-//        setResult(RESULT_OK, intent);
-        finish()
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+
+        if (chat_right_menu.visibility == View.VISIBLE) {
+            drawerMenu.closeDrawers()
+        } else {
+            finish()
+        }
 
     }
 
@@ -1157,13 +1169,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val chatting_type = Utils.getString(chatting, "type")
             val chat_created = Utils.getString(chatting, "created")
 
-            var intent = Intent()
-            intent.putExtra("room_id", room_id.toInt())
-            intent.putExtra("room_type", room_type)
-            intent.putExtra("content", content)
-            intent.putExtra("chatting_type", chatting_type)
-            intent.putExtra("chat_created", chat_created)
-            setResult(Activity.RESULT_OK, intent)
+//            var intent = Intent()
+//            intent.putExtra("room_id", room_id.toInt())
+//            intent.putExtra("room_type", room_type)
+//            intent.putExtra("content", content)
+//            intent.putExtra("chatting_type", chatting_type)
+//            intent.putExtra("chat_created", chat_created)
+//            setResult(Activity.RESULT_OK, intent)
 
         }
 
