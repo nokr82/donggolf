@@ -312,7 +312,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
             }
 
-            room.put("readdiv", "0")
+            room.put("readdiv", "1")
             dongAdapter.notifyDataSetChanged()
 
         }
