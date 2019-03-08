@@ -74,7 +74,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
         var uri = Utils.getString(Content,"image_uri")
-
+        var video = Utils.getString(Content,"video")
         val since = Utils.since(created)
 
         if (sex == "0"){
@@ -100,6 +100,11 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
                 var image = Config.url + uri
 
+                if (video!=null){
+                    item.videoIV.visibility = View.VISIBLE
+                }else{
+                    item.videoIV.visibility = View.VISIBLE
+                }
 //                if (image_type == "1") {
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
 //                } else {
@@ -161,10 +166,11 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var main_item_comment_count : TextView
         var main_item_like_count : TextView
         var profileIV: ImageView
+        var videoIV: ImageView
         var main_item_image : CircleImageView
 
         init {
-
+            videoIV = v.findViewById<View>(R.id.videoIV) as ImageView
             main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
             main_item_content = v.findViewById<View>(R.id.main_item_content) as TextView
             main_item_nickname = v.findViewById<View>(R.id.main_item_nickname) as TextView
