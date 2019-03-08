@@ -33,14 +33,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical">
         <!--대화상대, 미리보기-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:padding="5dp">
 
             <LinearLayout
@@ -51,16 +52,19 @@
                 >
             </LinearLayout>
             <TextView
+                android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:id="@+id/nickTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="닉네임일곱글자"
+                android:singleLine="true"
                 android:textSize="12dp"
                 android:textColor="#000000"
                 android:textStyle="bold"
                 android:layout_marginRight="3dp"/>
             <ImageView
+                android:layout_gravity="bottom"
                 android:id="@+id/firstIV"
                 android:layout_width="25dp"
                 android:layout_height="13dp"
@@ -68,6 +72,7 @@
                 android:layout_marginRight="3dp"/>
 
             <ImageView
+                android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:id="@+id/nofriendIV"
                 android:layout_width="25dp"
@@ -75,6 +80,7 @@
                 android:src="@drawable/icon_second"
                 android:layout_marginRight="3dp"/>
             <TextView
+                android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:id="@+id/countTV"
                 android:layout_width="wrap_content"
@@ -84,17 +90,20 @@
                 android:layout_marginBottom="1dp"
                 android:layout_marginRight="3dp"/>
             <ImageView
+                android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:id="@+id/pushoffIV"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:src="@drawable/icon_off_alarm"/>
             <ImageView
+                android:layout_gravity="bottom"
                 android:id="@+id/pushonIV"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:src="@drawable/img_alarm_off"/>
             <TextView
+                android:layout_gravity="bottom"
                 android:id="@+id/timeTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +114,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/chatcontentTV"

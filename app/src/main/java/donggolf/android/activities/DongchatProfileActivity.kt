@@ -103,14 +103,13 @@ class DongchatProfileActivity : RootActivity() {
                 val intent = Intent(context, DongChatDetailActivity::class.java)
                 intent.putExtra("room_id", room_id)
                 startActivityForResult(intent, DONG_CHAT)
+                finish()
             } else {
-                if (people_count == max_count) {
+                if (people_count >= max_count) {
                     Toast.makeText(context,"정원초과 입니다.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 } else if (people_count < max_count){
-                    val intent = Intent(context, DongChatDetailActivity::class.java)
-                    intent.putExtra("room_id", room_id)
-                    startActivityForResult(intent, DONG_CHAT)
+                    add_chat_member()
                 }
             }
 
@@ -379,6 +378,7 @@ class DongchatProfileActivity : RootActivity() {
         val params = RequestParams()
         params.put("room_id", room_id)
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type","detail")
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

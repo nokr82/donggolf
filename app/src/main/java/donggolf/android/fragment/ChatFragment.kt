@@ -239,6 +239,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
             val founder = Utils.getString(room, "member_id")
             val type = Utils.getString(room, "type")
             val block_code = Utils.getString(room, "block_code")
+            val max_count = Utils.getString(room,"max_count")
+            println("----------------------id : $id")
 
             if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
                 if (type == "1") {
@@ -264,7 +266,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     dialogView.codevisibleLL.visibility = View.GONE
 
                     dialogView.btn_title_clear.setOnClickListener {
-                        dialogView.blockcodeTV.setText("")
+                        alert.dismiss()
                     }
 
                     dialogView.cancleTV.setOnClickListener {
@@ -279,6 +281,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
 
                         if (code == block_code) {
+                            var chatmember = json.getJSONArray("Chatmember")
+
+                            if (max_count.toInt() >= chatmember.length()){
+                                Toast.makeText(context, "멤버(FULL)상태라 입장 할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
                             if (type == "1") {
                                 var intent = Intent(activity, ChatDetailActivity::class.java)
                                 intent.putExtra("division", 1)
