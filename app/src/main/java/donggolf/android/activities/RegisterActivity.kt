@@ -161,7 +161,7 @@ class RegisterActivity : RootActivity() {
                         val result = response!!.getString("result")
                         if (result == "overlap") {
                             emailET.setText("")
-                            Utils.alert(context, response!!.getString("result"))
+                            Utils.alert(context, "중복된 이메일입니다.")
                         }else{
 //                            finish()
                         }

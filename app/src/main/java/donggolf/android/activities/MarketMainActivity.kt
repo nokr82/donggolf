@@ -15,10 +15,12 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
+import donggolf.android.actions.MemberAction.get_region_member
 import donggolf.android.adapters.*
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_friend_search.*
 import kotlinx.android.synthetic.main.activity_market_main.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
 import org.json.JSONObject
@@ -44,6 +46,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var form  = ""
     var brand = ""
 
+    var type = "all"
+
     var page = 1
     var totalPage = 1
     var todayCount = 0
@@ -60,7 +64,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all",page)
+                getSecondHandMarketItems(type,page)
             }
         }
     }
@@ -68,7 +72,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all",page)
+                getSecondHandMarketItems(type,page)
             }
         }
     }
@@ -76,7 +80,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 page = 1
-                getSecondHandMarketItems("all",page)
+                getSecondHandMarketItems(type,page)
             }
         }
     }
@@ -106,12 +110,16 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
         genderAdatper = PdtCategoryAdapter(context, R.layout.item_dlg_market_sel_op, genderData)
 
-        getSecondHandMarketItems("all",1)
+
+        getSecondHandMarketItems(type,1)
 
         //set adapter
         adapter = MarketMainAdapter(context,R.layout.item_market_main,adapterData)
         maingridGV.adapter = adapter
         maingridGV.setOnScrollListener(this)
+
+
+
         maingridGV.setOnItemClickListener { parent, view, position, id ->
             val product_id = adapterData[position].getInt("prodId")
             var intent = Intent(this, GoodsDetailActivity::class.java)
@@ -165,27 +173,29 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
                 if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
                     var json = genderAdatper.getItem(position)
-                    var type = json.getJSONObject("PdtCategory")
-                    var title = Utils.getString(type, "title")
+                    var type2 = json.getJSONObject("PdtCategory")
+                    var title = Utils.getString(type2, "title")
                     entireClassificationTV.setText(title)
                     if (title.equals("분류전체")){
                         title = ""
                     }
+                    type = "form"
                     form = title
-                    getSecondHandMarketItems("form",1)
+                    getSecondHandMarketItems(type,1)
                     genderAdatper.notifyDataSetChanged()
 
                 } else {
                     var json = productCategoryAdatper.getItem(position)
-                    var type = json.getJSONObject("ProductCategory")
-                    var title = Utils.getString(type, "title")
+                    var type2 = json.getJSONObject("ProductCategory")
+                    var title = Utils.getString(type2, "title")
                     entireClassificationTV.text = title
                     if (title.equals("분류전체")){
                         title = ""
                     }
                     form = title
+                    type = "form"
 //                formData[position].put("isSelectedOp", true)
-                    getSecondHandMarketItems("form",1)
+                    getSecondHandMarketItems(type,1)
 
 
 
@@ -224,8 +234,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var json = categoryAdapter.getItem(position)
-                var type = json.getJSONObject("GoodsCategory")
-                var title = Utils.getString(type, "title")
+                var type2 = json.getJSONObject("GoodsCategory")
+                var title = Utils.getString(type2, "title")
                 entireBrandTV.text = title
                 if (title.equals("브랜드전체")){
                     title = ""
@@ -233,8 +243,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 brand = title
 //                brandData[position].put("isSelectedOp", true)
                 categoryAdapter.notifyDataSetChanged()
-
-                getSecondHandMarketItems("brand",1)
+                type = "brand"
+                getSecondHandMarketItems(type,1)
 
                 alert.dismiss()
             }
@@ -267,18 +277,19 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 var json = productTypeAdapter.getItem(position)
-                var type = json.getJSONObject("ProductType")
-                var title = Utils.getString(type, "title")
+                var type2 = json.getJSONObject("ProductType")
+                var title = Utils.getString(type2, "title")
                 Log.d("타이틀",title)
                 entireTypeTV.text = title
                 if (title.equals("종류전체")){
                     title = ""
                 }
                 product_type = title
+                type = "type"
 //                productData[position].put("isSelectedOp", true)
 
                 productTypeAdapter.notifyDataSetChanged()
-                getSecondHandMarketItems("type",1)
+                getSecondHandMarketItems(type,1)
                 alert.dismiss()
                 entireClassificationTV.setText("분류 전체")
             }
@@ -368,6 +379,12 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        getSecondHandMarketItems(type,1)
+        Log.d("로그",type+page.toString())
+    }
+
     //마켓 목록뽑기
     fun getSecondHandMarketItems(type : String ,page :Int){
         val params = RequestParams()
@@ -421,6 +438,9 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     }
 
     override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
+        if (!view.canScrollVertically(-1)) {
+            getSecondHandMarketItems("all",1)
+        }
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
             userScrolled = true
         } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
