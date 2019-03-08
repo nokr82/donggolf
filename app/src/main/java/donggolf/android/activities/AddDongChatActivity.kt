@@ -236,8 +236,7 @@ class AddDongChatActivity : RootActivity() {
                 dialogView.codevisibleLL.visibility = View.GONE
             }
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.blockcodeTV.setText("")
-                secretcode = ""
+                alert.dismiss()
             }
 
             dialogView.cancleTV.setOnClickListener {

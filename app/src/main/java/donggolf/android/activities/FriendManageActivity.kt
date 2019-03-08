@@ -149,10 +149,10 @@ class FriendManageActivity : RootActivity() {
                         frdMngAdapter.notifyDataSetChanged()*/
                     }
                     .show()
-            //val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
+            val alert = builder.show()
 
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.categoryTitleET.setText("")
+               alert.dismiss()
             }
 
         }

@@ -9,6 +9,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -238,8 +240,10 @@ class DongchatProfileActivity : RootActivity() {
             dialogView.settitleTV.setText("현재 채팅방 소개는 ")
             dialogView.blockcodeTV.setText(title)
 
+
+
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.blockcodeTV.setText("")
+                alert.dismiss()
             }
 
             dialogView.cancleTV.setOnClickListener {
@@ -275,9 +279,24 @@ class DongchatProfileActivity : RootActivity() {
             val title = roomtitleTV.text.toString()
             dialogView.settitleTV.setText("현재 채팅방 제목은 ")
             dialogView.blockcodeTV.setText(title)
+            dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    if (s.length>22){
+                        Toast.makeText(context,"최대제목길이는 22자입니다.",Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                }
+
+                override fun afterTextChanged(count: Editable) {
+                }
+
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                }
+            })
 
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.blockcodeTV.setText("")
+                alert.dismiss()
             }
 
             dialogView.cancleTV.setOnClickListener {
