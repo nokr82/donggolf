@@ -623,6 +623,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     fun add_chatting() {
         val content = contentET.text.toString()
+        if (content == null || content == ""){
+            Toast.makeText(context,"입력한 내용이 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
         contentET.setText("")
 
         val params = RequestParams()

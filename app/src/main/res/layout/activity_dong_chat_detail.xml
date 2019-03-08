@@ -77,14 +77,14 @@
                 android:visibility="gone"
                 android:id="@+id/noticevisibleLL"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#ffffff">
+                android:layout_height="50dp"
+                android:background="#ffffff"
+                android:gravity="center_vertical">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/icon_notice_green"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginLeft="10dp"/>
                 <TextView
                     android:id="@+id/noticeTV"
                     android:layout_width="0dp"
@@ -128,14 +128,14 @@
                     android:layout_above="@+id/llLL"
                     android:id="@+id/downnoticevisibleLL"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:background="#ffffff">
+                    android:layout_height="50dp"
+                    android:background="#ffffff"
+                    android:gravity="center_vertical">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@drawable/icon_notice_green"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="5dp"/>
+                        android:layout_marginLeft="10dp"/>
                     <TextView
                         android:id="@+id/downnoticeTV"
                         android:layout_width="0dp"

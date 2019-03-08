@@ -4,12 +4,14 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
+import android.widget.TextView
 import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -60,6 +62,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     var text_size = ""
 
+    var my_nick = ""
+
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
             chatting()
@@ -107,7 +111,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             founder = intent.getStringExtra("founder")
             if (founder.toInt() != member_id){
                 chatsetLL.visibility = View.GONE
-                chatsizeLL.visibility = View.GONE
+//                chatsizeLL.visibility = View.GONE
             }
         }
 
@@ -615,6 +619,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     fun add_chatting(){
         val content = contentET.text.toString()
+        if (content == null || content == ""){
+            Toast.makeText(context,"입력한 내용이 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         contentET.setText("")
 
         val params = RequestParams()
@@ -833,6 +842,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         if (members.length() > 2){
                             chatblockLL.visibility = View.GONE
                         }
+                        val count = members.length() - 3
                         for (i in 0 until members.length()){
                             val item = members.get(i) as JSONObject
                             val chatmember = item.getJSONObject("Chatmember")
@@ -846,6 +856,38 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 //                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
                             val nick = Utils.getString(memberinfo,"nick")
+                            val gander = Utils.getString(memberinfo,"sex")
+                            var v = View.inflate(context, R.layout.item_nick, null)
+                            var fv = View.inflate(context, R.layout.item_nick, null)
+                            val nickTV = v.findViewById(R.id.nickTV) as TextView
+                            val female = fv.findViewById(R.id.nickTV) as TextView
+                            nickTV.setTextColor(Color.parseColor("#000000"))
+                            female.setTextColor(Color.parseColor("#EF5C34"))
+                            if (i == 0) {
+                                nickTV.setText(nick)
+                                if (gander == "1"){
+                                    nickTV.setText("/")
+                                    addNickLL.addView(v)
+                                    female.setText(nick)
+                                    addNickLL.addView(fv)
+                                } else {
+                                    addNickLL.addView(v)
+                                }
+                            } else if (i < 3) {
+                                nickTV.setText("/"+nick)
+                                if (gander == "1"){
+                                    nickTV.setText("/")
+                                    addNickLL.addView(v)
+                                    female.setText(nick)
+                                    addNickLL.addView(fv)
+                                } else {
+                                    addNickLL.addView(v)
+                                }
+                            } else if (i == 3) {
+                                nickTV.setText("외 " + count.toString() + "명")
+                                addNickLL.addView(v)
+                            }
+
 //                            chattitleTV.setText(roomtitle)
 
                             var view:View = View.inflate(context, R.layout.item_profile, null)
@@ -865,6 +907,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (PrefUtils.getIntPreference(context,"member_id") == id.toInt()){
                                 val push_yn = Utils.getString(chatmember,"push_yn")
                                 text_size = Utils.getString(chatmember,"text_size")
+                                my_nick = nick
                                 if (push_yn == "Y"){
                                     pushoffIV.visibility = View.GONE
                                     pushonIV.visibility = View.VISIBLE
@@ -968,16 +1011,22 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("room_id", room_id)
         params.put("chat_id",last_id)
         params.put("type",type)
+        params.put("my_nick",my_nick)
 
         ChattingAction.delete_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    var intent = Intent()
-                    intent.putExtra("reset","reset")
-                    intent.putExtra("division","my")
-                    setResult(RESULT_OK, intent);
-                    finish()
+                    if (type == "out"){
+                        var intent = Intent()
+                        intent.putExtra("reset","reset")
+                        intent.putExtra("division","my")
+                        setResult(RESULT_OK, intent);
+                        finish()
+                    } else {
+                        chattingList.clear()
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
 
