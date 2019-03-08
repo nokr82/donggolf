@@ -46,6 +46,7 @@ open class FreeFragment : Fragment() {
 
     val user = HashMap<String, Any>()
 
+
     lateinit var main_edit_listview: ListView
     lateinit var addpostLL : LinearLayout
     lateinit var main_edit_search : EditText
@@ -54,7 +55,7 @@ open class FreeFragment : Fragment() {
     lateinit var main_listview:ListView
 
     private var progressDialog: ProgressDialog? = null
-
+    lateinit var fragment: FreeFragment
     lateinit var activity: MainActivity
     var tabType = 1
     var member_id = -1
@@ -83,7 +84,14 @@ open class FreeFragment : Fragment() {
         }
     }
 
-
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                mainData("")
+            }
+        }
+    }
 
     internal var ResetPostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -173,6 +181,9 @@ open class FreeFragment : Fragment() {
         //메시지보내기
         var filter = IntentFilter("MSG_NEXT")
         activity.registerReceiver(MsgReceiver, filter)
+        var filter3 = IntentFilter("ADD_POST")
+        activity.registerReceiver(reloadReciver, filter3)
+
 
         val filter1 = IntentFilter("SAVE_POST")
         activity.registerReceiver(ResetPostReceiver, filter1)
@@ -193,7 +204,10 @@ open class FreeFragment : Fragment() {
             }
 
             override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
-
+                if (!main_listview.canScrollVertically(-1)) {
+                    page = 1
+                    mainData(Utils.getString(main_edit_search))
+                }
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
@@ -346,7 +360,7 @@ open class FreeFragment : Fragment() {
 
         var intent = Intent(context, AddPostActivity::class.java);
         intent.putExtra("category",1)
-        startActivityForResult(intent, RESET_DATA);
+        getActivity()!!.startActivityForResult(intent, RESET_DATA);
     }
 
     fun MoveMainDetailActivity(id : String){
@@ -538,6 +552,14 @@ open class FreeFragment : Fragment() {
         if (DeletePostReceiver != null) {
             context!!.unregisterReceiver(DeletePostReceiver)
         }
+        if (reloadReciver != null) {
+            context!!.unregisterReceiver(reloadReciver)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainData("")
     }
 
     override fun onPause() {
@@ -553,10 +575,9 @@ open class FreeFragment : Fragment() {
 
             when (requestCode) {
                 RESET_DATA -> {
-                    if (data!!.getStringExtra("reset") != null) {
-                        if (adapterData != null){
-                            adapterData.clear()
-                        }
+                    Log.d("리절트","야스")
+                    if (data != null) {
+                        Log.d("리절트","야스")
                         page=1
                         mainData("")
                     }

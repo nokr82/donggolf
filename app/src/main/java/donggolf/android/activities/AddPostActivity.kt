@@ -1100,11 +1100,24 @@ class AddPostActivity : RootActivity() {
         videoVV.setMediaController(mediaController)
 
         removeIV.setOnClickListener {
-            videoVV.visibility = View.GONE
-            videoLL.visibility =View.GONE
-            removeIV.visibility = View.GONE
-            videoPaths.clear()
-            video_image.clear()
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("삭제하시겠습니까?")
+
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        videoVV.visibility = View.GONE
+                        videoLL.visibility =View.GONE
+                        removeIV.visibility = View.GONE
+                        videoPaths.clear()
+                        video_image.clear()
+                        dialog.cancel()
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+            val alert = builder.create()
+            alert.show()
+
         }
 
         loadData(dbManager,member_id.toString())
@@ -1251,6 +1264,7 @@ class AddPostActivity : RootActivity() {
                         dialog.cancel()
 
                         if (category == 1) {
+
                             addContent()
                         } else {
                             val id = intent.getStringExtra("id")
@@ -1668,8 +1682,8 @@ class AddPostActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
-                intent.putExtra("reset", "reset")
-                setResult(RESULT_OK, intent)
+                intent.action = "ADD_POST"
+                sendBroadcast(intent)
                 finish()
             }
 
@@ -1813,7 +1827,20 @@ class AddPostActivity : RootActivity() {
         delIV.tag = i
 
         delIV.setOnClickListener {
-            addPicturesLL!!.removeView(v)
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("삭제하시겠습니까?")
+
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        addPicturesLL!!.removeView(v)
+                        dialog.cancel()
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+            val alert = builder.create()
+            alert.show()
+
         }
 
         if (imgSeq == 0) {
@@ -1873,8 +1900,22 @@ class AddPostActivity : RootActivity() {
 
         delIV.tag = i
         delIV.setOnClickListener {
-            addPicturesLL!!.removeView(v)
-            delids.add(i)
+            val builder = AlertDialog.Builder(context)
+            builder
+                    .setMessage("삭제하시겠습니까?")
+
+                    .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                        addPicturesLL!!.removeView(v)
+                        delids.add(i)
+                        dialog.cancel()
+                    })
+                    .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                        dialog.cancel()
+                    })
+            val alert = builder.create()
+            alert.show()
+
+
 //            Log.d("아이디값",delids.toString())
 
 //            Toast.makeText(context,delids.toString(),Toast.LENGTH_SHORT).show()
