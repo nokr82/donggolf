@@ -144,16 +144,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
-                    <TextView
-                        android:id="@+id/peoplecountTV"
+                    <EditText
+                        android:hint="최대인원수는 80명 입니다."
+                        android:id="@+id/peoplecountET"
+                        android:inputType="number"
+                        android:maxLength="2"
                         android:layout_width="match_parent"
                         android:layout_height="25dp"
                         android:background="@drawable/box_region"
                         android:paddingLeft="10dp"
                         android:textSize="14dp"
-                        android:text="2"
+                        android:text=""
                         android:gravity="center_vertical"/>
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="25dp"
                         android:layout_alignParentRight="true"

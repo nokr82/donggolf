@@ -661,8 +661,7 @@ class DongchatProfileActivity : RootActivity() {
                         try {
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
                             var thumbnail = Utils.getImage(context.contentResolver, contentURI.toString())
-
-//                            ImageLoader.getInstance().displayImage(contentURI.toString(), profileIV, Utils.UILoptionsProfile)
+                            ImageLoader.getInstance().displayImage(contentURI.toString(), backgroundVP, Utils.UILoptionsProfile)
                             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 
                             val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
@@ -676,14 +675,13 @@ class DongchatProfileActivity : RootActivity() {
 
                                 Image_path.clear()
                                 Image_path.add(contentURI.toString())
-                                backgroundAdapter.notifyDataSetChanged()
+//                                backgroundAdapter.notifyDataSetChanged()
 
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
 //                            profileIV.setImageURI(contentURI)
 //                                profileIV.setImageBitmap(prof)
                                 set_image("background", prof)
-
 
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 
