@@ -90,6 +90,8 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", sidotype)
                 intent.putExtra("region_id", id)
+                intent.action = "SET_REGION"
+                sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             } else if (Utils.getString(type,"name") == "전국"){
@@ -100,6 +102,8 @@ class AreaRangeActivity : RootActivity() {
 //                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
 //                intent.putExtra("region_id2", id)
+                intent.action = "SET_REGION"
+                sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             } else {
@@ -128,6 +132,8 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", goguntype)
                 intent.putExtra("region_id", region_id)
+                intent.action = "SET_REGION"
+                sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
 
@@ -150,6 +156,8 @@ class AreaRangeActivity : RootActivity() {
 //                intent.putExtra("goguntype2", goguntype2)
                 intent.putExtra("region_id", region_id)
 //                intent.putExtra("region_id2", region_id2)
+                intent.action = "SET_REGION"
+                sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }

@@ -71,6 +71,20 @@ class ChatFragment : android.support.v4.app.Fragment() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 if (townChatOnRL.visibility == View.VISIBLE) {
+                    dongAdapterData.clear()
+                    getmychat(2)
+                } else {
+                    adapterData.clear()
+                    getmychat(1)
+                }
+            }
+        }
+    }
+
+    internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                if (townChatOnRL.visibility == View.VISIBLE) {
                     getmychat(2)
                 } else {
                     getmychat(1)
@@ -230,6 +244,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var filter3 = IntentFilter("CHAT_CHANGE")
         ctx!!.registerReceiver(reloadchatReciver, filter3)
+
+        var filter4 = IntentFilter("SET_REGION")
+        ctx!!.registerReceiver(reloadchatReciver, filter4)
 
 
         dong_chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -851,6 +868,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
         if (reloadchatReciver != null) {
             context!!.unregisterReceiver(reloadchatReciver)
+        }
+
+        if (setregionReciver != null) {
+            context!!.unregisterReceiver(setregionReciver)
         }
     }
 
