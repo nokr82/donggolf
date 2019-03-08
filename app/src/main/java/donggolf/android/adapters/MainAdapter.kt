@@ -93,7 +93,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_comment_count.text = cmt_cnt.toString()
         item.main_item_lately.text = since.toString()
         val type =Utils.getInt(Content,"type")
-        Log.d("타입",Content.toString())
 
         var image = Config.url + uri
         if (type == 2){
