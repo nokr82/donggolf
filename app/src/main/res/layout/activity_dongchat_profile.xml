@@ -23,9 +23,9 @@
                 android:layout_height="250dp">
                 <ImageView
                     android:id="@+id/backgroundVP"
+                    android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
-                />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -41,6 +41,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="50dp"
                             android:layout_marginLeft="10dp">
                             <TextView
                                 android:padding="3dp"
@@ -62,6 +63,7 @@
                             android:layout_centerInParent="true"
                             android:src="@drawable/icon_profile_l" /><!--프로필사진-->
                         <ImageView
+                            android:layout_marginBottom="50dp"
                             android:id="@+id/setimageIV"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -188,6 +190,13 @@
                             android:textSize="13dp"
                             android:textStyle="bold"
                             android:textColor="#CDCDCD"/>
+                        <ImageView
+                            android:id="@+id/cntIV"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:src="@drawable/btn_change_name" />
                     </LinearLayout>
                 </LinearLayout>
                 <ImageView
@@ -232,6 +241,7 @@
                     android:layout_marginTop="5dp"
                     android:text="채팅방 소개 텍스트가 들어갈 자리입니다"
                     android:maxLines="3"/>
+
             </LinearLayout>
 
             <ImageView

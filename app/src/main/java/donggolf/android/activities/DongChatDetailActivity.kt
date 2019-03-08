@@ -140,7 +140,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             dialogView.blockcodeTV.setText(block_code)
 
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.blockcodeTV.setText("")
+                alert.dismiss()
             }
 
             dialogView.cancleTV.setOnClickListener {
