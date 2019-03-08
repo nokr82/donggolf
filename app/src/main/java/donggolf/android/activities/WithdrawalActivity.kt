@@ -1,8 +1,11 @@
 package donggolf.android.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -32,36 +35,55 @@ class WithdrawalActivity : RootActivity() {
         btn_withd_ok.setOnClickListener {
 
             if (withdrawalCheck.isChecked) {
+                val builder = AlertDialog.Builder(context)
+                builder
+                        .setMessage("정말 탈퇴하시겠습니까?")
 
-                val params = RequestParams()
-                params.put("type", "leave")
-                params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-
-                MemberAction.update_info(params, object : JsonHttpResponseHandler(){
-                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                        try {
-                            val result = response!!.getString("result")
-                            if (result == "ok") {
-                                PrefUtils.clear(context)
-                                Utils.alert(context,"정상적으로 탈퇴되었습니다.")
-                                startActivity(Intent(context, LoginActivity::class.java))
-                                finish()
-                            }
-                        }catch (e:JSONException) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                        println(errorResponse)
-                    }
-                })
-            } else {
-
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                            secseion()
+                            dialog.cancel()
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.cancel()
+                        })
+                val alert = builder.create()
+                alert.show()
+            }
+            else {
                 Utils.alert(context, "위 사항을 읽어보시고 동의하기에 체크해주세요.")
-
+                return@setOnClickListener
             }
         }
 
     }
+
+
+    fun secseion(){
+
+        val params = RequestParams()
+        params.put("type", "leave")
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+
+        MemberAction.update_info(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        PrefUtils.clear(context)
+                        finishAffinity()
+                        System.runFinalizersOnExit(true)
+                        System.exit(0)
+                    }
+                }catch (e:JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+
 }
