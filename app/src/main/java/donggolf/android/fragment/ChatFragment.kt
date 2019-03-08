@@ -71,6 +71,20 @@ class ChatFragment : android.support.v4.app.Fragment() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 if (townChatOnRL.visibility == View.VISIBLE) {
+                    dongAdapterData.clear()
+                    getmychat(2)
+                } else {
+                    adapterData.clear()
+                    getmychat(1)
+                }
+            }
+        }
+    }
+
+    internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                if (townChatOnRL.visibility == View.VISIBLE) {
                     getmychat(2)
                 } else {
                     getmychat(1)
@@ -231,6 +245,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         var filter3 = IntentFilter("CHAT_CHANGE")
         ctx!!.registerReceiver(reloadchatReciver, filter3)
 
+        var filter4 = IntentFilter("SET_REGION")
+        ctx!!.registerReceiver(reloadchatReciver, filter4)
+
 
         dong_chat_list.setOnItemClickListener { parent, view, position, id ->
             var json = dongAdapterData.get(position)
@@ -239,6 +256,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
             val founder = Utils.getString(room, "member_id")
             val type = Utils.getString(room, "type")
             val block_code = Utils.getString(room, "block_code")
+            val max_count = Utils.getString(room,"max_count")
+            println("----------------------id : $id")
 
             if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
                 if (type == "1") {
@@ -264,7 +283,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     dialogView.codevisibleLL.visibility = View.GONE
 
                     dialogView.btn_title_clear.setOnClickListener {
-                        dialogView.blockcodeTV.setText("")
+                        alert.dismiss()
                     }
 
                     dialogView.cancleTV.setOnClickListener {
@@ -279,6 +298,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
 
                         if (code == block_code) {
+                            var chatmember = json.getJSONArray("Chatmember")
+
+                            if (max_count.toInt() >= chatmember.length()){
+                                Toast.makeText(context, "멤버(FULL)상태라 입장 할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
                             if (type == "1") {
                                 var intent = Intent(activity, ChatDetailActivity::class.java)
                                 intent.putExtra("division", 1)
@@ -842,6 +868,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
         if (reloadchatReciver != null) {
             context!!.unregisterReceiver(reloadchatReciver)
+        }
+
+        if (setregionReciver != null) {
+            context!!.unregisterReceiver(setregionReciver)
         }
     }
 

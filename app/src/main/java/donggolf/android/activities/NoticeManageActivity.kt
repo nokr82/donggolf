@@ -119,6 +119,7 @@ class NoticeManageActivity : RootActivity() {
                             noticeLL.visibility = View.GONE
                             founderLL.visibility = View.VISIBLE
                             founderTV.isCursorVisible = true
+                            saveTV.visibility = View.VISIBLE
                         }
 
                         val Member = room.getJSONObject("Member")
