@@ -72,9 +72,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             var roomitem = chatmember.get(i) as JSONObject
             val push_yn = Utils.getString(roomitem,"push_yn")
             val member = roomitem.getJSONObject("Member")
-            val member_nick = Utils.getString(member,"nick")
             val member_id = Utils.getString(member,"id")
-            val gander = Utils.getString(member,"sex")
 
             if (member_id.toInt() == PrefUtils.getIntPreference(context,"member_id")){
                 if (push_yn == "Y"){
@@ -84,30 +82,49 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     item.pushonIV.visibility = View.GONE
                     item.pushoffIV.visibility = View.VISIBLE
                 }
+                chatmember.remove(i)
+                break
+            }
+        }
 
-            } else {
-                nick += member_nick + " "
-                if (i < 4){
-                    var v = View.inflate(context, R.layout.item_nick, null)
-                    val nickTV = v.findViewById(R.id.nickTV) as TextView
-                    nickTV.setText(member_nick + " ")
-                    if (gander == "0"){
-                        nickTV.setTextColor(Color.parseColor("#000000"))
-                    } else {
-                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
-                    }
-                    item.addNickLL.addView(v)
-                } else if (i == 4){
-                    var v = View.inflate(context, R.layout.item_nick, null)
-                    val nickTV = v.findViewById(R.id.nickTV) as TextView
-                    nickTV.setText("....")
-                    if (gander == "0"){
-                        nickTV.setTextColor(Color.parseColor("#000000"))
-                    } else {
-                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
-                    }
+        for (i in 0 until chatmember.length()){
+            var roomitem = chatmember.get(i) as JSONObject
+            val member = roomitem.getJSONObject("Member")
+            val member_nick = Utils.getString(member,"nick")
+            val gander = Utils.getString(member,"sex")
+
+            nick = member_nick
+            var v = View.inflate(context, R.layout.item_nick, null)
+            var fv = View.inflate(context, R.layout.item_nick, null)
+            var nickTV = v.findViewById(R.id.nickTV) as TextView
+            var female = fv.findViewById(R.id.nickTV) as TextView
+            nickTV.setTextColor(Color.parseColor("#000000"))
+            female.setTextColor(Color.parseColor("#EF5C34"))
+
+            if (i == 0){
+                nickTV.setText(nick)
+                if (gander == "1"){
+                    female.setText(nick)
+                    item.addNickLL.addView(fv)
+                } else {
                     item.addNickLL.addView(v)
                 }
+            } else if (i < 3) {
+                nickTV.setText("/"+nick)
+                if (gander == "1"){
+                    nickTV.setText("/")
+                    item.addNickLL.addView(v)
+                    female.setText(nick)
+                    item.addNickLL.addView(fv)
+                } else {
+                    item.addNickLL.addView(v)
+                }
+            } else if (i == 3) {
+                nickTV.setText("외 " + count.toString() + "명")
+                item.addNickLL.addView(v)
+            } else {
+                nickTV.setText("")
+                female.setText("")
             }
 
         }
