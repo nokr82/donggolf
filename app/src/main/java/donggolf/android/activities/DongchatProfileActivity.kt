@@ -6,6 +6,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,7 +28,6 @@ import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_chat_detail.*
 import kotlinx.android.synthetic.main.activity_dongchat_profile.*
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
@@ -189,6 +189,59 @@ class DongchatProfileActivity : RootActivity() {
 //
 //        }
 
+        cntIV.setOnClickListener {
+            if (founder_id.toInt() != PrefUtils.getIntPreference(context,"member_id")){
+                return@setOnClickListener
+            }
+
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
+            builder.setView(dialogView)
+            val alert = builder.show()
+            dialogView.dlgtextTV.setTextColor(Color.parseColor("#000000"))
+            dialogView.dlgtextTV.setText("가용인원수는 최대 80명 입니다.")
+            dialogView.categoryTitleET.setHint("가용인원수를 입력해주세요.")
+            dialogView.dlgTitle.setText("채팅방 인원")
+            dialogView.codevisibleLL.visibility = View.GONE
+            dialogView.settitleTV.visibility = View.GONE
+            dialogView.blockcodeTV.visibility = View.GONE
+
+            dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    var cnt = 0
+                    var num = s.toString()
+                    if (num != "") {
+                        cnt = num.toInt()
+                        if (cnt > 80) {
+                            Toast.makeText(context, "가용인원수는 최대80명입니다.", Toast.LENGTH_SHORT).show()
+                            dialogView.categoryTitleET.setText("80")
+                            return
+                        }
+                    }
+                }
+
+                override fun afterTextChanged(count: Editable) {
+                }
+
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                }
+            })
+
+            dialogView.btn_title_clear.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.cancleTV.setOnClickListener {
+                alert.dismiss()
+            }
+
+            dialogView.okTV.setOnClickListener {
+                alert.dismiss()
+            }
+        }
+
+
         setimageIV.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_comment_menu, null) //사용자 정의 다이얼로그 xml 붙이기
@@ -273,7 +326,7 @@ class DongchatProfileActivity : RootActivity() {
             builder.setView(dialogView)
             val alert = builder.show()
 
-            dialogView.dlgtextTV.setText("변경할 내용을 입력하세요")
+            dialogView.dlgtextTV.visibility = View.GONE
             dialogView.categoryTitleET.setHint("변경할 제목을 입력해 주세요.")
             dialogView.dlgTitle.setText("제목 입력")
             val title = roomtitleTV.text.toString()
@@ -403,6 +456,7 @@ class DongchatProfileActivity : RootActivity() {
                             }
 
                             if (PrefUtils.getIntPreference(context,"member_id") != Utils.getInt(chatroom,"member_id")){
+                                cntIV.visibility = View.GONE
                                 setnoticeTV.visibility = View.GONE
                                 setroomtitleIV.visibility = View.GONE
                                 setimageIV.visibility = View.GONE
