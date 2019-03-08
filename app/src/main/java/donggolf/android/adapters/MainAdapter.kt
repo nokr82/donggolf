@@ -24,6 +24,8 @@ import java.lang.RuntimeException
 import com.kakao.auth.StringSet.file
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import com.kakao.kakaostory.StringSet.image
 import donggolf.android.R
 import donggolf.android.base.DownloadFileAsyncTask
 
@@ -90,21 +92,21 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_nickname.text = nick.toString()
         item.main_item_comment_count.text = cmt_cnt.toString()
         item.main_item_lately.text = since.toString()
+        val type =Utils.getInt(Content,"type")
+        Log.d("타입",Content.toString())
 
+        var image = Config.url + uri
+        if (type == 2){
+            item.videoIV.visibility = View.VISIBLE
+        }else{
+            item.videoIV.visibility = View.GONE
+        }
         if (uri != null){
             if (uri != "") {
 
                 item.profileIV.visibility = View.VISIBLE
 
-                var image_type = Utils.getString(Content,"image_type")
 
-                var image = Config.url + uri
-
-                if (video!=null){
-                    item.videoIV.visibility = View.VISIBLE
-                }else{
-                    item.videoIV.visibility = View.VISIBLE
-                }
 //                if (image_type == "1") {
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
 //                } else {
