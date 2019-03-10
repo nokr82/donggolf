@@ -214,6 +214,16 @@ class ViewProfileListActivity : RootActivity() {
             }
         })
     }
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (resetDataReceiver != null) {
+            context.unregisterReceiver(resetDataReceiver)
+        }
+        if (deleteDataReceiver != null) {
+            context.unregisterReceiver(deleteDataReceiver)
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
