@@ -7,10 +7,10 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_posting"
-        android:title="게시물 작성"
-        app:showAsAction="always"/>
+        android:title="프로필 사진변경"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_add_img"
         android:title="사진 추가"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

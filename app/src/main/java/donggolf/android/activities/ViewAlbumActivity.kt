@@ -121,7 +121,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 //
 //                                startActivityForResult(galleryIntent, GALLERY)
 
-                                permissionimage()
+                                permissionimage(1)
 
                             } else {
 
@@ -129,10 +129,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_posting -> {
-                            val intent = Intent(context, AddPostActivity::class.java)
+                           /* val intent = Intent(context, AddPostActivity::class.java)
                             intent.putExtra("category",1)
                             intent.putExtra("image_uri", selectedImageViewList)
-                            startActivity(intent)
+                            startActivity(intent)*/
+                            permissionimage(2)
 
                             return@setOnMenuItemClickListener true
                         }
@@ -389,11 +390,16 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
         })
     }
 
-    private fun permissionimage() {
+    private fun permissionimage(type:Int) {
 
         val permissionlistener = object : PermissionListener {
             override fun onPermissionGranted() {
-                moveMyPicture()
+                if (type ==1){
+                    moveMyPicture()
+                }else{
+                    moveMyProfile()
+                }
+
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
@@ -414,6 +420,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
         var intent = Intent(context, FindPictureActivity::class.java);
         intent.putExtra("image","image")
         startActivityForResult(intent, SELECT_PICTURE);
+    }
+    fun moveMyProfile(){
+        var intent = Intent(context, FindPictureActivity::class.java);
+        intent.putExtra("image","profile")
+        startActivityForResult(intent, SELECT_PICTURE)
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
