@@ -81,7 +81,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
-    internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+  /*  internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 if (townChatOnRL.visibility == View.VISIBLE) {
@@ -91,7 +91,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 }
             }
         }
-    }
+    }*/
 
     internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -870,9 +870,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
             context!!.unregisterReceiver(reloadchatReciver)
         }
 
-        if (setregionReciver != null) {
+     /*   if (setregionReciver != null) {
             context!!.unregisterReceiver(setregionReciver)
-        }
+        }*/
     }
 
     fun timerStart() {

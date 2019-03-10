@@ -20,7 +20,6 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import com.kakao.kakaostory.StringSet.image
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -32,7 +31,6 @@ import donggolf.android.actions.PostAction
 import donggolf.android.base.*
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
-import kotlinx.android.synthetic.main.item_addgoods.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.*
@@ -70,18 +68,18 @@ class AddPostActivity : RootActivity() {
 
     private val imgSeq = 0
 
-    var pk : String? = null
+    var pk: String? = null
     var images_path: ArrayList<String> = ArrayList<String>()
     var modi_path: ArrayList<String> = ArrayList<String>()
     var images: ArrayList<Bitmap>? = null
     var images_url: ArrayList<String>? = null
     var images_url_remove: ArrayList<String>? = null
     var images_id: ArrayList<Int>? = null
-    var selectedImageViewList:ArrayList<String> = ArrayList<String>()
+    var selectedImageViewList: ArrayList<String> = ArrayList<String>()
 
-    var video_image:ArrayList<String> = ArrayList<String>()
+    var video_image: ArrayList<String> = ArrayList<String>()
 
-    lateinit var videofile:ByteArray
+    lateinit var videofile: ByteArray
 
     var cht_yn = "Y"
     var cmt_yn = "Y"
@@ -109,36 +107,36 @@ class AddPostActivity : RootActivity() {
 
         val setContent = TmpContent()
 
-      /*  intent = getIntent()
-        selectedImageViewList = intent.getStringArrayListExtra("image_uri")
-        Log.d("선택된이미지",selectedImageViewList.lastIndex.toString())
-        for (i in 0 until selectedImageViewList.lastIndex){
-            var path = Config.url + selectedImageViewList[i]
-            reset2(path,i)
+        /*  intent = getIntent()
+          selectedImageViewList = intent.getStringArrayListExtra("image_uri")
+          Log.d("선택된이미지",selectedImageViewList.lastIndex.toString())
+          for (i in 0 until selectedImageViewList.lastIndex){
+              var path = Config.url + selectedImageViewList[i]
+              reset2(path,i)
 
-        }*/
+          }*/
 
-        if (cht_yn=="Y"){
+        if (cht_yn == "Y") {
             chatableIV.visibility = View.VISIBLE
-        }else{
+        } else {
             chatableIV.visibility = View.GONE
         }
 
-        if (cmt_yn =="Y"){
+        if (cmt_yn == "Y") {
             replyableIV.visibility = View.VISIBLE
-        }else{
+        } else {
             replyableIV.visibility = View.GONE
         }
 
 
         addPicturesLL = findViewById(R.id.addPicturesLL)
 
-        if (intent.getStringArrayListExtra("image_uri") != null){
+        if (intent.getStringArrayListExtra("image_uri") != null) {
             selectedImageViewList = intent.getStringArrayListExtra("image_uri")
             println("images---------selectimage$selectedImageViewList")
-            if (selectedImageViewList.size > 0){
-                for (i in 0 until selectedImageViewList.size){
-                    reset2(selectedImageViewList.get(i),i)
+            if (selectedImageViewList.size > 0) {
+                for (i in 0 until selectedImageViewList.size) {
+                    reset2(selectedImageViewList.get(i), i)
                 }
             }
         }
@@ -165,7 +163,7 @@ class AddPostActivity : RootActivity() {
 
                     .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
                         videoVV.visibility = View.GONE
-                        videoLL.visibility =View.GONE
+                        videoLL.visibility = View.GONE
                         removeIV.visibility = View.GONE
                         videoPaths.clear()
                         video_image.clear()
@@ -179,7 +177,7 @@ class AddPostActivity : RootActivity() {
 
         }
 
-        loadData(dbManager,member_id.toString())
+        loadData(dbManager, member_id.toString())
 
         permission()
 
@@ -192,7 +190,7 @@ class AddPostActivity : RootActivity() {
         }
 
         finishaBT.setOnClickListener {
-            if (addpostTV.text.equals("수정하기")){
+            if (addpostTV.text.equals("수정하기")) {
                 val builder = AlertDialog.Builder(context)
                 builder
                         .setMessage("수정하기를 취소하시겠습니까 ?")
@@ -208,15 +206,15 @@ class AddPostActivity : RootActivity() {
 
 //                        loadData(dbManager,member_id.toString())
 
-                            if(tmpContent.id == null){
+                            if (tmpContent.id == null) {
                                 finish()
                             }
 
-                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                                 dbManager.deleteImagePaths(member_id.toString())
                             }
 
-                            if(tmpContent.id != null) {
+                            if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
                                 finish()
                             }
@@ -227,7 +225,7 @@ class AddPostActivity : RootActivity() {
                         })
                 val alert = builder.create()
                 alert.show()
-            }else{
+            } else {
                 val builder = AlertDialog.Builder(context)
                 builder
                         .setMessage("글쓰기를 취소하시겠습니까 ?")
@@ -236,11 +234,11 @@ class AddPostActivity : RootActivity() {
                             val title = Utils.getString(titleET)
                             val content = Utils.getString(contentET)
 
-                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                                 dbManager.deleteImagePaths(member_id.toString())
                             }
 
-                            if(tmpContent.id != null) {
+                            if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
                             }
 
@@ -248,25 +246,25 @@ class AddPostActivity : RootActivity() {
 
                             dbManager.inserttmpcontent(tmpContent)
 
-                            if (images_path != null && images_path!!.size > 0 ) {
-                                for (i in 0 until images_path!!.size){
-                                    val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+                            if (images_path != null && images_path!!.size > 0) {
+                                for (i in 0 until images_path!!.size) {
+                                    val imagesPath = ImagesPath(0, member_id.toString(), images_path!!.get(i), 1)
                                     println("imagesPath ${imagesPath.path}")
                                     dbManager.insertimagespath(imagesPath)
                                 }
                             }
 
-                            if (videoPaths != null && videoPaths.size > 0 ) {
-                                for (i in 0 until videoPaths.size){
-                                    val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                            if (videoPaths != null && videoPaths.size > 0) {
+                                for (i in 0 until videoPaths.size) {
+                                    val videoPath = ImagesPath(0, member_id.toString(), videoPaths.get(i), 2)
                                     println("videoPath ${videoPath.path}")
                                     dbManager.insertimagespath(videoPath)
                                 }
                             }
 
-                            if (hashtag != null && hashtag.size > 0 ) {
-                                for (i in 0 until hashtag.size){
-                                    val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                            if (hashtag != null && hashtag.size > 0) {
+                                for (i in 0 until hashtag.size) {
+                                    val hastag = ImagesPath(0, member_id.toString(), hashtag.get(i), 3)
                                     println("hastag ${hastag.path}")
                                     dbManager.insertimagespath(hastag)
                                 }
@@ -281,16 +279,16 @@ class AddPostActivity : RootActivity() {
                         .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
 
 
-//                            loadData(dbManager,member_id.toString())
+                            //                            loadData(dbManager,member_id.toString())
 
-                            if(tmpContent.id == null){
+                            if (tmpContent.id == null) {
                             }
 
-                            if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                            if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                                 dbManager.deleteImagePaths(member_id.toString())
                             }
 
-                            if(tmpContent.id != null) {
+                            if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
                             }
 
@@ -330,18 +328,17 @@ class AddPostActivity : RootActivity() {
                             modify(id)
                         }
 
-                        if(tmpContent.id == null){
+                        if (tmpContent.id == null) {
                         }
 
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                             dbManager.deleteImagePaths(member_id.toString())
                         }
 
-                        if(tmpContent.id != null) {
+                        if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
                         }
                         Utils.hideKeyboard(this)
-
 
 
                     })
@@ -359,8 +356,8 @@ class AddPostActivity : RootActivity() {
             val id = intent.getStringExtra("id")
 
             var intent = Intent(context, ContentTagChangeActivity::class.java);
-                intent.putExtra("type","post")
-            intent.putExtra("id",id)
+            intent.putExtra("type", "post")
+            intent.putExtra("id", id)
             startActivityForResult(intent, SELECT_HASHTAG)
         }
         /*  var cmt_yn = "Y"
@@ -379,18 +376,17 @@ class AddPostActivity : RootActivity() {
         chatableRL.setOnClickListener {
             if (chatableIV.visibility == View.GONE) {
                 chatableIV.visibility = View.VISIBLE
-                cht_yn  = "Y"
+                cht_yn = "Y"
             } else {
                 chatableIV.visibility = View.GONE
-                cht_yn  = "N"
+                cht_yn = "N"
             }
         }
 
 
-
     }
 
-    private fun loadData(dbManager: DataBaseHelper , userid: String) {
+    private fun loadData(dbManager: DataBaseHelper, userid: String) {
 
         //임시저장 데이터 불러오기
         val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
@@ -401,11 +397,11 @@ class AddPostActivity : RootActivity() {
 
         var tmpImagesPath = dbManager.selectImagesPath(imagespathquery)
 
-        if (tmpImagesPath != null && tmpImagesPath.size > 0){
-            for (i in 0 until tmpImagesPath.size){
-                if (tmpImagesPath.get(i).type == 1){
+        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
+            for (i in 0 until tmpImagesPath.size) {
+                if (tmpImagesPath.get(i).type == 1) {
                     images_path!!.add(tmpImagesPath.get(i).path!!)
-                } else if (tmpImagesPath.get(i).type == 2){
+                } else if (tmpImagesPath.get(i).type == 2) {
                     videoPaths.add(tmpImagesPath.get(i).path!!)
                 } else if (tmpImagesPath.get(i).type == 3) {
                     hashtag.add(tmpImagesPath.get(i).path!!)
@@ -416,7 +412,7 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (images_path!!.size > 0 ){
+        if (images_path!!.size > 0) {
             for (i in 0..(images_path!!.size - 1)) {
                 val str = images_path!![i]
 
@@ -461,7 +457,7 @@ class AddPostActivity : RootActivity() {
             videoVV.setOnPreparedListener { mp -> mp.isLooping = true }
         }
 
-        if (hashtag.size > 0 ){
+        if (hashtag.size > 0) {
             var tag = ""
             for (i in 0 until hashtag.size) {
                 tag += "#" + hashtag.get(i) + "  "
@@ -492,31 +488,31 @@ class AddPostActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("content_id",id)
+        params.put("content_id", id)
         val login_id = PrefUtils.getIntPreference(context, "member_id")
-        params.put("member_id",login_id)
-        params.put("title",title)
-        params.put("text",text)
-        params.put("cht_yn",cht_yn)
-        params.put("cmt_yn",cmt_yn)
+        params.put("member_id", login_id)
+        params.put("title", title)
+        params.put("text", text)
+        params.put("cht_yn", cht_yn)
+        params.put("cmt_yn", cmt_yn)
 
-        if (hashtag != null){
-            for (i in 0 .. hashtag.size - 1){
-                params.put("tag[" + i + "]",  hashtag.get(i))
+        if (hashtag != null) {
+            for (i in 0..hashtag.size - 1) {
+                params.put("tag[" + i + "]", hashtag.get(i))
             }
         }
 
-        if (delids!=null){
-            Log.d("삭제",delids.toString())
-            if (delids.size != 0){
-                for (i in 0..delids.size - 1){
-                    params.put("del_ids["+i+"]",  delids[i])
+        if (delids != null) {
+            Log.d("삭제", delids.toString())
+            if (delids.size != 0) {
+                for (i in 0..delids.size - 1) {
+                    params.put("del_ids[" + i + "]", delids[i])
                 }
             }
         }
 
         var seq = 0
-        if (addPicturesLL != null){
+        if (addPicturesLL != null) {
             for (i in 0 until addPicturesLL!!.childCount) {
                 val v = addPicturesLL?.getChildAt(i)
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
@@ -541,16 +537,16 @@ class AddPostActivity : RootActivity() {
 //            }
 //        }
 
-        if (video_image.size > 0){
+        if (video_image.size > 0) {
             params.put("video_delete", "delete")
-         } else {
-            if (videoPaths != null){
-                if (videoPaths.size != 0){
+        } else {
+            if (videoPaths != null) {
+                if (videoPaths.size != 0) {
 
                     val options = BitmapFactory.Options()
                     options.inSampleSize = 1
 
-                    for (i in 0..videoPaths.size - 1){
+                    for (i in 0..videoPaths.size - 1) {
 
                         if (album_video) {
                             val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
@@ -567,13 +563,13 @@ class AddPostActivity : RootActivity() {
                         val baos = ByteArrayOutputStream()
                         val videoBytes = baos.toByteArray()
 
-                        params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+                        params.put("videos[" + i + "]", ByteArrayInputStream(bytes))
                     }
                 }
             }
         }
 
-        PostAction.update_post(params,object : JsonHttpResponseHandler(){
+        PostAction.update_post(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
@@ -609,19 +605,19 @@ class AddPostActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id",member_id)
-        params.put("title",title)
-        params.put("text",text)
-        params.put("deleted","N")
-        params.put("cht_yn",cht_yn)
-        params.put("cmt_yn",cmt_yn)
+        params.put("member_id", member_id)
+        params.put("title", title)
+        params.put("text", text)
+        params.put("deleted", "N")
+        params.put("cht_yn", cht_yn)
+        params.put("cmt_yn", cmt_yn)
 
-        if (PrefUtils.getStringPreference(context,"region_id") != null) {
+        if (PrefUtils.getStringPreference(context, "region_id") != null) {
             var region_id = PrefUtils.getStringPreference(context, "region_id")
-            if (region_id=="1001"){
-                region_id ="0"
+            if (region_id == "1001") {
+                region_id = "0"
                 params.put("region", region_id)
-            }else{
+            } else {
                 params.put("region", region_id)
             }
 
@@ -630,23 +626,23 @@ class AddPostActivity : RootActivity() {
             params.put("region", region_id)
         }
 
-        if (PrefUtils.getStringPreference(context,"region_id2") != null) {
+        if (PrefUtils.getStringPreference(context, "region_id2") != null) {
             var region_id = PrefUtils.getStringPreference(context, "region_id2")
             params.put("region2", region_id)
         } else {
             var region_id = 1
             params.put("region2", region_id)
         }
-        Log.d("태그",hashtag.toString())
+        Log.d("태그", hashtag.toString())
 
-        if (hashtag != null){
-            for (i in 0 .. hashtag.size - 1){
-                params.put("tag[" + i + "]",  hashtag.get(i))
+        if (hashtag != null) {
+            for (i in 0..hashtag.size - 1) {
+                params.put("tag[" + i + "]", hashtag.get(i))
             }
         }
 
-        if (temp_yn != ""){
-            params.put("tmp_yn",temp_yn)
+        if (temp_yn != "") {
+            params.put("tmp_yn", temp_yn)
         }
 
 
@@ -678,7 +674,7 @@ class AddPostActivity : RootActivity() {
 //        }
 
         var seq = 0
-        if (addPicturesLL != null){
+        if (addPicturesLL != null) {
             for (i in 0 until addPicturesLL!!.childCount) {
                 val v = addPicturesLL?.getChildAt(i)
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
@@ -691,20 +687,20 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (videoPaths != null){
-            if (videoPaths.size != 0){
+        if (videoPaths != null) {
+            if (videoPaths.size != 0) {
 
                 val options = BitmapFactory.Options()
                 options.inSampleSize = 1
 
-                for (i in 0..videoPaths.size - 1){
+                for (i in 0..videoPaths.size - 1) {
 
                     if (album_video) {
                         val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
                         params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
                     } else {
                         val bitmap = Utils.retriveVideoFrameFromVideo(videoPaths[i])
-                            params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
+                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
                     }
 
                     val file = File(videoPaths.get(i))
@@ -731,13 +727,13 @@ class AddPostActivity : RootActivity() {
                     val videoBytes = baos.toByteArray()
 
 //                    params.put("videos[" + i + "]",  ByteArrayInputStream(videofile))
-                    params.put("videos[" + i + "]",  ByteArrayInputStream(bytes))
+                    params.put("videos[" + i + "]", ByteArrayInputStream(bytes))
 
                 }
             }
         }
 
-        PostAction.add_post(params,object : JsonHttpResponseHandler(){
+        PostAction.add_post(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
@@ -754,18 +750,18 @@ class AddPostActivity : RootActivity() {
 
         val dbManager = DataBaseHelper(context)
 
-        loadData(dbManager,member_id.toString())
+        loadData(dbManager, member_id.toString())
 
-        if(tmpContent.id == null){
+        if (tmpContent.id == null) {
             finish()
         }
 
-        if(tmpContent.id != null) {
+        if (tmpContent.id != null) {
             dbManager.deleteTmpContent(tmpContent.id!!)
             finish()
         }
 
-        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
             dbManager.deleteImagePaths(member_id.toString())
         }
 
@@ -776,7 +772,7 @@ class AddPostActivity : RootActivity() {
         var intent = Intent(context, FindPictureActivity::class.java);
         var time = System.currentTimeMillis()
 //        intent.putExtra("time", System.currentTimeMillis())
-        intent.putExtra("image","image")
+        intent.putExtra("image", "image")
         startActivityForResult(intent, SELECT_PICTURE);
 
         println("SELECT_PICTURE:::::::::::::::::::::::::${time}")
@@ -786,7 +782,7 @@ class AddPostActivity : RootActivity() {
     private fun moveMyVideo() {
 //        var intent = Intent(context, FindVideoActivity::class.java);
         var intent = Intent(context, FindPictureActivity::class.java);
-        intent.putExtra("image","video")
+        intent.putExtra("image", "video")
         startActivityForResult(intent, SELECT_VIDEO);
     }
 
@@ -798,7 +794,7 @@ class AddPostActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "권한설정을 해주셔야 합니다.", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -819,7 +815,7 @@ class AddPostActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "권한설정을 해주셔야 합니다.", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -840,7 +836,7 @@ class AddPostActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "권한설정을 해주셔야 합니다.", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -937,7 +933,7 @@ class AddPostActivity : RootActivity() {
         val delIV = v.findViewById<View>(R.id.delIV) as ImageView
 
 //        ImageLoader.getInstance().displayImage(str,v.addedImgIV, Utils.UILoptionsUserProfile)
-        imageUrlToIVs.put(str,imageIV)
+        imageUrlToIVs.put(str, imageIV)
 
         ImageLoader.getInstance().loadImage(str, object : ImageLoadingListener {
             override fun onLoadingCancelled(imageUri: String?, view: View?) {
@@ -953,7 +949,7 @@ class AddPostActivity : RootActivity() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
                 val iv = imageUrlToIVs.get(imageUri!!)
                 iv!!.setImageBitmap(loadedImage)
-                Log.d("높이23",loadedImage!!.height.toString())
+                Log.d("높이23", loadedImage!!.height.toString())
             }
         })
 
@@ -984,15 +980,16 @@ class AddPostActivity : RootActivity() {
         }
 
     }
-    fun getPost(){
+
+    fun getPost() {
         //게시글 불러오기
-        if (intent.getStringExtra("id") != null){
+        if (intent.getStringExtra("id") != null) {
             val id = intent.getStringExtra("id")
             val login_id = PrefUtils.getIntPreference(context, "member_id")
 
             var params = RequestParams()
-            params.put("id",id)
-            params.put("member_id",login_id)
+            params.put("id", id)
+            params.put("member_id", login_id)
 
             PostAction.get_post(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1002,45 +999,45 @@ class AddPostActivity : RootActivity() {
 
                             val data = response.getJSONObject("Content")
 
-                            val title = Utils.getString(data,"title")
-                            val text = Utils.getString(data,"text")
-                            val member_id = Utils.getString(data,"member_id")
-                            val cht_yn = Utils.getString(data,"cht_yn")
-                            val cmt_yn = Utils.getString(data,"cmt_yn")
+                            val title = Utils.getString(data, "title")
+                            val text = Utils.getString(data, "text")
+                            val member_id = Utils.getString(data, "member_id")
+                            val cht_yn = Utils.getString(data, "cht_yn")
+                            val cmt_yn = Utils.getString(data, "cmt_yn")
 
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
 
-                            if (tags != null && tags.length() > 0 ){
+                            if (tags != null && tags.length() > 0) {
                                 var hashtags: String = ""
 
-                                for (i in 0 until tags.length()){
+                                for (i in 0 until tags.length()) {
                                     var json = tags.get(i) as JSONObject
                                     var MemberTags = json.getJSONObject("ContentsTags")
-                                    val division = Utils.getString(MemberTags,"division")
+                                    val division = Utils.getString(MemberTags, "division")
 
-                                    if (division == "1"){
-                                        val tag = Utils.getString(MemberTags,"tag")
-                                        hashtags += "#"+tag + "  "
+                                    if (division == "1") {
+                                        val tag = Utils.getString(MemberTags, "tag")
+                                        hashtags += "#" + tag + "  "
                                     }
                                 }
                                 hashtagsTV.text = hashtags
                             }
 
-                            if (imageDatas != null && imageDatas.length() > 0){
+                            if (imageDatas != null && imageDatas.length() > 0) {
                                 var imagePaths: java.util.ArrayList<String> = java.util.ArrayList<String>()
 
-                                for (i in 0 until imageDatas.length()){
+                                for (i in 0 until imageDatas.length()) {
                                     var json = imageDatas.get(i) as JSONObject
 
                                     var contentFile = json.getJSONObject("contentFile")
-                                    var type = Utils.getInt(contentFile,"type")
-                                    var id = Utils.getInt(contentFile,"id")
+                                    var type = Utils.getInt(contentFile, "type")
+                                    var id = Utils.getInt(contentFile, "id")
                                     if (type == 1) {
                                         var path = Config.url + Utils.getString(contentFile, "image_uri")
 
-                                        reset2(path,id)
+                                        reset2(path, id)
                                         println("getimage------$path")
                                         imagePaths.add(path)
 //                                        modi_path!!.add(Utils.getString(contentFile, "image"))
@@ -1051,7 +1048,7 @@ class AddPostActivity : RootActivity() {
                                         println("path ----- $path")
                                         removeIV.visibility = View.VISIBLE
                                         videoVV.visibility = View.VISIBLE
-                                        videoLL.visibility =View.VISIBLE
+                                        videoLL.visibility = View.VISIBLE
                                         val uri = Uri.parse(Config.url + path)
                                         videoVV.start()
                                         videoVV.setVideoURI(uri)
@@ -1063,19 +1060,19 @@ class AddPostActivity : RootActivity() {
                                 }
                             }
 
-                            if (images_path != null){
+                            if (images_path != null) {
 
                             }
                             titleET.setText(title)
                             contentET.setText(text)
 
-                            if (cht_yn  == "Y"){
+                            if (cht_yn == "Y") {
                                 chatableIV.visibility = View.VISIBLE
                             } else {
                                 chatableIV.visibility = View.GONE
                             }
 
-                            if (cmt_yn == "Y"){
+                            if (cmt_yn == "Y") {
                                 replyableIV.visibility = View.VISIBLE
                             } else {
                                 replyableIV.visibility = View.GONE
@@ -1094,7 +1091,6 @@ class AddPostActivity : RootActivity() {
 
         }
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1209,7 +1205,7 @@ class AddPostActivity : RootActivity() {
 
                     println("path ----- ${videoPaths.get(0)}")
                     videoVV.visibility = View.VISIBLE
-                    videoLL.visibility =View.VISIBLE
+                    videoLL.visibility = View.VISIBLE
                     removeIV.visibility = View.VISIBLE
                     val uri = Uri.parse(videoPaths.get(0))
                     videoVV.start()
@@ -1227,9 +1223,9 @@ class AddPostActivity : RootActivity() {
 
                         println("tmpcontent : $hashtag")
                         var tag = ""
-                        if (hashtag.size > 0){
-                            for (i in 0 until hashtag.size){
-                                tag += "#"+hashtag.get(i) + " "
+                        if (hashtag.size > 0) {
+                            for (i in 0 until hashtag.size) {
+                                tag += "#" + hashtag.get(i) + " "
                             }
                             hashtagsTV.setText(tag)
                         }
@@ -1242,7 +1238,6 @@ class AddPostActivity : RootActivity() {
     }
 
 
-
     fun clickMethod(v: View) {
         val builder = AlertDialog.Builder(context)
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
@@ -1251,7 +1246,7 @@ class AddPostActivity : RootActivity() {
                     addPicturesLL!!.removeAllViews()
                     images!!.clear()
                     val tag = v.tag as Int
-                    if (images_path!=null){
+                    if (images_path != null) {
                         images_path!!.removeAt(tag)
                     }
 
@@ -1348,7 +1343,7 @@ class AddPostActivity : RootActivity() {
     override fun onBackPressed() {
         val dbManager = DataBaseHelper(context)
         val dataList: Array<String> = arrayOf("*");
-        if (addpostTV.text.equals("수정하기")){
+        if (addpostTV.text.equals("수정하기")) {
             val builder = AlertDialog.Builder(context)
             builder
                     .setMessage("수정하기를 취소하시겠습니까 ?")
@@ -1364,15 +1359,15 @@ class AddPostActivity : RootActivity() {
 
 //                        loadData(dbManager,member_id.toString())
 
-                        if(tmpContent.id == null){
+                        if (tmpContent.id == null) {
                             finish()
                         }
 
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                             dbManager.deleteImagePaths(member_id.toString())
                         }
 
-                        if(tmpContent.id != null) {
+                        if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
                             finish()
                         }
@@ -1383,7 +1378,7 @@ class AddPostActivity : RootActivity() {
                     })
             val alert = builder.create()
             alert.show()
-        }else{
+        } else {
             val builder = AlertDialog.Builder(context)
             builder
                     .setMessage("글쓰기를 취소하시겠습니까 ?")
@@ -1393,11 +1388,11 @@ class AddPostActivity : RootActivity() {
                         val title = Utils.getString(titleET)
                         val content = Utils.getString(contentET)
 
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                             dbManager.deleteImagePaths(member_id.toString())
                         }
 
-                        if(tmpContent.id != null) {
+                        if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
                         }
 
@@ -1405,33 +1400,33 @@ class AddPostActivity : RootActivity() {
 
                         dbManager.inserttmpcontent(tmpContent)
 
-                        if (images_path != null && images_path!!.size > 0 ) {
-                            for (i in 0 until images_path!!.size){
-                                val imagesPath = ImagesPath(0,member_id.toString(),images_path!!.get(i),1)
+                        if (images_path != null && images_path!!.size > 0) {
+                            for (i in 0 until images_path!!.size) {
+                                val imagesPath = ImagesPath(0, member_id.toString(), images_path!!.get(i), 1)
                                 println("imagesPath ${imagesPath.path}")
                                 dbManager.insertimagespath(imagesPath)
                             }
                         }
 
-                        if (videoPaths != null && videoPaths.size > 0 ) {
-                            for (i in 0 until videoPaths.size){
-                                val videoPath = ImagesPath(0,member_id.toString(),videoPaths.get(i),2)
+                        if (videoPaths != null && videoPaths.size > 0) {
+                            for (i in 0 until videoPaths.size) {
+                                val videoPath = ImagesPath(0, member_id.toString(), videoPaths.get(i), 2)
                                 println("videoPath ${videoPath.path}")
                                 dbManager.insertimagespath(videoPath)
                             }
                         }
 
-                        if (hashtag != null && hashtag.size > 0 ) {
-                            for (i in 0 until hashtag.size){
-                                val hastag = ImagesPath(0,member_id.toString(),hashtag.get(i),3)
+                        if (hashtag != null && hashtag.size > 0) {
+                            for (i in 0 until hashtag.size) {
+                                val hastag = ImagesPath(0, member_id.toString(), hashtag.get(i), 3)
                                 println("hastag ${hastag.path}")
                                 dbManager.insertimagespath(hastag)
                             }
                         }
 
-                        if (videoIds != null && videoIds.size > 0 ) {
-                            for (i in 0 until videoIds.size){
-                                val video_ids = ImagesPath(0,member_id.toString(),videoIds[i].toString(),4)
+                        if (videoIds != null && videoIds.size > 0) {
+                            for (i in 0 until videoIds.size) {
+                                val video_ids = ImagesPath(0, member_id.toString(), videoIds[i].toString(), 4)
                                 println("videoIds ${video_ids.path}")
                                 dbManager.insertimagespath(video_ids)
                             }
@@ -1449,14 +1444,14 @@ class AddPostActivity : RootActivity() {
 
 //                    loadData(dbManager,member_id.toString())
 
-                        if(tmpContent.id == null){
+                        if (tmpContent.id == null) {
                         }
 
-                        if (tmpImagesPath != null && tmpImagesPath.size > 0 ){
+                        if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                             dbManager.deleteImagePaths(member_id.toString())
                         }
 
-                        if(tmpContent.id != null) {
+                        if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
                         }
 
@@ -1468,7 +1463,6 @@ class AddPostActivity : RootActivity() {
             val alert = builder.create()
             alert.show()
         }
-
 
 
     }
