@@ -1,12 +1,16 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.Text
 import org.json.JSONArray
@@ -17,8 +21,11 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
     var view:Int = view
     var data:ArrayList<JSONObject> = data
 
-    var text: Text = Text()
-    var photo: JSONArray = JSONArray()
+    var text:Text = Text()
+    var photo:JSONArray = JSONArray()
+    var video:ArrayList<String> = ArrayList<String>()
+
+
 
     override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
 
@@ -39,31 +46,77 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
         }
 
         var json = data.get(position)
-        var content = json.getJSONObject("Content")
+        var Content = json.getJSONObject("Content")
+        val member_id = Utils.getString(Content,"member_id")
+        val title = Utils.getString(Content,"title")
+        val text = Utils.getString(Content,"text")
+        val content_id = Utils.getString(Content,"id")
+        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
+        val look_cnt = Utils.getString(Content,"look_cnt")
+        val like_cnt = Utils.getString(Content,"like_cnt")
+        val cmt_cnt = Utils.getString(Content,"cmt_cnt")
+        var member = json.getJSONObject("Member")
+        var nick = Utils.getString(member,"nick")
+        var sex = Utils.getString(member,"sex")
+        var profile = Utils.getString(member,"profile_img")
+        var created = Utils.getString(Content,"created")
+        var uri = Utils.getString(Content,"image_uri")
+        var video = Utils.getString(Content,"video")
+        val since = Utils.since(created)
 
-        json.put("cmt_wrt_id", Utils.getInt(content,""))
-        var content_id =  Utils.getString(content,"id")
-        val member_id = Utils.getString(content,"member_id")
-        val title = Utils.getString(content,"title")
-        val text = Utils.getString(content,"text")
-        val created = Utils.getString(content, "created").substringBefore(" ")
-
-        item.myPostTitleTV.text = title.toString()
-        item.myPostContTV.text = text.toString()
-        item.writeDateTV.text = created
-
-        var wd = json.getBoolean("willDel")
-        if (wd) {
-            item.item_btn_del.visibility = View.VISIBLE
-            notifyDataSetChanged()
-        } else {
-            item.item_btn_del.visibility = View.GONE
-            notifyDataSetChanged()
+        if (sex == "0"){
+            item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
+        }else{
+            item.main_item_nickname.setTextColor(Color.parseColor("#EF5C34"))
         }
 
-        val member = json.getJSONObject("Member")
-        val nick = Utils.getString(member, "nick")
-        item.myPostItem_nick.text = nick
+        item.main_item_title.text = title.toString()
+        item.main_item_content.text = text.toString()
+        item.main_item_view_count.text = look_cnt.toString()
+        item.main_item_like_count.text = like_cnt.toString()
+        item.main_item_nickname.text = nick.toString()
+        item.main_item_comment_count.text = cmt_cnt.toString()
+        item.main_item_lately.text = since.toString()
+        val type =Utils.getInt(Content,"type")
+
+        var image = Config.url + uri
+        if (type == 2){
+            item.videoIV.visibility = View.VISIBLE
+        }else{
+            item.videoIV.visibility = View.GONE
+        }
+        if (uri != null){
+            if (uri != "") {
+
+                item.profileIV.visibility = View.VISIBLE
+
+
+//                if (image_type == "1") {
+                ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
+//                } else {
+//
+////                    val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image,0);
+//                    println("image::::::::::::::::::::::::::::::::::::$image")
+////                    val bitmapThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, photo.videoID.toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
+//                    // val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image, MediaStore.Video.Thumbnails.MINI_KIND)
+//                    val bitmapThumb = Utils.retriveVideoFrameFromVideo(image)
+//                    item.profileIV.setImageBitmap(bitmapThumb)
+//                }
+
+            } else {
+                item.profileIV.visibility = View.GONE
+            }
+        } else {
+            item.profileIV.visibility = View.GONE
+        }
+
+        if (profile != null){
+            var image = Config.url + profile
+            ImageLoader.getInstance().displayImage(image, item.main_item_image, Utils.UILoptionsUserProfile)
+        } else {
+            item.main_item_image.setImageResource(donggolf.android.R.drawable.icon_profiles)
+        }
+
 
         return retView
     }
@@ -90,30 +143,33 @@ class MyPostAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : Ar
 
     class ViewHolder(v: View) {
 
-        var myPostTitleTV : TextView
-        var myPostContTV : TextView
+        var main_item_title : TextView
+        var main_item_content : TextView
 
-        var myPostItem_profile : ImageView
-        var myPostItem_nick : TextView
-        var writeDateTV : TextView
-        var mpCommentTV : TextView
-
-        var item_btn_del : ImageView
-        var itemMyPostMng_postImg :ImageView
+        var main_item_nickname : TextView
+        var main_item_lately : TextView
+        var main_item_view_count : TextView
+        var main_item_comment_count : TextView
+        var main_item_like_count : TextView
+        var profileIV: ImageView
+        var videoIV: ImageView
+        var main_item_image : CircleImageView
 
         init {
-
-            myPostTitleTV = v.findViewById<View>(R.id.myPostTitleTV) as TextView
-            myPostContTV = v.findViewById<View>(R.id.myPostContTV) as TextView
-            myPostItem_profile = v.findViewById<View>(R.id.myPostItem_profile) as ImageView
-            myPostItem_nick = v.findViewById<View>(R.id.myPostItem_nick) as TextView
-            writeDateTV = v.findViewById<View>(R.id.writeDateTV) as TextView
-            mpCommentTV = v.findViewById<View>(R.id.mpCommentTV) as TextView
-            item_btn_del = v.findViewById<View>(R.id.item_btn_del) as ImageView//item_btn_del
-            itemMyPostMng_postImg = v.findViewById<View>(R.id.itemMyPostMng_postImg) as ImageView
+            videoIV = v.findViewById<View>(R.id.videoIV) as ImageView
+            main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
+            main_item_content = v.findViewById<View>(R.id.main_item_content) as TextView
+            main_item_nickname = v.findViewById<View>(R.id.main_item_nickname) as TextView
+            main_item_lately = v.findViewById<View>(R.id.main_item_lately) as TextView
+            main_item_view_count = v.findViewById<View>(R.id.main_item_view_count) as TextView
+            main_item_comment_count = v.findViewById<View>(R.id.main_item_comment_count) as TextView
+            main_item_like_count = v.findViewById<View>(R.id.main_item_like_count) as TextView
+            profileIV = v.findViewById<View>(R.id.profileIV) as ImageView
+            main_item_image = v.findViewById<View>(R.id.main_item_image) as CircleImageView
 
         }
 
 
     }
+
 }

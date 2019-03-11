@@ -65,9 +65,9 @@ class MyPostMngActivity : RootActivity() {
             finish()
         }
 
-        myPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myPostList)
-        myCommentPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myCommentPostList)
-        myStoredPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myStoredPostList)
+        myPostAdapter = MyPostAdapter(context, R.layout.main_listview_item, myPostList)
+        myCommentPostAdapter = MyPostAdapter(context, R.layout.main_listview_item, myCommentPostList)
+        myStoredPostAdapter = MyPostAdapter(context, R.layout.main_listview_item, myStoredPostList)
 
         myPostLV.adapter = myPostAdapter
         myCommentLV.adapter = myCommentPostAdapter
