@@ -141,7 +141,6 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             block_code = ""
             set_chatting_setting("1")
         }
-
         secretLL.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
