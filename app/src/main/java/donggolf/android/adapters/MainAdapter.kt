@@ -24,6 +24,8 @@ import java.lang.RuntimeException
 import com.kakao.auth.StringSet.file
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import com.kakao.kakaostory.StringSet.image
 import donggolf.android.R
 import donggolf.android.base.DownloadFileAsyncTask
 
@@ -74,7 +76,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
         var uri = Utils.getString(Content,"image_uri")
-
+        var video = Utils.getString(Content,"video")
         val since = Utils.since(created)
 
         if (sex == "0"){
@@ -90,15 +92,19 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_nickname.text = nick.toString()
         item.main_item_comment_count.text = cmt_cnt.toString()
         item.main_item_lately.text = since.toString()
+        val type =Utils.getInt(Content,"type")
 
+        var image = Config.url + uri
+        if (type == 2){
+            item.videoIV.visibility = View.VISIBLE
+        }else{
+            item.videoIV.visibility = View.GONE
+        }
         if (uri != null){
             if (uri != "") {
 
                 item.profileIV.visibility = View.VISIBLE
 
-                var image_type = Utils.getString(Content,"image_type")
-
-                var image = Config.url + uri
 
 //                if (image_type == "1") {
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
@@ -161,10 +167,11 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var main_item_comment_count : TextView
         var main_item_like_count : TextView
         var profileIV: ImageView
+        var videoIV: ImageView
         var main_item_image : CircleImageView
 
         init {
-
+            videoIV = v.findViewById<View>(R.id.videoIV) as ImageView
             main_item_title = v.findViewById<View>(R.id.main_item_title) as TextView
             main_item_content = v.findViewById<View>(R.id.main_item_content) as TextView
             main_item_nickname = v.findViewById<View>(R.id.main_item_nickname) as TextView

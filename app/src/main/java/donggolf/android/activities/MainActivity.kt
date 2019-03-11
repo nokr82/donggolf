@@ -62,7 +62,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var content_id = -1
     var friend_id = -1
     var room_id = -1
-
     var AREA_OK = 101
     var sidotype = "전국"
     var sidotype2 = "전국"

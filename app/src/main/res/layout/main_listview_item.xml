@@ -30,6 +30,9 @@
             android:maxLines="2"
             android:layout_marginLeft="10dp"/>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <ImageView
             android:visibility="gone"
             android:id="@+id/profileIV"
@@ -41,6 +44,14 @@
             android:background="@color/com_kakao_button_background_press"
             android:gravity="right"/>
 
+            <ImageView
+                android:id="@+id/videoIV"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/kakao_login_symbol"/>
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout

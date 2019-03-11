@@ -24,10 +24,10 @@ class FindPictureActivity : RootActivity() {
 
     private lateinit var context: Context
 
-    private val data:ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private val videodata:ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private val buckets:ArrayList<String> = ArrayList<String>()
-    private val videobuckets:ArrayList<String> = ArrayList<String>()
+    private val data: ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private val videodata: ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private val buckets: ArrayList<String> = ArrayList<String>()
+    private val videobuckets: ArrayList<String> = ArrayList<String>()
 
     private var picCount = 0
     private var limit = 0
@@ -36,10 +36,10 @@ class FindPictureActivity : RootActivity() {
 
     var pics: MutableList<String> = ArrayList<String>()
 
-    private  var adapterData : ArrayList<PictureCategory> = ArrayList<PictureCategory>()
+    private var adapterData: ArrayList<PictureCategory> = ArrayList<PictureCategory>()
 
-    private  lateinit var  adapter : CustomGalleryFolderArrayAdapter
-    private  lateinit var  videoadapter : CustomVideoFolderArrayAdapter
+    private lateinit var adapter: CustomGalleryFolderArrayAdapter
+    private lateinit var videoadapter: CustomVideoFolderArrayAdapter
 
     private var videoList: java.util.ArrayList<VideoAdapter.VideoData> = java.util.ArrayList<VideoAdapter.VideoData>()
 
@@ -65,9 +65,9 @@ class FindPictureActivity : RootActivity() {
 //        videoSize()
 //        photoSize()
 
-        if (intent.getStringExtra("image") != null){
+        if (intent.getStringExtra("image") != null) {
             image = intent.getStringExtra("image")
-            if (image == "image"){
+            if (image == "image" || image == "profile") {
 
                 val projection = arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                 val c = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
@@ -80,8 +80,8 @@ class FindPictureActivity : RootActivity() {
                             buckets.add(bucketDisplayName)
 
                             val jsonObject = JSONObject()
-                            jsonObject.put("bucketName",bucketDisplayName)
-                            jsonObject.put("total",-1)
+                            jsonObject.put("bucketName", bucketDisplayName)
+                            jsonObject.put("total", -1)
                             data.add(jsonObject)
 
                         }
@@ -106,8 +106,8 @@ class FindPictureActivity : RootActivity() {
                             videobuckets.add(bucketDisplayName)
 
                             val jsonObject = JSONObject()
-                            jsonObject.put("bucketName",bucketDisplayName)
-                            jsonObject.put("total",-1)
+                            jsonObject.put("bucketName", bucketDisplayName)
+                            jsonObject.put("total", -1)
                             videodata.add(jsonObject)
 
                         }
@@ -123,10 +123,10 @@ class FindPictureActivity : RootActivity() {
         }
 
         findpictre_listview.setOnItemClickListener { parent, view, position, id ->
-            if (image == "image"){
+            if (image == "image") {
                 val item = data.get(position)
-                val bucketName = Utils.getString(item,"bucketName")
-                val total = Utils.getInt(item,"total")
+                val bucketName = Utils.getString(item, "bucketName")
+                val total = Utils.getInt(item, "total")
 
                 val intent = Intent(context, FindPictureGridActivity::class.java)
                 intent.putExtra("bucketName", bucketName)
@@ -134,14 +134,14 @@ class FindPictureActivity : RootActivity() {
                 intent.putExtra("pic_count", picCount)
                 intent.putExtra("limit", limit)
                 intent.putExtra("nowPicCount", nowPicCount)
-                intent.putExtra("category","image")
+                intent.putExtra("category", "image")
 //                intent.putExtra("time", time)
                 startActivityForResult(intent, SELECT_PICTURE)
 
-            } else {
-                val item = videodata.get(position)
-                val bucketName = Utils.getString(item,"bucketName")
-                val total = Utils.getInt(item,"total")
+            }else if (image=="profile"){
+                val item = data.get(position)
+                val bucketName = Utils.getString(item, "bucketName")
+                val total = Utils.getInt(item, "total")
 
                 val intent = Intent(context, FindPictureGridActivity::class.java)
                 intent.putExtra("bucketName", bucketName)
@@ -149,7 +149,21 @@ class FindPictureActivity : RootActivity() {
                 intent.putExtra("pic_count", picCount)
                 intent.putExtra("limit", limit)
                 intent.putExtra("nowPicCount", nowPicCount)
-                intent.putExtra("category","video")
+                intent.putExtra("category", "profile")
+//                intent.putExtra("time", time)
+                startActivityForResult(intent, SELECT_PICTURE)
+            }else {
+                val item = videodata.get(position)
+                val bucketName = Utils.getString(item, "bucketName")
+                val total = Utils.getInt(item, "total")
+
+                val intent = Intent(context, FindPictureGridActivity::class.java)
+                intent.putExtra("bucketName", bucketName)
+                intent.putExtra("total", total)
+                intent.putExtra("pic_count", picCount)
+                intent.putExtra("limit", limit)
+                intent.putExtra("nowPicCount", nowPicCount)
+                intent.putExtra("category", "video")
                 startActivityForResult(intent, SELECT_VIDEO)
 
             }
@@ -162,21 +176,21 @@ class FindPictureActivity : RootActivity() {
         }
 
 
-
     }
-    fun MoveFindVideoActivity(){
+
+    fun MoveFindVideoActivity() {
         var intent = Intent(context, FindVideoActivity::class.java);
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
-    fun MoveFindPictureGridActivity(){
+    fun MoveFindPictureGridActivity() {
 
         var intent = Intent(context, FindPictureGridActivity::class.java);
         startActivityForResult(intent, SELECT_PICTURE);
 //        startActivity(Intent(this,FindPictureGridActivity::class.java))
     }
 
-    fun videoSize(){
+    fun videoSize() {
         val resolver = contentResolver
         var cursor: Cursor? = null
         try {
@@ -205,7 +219,7 @@ class FindPictureActivity : RootActivity() {
                     val bucketDisplayName = cursor.getString(idx[3])
 
                     if (displayName != null) {
-                        video =  VideoAdapter.VideoData()
+                        video = VideoAdapter.VideoData()
                         video.videoID = videoID
                         video.videoPath = videoPath
                         video.bucketVideoName = bucketDisplayName
@@ -229,7 +243,7 @@ class FindPictureActivity : RootActivity() {
         }
     }
 
-    fun photoSize(){
+    fun photoSize() {
         val resolver = contentResolver
         var cursor: Cursor? = null
         try {
@@ -253,7 +267,7 @@ class FindPictureActivity : RootActivity() {
                     val orientation = cursor.getInt(idx[3])
                     val bucketDisplayName = cursor.getString(idx[4])
                     if (displayName != null) {
-                        photo =  ImageAdapter.PhotoData()
+                        photo = ImageAdapter.PhotoData()
                         photo.photoID = photoID
                         photo.photoPath = photoPath
                         photo.orientation = orientation
@@ -281,9 +295,9 @@ class FindPictureActivity : RootActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
 
-            when(requestCode) {
+            when (requestCode) {
                 SELECT_PICTURE -> {
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
@@ -294,7 +308,7 @@ class FindPictureActivity : RootActivity() {
 
                     Log.d("yjs", "findpicture : " + item)
 
-                    setResult(RESULT_OK,intent)
+                    setResult(RESULT_OK, intent)
                     finish()
 
                 }
@@ -312,7 +326,7 @@ class FindPictureActivity : RootActivity() {
                     Log.d("yjs", "findpicture : " + item)
                     Log.d("yjs", "video_ids : " + ids)
 
-                    setResult(RESULT_OK,intent)
+                    setResult(RESULT_OK, intent)
                     finish()
                 }
             }

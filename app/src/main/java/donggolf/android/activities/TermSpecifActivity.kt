@@ -21,7 +21,7 @@ class TermSpecifActivity : RootActivity() {
         specWV.settings.javaScriptEnabled = true
         specWV.loadUrl(url)
 
-        finishLL.setOnClickListener {
+        finishLL.setOnClickListener  {
             finish()
         }
 

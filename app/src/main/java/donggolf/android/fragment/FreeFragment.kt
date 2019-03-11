@@ -39,22 +39,23 @@ open class FreeFragment : Fragment() {
 
     var ctx: Context? = null
 
-    private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  lateinit var  adapter : MainAdapter
-    private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private var adapterData: ArrayList<JSONObject> = ArrayList<JSONObject>()
+    private lateinit var adapter: MainAdapter
+    private lateinit var editadapter: MainEditAdapter
+    private var editadapterData: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     val user = HashMap<String, Any>()
 
+
     lateinit var main_edit_listview: ListView
-    lateinit var addpostLL : LinearLayout
-    lateinit var main_edit_search : EditText
-    lateinit var main_listview_search : LinearLayout
-    lateinit var main_edit_close : LinearLayout
-    lateinit var main_listview:ListView
+    lateinit var addpostLL: LinearLayout
+    lateinit var main_edit_search: EditText
+    lateinit var main_listview_search: LinearLayout
+    lateinit var main_edit_close: LinearLayout
+    lateinit var main_listview: ListView
 
     private var progressDialog: ProgressDialog? = null
-
+    lateinit var fragment: FreeFragment
     lateinit var activity: MainActivity
     var tabType = 1
     var member_id = -1
@@ -83,7 +84,14 @@ open class FreeFragment : Fragment() {
         }
     }
 
-
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                page = 1
+                mainData("")
+            }
+        }
+    }
 
     internal var ResetPostReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -91,9 +99,9 @@ open class FreeFragment : Fragment() {
 
                 adapterData.clear()
 
-                ContentAction.list(user,Pair("createAt", Query.Direction.DESCENDING),0) { success:Boolean, data:ArrayList<Map<String, Any>?>?, exception:Exception? ->
+                ContentAction.list(user, Pair("createAt", Query.Direction.DESCENDING), 0) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
-                    if(success && data != null) {
+                    if (success && data != null) {
                         data.forEach {
                             println(it)
 
@@ -173,6 +181,9 @@ open class FreeFragment : Fragment() {
         //메시지보내기
         var filter = IntentFilter("MSG_NEXT")
         activity.registerReceiver(MsgReceiver, filter)
+        var filter3 = IntentFilter("ADD_POST")
+        activity.registerReceiver(reloadReciver, filter3)
+
 
         val filter1 = IntentFilter("SAVE_POST")
         activity.registerReceiver(ResetPostReceiver, filter1)
@@ -180,10 +191,10 @@ open class FreeFragment : Fragment() {
         val filter2 = IntentFilter("DELETE_POST")
         activity.registerReceiver(DeletePostReceiver, filter2)
 
-        adapter = MainAdapter(activity,R.layout.main_listview_item,adapterData)
+        adapter = MainAdapter(activity, R.layout.main_listview_item, adapterData)
         main_listview.adapter = adapter
 
-        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item,editadapterData,this)
+        editadapter = MainEditAdapter(activity, R.layout.main_edit_listview_item, editadapterData, this)
         main_edit_listview.adapter = editadapter
 
         main_listview.setOnScrollListener(object : AbsListView.OnScrollListener {
@@ -192,8 +203,11 @@ open class FreeFragment : Fragment() {
                 totalItemCountScroll = totalItemCount
             }
 
-            override fun onScrollStateChanged(main_listview:AbsListView, newState: Int) {
-
+            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+                if (!main_listview.canScrollVertically(-1)) {
+                    page = 1
+                    mainData(Utils.getString(main_edit_search))
+                }
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
@@ -237,14 +251,14 @@ open class FreeFragment : Fragment() {
 
             Utils.hideKeyboard(context)
 
-            if(main_listview_search.visibility == View.VISIBLE) {
+            if (main_listview_search.visibility == View.VISIBLE) {
                 main_listview_search.visibility = View.GONE
                 return@setOnItemClickListener
             }
 
             val data = adapter.getItem(position)
             val content = data.getJSONObject("Content")
-            var id = Utils.getInt(content,"id")
+            var id = Utils.getInt(content, "id")
 
             MoveMainDetailActivity(id.toString())
         }
@@ -261,7 +275,7 @@ open class FreeFragment : Fragment() {
         }
 
         main_edit_search.setOnEditorActionListener() { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val srchWd = main_edit_search.text.toString()
                 if (srchWd != null && srchWd != "") {
                     addSearchWords(srchWd)
@@ -270,7 +284,7 @@ open class FreeFragment : Fragment() {
                     mainData(srchWd)
                 }
 
-                if (srchWd == null || srchWd == ""){
+                if (srchWd == null || srchWd == "") {
 //                    resetList(srchWd)
                     mainData(srchWd)
                 }
@@ -290,11 +304,11 @@ open class FreeFragment : Fragment() {
         }
 
         iconsearchIV.setOnClickListener {
-           var keyword =   Utils.getString(main_edit_search)
+            var keyword = Utils.getString(main_edit_search)
             main_listview_search.visibility = View.GONE
             main_edit_search.isCursorVisible = false
-            if (keyword==""){
-                Toast.makeText(context,"키워드를 입력해주세요.",Toast.LENGTH_SHORT).show()
+            if (keyword == "") {
+                Toast.makeText(context, "키워드를 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             addSearchWords(keyword)
@@ -306,7 +320,7 @@ open class FreeFragment : Fragment() {
         btn_del_searchWord.setOnClickListener {
             Utils.hideKeyboard(context)
 
-            if(Utils.getString(main_edit_search) == "") {
+            if (Utils.getString(main_edit_search) == "") {
                 return@setOnClickListener
             }
             main_edit_search.setText("")
@@ -318,7 +332,7 @@ open class FreeFragment : Fragment() {
 
             val item = editadapterData.get(position)
             val SearchList = item.getJSONObject("SearchList")
-            val content = Utils.getString(SearchList,"content")
+            val content = Utils.getString(SearchList, "content")
             println("----content$content")
             main_edit_search.setText(content)
 //            resetList(content)
@@ -338,37 +352,37 @@ open class FreeFragment : Fragment() {
 //        progressDialog = ProgressDialog(ctx)
     }
 
-    fun MoveAddPostActivity(){
-        if (PrefUtils.getIntPreference(context, "member_id") == -1){
-            Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
+    fun MoveAddPostActivity() {
+        if (PrefUtils.getIntPreference(context, "member_id") == -1) {
+            Toast.makeText(context, "비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
             return
         }
 
         var intent = Intent(context, AddPostActivity::class.java);
-        intent.putExtra("category",1)
-        startActivityForResult(intent, RESET_DATA);
+        intent.putExtra("category", 1)
+        getActivity()!!.startActivityForResult(intent, RESET_DATA);
     }
 
-    fun MoveMainDetailActivity(id : String){
+    fun MoveMainDetailActivity(id: String) {
         var intent: Intent = Intent(activity, MainDetailActivity::class.java)
-        intent.putExtra("id",id)
+        intent.putExtra("id", id)
         startActivityForResult(intent, DETAIL);
     }
 
     fun mainData(keyWord: String) {
         val params = RequestParams()
         var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
-        var goguntype  =PrefUtils.getStringPreference(ctx, "goguntype")
-        var goguntype2  =PrefUtils.getStringPreference(ctx, "goguntype2")
-        var region_id = PrefUtils.getStringPreference(ctx,"region_id")
-        var region_id2 = PrefUtils.getStringPreference(ctx,"region_id2")
+        var goguntype = PrefUtils.getStringPreference(ctx, "goguntype")
+        var goguntype2 = PrefUtils.getStringPreference(ctx, "goguntype2")
+        var region_id = PrefUtils.getStringPreference(ctx, "region_id")
+        var region_id2 = PrefUtils.getStringPreference(ctx, "region_id2")
 
-        params.put("member_id",member_id)
-        params.put("goguntype",goguntype)
-        params.put("sidotype",sidotype)
-        params.put("region_id",region_id)
-        params.put("searchKeyword",keyWord)
-        if (region_id2 != ""){
+        params.put("member_id", member_id)
+        params.put("goguntype", goguntype)
+        params.put("sidotype", sidotype)
+        params.put("region_id", region_id)
+        params.put("searchKeyword", keyWord)
+        if (region_id2 != "") {
             params.put("region_id2", region_id2)
         }
         params.put("page", page)
@@ -382,7 +396,7 @@ open class FreeFragment : Fragment() {
 
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    if (page == 1){
+                    if (page == 1) {
                         adapterData.clear()
                     }
 
@@ -391,7 +405,7 @@ open class FreeFragment : Fragment() {
 
                     val list = response!!.getJSONArray("content")
 
-                    for (i in 0..(list.length()-1)){
+                    for (i in 0..(list.length() - 1)) {
                         val Content = list.get(i) as JSONObject
                         adapterData.add(Content)
                     }
@@ -437,10 +451,10 @@ open class FreeFragment : Fragment() {
     fun addSearchWords(content: String) {
 
         val params = RequestParams()
-        params.put("member_id",member_id)
-        params.put("content",content)
+        params.put("member_id", member_id)
+        params.put("content", content)
 
-        PostAction.add_search(params,object : JsonHttpResponseHandler(){
+        PostAction.add_search(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 getSearchList()
@@ -454,20 +468,20 @@ open class FreeFragment : Fragment() {
 
     }
 
-    fun getSearchList(){
+    fun getSearchList() {
         val params = RequestParams()
-        params.put("member_id",member_id)
+        params.put("member_id", member_id)
 
-        PostAction.search_list(params,object : JsonHttpResponseHandler(){
+        PostAction.search_list(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    if (editadapterData != null){
+                    if (editadapterData != null) {
                         editadapterData.clear()
                     }
 
-                    var contents:ArrayList<JSONObject> = ArrayList<JSONObject>()
+                    var contents: ArrayList<JSONObject> = ArrayList<JSONObject>()
                     val data = response.getJSONArray("SearchList")
                     for (i in 0..data.length() - 1) {
                         var json = data.get(i) as JSONObject
@@ -485,15 +499,15 @@ open class FreeFragment : Fragment() {
         })
     }
 
-    fun resetList(keyWord : String){
+    fun resetList(keyWord: String) {
 
-        if (keyWord == null || keyWord == ""){
+        if (keyWord == null || keyWord == "") {
             mainData("")
         } else {
             val params = RequestParams()
-            params.put("searchKeyword",keyWord)
+            params.put("searchKeyword", keyWord)
 
-            PostAction.load_post(params,object : JsonHttpResponseHandler(){
+            PostAction.load_post(params, object : JsonHttpResponseHandler() {
 
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     val result = response!!.getString("result")
@@ -501,12 +515,12 @@ open class FreeFragment : Fragment() {
                         try {
                             val list = response!!.getJSONArray("content")
 
-                            if(adapterData != null){
+                            if (adapterData != null) {
                                 adapterData.clear()
                                 adapter.notifyDataSetChanged()
                             }
 
-                            for (i in 0..(list.length()-1)){
+                            for (i in 0..(list.length() - 1)) {
                                 val Content = list.get(i) as JSONObject
                                 adapterData.add(Content as JSONObject)
                             }
@@ -538,6 +552,14 @@ open class FreeFragment : Fragment() {
         if (DeletePostReceiver != null) {
             context!!.unregisterReceiver(DeletePostReceiver)
         }
+        if (reloadReciver != null) {
+            context!!.unregisterReceiver(reloadReciver)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainData("")
     }
 
     override fun onPause() {
@@ -553,21 +575,20 @@ open class FreeFragment : Fragment() {
 
             when (requestCode) {
                 RESET_DATA -> {
-                    if (data!!.getStringExtra("reset") != null) {
-                        if (adapterData != null){
-                            adapterData.clear()
-                        }
-                        page=1
+                    Log.d("리절트", "야스")
+                    if (data != null) {
+                        Log.d("리절트", "야스")
+                        page = 1
                         mainData("")
                     }
                 }
 
                 DETAIL -> {
                     if (data!!.getStringExtra("reset") != null) {
-                        if (adapterData != null){
+                        if (adapterData != null) {
                             adapterData.clear()
                         }
-                        page=1
+                        page = 1
                         mainData("")
                     }
                 }
@@ -576,11 +597,11 @@ open class FreeFragment : Fragment() {
 
     }
 
-    fun deleteSearchList(searchid:String){
+    fun deleteSearchList(searchid: String) {
         val params = RequestParams()
-        params.put("searchid",searchid)
+        params.put("searchid", searchid)
 
-        PostAction.delete_search(params,object : JsonHttpResponseHandler(){
+        PostAction.delete_search(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
 

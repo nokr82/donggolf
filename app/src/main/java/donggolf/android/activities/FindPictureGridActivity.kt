@@ -70,7 +70,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         context = this
 
         var intent = getIntent()
-        if (intent.getStringExtra("category") != null){
+        if (intent.getStringExtra("category") != null) {
             category = intent.getStringExtra("category")
             val bucketName = getIntent().getStringExtra("bucketName")
             val total = getIntent().getIntExtra("total", 0)
@@ -78,7 +78,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
             limit = getIntent().getIntExtra("limit", 0)
             nowPicCount = getIntent().getIntExtra("nowPicCount", 1)
 
-            if (category == "image"){
+            if (category == "image" || category == "profile") {
 
                 val resolver = contentResolver
                 var cursor: Cursor? = null
@@ -140,14 +140,14 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 val resolver = contentResolver
                 var cursor: Cursor? = null
                 try {
-                    val proj = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.DISPLAY_NAME,MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+                    val proj = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
                     val idx = IntArray(proj.size)
 
                     val selection = MediaStore.Video.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
                     cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        
+
                         println(" cursor : " + cursor.count)
                     } else {
 //                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
@@ -190,7 +190,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                 val imageLoader: ImageLoader = ImageLoader(resolver)
 
-                val adapter = VideoAdapter(this, videoList, imageLoader,selected)
+                val adapter = VideoAdapter(this, videoList, imageLoader, selected)
 
                 selectGV.setAdapter(adapter)
 
@@ -266,7 +266,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
 
         finishBT.setOnClickListener {
-//            try {
+            //            try {
 //                if (cursor != null && !cursor.isClosed) {
 //                    cursor.close()
 //                }
@@ -282,11 +282,13 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 //                    var bt: Bitmap = Utils.getImage(context.getContentResolver(), selected[0], 10)
 
                 val builder = AlertDialog.Builder(context)
-                 if (category == "image"){
-                     builder.setMessage("사진을 등록하시겠습니까 ?")
+                if (category == "image") {
+                    builder.setMessage("사진을 등록하시겠습니까 ?")
+                } else if (category == "profile") {
+                    builder.setMessage("프로필사진을 변경하시겠습니까 ?")
                 } else {
-                     builder.setMessage("동영상을 등록하시겠습니까 ?")
-                 }
+                    builder.setMessage("동영상을 등록하시겠습니까 ?")
+                }
 
 
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
@@ -300,13 +302,17 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                             var idx = 0
                             var idxn = 0
 
-                            if (category == "image") {
+                            if (category == "image" || category == "profile") {
 
                                 for (strPo in selected) {
                                     result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
                                     name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
 
 //                                    Log.d("yjs", "Path : " + photoList[0].photoPath + photoList[0].displayName)
+                                }
+
+                                if (category == "profile") {
+                                    Toast.makeText(context, "프로필 사진이 변경 되었습니다.", Toast.LENGTH_SHORT).show()
                                 }
 
                                 val returnIntent = Intent()
@@ -335,12 +341,14 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                                 returnIntent.putExtra("videos", result)
                                 returnIntent.putExtra("displayname", name)
                                 returnIntent.putExtra("ids", ids)
+                                returnIntent.action = "REGION_CHANGE"
+                                sendBroadcast(intent)
                                 setResult(RESULT_OK, returnIntent)
                                 finish()
                             }
                         })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
+                            dialog.cancel()
                         })
                 val alert = builder.create()
                 alert.show()
@@ -353,7 +361,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-        if (category == "image") {
+        if (category == "image" || category == "profile") {
 
             val strPo = position.toString()
 
@@ -380,20 +388,38 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     }
 
                 } else {
-                    if (count + selected.size > 9) {
-                        Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                        return
+                    if (category == "image") {
+                        if (count + selected.size > 9) {
+                            Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+
+                        selected.add(strPo)
+
+                        countTV.text = selected.size.toString()
+
+                        val adapter = selectGV.getAdapter()
+                        if (adapter != null) {
+                            val f = adapter as ImageAdapter
+                            (f as BaseAdapter).notifyDataSetChanged()
+                        }
+                    } else {
+                        if (count + selected.size > 0) {
+                            Toast.makeText(context, "프로필 사진변경은 1장만 선택하여 주세요.", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+
+                        selected.add(strPo)
+
+                        countTV.text = selected.size.toString()
+
+                        val adapter = selectGV.getAdapter()
+                        if (adapter != null) {
+                            val f = adapter as ImageAdapter
+                            (f as BaseAdapter).notifyDataSetChanged()
+                        }
                     }
 
-                    selected.add(strPo)
-
-                    countTV.text = selected.size.toString()
-
-                    val adapter = selectGV.getAdapter()
-                    if (adapter != null) {
-                        val f = adapter as ImageAdapter
-                        (f as BaseAdapter).notifyDataSetChanged()
-                    }
                 }
             }
         } else {
@@ -423,7 +449,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     }
 
                 } else {
-                    if (selected.size  + 1 > 1) {
+                    if (selected.size + 1 > 1) {
                         Toast.makeText(context, "동영상은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                         return
                     }
