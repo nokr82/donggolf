@@ -49,10 +49,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     var room_id = ""
     var founder = ""
+    var founder_id = ""
     var chatTitle = ""
 
     var first_id = -1
     var last_id = -1
+
+    var friendyn = 0
 
     var room_type = -1
 
@@ -188,6 +191,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val intent = Intent(context, ChatMemberActivity::class.java)
             intent.putExtra("founder",founder)
             intent.putExtra("room_id",room_id)
+            intent.putExtra("founder_id",founder_id)
             intent.putExtra("division","0")
             startActivity(intent)
         }
@@ -196,6 +200,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val intent = Intent(context, ChatMemberActivity::class.java)
             intent.putExtra("founder",founder)
             intent.putExtra("room_id",room_id)
+            intent.putExtra("founder_id",founder_id)
             intent.putExtra("division","0")
             startActivity(intent)
         }
@@ -213,14 +218,21 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         addChatMemberLL.setOnClickListener {
-            val intent = Intent(context, SelectMemberActivity::class.java)
-            intent.putExtra("founder",founder)
-            intent.putExtra("room_id",room_id)
-            intent.putExtra("member_count",memberList.size)
-            intent.putExtra("member_ids",mate_id)
-            intent.putExtra("member_nicks",mate_nick)
-            intent.putExtra("division","0")
-            startActivityForResult(intent,RESET)
+
+            if (founder_id.toInt() == PrefUtils.getIntPreference(context,"member_id") || friendyn == 1){
+                val intent = Intent(context, SelectMemberActivity::class.java)
+                intent.putExtra("founder",founder)
+                intent.putExtra("room_id",room_id)
+                intent.putExtra("member_count",memberList.size)
+                intent.putExtra("member_ids",mate_id)
+                intent.putExtra("member_nicks",mate_nick)
+                intent.putExtra("division","0")
+                startActivityForResult(intent,RESET)
+            } else {
+                Toast.makeText(context,"1촌이 아니시면 대화멤버를 추가하실 수 없습니다..",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
         }
 
         settingmoreRL.setOnClickListener{
@@ -484,6 +496,71 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok") {
                     val list = response.getJSONArray("list")
                     val room = response.getJSONObject("chatroom")
+
+                    val members = response.getJSONArray("members")
+
+
+                    countTV.setText(members.length().toString())
+
+                    memberlistLL.removeAllViews()
+                    addNickLL.removeAllViews()
+                    mate_id.clear()
+                    val count = members.length() - 3
+
+                    for (i in 0 until members.length()){
+                        val item = members.get(i) as JSONObject
+                        val member = item.getJSONObject("Member")
+                        val id = Utils.getString(member,"id")
+                        mate_id.add(id)
+                        val gander = Utils.getString(member,"sex")
+                        val nick = Utils.getString(member,"nick")
+                        val profile_img = Utils.getString(member,"profile_img")
+
+                        var view:View = View.inflate(context, R.layout.item_profile, null)
+                        var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
+
+                        var image = Config.url + profile_img
+                        ImageLoader.getInstance().displayImage(image, profileIV, Utils.UILoptionsUserProfile)
+
+                        memberlistLL.addView(view)
+
+
+                        var v = View.inflate(context, R.layout.item_nick, null)
+                        var fv = View.inflate(context, R.layout.item_nick, null)
+                        val nickTV = v.findViewById(R.id.nickTV) as TextView
+                        val female = fv.findViewById(R.id.nickTV) as TextView
+                        nickTV.setTextColor(Color.parseColor("#000000"))
+                        female.setTextColor(Color.parseColor("#EF5C34"))
+
+                        if (i == 0) {
+                            nickTV.setText(nick)
+                            if (gander == "1"){
+                                nickTV.setText("/")
+                                addNickLL.addView(v)
+                                female.setText(nick)
+                                addNickLL.addView(fv)
+                            } else {
+                                addNickLL.addView(v)
+                            }
+                        } else if (i < 3) {
+                            nickTV.setText("/"+nick)
+                            if (gander == "1"){
+                                nickTV.setText("/")
+                                addNickLL.addView(v)
+                                female.setText(nick)
+                                addNickLL.addView(fv)
+                            } else {
+                                addNickLL.addView(v)
+                            }
+                        } else if (i == 3) {
+                            nickTV.setText("외 " + count.toString() + "명")
+                            addNickLL.addView(v)
+                        }
+
+                    }
+
+
+
 
 //                    val roomtitle = Utils.getString(room,"title")
 //                    chattitleTV.setText(roomtitle)
@@ -836,6 +913,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     }
 
                     val members = response!!.getJSONArray("chatmember")
+                    friendyn = response!!.getInt("friendyn")
                     var roomtitle = ""
                     memberlistLL.removeAllViews()
                     if (members != null && members.length() > 0){
@@ -852,6 +930,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (PrefUtils.getIntPreference(context,"member_id") != id.toInt()){
                                 chat_member_id = id.toInt()
                             }
+                            founder_id = id
 
 //                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
@@ -863,32 +942,35 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val female = fv.findViewById(R.id.nickTV) as TextView
                             nickTV.setTextColor(Color.parseColor("#000000"))
                             female.setTextColor(Color.parseColor("#EF5C34"))
-                            if (i == 0) {
-                                nickTV.setText(nick)
-                                if (gander == "1"){
-                                    nickTV.setText("/")
-                                    addNickLL.addView(v)
-                                    female.setText(nick)
-                                    addNickLL.addView(fv)
-                                } else {
-                                    addNickLL.addView(v)
-                                }
-                            } else if (i < 3) {
-                                nickTV.setText("/"+nick)
-                                if (gander == "1"){
-                                    nickTV.setText("/")
-                                    addNickLL.addView(v)
-                                    female.setText(nick)
-                                    addNickLL.addView(fv)
-                                } else {
-                                    addNickLL.addView(v)
-                                }
-                            } else if (i == 3) {
-                                nickTV.setText("외 " + count.toString() + "명")
-                                addNickLL.addView(v)
-                            }
+//                            if (i == 0) {
+//                                nickTV.setText(nick)
+//                                if (gander == "1"){
+//                                    nickTV.setText("/")
+//                                    addNickLL.addView(v)
+//                                    female.setText(nick)
+//                                    addNickLL.addView(fv)
+//                                } else {
+//                                    addNickLL.addView(v)
+//                                }
+//                            } else if (i < 3) {
+//                                nickTV.setText("/"+nick)
+//                                if (gander == "1"){
+//                                    nickTV.setText("/")
+//                                    addNickLL.addView(v)
+//                                    female.setText(nick)
+//                                    addNickLL.addView(fv)
+//                                } else {
+//                                    addNickLL.addView(v)
+//                                }
+//                            } else if (i == 3) {
+//                                nickTV.setText("외 " + count.toString() + "명")
+//                                addNickLL.addView(v)
+//                            }
 
 //                            chattitleTV.setText(roomtitle)
+
+
+
 
                             var view:View = View.inflate(context, R.layout.item_profile, null)
                             var profileIV:CircleImageView = view.findViewById(R.id.profileIV)

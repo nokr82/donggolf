@@ -90,6 +90,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", sidotype)
                 intent.putExtra("region_id", id)
+                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -101,6 +102,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("goguntype", sidotype)
 //                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
+                PrefUtils.setPreference(context, "region_id", region_id)
 //                intent.putExtra("region_id2", id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
@@ -132,6 +134,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", goguntype)
                 intent.putExtra("region_id", region_id)
+                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
