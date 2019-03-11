@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -96,21 +97,18 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                 alert.show()
             }
 
-            var intent = getIntent()
 
             val get_category_id = intent.getStringExtra("category_id")
-            val mate_id = intent.getStringExtra("mate_id")
+            val mate_id = intent.getSerializableExtra("mate_id")
             println("----mate_id : $mate_id")
+            var intent = Intent()
+            intent.putExtra("mate_id",mate_id)
+            intent.putExtra("category_id",category_id)
+            intent.putExtra("get_category_id",get_category_id)
 
-            acceptMates(category_id,mate_id)
+            setResult(Activity.RESULT_OK,intent)
+            finish()
 
-//            intent.action = "RESET_CATEGORY"
-//            sendBroadcast(intent)
-//            intent.putExtra("CategoryID", category_id)
-//            intent.putExtra("category_id",get_category_id)
-//            setResult(RESULT_OK,intent)
-
-//            finish()
         }
 
         finishLL.setOnClickListener {
@@ -234,56 +232,6 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     getCategoryList()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
-            }
-        })
-    }
-
-    fun acceptMates(category_id: String,member_id:String) {
-//        mateList.clear()
-//
-//        for (i in 0 until mateRequestList.size) {
-//            if(mateRequestList.get(i).getBoolean("check")) {
-//                mateList.add(mateRequestList.get(i).getInt("mate_id"))
-//            }
-//        }
-
-        val params = RequestParams()
-//        params.put("mate_id", mateList)
-//        Log.d("메이트",mateList.toString())
-        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id",  member_id)
-        /*     if (mateList != null){
-                 if (mateList!!.size != 0){
-                     for (i in 0..mateList!!.size - 1){
-                         params.put("mate_id[" + i + "]",  mateList.get(i))
-     //                    params.put("mate_id[" + i + "]",  mateList.get(i))
-                     }
-                 }
-             }*/
-        params.put("category_id", category_id)
-        params.put("status", "m")
-
-        MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-//              Log.d("리스븐",response.toString())
-                val result = response!!.getString("result")
-                if (result == "ok") {
-                    intent.action = "RESET_CATEGORY"
-                    sendBroadcast(intent)
-//            intent.putExtra("CategoryID", category_id)
-//            intent.putExtra("category_id",get_category_id)
-                    setResult(RESULT_OK,intent)
-
-                    finish()
                 }
             }
 

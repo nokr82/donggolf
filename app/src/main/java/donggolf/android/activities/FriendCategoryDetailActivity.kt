@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -27,6 +28,7 @@ class FriendCategoryDetailActivity : RootActivity() {
 
     var mateList = ArrayList<JSONObject>()
     var mateUpdate = ArrayList<Int>()
+    var matemove = ArrayList<Int>()
     lateinit var friendAdapter : MateListAdapter
 
     var checkAll = false
@@ -138,9 +140,23 @@ class FriendCategoryDetailActivity : RootActivity() {
 
         //이동
         moveTV.setOnClickListener {
+            matemove.clear()
+            for (i in 0 until mateList.size) {
+                Log.d("메이트리스트",mateList.get(i).toString())
+                Log.d("불리언",mateList.get(i).getBoolean("check").toString())
+                if (mateList.get(i).getBoolean("check")){
+                    matemove.add(mateList.get(i).getInt("mate_id"))
+
+                }else{
+
+                }
+
+            }
             //카테고리 고르라고
             val intent = Intent(context, FriendReqSelectCategoryActivity::class.java)
             intent.putExtra("category_id",category_id.toString())
+            intent.putExtra("mate_id",matemove)
+            Log.d("메이트아디",matemove.toString())
             startActivityForResult(intent,MOVEtoCATEGORY)
         }
 
@@ -195,7 +211,8 @@ class FriendCategoryDetailActivity : RootActivity() {
         btn_back.setOnClickListener {
             Utils.hideKeyboard(this)
             var intent = Intent()
-            setResult(Activity.RESULT_OK)
+            intent.putExtra("reset","reset")
+            setResult(Activity.RESULT_OK,intent)
             finish()
         }
 
@@ -208,11 +225,15 @@ class FriendCategoryDetailActivity : RootActivity() {
             when(requestCode) {
                 MOVEtoCATEGORY -> {
 
-                    if (data!!.getStringExtra("CategoryID") != null && data!!.getStringExtra("category_id") != null) {
-                        val selCateg = data!!.getStringExtra("CategoryID")
+                    if (data != null) {
                         val category_id = data!!.getStringExtra("category_id")
-                        //println("category id : $selCateg")
-                        moveMateOtherCategory(selCateg, category_id)
+                        val mate_id = data!!.getSerializableExtra("mate_id")
+                        val get_category_id = data!!.getStringExtra("get_category_id")
+                        Log.d("스트링",mate_id.toString())
+                        Log.d("스트링",get_category_id)
+                        Log.d("스트링",category_id)
+                        moveMateOtherCategory(mate_id as ArrayList<Int>, category_id,get_category_id)
+                        finish()
                     }
                 }
 
@@ -225,7 +246,7 @@ class FriendCategoryDetailActivity : RootActivity() {
         }
     }
 
-    fun moveMateOtherCategory(selCateg : String,nowCategory_id:String){
+    fun moveMateOtherCategory(member_id:ArrayList<Int> ,nowCategory_id:String,selCateg:String){
 
         mateUpdate.clear()
         for (i in 0 until mateList.size) {
@@ -235,9 +256,16 @@ class FriendCategoryDetailActivity : RootActivity() {
         }
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id", mateUpdate)//넘길 친구목록
-        params.put("category_id", selCateg)//이동할 카테고리 id
-        params.put("now_category_id", nowCategory_id)//이동할 카테고리 id
+//        params.put("mate_id", mateUpdate)//넘길 친구목록
+        if (member_id != null){
+            if (member_id!!.size != 0){
+                for (i in 0..member_id!!.size - 1){
+                    params.put("mate_id[" + i + "]",  member_id.get(i))
+                }
+            }
+        }
+        params.put("category_id", nowCategory_id)//이동할 카테고리 id
+//        params.put("now_category_id", nowCategory_id)//이동할 카테고리 id
 
         MateAction.update_mates_status(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -256,6 +284,7 @@ class FriendCategoryDetailActivity : RootActivity() {
 
                         mateList.add(mate)
                     }
+                    finish()
                     friendAdapter.notifyDataSetChanged()
                 } else if (result == "empty") {
                     mateList.clear()
