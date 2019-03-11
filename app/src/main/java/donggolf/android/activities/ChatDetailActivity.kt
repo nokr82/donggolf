@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AbsListView
 import android.widget.BaseAdapter
@@ -108,6 +110,26 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         chatLV.adapter = adapter
         chatLV.setOnScrollListener(this)
+
+
+
+        contentET.addTextChangedListener(object : TextWatcher {
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length==999){
+                    Toast.makeText(context,"한번에 입력되는 글자 크기는 1,000자 입니다.",Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun afterTextChanged(count: Editable) {
+
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+
+            }
+        })
 
 
         if (intent.getStringExtra("founder") != null){
