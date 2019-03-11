@@ -240,6 +240,8 @@ class FriendReqSelectCategoryActivity : RootActivity() {
         MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 Log.d("결과",response.toString())
+                Toast.makeText(context,"친구추가되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
