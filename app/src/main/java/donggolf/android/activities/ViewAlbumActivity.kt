@@ -5,11 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -28,12 +24,10 @@ import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import donggolf.android.adapters.ViewAlbumAdapter
-import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
-import kotlinx.android.synthetic.main.findpicture_gridview_item.view.*
+import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
 import java.io.ByteArrayInputStream
-import java.io.IOException
 import java.util.*
 
 class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
@@ -43,16 +37,15 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
     private lateinit var eachViewAdapter : ViewAlbumAdapter
     private var albumList = ArrayList<JSONObject>()//Path Array
 
-    val GALLERY = 2
     var tmp_member_id = 0
     var login_id = 0
 
     var clickedItmeCnt = 0
     var selectedImageList = ArrayList<String>()
-    var selectedImageViewList:ArrayList<String> = ArrayList<String>()
     var selImgViewPositions = ArrayList<Int>()
 
-    var ADD_POST = 1000
+    var p_type = -1
+
 
     var SELECT_PICTURE = 100
 
@@ -129,11 +122,13 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_posting -> {
-                           /* val intent = Intent(context, AddPostActivity::class.java)
-                            intent.putExtra("category",1)
-                            intent.putExtra("image_uri", selectedImageViewList)
-                            startActivity(intent)*/
-                            permissionimage(2)
+                            p_type = 1
+                            if (selected.size > 1) {
+                                Toast.makeText(context, "[ 프로필 사진변경은 1장만 선택하여 주세요", Toast.LENGTH_SHORT).show()
+                                return@setOnMenuItemClickListener false
+                            }
+
+                            change_profile()
 
                             return@setOnMenuItemClickListener true
                         }
@@ -145,39 +140,6 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
         })
 
-//        selectGV.setOnItemClickListener { parent, view, position, id ->
-//
-//            println("------clickeditemcnt$clickedItmeCnt    albumlist ${albumList.size}")
-//
-//            var is_duplicateClicks= albumList[position].getBoolean("duplicateClicks")
-//            if (clickedItmeCnt <= albumList.size) {
-//
-//                var dc_tf = albumList[position].getBoolean("duplicateClicks")
-//
-//                println("temp position item : $dc_tf")
-//                if (dc_tf){
-//                    albumList[position].put("duplicateClicks", !dc_tf)
-//                    println("removed item : ${selImgViewPositions-1}")
-//                    selImgViewPositions.removeAt(selImgViewPositions.size - (position - 1))
-//                    clickedItmeCnt--
-//                } else {
-//                    albumList[position].put("duplicateClicks", !dc_tf)
-//                    clickedItmeCnt++
-//                    albumList[position].put("select_album_img_cnt", clickedItmeCnt)
-//                    selectedImageList.add(albumList[position].getString("image_id"))
-//                    selectedImageViewList.add(Config.url + albumList[position].getString("image_uri"))
-//                    Log.d("이미지배열",selectedImageViewList.toString())
-//                    selImgViewPositions.add(position)
-//                }
-//
-//                println("----clickeditemcnt$clickedItmeCnt")
-//
-//                println(selImgViewPositions)
-//
-//                eachViewAdapter.notifyDataSetChanged()
-//            }
-//
-//        }
 
 
     }
@@ -185,56 +147,6 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-//        if (resultCode == Activity.RESULT_OK && resultCode == GALLERY) {
-//            if (data != null)
-//            {
-//                val contentURI = data.data
-//                Log.d("갤러리",contentURI.toString())
-//                //content://media/external/images/media/1200
-//
-//                try
-//                {
-//                    //갤러리에서 가져온 이미지를 프로필에 세팅
-//                    var thumbnail = MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
-//                    val resized = Utils.resizeBitmap(thumbnail, 100)
-////                            imgProfile.setImageBitmap(resized)
-//
-//                    //전송하기 위한 전처리
-//                    //먼저 ImageView에 세팅하고 세팅한 이미지를 기반으로 작업
-//                    val bitmap = resized
-//                    val img = ByteArrayInputStream(Utils.getByteArray(bitmap))
-//
-//                    //이미지 전송
-//                    val params = RequestParams()
-//                    params.put("files", img)
-//                    params.put("type", "image")
-//                    params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-//
-//                    MemberAction.update_info(params, object : JsonHttpResponseHandler() {
-//                        override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-//                            //getTempUserInformation("image")
-//                            getProfilImageList()
-//                        }
-//
-//                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-//                            println(responseString)
-//                        }
-//
-//                        override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-//                            if (errorResponse != null)
-//                                println(errorResponse.getString("message"))
-//                        }
-//                    })
-//
-//
-//                }
-//                catch (e: IOException) {
-//                    e.printStackTrace()
-//                    Toast.makeText(context, "실패", Toast.LENGTH_SHORT).show()
-//                }
-//
-//            }
-//        }
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 SELECT_PICTURE -> {
@@ -297,6 +209,38 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
         })
     }
+
+
+    fun change_profile(){
+
+        var profile_img =""
+        for (strPo in selected) {
+            val item = albumList.get(strPo.toInt())
+            val MemberImg = item.getJSONObject("MemberImg")
+            profile_img = Utils.getString(MemberImg,"image_uri")
+        }
+
+        //이미지 전송
+        val params = RequestParams()
+        params.put("profile_img", profile_img)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+
+        MemberAction.m_update_info(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                    Toast.makeText(context,"프로필사진이 변경되었습니다.",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                if (errorResponse != null)
+                    println(errorResponse.getString("message"))
+            }
+        })
+    }
+
 
     fun removeImages(){
 
@@ -432,28 +376,52 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 
         val strPo = position.toString()
 
-        if (selected.contains(strPo)) {
-            selected.remove(strPo)
+        if (p_type !=1){
+            if (selected.contains(strPo)) {
+                selected.remove(strPo)
 
-            val adapter = selectGV.getAdapter()
-            if (adapter != null) {
-                val f = adapter as ViewAlbumAdapter
-                (f as BaseAdapter).notifyDataSetChanged()
+                val adapter = selectGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ViewAlbumAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
+
+            } else {
+                if (selected.size > 9) {
+                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                selected.add(strPo)
+
+                val adapter = selectGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ViewAlbumAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
             }
+        }else{
+            if (selected.contains(strPo)) {
+                selected.remove(strPo)
 
-        } else {
-            if (selected.size > 9) {
-                Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                return
-            }
+                val adapter = selectGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ViewAlbumAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
 
-            selected.add(strPo)
+            } else {
 
-            val adapter = selectGV.getAdapter()
-            if (adapter != null) {
-                val f = adapter as ViewAlbumAdapter
-                (f as BaseAdapter).notifyDataSetChanged()
+
+                selected.add(strPo)
+
+                val adapter = selectGV.getAdapter()
+                if (adapter != null) {
+                    val f = adapter as ViewAlbumAdapter
+                    (f as BaseAdapter).notifyDataSetChanged()
+                }
             }
         }
+
     }
 }

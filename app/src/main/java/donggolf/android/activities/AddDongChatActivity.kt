@@ -77,6 +77,7 @@ class AddDongChatActivity : RootActivity() {
         getGugun(2)
 
         btn_cancelAddDongchat.setOnClickListener {
+            Utils.hideKeyboard(this)
             finish()
         }
 
@@ -302,6 +303,15 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
+        var max_count = peoplecountET.text.toString()
+        if (max_count.isEmpty()){
+            Utils.alert(context, "인원수를 입력해주세요.")
+            return
+        } else if (max_count.toInt() > 80){
+            Utils.alert(context, "인원 최대 제한은 80명입니다.")
+            return
+        }
+
         if (region_id == "-1") {
             Utils.alert(context, "지역 선택은 필수 입니다다.")
             return
@@ -310,8 +320,10 @@ class AddDongChatActivity : RootActivity() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         params.put("title", title)
+        params.put("max_count", max_count.toInt())
         params.put("introduce", content)
         params.put("regions", region_id)
+
 
         if (profile == null) {
             Utils.alert(context, "프로필사진은 필수 입력입니다.")

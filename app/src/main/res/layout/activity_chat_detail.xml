@@ -120,6 +120,7 @@
 
                     </LinearLayout>
                     <EditText
+                        android:maxLength="1000"
                         android:id="@+id/contentET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"

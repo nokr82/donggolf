@@ -81,13 +81,16 @@
                 android:scaleType="centerCrop"
                 android:src="@mipmap/icon_profile_l"
                 android:id="@+id/imgProfile"/>
+
             <ImageView
                 android:id="@+id/addProfImg"
                 android:layout_width="25dp"
                 android:layout_height="20dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
+                android:layout_marginEnd="4dp"
                 android:layout_marginRight="15dp"
+                android:layout_toStartOf="@+id/mngTXPhotoCnt"
                 android:background="@drawable/btn_add_photo" />
 
             <TextView

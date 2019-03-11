@@ -159,7 +159,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 }
             }
         } else {
-            item.timeTV.setText("")
+            val since = Utils.since(room_created)
+            item.timeTV.setText(since)
         }
 
         if (chatmember.length() == 2){
@@ -185,7 +186,14 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         if (title != null && title.length > 0) {
             item.nickTV.visibility = View.VISIBLE
             item.addNickLL.visibility = View.GONE
-            item.nickTV.setText(title)
+//            item.nickTV.setText(title)
+            if (title.length > 15){
+                var sub = title.substring(0,15)
+                item.nickTV.setText(sub + "...")
+            } else {
+                item.nickTV.setText(title)
+            }
+
         } else {
             item.nickTV.visibility = View.GONE
             item.addNickLL.visibility = View.VISIBLE

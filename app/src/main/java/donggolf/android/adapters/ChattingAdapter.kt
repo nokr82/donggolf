@@ -68,6 +68,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var difference = peoplecount - read_count
         var type = Utils.getString(chatting,"type")
 
+        var room = json.getJSONObject("Chatroom")
+
         item.userprofileIV.setOnClickListener {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("member_id", send_member_id)
@@ -110,19 +112,22 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
         }
 
-
         var text_size = Utils.getString(json,"text_size")
         if (text_size == "1"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
         } else if (text_size == "2"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
         } else if (text_size == "3"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
         } else if (text_size == "4"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
         }
 
@@ -142,9 +147,16 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.mycontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.myimageIV, Utils.UILoptionsUserProfile)
-            } else {
+            } else if (type == "c"){
                 item.myimageIV.visibility = View.GONE
                 item.mycontentTV.visibility = View.VISIBLE
+            }  else if (type == "d"){
+                item.myLL.visibility = View.GONE
+                item.userLL.visibility = View.VISIBLE
+                item.usernickTV.visibility = View.GONE
+                item.userprofileIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
+                item.usercontentTV.setText(content)
             }
 
         } else {
@@ -152,6 +164,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.userLL.visibility = View.VISIBLE
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
+            item.userprofileIV.visibility = View.VISIBLE
 
             if (type == "i"){
                 item.userimageIV.visibility = View.VISIBLE
@@ -161,9 +174,10 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             } else if (type == "c"){
                 item.userimageIV.visibility = View.GONE
                 item.usercontentTV.visibility = View.VISIBLE
-            } else {
-                item.userimageIV.visibility = View.GONE
-                item.usercontentTV.visibility = View.GONE
+            } else  if (type == "d"){
+                item.usernickTV.visibility = View.GONE
+                item.userprofileIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
             }
 
             val today = Utils.todayStr()
