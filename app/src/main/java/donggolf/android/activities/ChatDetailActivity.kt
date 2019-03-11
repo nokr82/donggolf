@@ -116,7 +116,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         contentET.addTextChangedListener(object : TextWatcher {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length==999){
+                if (s.length==1000){
                     Toast.makeText(context,"한번에 입력되는 글자 크기는 1,000자 입니다.",Toast.LENGTH_SHORT).show()
                 }
             }
