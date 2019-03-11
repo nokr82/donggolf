@@ -77,6 +77,7 @@ class AddDongChatActivity : RootActivity() {
         getGugun(2)
 
         btn_cancelAddDongchat.setOnClickListener {
+            Utils.hideKeyboard(this)
             finish()
         }
 

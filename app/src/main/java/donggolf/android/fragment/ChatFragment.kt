@@ -848,7 +848,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     if (data!!.getStringExtra("reset") != null) {
                         adapterData.clear()
                         page = 1
-                        getmychat(1)
+                        if (ChatOnRL.visibility == View.VISIBLE) {
+                            getmychat(1)
+                        } else {
+                            getmychat(2)
+                        }
 //                        timerStart()
                     }
                 }

@@ -386,6 +386,7 @@ class SelectMemberActivity : RootActivity() {
         params.put("mate_id", mate_ids)
         params.put("room_id", room_id)
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type", "add")
 
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
