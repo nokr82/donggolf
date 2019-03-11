@@ -38,7 +38,6 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import kotlin.collections.ArrayList
 
-
 class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
@@ -106,7 +105,6 @@ class MainDetailActivity : RootActivity() {
         intent = intent
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
-        cmtET.hint = "테스트중입니다"
 
         //댓글 관련 어댑터
         commentAdapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,commentList)

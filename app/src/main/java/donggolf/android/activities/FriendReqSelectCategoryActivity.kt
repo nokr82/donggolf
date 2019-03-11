@@ -143,7 +143,7 @@ class FriendReqSelectCategoryActivity : RootActivity() {
 
                     selCategAdapter.notifyDataSetChanged()
 
-                    if (categoryList.size == 1){
+                /*    if (categoryList.size == 1){
                         val builder = AlertDialog.Builder(context)
                         val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
                         builder.setView(dialogView)
@@ -177,7 +177,7 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                             addMateCategory(Utils.getString(dialogView.categoryTitleET))
                             alert.dismiss()
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -241,6 +241,10 @@ class FriendReqSelectCategoryActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 Log.d("결과",response.toString())
                 Toast.makeText(context,"친구추가되었습니다.", Toast.LENGTH_SHORT).show()
+                var intent = Intent()
+                intent.action = "ADD_FRIEND"
+                sendBroadcast(intent)
+
                 finish()
             }
 
