@@ -7,20 +7,17 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
-import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
 import donggolf.android.actions.PostAction
-import donggolf.android.adapters.MyPostAdapter
+import donggolf.android.adapters.MainAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_my_post_mng.*
 import kotlinx.android.synthetic.main.item_my_post_manage.view.*
 import org.json.JSONArray
@@ -36,9 +33,9 @@ class MyPostMngActivity : RootActivity() {
 
     var DELETED = 103
     //adapter 3개 연결
-    lateinit var myPostAdapter: MyPostAdapter
-    lateinit var myCommentPostAdapter: MyPostAdapter
-    lateinit var myStoredPostAdapter: MyPostAdapter
+    lateinit var myPostAdapter: MainAdapter
+    lateinit var myCommentPostAdapter: MainAdapter
+    lateinit var myStoredPostAdapter: MainAdapter
 
     var myPostList = ArrayList<JSONObject>()
     var myCommentPostList = ArrayList<JSONObject>()
@@ -65,9 +62,9 @@ class MyPostMngActivity : RootActivity() {
             finish()
         }
 
-        myPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myPostList)
-        myCommentPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myCommentPostList)
-        myStoredPostAdapter = MyPostAdapter(context, R.layout.item_my_post_manage, myStoredPostList)
+        myPostAdapter = MainAdapter(context, R.layout.main_listview_item, myPostList)
+        myCommentPostAdapter = MainAdapter(context, R.layout.main_listview_item, myCommentPostList)
+        myStoredPostAdapter = MainAdapter(context, R.layout.main_listview_item, myStoredPostList)
 
         myPostLV.adapter = myPostAdapter
         myCommentLV.adapter = myCommentPostAdapter
@@ -278,6 +275,7 @@ class MyPostMngActivity : RootActivity() {
 
                         val data = response!!.getJSONArray("contents")
                         myPostList.clear()
+                        Log.d("데이타",data.toString())
                         for (i in 0 until data.length()) {
                             myPostList.add(data[i] as JSONObject)
                             myPostList[i].put("willDel", false)

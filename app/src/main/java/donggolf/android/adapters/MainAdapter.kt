@@ -61,6 +61,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         }
 
         var json = data.get(position)
+        Log.d("이미지",json.toString())
         var Content = json.getJSONObject("Content")
         val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")

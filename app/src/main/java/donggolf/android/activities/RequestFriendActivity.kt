@@ -2,9 +2,7 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +35,13 @@ class RequestFriendActivity : RootActivity() {
     val SELECT_CATEGORY = 101
 
     var wait = ""
-
+    internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                finish()
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_friend)
@@ -46,6 +50,11 @@ class RequestFriendActivity : RootActivity() {
 
         matesRequestAdapter = MateManageAdapter(context, R.layout.item_mate_manage, mateRequestList,this,wait)
         requestFriends.adapter = matesRequestAdapter
+
+        var filter1 = IntentFilter("ADD_FRIEND")
+        registerReceiver(reloadReciver, filter1)
+
+
 
         val type = intent.getStringExtra("type")
         if (type == "waiting") {
@@ -304,6 +313,8 @@ class RequestFriendActivity : RootActivity() {
         })
     }
 
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
@@ -419,7 +430,12 @@ class RequestFriendActivity : RootActivity() {
             }
         })
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        if (reloadReciver != null) {
+            context!!.unregisterReceiver(reloadReciver)
+        }
+    }
     override fun onBackPressed() {
         Utils.hideKeyboard(context)
         var intent = Intent()
