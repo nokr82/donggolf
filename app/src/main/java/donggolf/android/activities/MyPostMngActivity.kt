@@ -1,11 +1,13 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -18,6 +20,7 @@ import donggolf.android.adapters.MyPostAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.activity_my_post_mng.*
 import kotlinx.android.synthetic.main.item_my_post_manage.view.*
 import org.json.JSONArray
@@ -26,13 +29,14 @@ import org.json.JSONObject
 
 class MyPostMngActivity : RootActivity() {
 
-    lateinit var context : Context
+    lateinit var context: Context
     var member_id = 0
     var type = ""
     var nick = ""
 
+    var DELETED = 103
     //adapter 3개 연결
-    lateinit var myPostAdapter : MyPostAdapter
+    lateinit var myPostAdapter: MyPostAdapter
     lateinit var myCommentPostAdapter: MyPostAdapter
     lateinit var myStoredPostAdapter: MyPostAdapter
 
@@ -45,11 +49,11 @@ class MyPostMngActivity : RootActivity() {
         setContentView(R.layout.activity_my_post_mng)
 
         context = this
-        member_id = PrefUtils.getIntPreference(context,"member_id")
+        member_id = PrefUtils.getIntPreference(context, "member_id")
 
         var intent = getIntent()
 
-        if (intent.getStringExtra("founder") != null){
+        if (intent.getStringExtra("founder") != null) {
             member_id = intent.getStringExtra("founder").toInt()
             println("-----------member_id$member_id")
             type = intent.getStringExtra("type")
@@ -77,52 +81,13 @@ class MyPostMngActivity : RootActivity() {
             myPost_myPostTV.setTextColor(Color.parseColor("#0EDA2F"))
             myPost_myPost_view.visibility = View.VISIBLE
             myPostLV.visibility = View.VISIBLE
+            loaddata()
 
-            val params = RequestParams()
-            params.put("member_id", member_id)
-
-            MemberAction.my_post_load(params,object : JsonHttpResponseHandler(){
-
-                override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-
-                    try {
-                        println("내 글 보기 :: $response")
-                        val result = response!!.getString("result")
-                        if ("ok" == result) {
-
-                            val data = response!!.getJSONArray("contents")
-                            myPostList.clear()
-                            for (i in 0 until data.length()){
-                                myPostList.add(data[i] as JSONObject)
-                                myPostList[i].put("willDel", false)
-                            }
-                            myPostAdapter.notifyDataSetChanged()
-
-                            if (nick != ""){
-                                myPost_myPostTV.text = nick + "님의 게시물(" + data.length() +")"
-                            } else {
-                                myPost_myPostTV.text = "내 게시물(" + data.length() +")"
-                            }
-//                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
-                        }
-
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                    println("DataLoad failed. Because of")
-                    println(errorResponse)
-                }
-
-            })
         }
         myPostLV.setOnItemClickListener { parent, view, position, id ->
             val data = myPostList.get(position)
             val content = data.getJSONObject("Content")
-            var content_id =  Utils.getString(content,"id")
+            var content_id = Utils.getString(content, "id")
 
             MoveMainDetailActivity(content_id)
         }
@@ -142,7 +107,7 @@ class MyPostMngActivity : RootActivity() {
             params.put("member_id", member_id)
             params.put("type", "comment")
 
-            MemberAction.my_post_load(params,object : JsonHttpResponseHandler(){
+            MemberAction.my_post_load(params, object : JsonHttpResponseHandler() {
 
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
@@ -153,13 +118,13 @@ class MyPostMngActivity : RootActivity() {
 
                             val data = response!!.getJSONArray("contents")
                             myCommentPostList.clear()
-                            for (i in 0 until data.length()){
+                            for (i in 0 until data.length()) {
                                 myCommentPostList.add(data[i] as JSONObject)
                                 myCommentPostList[i].put("willDel", false)
                             }
                             myCommentPostAdapter.notifyDataSetChanged()
 
-                            myPost_commentTV.text = "댓글단 글(" + data.length() +")"
+                            myPost_commentTV.text = "댓글단 글(" + data.length() + ")"
                         }
 
                     } catch (e: JSONException) {
@@ -182,7 +147,7 @@ class MyPostMngActivity : RootActivity() {
         myCommentLV.setOnItemClickListener { parent, view, position, id ->
             val data = myCommentPostList.get(position)
             val content = data.getJSONObject("Content")
-            var content_id =  Utils.getString(content,"id")
+            var content_id = Utils.getString(content, "id")
 
             MoveMainDetailActivity(content_id)
         }
@@ -197,7 +162,7 @@ class MyPostMngActivity : RootActivity() {
             params.put("member_id", member_id)
             params.put("type", "stored")
 
-            MemberAction.my_post_load(params,object : JsonHttpResponseHandler(){
+            MemberAction.my_post_load(params, object : JsonHttpResponseHandler() {
 
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
@@ -235,7 +200,7 @@ class MyPostMngActivity : RootActivity() {
         myStorePostLV.setOnItemClickListener { parent, view, position, id ->
             val data = myStoredPostList.get(position)
             val content = data.getJSONObject("Content")
-            var content_id =  Utils.getString(content,"id")
+            var content_id = Utils.getString(content, "id")
 
             MoveMainDetailActivity(content_id)
         }
@@ -243,36 +208,36 @@ class MyPostMngActivity : RootActivity() {
         myStorePostLV.setOnItemLongClickListener { parent, view, position, id ->
 
 
-            myStoredPostList[position].put("willDel",true)
+            myStoredPostList[position].put("willDel", true)
             myStoredPostAdapter.notifyDataSetChanged()
 
             val data = myStoredPostList.get(position)
             val contentOb = data.getJSONObject("Content")
 
-            var contIdx = Utils.getString(contentOb,"id")
+            var contIdx = Utils.getString(contentOb, "id")
 
             view.item_btn_del.setOnClickListener {
 
-                if (PrefUtils.getIntPreference(context,"member_id") != member_id){
-                    Toast.makeText(context,"타인의 게시물을 삭제할수없습니다", Toast.LENGTH_SHORT).show()
+                if (PrefUtils.getIntPreference(context, "member_id") != member_id) {
+                    Toast.makeText(context, "타인의 게시물을 삭제할수없습니다", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 val params = RequestParams()
                 params.put("content_id", contIdx)
-                params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+                params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-                PostAction.delete_favorite_content(params, object : JsonHttpResponseHandler(){
+                PostAction.delete_favorite_content(params, object : JsonHttpResponseHandler() {
                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                         try {
                             val result = response!!.getString("result")
                             if (result == "ok") {
                                 myStoredPostList.remove(myStoredPostList.removeAt(position))
                                 myStoredPostAdapter.notifyDataSetChanged()
-                                Toast.makeText(context,"보관글을 삭제했습니다", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "보관글을 삭제했습니다", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(context, "보관글 삭제에 실패했습니다", Toast.LENGTH_SHORT).show()
                             }
-                        } catch (e : JSONException) {
+                        } catch (e: JSONException) {
                             e.printStackTrace()
                         }
                     }
@@ -295,11 +260,14 @@ class MyPostMngActivity : RootActivity() {
         myPost_myPostTV.setTextColor(Color.parseColor("#0EDA2F"))
         myPost_myPost_view.visibility = View.VISIBLE
         myPostLV.visibility = View.VISIBLE
+        loaddata()
+    }
 
+    fun loaddata() {
         val params = RequestParams()
         params.put("member_id", member_id)
 
-        MemberAction.my_post_load(params,object : JsonHttpResponseHandler(){
+        MemberAction.my_post_load(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
@@ -309,20 +277,19 @@ class MyPostMngActivity : RootActivity() {
                     if ("ok" == result) {
 
                         val data = response!!.getJSONArray("contents")
-
                         myPostList.clear()
-                        for (i in 0 until data.length()){
+                        for (i in 0 until data.length()) {
                             myPostList.add(data[i] as JSONObject)
                             myPostList[i].put("willDel", false)
                         }
                         myPostAdapter.notifyDataSetChanged()
 
-                        if (nick != ""){
-                            myPost_myPostTV.text = nick + "님의 게시물(" + data.length() +")"
+                        if (nick != "") {
+                            myPost_myPostTV.text = nick + "님의 게시물(" + data.length() + ")"
                         } else {
-                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
+                            myPost_myPostTV.text = "내 게시물(" + data.length() + ")"
                         }
-//                        myPost_myPostTV.text = "내 게시글(" + data.length() +")"
+//                            myPost_myPostTV.text = "내 게시물(" + data.length() +")"
                     }
 
                 } catch (e: JSONException) {
@@ -340,14 +307,11 @@ class MyPostMngActivity : RootActivity() {
     }
 
 
-
-    fun MoveMainDetailActivity(id : String){
+    fun MoveMainDetailActivity(id: String) {
         var intent: Intent = Intent(context, MainDetailActivity::class.java)
-        intent.putExtra("id",id)
-        startActivity(intent)
+        intent.putExtra("id", id)
+        startActivityForResult(intent, DELETED)
     }
-
-
 
 
     fun setTabInit() {
@@ -363,8 +327,7 @@ class MyPostMngActivity : RootActivity() {
         myCommentLV.visibility = View.GONE
         myStorePostLV.visibility = View.GONE
 
-//        myPost_myPostTV.text = "내 게시글"
-        if (nick != ""){
+        if (nick != "") {
             myPost_myPostTV.text = nick + "님의 게시물"
         } else {
             myPost_myPostTV.text = "내 게시물"
@@ -375,49 +338,18 @@ class MyPostMngActivity : RootActivity() {
         myPost_storeTV.text = "보관 글"
     }
 
-    /*class MyPostPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-
-        override fun getItem(i: Int): Fragment {
-
-            var fragment: Fragment
-
-            val args = Bundle()
-            when (i) {
-                0 -> {
-                    fragment = FreeFragment()
-                    fragment.arguments = args
-
-                    return fragment
-                }
-                1 -> {
-                    fragment = ChatFragment()
-                    fragment.arguments = args
-
-                    return fragment
-                }
-                2 -> {
-                    fragment = FushFragment()
-                    fragment.arguments = args
-                    return fragment
-                }
-                else -> {
-                    fragment = InfoFragment()
-                    fragment.arguments = args
-                    return fragment
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                DELETED -> {
+                    if (data != null) {
+                        loaddata()
+                    }
                 }
             }
         }
+    }
 
-        override fun getCount(): Int {
-            return 4
-        }
 
-        override fun getPageTitle(position: Int): CharSequence? {
-            return ""
-        }
-
-        override fun getItemPosition(`object`: Any): Int {
-            return POSITION_NONE
-        }
-    }*/
 }
