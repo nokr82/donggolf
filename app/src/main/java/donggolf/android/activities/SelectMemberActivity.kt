@@ -544,6 +544,8 @@ class SelectMemberActivity : RootActivity() {
                 if (result == "ok") {
                     var intent = Intent()
                     intent.putExtra("reset","reset")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
                 }

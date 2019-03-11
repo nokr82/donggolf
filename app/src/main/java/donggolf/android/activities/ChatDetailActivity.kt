@@ -515,6 +515,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         ChattingAction.chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
+                println("-------------result : $result")
                 if (result == "ok") {
                     val list = response.getJSONArray("list")
                     val room = response.getJSONObject("chatroom")
@@ -582,7 +583,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     }
 
 
-
+                    println("------- first_id : ${first_id} list.size : ${list.length()} adddddddddddddddddddddddddddddd")
 
 //                    val roomtitle = Utils.getString(room,"title")
 //                    chattitleTV.setText(roomtitle)
@@ -600,6 +601,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     } else {
                         for (i in 0 until list.length()) {
+
+                            println("-------list.size : ${list.length()} adddddddddddddddddddddddddddddd")
                             val data = list.get(i) as JSONObject
 
                             if (insertCheckData(data.getJSONObject("Chatting"))) {

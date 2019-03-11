@@ -73,6 +73,7 @@
                         android:layout_weight="1"
                         android:textSize="14dp"
                         android:padding="8dp"
+                        android:minWidth="55dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/item_chat_box_oppo"
                         android:text="상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다"/>
@@ -88,7 +89,7 @@
                         android:id="@+id/userdateTV"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="0"
+                        android:layout_weight="0.5"
                         android:maxLines="1"
                         android:minWidth="300dp"
                         android:gravity="bottom"

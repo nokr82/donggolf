@@ -374,6 +374,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                         dialogView.btn_title_clear.setOnClickListener {
                             dialogView.blockcodeTV.setText("")
+                            alert.dismiss()
+
                         }
 
                         dialogView.cancleTV.setOnClickListener {
@@ -456,6 +458,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                         dialogView.btn_title_clear.setOnClickListener {
                             dialogView.blockcodeTV.setText("")
+                            alert.dismiss()
                         }
 
                         dialogView.cancleTV.setOnClickListener {

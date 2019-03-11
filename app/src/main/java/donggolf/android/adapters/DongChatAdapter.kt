@@ -51,6 +51,7 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         val member = json.getJSONObject("Member")
         val chatmember = json.getJSONArray("Chatmember")
         var nick = ""
+        var peoplecount = Utils.getString(room,"peoplecount")
         val room_created = Utils.getString(room,"room_created")
         var readdiv = Utils.getString(room,"readdiv")
         if (readdiv == "0"){
@@ -116,8 +117,8 @@ open class DongChatAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         ImageLoader.getInstance().displayImage(image, item.profPhoto, Utils.UILoptionsUserProfile)
 
         item.countTV.visibility = View.VISIBLE
-        item.countTV.setText("("+chatmember.length().toString()+")")
-
+//        item.countTV.setText("("+chatmember.length().toString()+")")
+        item.countTV.setText("("+peoplecount.toString()+")")
         return retView
 
     }

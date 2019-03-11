@@ -741,6 +741,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     val room = response.getJSONObject("chatroom")
 
                     val members = response.getJSONArray("members")
+                    val block_members = response.getJSONArray("block_members")
 
 
                     last_id = response!!.getString("last_id").toInt()
@@ -750,6 +751,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     memberlistLL.removeAllViews()
                     val count = members.length() - 3
                     mate_id.clear()
+
                     for (i in 0 until members.length()){
                         val item = members.get(i) as JSONObject
                         val member = item.getJSONObject("Member")
@@ -768,17 +770,16 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                         memberlistLL.addView(view)
 
-                        if (id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
-                            nick = Utils.getString(member,"nick")
-                            if (chatmember_block_yn == "Y"){
-                                if (message_yn == "N"){
-                                    message_yn = "Y"
-                                    Utils.alert(context, "채팅방에서 차단되었습니다.")
-                                    finish()
-                                }
-                            }
-                        }
+                    }
 
+                    for (i in 0 until block_members.length()){
+                        val item = block_members.get(i) as JSONObject
+                        val member = item.getJSONObject("Member")
+                        var id = Utils.getString(member,"id")
+                        if (id.toInt() == PrefUtils.getIntPreference(context, "member_id")){
+                            Utils.alert(context, "채팅방에서 차단되었습니다.")
+                            finish()
+                        }
                     }
 
 //                    nicknameTV.setText(roomtitle)
@@ -808,6 +809,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     if (list.length() > 0) {
                         (adapter as BaseAdapter).notifyDataSetChanged()
+                        println("-------notify")
                     }
                 }
             }
