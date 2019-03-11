@@ -623,6 +623,8 @@ class MainDetailActivity : RootActivity() {
                                     val result = response!!.getString("result")
                                     if (result == "yes") {
                                         Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                    }else if (result == "already"){
+                                        Toast.makeText(context, "차단상태입니다.", Toast.LENGTH_SHORT).show()
                                     }else {
                                         Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
                                     }
