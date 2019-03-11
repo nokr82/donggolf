@@ -105,7 +105,6 @@ class FriendReqSelectCategoryActivity : RootActivity() {
             intent.putExtra("mate_id",mate_id)
             intent.putExtra("category_id",category_id)
             intent.putExtra("get_category_id",get_category_id)
-
             setResult(Activity.RESULT_OK,intent)
             finish()
 

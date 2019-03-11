@@ -233,6 +233,9 @@ class FriendCategoryDetailActivity : RootActivity() {
                         Log.d("스트링",get_category_id)
                         Log.d("스트링",category_id)
                         moveMateOtherCategory(mate_id as ArrayList<Int>, category_id,get_category_id)
+                        var intent = Intent()
+                        intent.putExtra("reset","reset")
+                        setResult(Activity.RESULT_OK,intent)
                         finish()
                     }
                 }
