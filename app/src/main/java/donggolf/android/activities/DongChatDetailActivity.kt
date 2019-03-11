@@ -695,6 +695,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     intent.action = "CHAT_CHANGE"
                     sendBroadcast(intent)
                 }
+                comment_path.clear()
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -787,16 +788,24 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(0, data)
-                            chattingList.get(i).put("text_size", text_size)
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(0, data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
                         }
 
                     } else {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
-                            chattingList.add(data)
-                            chattingList.get(i).put("text_size", text_size)
+//                            chattingList.add(data)
+//                            chattingList.get(i).put("text_size", text_size)
+//                            chatCont.setSelection(adapter.count - 1)
+                            if (insertCheckData(data.getJSONObject("Chatting"))) {
+                                chattingList.add(data)
+                                chattingList.get(i).put("text_size",text_size)
+                            }
                             chatCont.setSelection(adapter.count - 1)
+
                         }
                     }
 
@@ -806,11 +815,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-
-                    if (list.length() > 0) {
-                        (adapter as BaseAdapter).notifyDataSetChanged()
-                        println("-------notify")
-                    }
+                    (adapter as BaseAdapter).notifyDataSetChanged()
+//                    if (list.length() > 0) {
+//                        (adapter as BaseAdapter).notifyDataSetChanged()
+//                        println("-------notify")
+//                    }
                 }
             }
 
@@ -1258,6 +1267,28 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             context.unregisterReceiver(resetReceiver)
         }
 
+    }
+
+    fun insertCheckData(data: JSONObject) : Boolean {
+
+        val check_id = Utils.getInt(data, "id")
+
+        var add = true
+
+        for (i in 0 until chattingList.size) {
+            val data = chattingList[i]
+            val chat = data.getJSONObject("Chatting")
+
+            val id = Utils.getInt(chat, "id")
+
+            if (check_id == id) {
+                add = false
+                break
+            }
+
+        }
+
+        return add
     }
 
 }

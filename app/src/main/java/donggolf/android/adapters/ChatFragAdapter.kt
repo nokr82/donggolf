@@ -159,7 +159,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 }
             }
         } else {
-            item.timeTV.setText("")
+            val since = Utils.since(created)
+            item.timeTV.setText(since)
         }
 
         if (chatmember.length() == 2){

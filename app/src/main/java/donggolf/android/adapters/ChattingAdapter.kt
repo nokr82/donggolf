@@ -68,6 +68,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var difference = peoplecount - read_count
         var type = Utils.getString(chatting,"type")
 
+        var room = json.getJSONObject("Chatroom")
+
         item.userprofileIV.setOnClickListener {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("member_id", send_member_id)
