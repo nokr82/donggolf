@@ -152,6 +152,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.userLL.visibility = View.VISIBLE
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
+            item.userprofileIV.visibility = View.VISIBLE
 
             if (type == "i"){
                 item.userimageIV.visibility = View.VISIBLE
@@ -162,8 +163,9 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.userimageIV.visibility = View.GONE
                 item.usercontentTV.visibility = View.VISIBLE
             } else {
-                item.userimageIV.visibility = View.GONE
-                item.usercontentTV.visibility = View.GONE
+                item.usernickTV.visibility = View.GONE
+                item.userprofileIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
             }
 
             val today = Utils.todayStr()

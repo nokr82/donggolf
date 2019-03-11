@@ -69,6 +69,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     var nick = ""
 
+    var timer_yn = "N"
 
     //    var comment_path: Bitmap? = null
     var comment_path: java.util.ArrayList<String> = java.util.ArrayList<String>()
@@ -373,7 +374,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             intent.putExtra("room_id", room_id)
             intent.putExtra("last_id", last_id)
             intent.putExtra("block_yn", "N")
-            startActivity(intent)
+            startActivityForResult(intent, BLOCK_MEMBER)
         }
 
         chatReportLL.setOnClickListener {
@@ -833,6 +834,8 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         timer = Timer()
         timer!!.schedule(task, 0, 1000)
 
+        timer_yn = "Y"
+
     }
 
     override fun onPause() {
@@ -840,12 +843,13 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         if (timer != null) {
             timer!!.cancel()
+            timer_yn = "N"
         }
     }
 
     override fun onResume() {
         super.onResume()
-        timerStart()
+//        timerStart()
     }
 
     override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
@@ -1124,6 +1128,12 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         memberlistLL.removeAllViews()
 
                         detail_chatting()
+
+                        if (timer_yn == "N"){
+                            timer_yn == "Y"
+                            timerStart()
+                        }
+
                     }
                 }
 
@@ -1146,7 +1156,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     add_chatting()
 
-                    timerStart()
+                    if (timer_yn == "N"){
+                        timer_yn == "Y"
+                        timerStart()
+                    }
 
 //                    if (data != null)
 //                    {
@@ -1199,6 +1212,13 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         memberlistLL.removeAllViews()
 
                         detail_chatting()
+
+                        println("_-----------timer_yn : $timer_yn")
+
+                        if (timer_yn == "N"){
+                            timer_yn == "Y"
+                            timerStart()
+                        }
                     }
                 }
             }

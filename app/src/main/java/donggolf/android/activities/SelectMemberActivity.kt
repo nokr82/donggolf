@@ -540,10 +540,13 @@ class SelectMemberActivity : RootActivity() {
 
         ChattingAction.set_dongchat_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                var intent = Intent()
-                intent.putExtra("reset","reset")
-                setResult(RESULT_OK, intent);
-                finish()
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    setResult(RESULT_OK, intent);
+                    finish()
+                }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
