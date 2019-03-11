@@ -70,11 +70,12 @@
                         android:id="@+id/usercontentTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:textSize="14dp"
                         android:padding="8dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/item_chat_box_oppo"
-                        android:text="상대방이 보낸 메시지 입니다"/>
+                        android:text="상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다상대방이 보낸 메시지 입니다"/>
 
                     <ImageView
                         android:visibility="gone"
@@ -83,21 +84,22 @@
                         android:layout_height="100dp"
                         android:scaleType="centerCrop"/>
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/userdateTV"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center">
+                        android:layout_weight="0"
+                        android:maxLines="1"
+                        android:minWidth="300dp"
+                        android:gravity="bottom"
+                        android:textSize="12dp"
+                        android:textColor="#CDCDCD"
+                        android:text="2월 26일 오후 7시 27분"/>
 
-                        <TextView
-                            android:id="@+id/userdateTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="bottom"
-                            android:textSize="12dp"
-                            android:textColor="#CDCDCD"
-                            android:text="2월 26일 오후 7시 27분"/>
-
-                    </LinearLayout>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"/>
 
                 </LinearLayout>
 
