@@ -1262,6 +1262,7 @@ class MainDetailActivity : RootActivity() {
                                 var params = RequestParams()
                                 params.put("content_id", content_id)
                                 params.put("member_id", login_id)
+                                params.put("type", "1")
 
                                 PostAction.add_report(params, object : JsonHttpResponseHandler() {
                                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
