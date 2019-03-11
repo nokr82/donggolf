@@ -686,6 +686,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
         }
 
+        if (PrefUtils.getStringPreference(context, "region_id") != null) {
+            var region_id = PrefUtils.getStringPreference(context, "region_id")
+            params.put("region", region_id)
+        }
+
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         params.put("type", type)
@@ -696,6 +701,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 var region_id2 = PrefUtils.getStringPreference(context, "region_id2")
                 params.put("region", region_id)
                 params.put("region2", region_id2)
+                println("----------region_id : $region_id")
             } else {
                 Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -709,6 +715,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     todayCount = response!!.getInt("todayCount")
                     val mychat_count = response!!.getInt("mychat_count")
                     val dongchat_count = response!!.getInt("dongchat_count")
+
                     chatcountTV.setText(mychat_count.toString())
                     dongchatcountTV.setText(dongchat_count.toString())
                     mychatcountTV.setText(mychat_count.toString())
