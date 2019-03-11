@@ -217,7 +217,14 @@
                             android:layout_margin="7dp"
                             android:textColor="#000000"
                             android:textSize="13dp" />
-
+                        <EditText
+                            android:id="@+id/cmtET2"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="댓글을 남겨주세요"
+                            android:paddingLeft="5dp"
+                            android:textSize="13dp" />
                         <donggolf.android.base.RationalRelativeLayout
                             android:id="@+id/imageRL"
                             android:layout_width="match_parent"
@@ -504,15 +511,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="horizontal">
+
                 <EditText
                     android:id="@+id/cmtET"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@null"
+                    android:background="#000000"
                     android:hint="댓글을 남겨주세요"
                     android:paddingLeft="5dp"
-                    android:singleLine="true"
                     android:textSize="13dp" />
 
 
