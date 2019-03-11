@@ -507,7 +507,10 @@ class DongchatProfileActivity : RootActivity() {
     fun add_chat_member(){
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("room_id", PrefUtils.getIntPreference(context, room_id))
+        params.put("room_id", room_id)
+        params.put("type", "in")
+
+        println("--------add_chat_member room_id : $room_id ")
 
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -515,6 +518,14 @@ class DongchatProfileActivity : RootActivity() {
                     println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
+                        val intent = Intent(context, DongChatDetailActivity::class.java)
+                        intent.putExtra("room_id", room_id)
+                        startActivityForResult(intent, DONG_CHAT)
+                        finish()
+                    } else if (result == "alreay"){
+                        val intent = Intent(context, DongChatDetailActivity::class.java)
+                        intent.putExtra("room_id", room_id)
+                        startActivityForResult(intent, DONG_CHAT)
                         finish()
                     }
                 } catch (e: JSONException) {
