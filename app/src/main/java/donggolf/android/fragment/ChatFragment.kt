@@ -518,7 +518,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 totalItemCountScroll = totalItemCount
             }
 
-            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+            override fun onScrollStateChanged(chat_list: AbsListView, newState: Int) {
+
+                if (!chat_list.canScrollVertically(-1)) {
+                    page = 1
+                    getmychat(1)
+                }
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
@@ -569,7 +574,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             }
 
-            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+            override fun onScrollStateChanged(dong_chat_list: AbsListView, newState: Int) {
+
+                if (!dong_chat_list.canScrollVertically(-1)) {
+                    page = 1
+                    getmychat(1)
+                }
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true

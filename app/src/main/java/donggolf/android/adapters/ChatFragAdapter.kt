@@ -159,7 +159,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 }
             }
         } else {
-            val since = Utils.since(created)
+            val since = Utils.since(room_created)
             item.timeTV.setText(since)
         }
 
