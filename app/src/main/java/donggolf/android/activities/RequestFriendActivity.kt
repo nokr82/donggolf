@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -408,6 +409,7 @@ class RequestFriendActivity : RootActivity() {
                 println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    Toast.makeText(context,"차단이 해제되었습니다.",Toast.LENGTH_SHORT).show()
                     getFriendList("b", 0)
                 }
             }
