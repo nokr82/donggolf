@@ -530,9 +530,13 @@ class SelectMemberActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id",block_member_ids)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("block_member_ids",block_member_ids)
         params.put("room_id", room_id)
         params.put("last_id", last_id)
+
+        println("-------blocks")
+
 
         ChattingAction.set_dongchat_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
