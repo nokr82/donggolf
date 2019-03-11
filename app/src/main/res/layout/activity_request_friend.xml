@@ -45,6 +45,14 @@
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/btn_alarm_off"
                 android:layout_alignParentRight="true"/>
+            <ImageView
+                android:id="@+id/swc_alarm_req_frd_on"
+                android:layout_width="30dp"
+                android:visibility="gone"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/btn_alarm_on"
+                android:layout_alignParentRight="true"/>
         </RelativeLayout>
 
     </LinearLayout>

@@ -41,6 +41,8 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
         item.cateTitleTV.text = Utils.getString(category,"category")
         item.item_category_count.setText(Utils.getString(category,"peoplecnt"))
 
+
+
         if (Utils.getString(category,"peoplecnt") == "0"){
             item.category_del_LL.visibility = View.VISIBLE
             item.item_category_count.visibility = View.GONE
@@ -48,7 +50,10 @@ class FriendCategoryAdapter(context: Context, view:Int, data: ArrayList<JSONObje
             item.category_del_LL.visibility = View.GONE
             item.item_category_count.visibility = View.VISIBLE
         }
-
+        if (item.cateTitleTV.text == "1촌 골퍼"){
+            item.category_del_LL.visibility = View.GONE
+            item.item_category_count.visibility = View.VISIBLE
+        }
         var listFirst = true
         var alarmTxt = ""
         if (Utils.getString(category,"new_post") == "y"){

@@ -65,6 +65,16 @@ class RequestFriendActivity : RootActivity() {
             getFriendList("b", 0)
         }
 
+
+        swc_alarm_req_frd.setOnClickListener {
+            swc_alarm_req_frd_on.visibility = View.VISIBLE
+            swc_alarm_req_frd.visibility = View.GONE
+        }
+        swc_alarm_req_frd_on.setOnClickListener {
+            swc_alarm_req_frd_on.visibility = View.GONE
+            swc_alarm_req_frd.visibility = View.VISIBLE
+        }
+
         requestFriends.setOnItemClickListener { parent, view, position, id ->
             val item = mateRequestList.get(position)
             val matemember = item.getJSONObject("MateMember")
@@ -310,27 +320,12 @@ class RequestFriendActivity : RootActivity() {
     }
 
     fun acceptMates(category_id: String,member_id:String) {
-//        mateList.clear()
-//
-//        for (i in 0 until mateRequestList.size) {
-//            if(mateRequestList.get(i).getBoolean("check")) {
-//                mateList.add(mateRequestList.get(i).getInt("mate_id"))
-//            }
-//        }
 
         val params = RequestParams()
-//        params.put("mate_id", mateList)
-//        Log.d("메이트",mateList.toString())
+
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("mate_id",  member_id)
-        /*     if (mateList != null){
-                 if (mateList!!.size != 0){
-                     for (i in 0..mateList!!.size - 1){
-                         params.put("mate_id[" + i + "]",  mateList.get(i))
-     //                    params.put("mate_id[" + i + "]",  mateList.get(i))
-                     }
-                 }
-             }*/
+
         params.put("category_id", category_id)
         params.put("status", "m")
 

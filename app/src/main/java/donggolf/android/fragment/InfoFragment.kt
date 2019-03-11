@@ -66,7 +66,6 @@ class InfoFragment : Fragment() {
     private var progressDialog: ProgressDialog? = null
 
 
-    val SELECT_PROFILE = 104
     val SELECT_STATUS = 105
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
@@ -316,9 +315,7 @@ class InfoFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                SELECT_PROFILE -> {
-                    member_info()
-                }
+
                 SELECT_STATUS -> {
                     member_info()
                 }
@@ -342,8 +339,7 @@ class InfoFragment : Fragment() {
 
                             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 
-                            val cursor =
-                                    context!!.contentResolver.query(selectedImageUri!!, filePathColumn, null, null, null)
+                            val cursor = context!!.contentResolver.query(selectedImageUri!!, filePathColumn, null, null, null)
                             if (cursor!!.moveToFirst()) {
                                 val columnIndex = cursor.getColumnIndex(filePathColumn[0])
                                 val picturePath = cursor.getString(columnIndex)
@@ -388,9 +384,6 @@ class InfoFragment : Fragment() {
 
     }
 
-    fun updateprofile(bt: Bitmap) {
-
-    }
 
 
     fun getTempUserInformation(type: String) {

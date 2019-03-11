@@ -76,6 +76,7 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
 
         }
 
+
         return retView
     }
 

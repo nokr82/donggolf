@@ -106,7 +106,8 @@ class MainDetailActivity : RootActivity() {
         intent = intent
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
-        cmtET.hint = ""
+        cmtET.hint = "테스트중입니다"
+
         //댓글 관련 어댑터
         commentAdapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,commentList)
 

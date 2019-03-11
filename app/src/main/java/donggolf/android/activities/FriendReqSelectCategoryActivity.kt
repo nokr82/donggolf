@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -29,18 +30,23 @@ class FriendReqSelectCategoryActivity : RootActivity() {
     lateinit var selCategAdapter : FriendCategoryAdapter
     var categoryList = ArrayList<JSONObject>()
 
+    var mates_id = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_req_select_category)
 
         context = this
-
+        val intent = getIntent()
+        mates_id = intent.getIntExtra("mates_id", -1)
+        Log.d("2아뒤",mates_id.toString())
         selCategAdapter = FriendCategoryAdapter(context, R.layout.item_friend_category_list, categoryList)
         selectCategoryLV.adapter = selCategAdapter
 
         btn_addCategory.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
+            builder.setView(dialogView)
+            val alert = builder.show()
             dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -57,21 +63,17 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                     // 입력하기 전에 호출된다.
                 }
             })
-
-            builder.setView(dialogView)
-                    .setPositiveButton("확인") { dialog, id ->
-
-                        var category = Utils.getString(dialogView.categoryTitleET)
-                        if (category == "" || category == null){
-                            Toast.makeText(context,"빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
-                            return@setPositiveButton
-                        }
-                        addMateCategory(Utils.getString(dialogView.categoryTitleET))
-                    }
-                    .show()
-            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
-
             dialogView.btn_title_clear.setOnClickListener {
+                alert.dismiss()
+            }
+            dialogView.dlg_addchattingTV.setOnClickListener {
+                var category = Utils.getString(dialogView.categoryTitleET)
+                if (category == "" || category == null) {
+                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                addMateCategory(Utils.getString(dialogView.categoryTitleET))
                 alert.dismiss()
             }
         }
@@ -96,21 +98,24 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                 alert.show()
             }
 
-            var intent = getIntent()
+            if (mates_id!=-1){
+                acceptMates(category_id,mates_id)
 
-            val get_category_id = intent.getStringExtra("category_id")
-            val mate_id = intent.getStringExtra("mate_id")
-            println("----mate_id : $mate_id")
+            }else{
+                val get_category_id = intent.getStringExtra("category_id")
+                val mate_id = intent.getSerializableExtra("mate_id")
+                println("----mate_id : $mate_id")
+                var intent = Intent()
+                intent.putExtra("mate_id",mate_id)
+                intent.putExtra("category_id",category_id)
+                intent.putExtra("get_category_id",get_category_id)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
+            }
 
-            acceptMates(category_id,mate_id)
 
-//            intent.action = "RESET_CATEGORY"
-//            sendBroadcast(intent)
-//            intent.putExtra("CategoryID", category_id)
-//            intent.putExtra("category_id",get_category_id)
-//            setResult(RESULT_OK,intent)
 
-//            finish()
+
         }
 
         finishLL.setOnClickListener {
@@ -141,6 +146,8 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                     if (categoryList.size == 1){
                         val builder = AlertDialog.Builder(context)
                         val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
+                        builder.setView(dialogView)
+                        val alert = builder.show()
                         dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
 
                             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -157,21 +164,17 @@ class FriendReqSelectCategoryActivity : RootActivity() {
                                 // 입력하기 전에 호출된다.
                             }
                         })
-
-                        builder.setView(dialogView)
-                                .setPositiveButton("확인") { dialog, id ->
-
-                                    var category = Utils.getString(dialogView.categoryTitleET)
-                                    if (category == "" || category == null){
-                                        Toast.makeText(context,"빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
-                                        return@setPositiveButton
-                                    }
-                                    addMateCategory(Utils.getString(dialogView.categoryTitleET))
-                                }
-                                .show()
-                        val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
-
                         dialogView.btn_title_clear.setOnClickListener {
+                            alert.dismiss()
+                        }
+                        dialogView.dlg_addchattingTV.setOnClickListener {
+                            var category = Utils.getString(dialogView.categoryTitleET)
+                            if (category == "" || category == null) {
+                                Toast.makeText(context, "빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            addMateCategory(Utils.getString(dialogView.categoryTitleET))
                             alert.dismiss()
                         }
                     }
@@ -224,17 +227,21 @@ class FriendReqSelectCategoryActivity : RootActivity() {
         })
     }
 
-    fun delete_category(id : String){
-        val params = RequestParams()
-        params.put("id", id)
+    fun acceptMates(category_id: String,member_id:Int) {
 
-        MateAction.delete_category(params, object : JsonHttpResponseHandler(){
+        val params = RequestParams()
+
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+
+        params.put("mate_id",  member_id)
+        params.put("category_id", category_id)
+        params.put("status", "m")
+
+        MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
-                val result = response!!.getString("result")
-                if (result == "ok") {
-                    getCategoryList()
-                }
+                Log.d("결과",response.toString())
+                Toast.makeText(context,"친구추가되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
@@ -247,43 +254,16 @@ class FriendReqSelectCategoryActivity : RootActivity() {
         })
     }
 
-    fun acceptMates(category_id: String,member_id:String) {
-//        mateList.clear()
-//
-//        for (i in 0 until mateRequestList.size) {
-//            if(mateRequestList.get(i).getBoolean("check")) {
-//                mateList.add(mateRequestList.get(i).getInt("mate_id"))
-//            }
-//        }
-
+    fun delete_category(id : String){
         val params = RequestParams()
-//        params.put("mate_id", mateList)
-//        Log.d("메이트",mateList.toString())
-        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
-        params.put("mate_id",  member_id)
-        /*     if (mateList != null){
-                 if (mateList!!.size != 0){
-                     for (i in 0..mateList!!.size - 1){
-                         params.put("mate_id[" + i + "]",  mateList.get(i))
-     //                    params.put("mate_id[" + i + "]",  mateList.get(i))
-                     }
-                 }
-             }*/
-        params.put("category_id", category_id)
-        params.put("status", "m")
+        params.put("id", id)
 
-        MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
+        MateAction.delete_category(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-//              Log.d("리스븐",response.toString())
+                println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    intent.action = "RESET_CATEGORY"
-                    sendBroadcast(intent)
-//            intent.putExtra("CategoryID", category_id)
-//            intent.putExtra("category_id",get_category_id)
-                    setResult(RESULT_OK,intent)
-
-                    finish()
+                    getCategoryList()
                 }
             }
 
