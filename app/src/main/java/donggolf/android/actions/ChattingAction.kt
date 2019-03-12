@@ -62,7 +62,9 @@ object ChattingAction {
     fun set_block(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/chatting/set_block.json", params, handler)
     }
-
+    fun set_dongchat_block(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/chatting/set_dongchat_block.json", params, handler)
+    }
     fun delete_chatting_room(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/chatting/delete_chatting_room.json", params, handler)
     }
@@ -79,9 +81,7 @@ object ChattingAction {
         HttpClient.post("/chatting/get_chat_member.json", params, handler)
     }
 
-    fun set_dongchat_block(params: RequestParams, handler: JsonHttpResponseHandler) {
-        HttpClient.post("/chatting/set_dongchat_block.json", params, handler)
-    }
+
 
     fun set_title(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/chatting/set_title.json", params, handler)
