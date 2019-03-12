@@ -249,5 +249,14 @@ class FriendManageActivity : RootActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (resetReceiver != null) {
+            context.unregisterReceiver(resetReceiver)
+        }
+
+    }
+
 
 }
