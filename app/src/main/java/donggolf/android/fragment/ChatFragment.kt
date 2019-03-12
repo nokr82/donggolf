@@ -337,7 +337,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
             }
-
+            room.put("readdiv", "1")
+            dongAdapter.notifyDataSetChanged()
         }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -509,6 +510,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
 
             adapter.notifyDataSetChanged()
+            dongAdapter.notifyDataSetChanged()
 
         }
 

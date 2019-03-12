@@ -87,6 +87,8 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             }
         }
 
+        val count = peoplecount.toInt() - 3
+
         for (i in 0 until chatmember.length()){
             var roomitem = chatmember.get(i) as JSONObject
             val member = roomitem.getJSONObject("Member")

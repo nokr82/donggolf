@@ -108,6 +108,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
+        } else {
+            item.usernickTV.setTextColor(Color.parseColor("#EF5C34"))
         }
 
         var text_size = Utils.getString(json,"text_size")

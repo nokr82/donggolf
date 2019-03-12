@@ -161,7 +161,7 @@ class DongchatProfileActivity : RootActivity() {
 
         room_id = intent.getStringExtra("room_id")
 
-        detail_chatting()
+        detail_chatting("detail")
 
 //        backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
 //        backgroundVP.adapter = backgroundAdapter
@@ -397,21 +397,20 @@ class DongchatProfileActivity : RootActivity() {
         }
 
     }
-
-    fun detail_chatting() {
+    fun detail_chatting(type:String){
         val params = RequestParams()
         params.put("room_id", room_id)
-        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-        params.put("type", "detail")
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type",type)
 
-        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler() {
+        ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
                 val result = response!!.getString("result")
                 if (result == "ok") {
-                    if (Image_path != null) {
+                    if (Image_path != null){
                         Image_path.clear()
                     }
 
@@ -539,8 +538,6 @@ class DongchatProfileActivity : RootActivity() {
         params.put("room_id", room_id)
         params.put("type", "in")
 
-        println("--------add_chat_member room_id : $room_id ")
-
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
@@ -616,7 +613,7 @@ class DongchatProfileActivity : RootActivity() {
                             roomtitleTV.setText(title)
                         }
                         if (max_count_m!=-1){
-                            detail_chatting()
+                            detail_chatting("reset")
                         }
                     }
                 } catch (e: JSONException) {
@@ -701,8 +698,8 @@ class DongchatProfileActivity : RootActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 SET_NOTICE -> {
-                    if (data!!.getStringExtra("reset") != null) {
-                        detail_chatting()
+                    if (data!!.getStringExtra("reset") != null){
+                        detail_chatting("reset")
                     }
                 }
 
