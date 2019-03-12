@@ -628,7 +628,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
 
 
-                    chatmembercountTV.setText(members.length().toString())
+//                    chatmembercountTV.setText(members.length().toString())
 
                 }
             }
