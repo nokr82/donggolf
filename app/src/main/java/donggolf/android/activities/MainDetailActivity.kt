@@ -933,6 +933,7 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+                            Log.d("이미지",imageDatas.toString())
                             println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
@@ -990,6 +991,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until imagePaths.size){
                                     val image = Config.url + imagePaths.get(i)
+                                    Log.d("이미지2",image)
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
