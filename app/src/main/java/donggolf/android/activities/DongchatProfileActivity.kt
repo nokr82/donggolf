@@ -538,8 +538,6 @@ class DongchatProfileActivity : RootActivity() {
         params.put("room_id", room_id)
         params.put("type", "in")
 
-        println("--------add_chat_member room_id : $room_id ")
-
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
@@ -615,7 +613,7 @@ class DongchatProfileActivity : RootActivity() {
                             roomtitleTV.setText(title)
                         }
                         if (max_count_m!=-1){
-                            detail_chatting()
+                            detail_chatting("reset")
                         }
                     }
                 } catch (e: JSONException) {
