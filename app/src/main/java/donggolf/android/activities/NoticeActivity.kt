@@ -97,7 +97,7 @@ class NoticeActivity : RootActivity() {
 
         val keyword = Utils.getString(main_edit_search)
         val title = Utils.getString(producttypeTV)
-        if (keyword == "" || keyword == null){
+        if (keyword == "" || keyword == null||title==""||title == null){
             Toast.makeText(context, "빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
@@ -110,7 +110,7 @@ class NoticeActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("keyword",keyword)
-        params.put("title",title+"게시판")
+        params.put("title",title)
         params.put("member_id", member_id)
 
         MarketAction.add_keyword(params, object : JsonHttpResponseHandler() {

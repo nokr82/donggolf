@@ -201,7 +201,7 @@ class AddPostActivity : RootActivity() {
                             Utils.hideKeyboard(this)
 
                         })
-                        .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
+                        .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
 //                        loadData(dbManager,member_id.toString())
@@ -1354,7 +1354,7 @@ class AddPostActivity : RootActivity() {
                         Utils.hideKeyboard(this)
 
                     })
-                    .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
+                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
 //                        loadData(dbManager,member_id.toString())

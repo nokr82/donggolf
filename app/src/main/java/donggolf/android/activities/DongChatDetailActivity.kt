@@ -173,6 +173,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         detail_chatting()
+        set_in_yn("Y")
 
         cancleLL.setOnClickListener {
             noticevisibleLL.visibility = View.GONE
@@ -293,9 +294,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                         .setPositiveButton("예", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
-                            val lastMSG = chattingList.get(chattingList.size - 1)
-                            val chatting = lastMSG.getJSONObject("Chatting")
-                            val last_id = Utils.getInt(chatting, "id")
+                            if (chattingList.size > 0) {
+                                val lastMSG = chattingList.get(chattingList.size - 1)
+                                val chatting = lastMSG.getJSONObject("Chatting")
+                                val last_id = Utils.getInt(chatting, "id")
+                            }
                             delete_chat_member(last_id, "out")
                         })
                         .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
@@ -525,6 +528,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         for (i in 0 until members.length()) {
                             val item = members.get(i) as JSONObject
                             val chatmember = item.getJSONObject("Chatmember")
+                            val member = item.getJSONObject("Member")
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
                             title = Utils.getString(chatroom, "title")
@@ -534,7 +538,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                             val notice = Utils.getString(chatroom, "notice")
                             val id = Utils.getString(chatmember, "member_id")
-                            val nicks = Utils.getString(chatmember, "nick")
+                            val nicks = Utils.getString(member, "nick")
                             val notice_yn = Utils.getString(chatmember, "notice_yn")
                             max_count = Utils.getInt(chatroom, "max_count")
                             people_count = Utils.getInt(chatroom, "peoplecount")
@@ -543,6 +547,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 my_notice_yn = notice_yn
                                 my_top_yn = top_yn
                                 mynotice = notice
+                                nick = nicks
                             }
 
 //                            nicknameTV.setText(title + "(" + members.length().toString() + ")")
@@ -628,7 +633,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
 
 
-                    chatmembercountTV.setText(members.length().toString())
+//                    chatmembercountTV.setText(members.length().toString())
 
                 }
             }
@@ -855,6 +860,9 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             timer!!.cancel()
             timer_yn = "N"
         }
+
+        set_in_yn("N")
+
     }
 
     override fun onResume() {
@@ -1038,7 +1046,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         params.put("room_id", room_id)
-        params.put("last_id", last_id)
+        params.put("chat_id", last_id)
         params.put("my_nick",nick)
         params.put("type", type)
 
@@ -1142,6 +1150,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         if (timer_yn == "N"){
                             timer_yn == "Y"
                             timerStart()
+                            set_in_yn("Y")
                         }
 
                     }
@@ -1169,6 +1178,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (timer_yn == "N"){
                         timer_yn == "Y"
                         timerStart()
+                        set_in_yn("Y")
                     }
 
 //                    if (data != null)
@@ -1223,11 +1233,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                         detail_chatting()
 
-                        println("_-----------timer_yn : $timer_yn")
-
                         if (timer_yn == "N"){
                             timer_yn == "Y"
                             timerStart()
+                            set_in_yn("Y")
                         }
                     }
                 }
@@ -1244,10 +1253,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         ChattingAction.set_notice_yn(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                val result = response!!.getString("result")
-                if (result == "block") {
-                    Toast.makeText(context, "차단당한 게시물 입니다.", Toast.LENGTH_SHORT).show()
-                }
+
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
@@ -1289,6 +1295,41 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         return add
+    }
+
+    fun set_in_yn(in_yn:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("in_yn",in_yn)
+
+        ChattingAction.set_in_yn(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    override fun onBackPressed() {
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+
+        if (dongchat_right_menu.visibility == View.VISIBLE) {
+            dongchat_drawerMenu.closeDrawers()
+        } else {
+            finish()
+        }
+
     }
 
 }

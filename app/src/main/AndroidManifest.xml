@@ -17,6 +17,7 @@
         android:required="true" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:name=".base.GlobalApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo_png"

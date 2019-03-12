@@ -1,5 +1,6 @@
 package donggolf.android.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -35,6 +36,8 @@ class ProfileActivity : RootActivity() {
     var type = -1
     var matediv = 0
     var chat_id = 0
+
+    var RESET = 100
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +100,7 @@ class ProfileActivity : RootActivity() {
                                         member_info(member_id)
                                         val result = response!!.getString("result")
                                         if (result == "yes") {
-                                            Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "이미 친구신청을 하셨거나 친구신청을 받았습니다.", Toast.LENGTH_SHORT).show()
                                         }else if (result == "already"){
                                             Toast.makeText(context, "차단상태입니다.", Toast.LENGTH_SHORT).show()
                                         }else {
@@ -331,11 +334,12 @@ class ProfileActivity : RootActivity() {
                         val type = Utils.getString(room, "type")
 
                         if (type == "1"){
+
                             var intent = Intent(context, ChatDetailActivity::class.java)
                             intent.putExtra("division", 1)
                             intent.putExtra("id", id)
                             intent.putExtra("founder", founder)
-                            startActivity(intent)
+                            startActivityForResult(intent,RESET)
                         }
 
                     } else if (result == "empty"){
@@ -382,7 +386,6 @@ class ProfileActivity : RootActivity() {
                     intent.action = "RESET_CHATTING"
                     sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
-                    finish()
 
                     val founder = PrefUtils.getIntPreference(context,"member_id")
 
@@ -390,7 +393,9 @@ class ProfileActivity : RootActivity() {
                     intentst.putExtra("division", 1)
                     intentst.putExtra("id", lastid)
                     intentst.putExtra("founder", founder.toString())
-                    startActivity(intentst)
+                    startActivityForResult(intentst,RESET)
+
+                    finish()
 
                 }
             }
@@ -456,7 +461,27 @@ class ProfileActivity : RootActivity() {
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (resultCode == Activity.RESULT_OK) {
+
+            when (requestCode) {
+                RESET -> {
+
+                    println("---------------reset 타기")
+                    if (data!!.getStringExtra("reset") != null) {
+                        var intent = Intent()
+                        intent.action = "RESET_CHATTING"
+                        sendBroadcast(intent)
+                        println("-------------reset_chatting")
+                    }
+                }
+
+            }
+        }
+
+    }
 
 
 }

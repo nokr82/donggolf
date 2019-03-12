@@ -622,7 +622,7 @@ class MainDetailActivity : RootActivity() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                     val result = response!!.getString("result")
                                     if (result == "yes") {
-                                        Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "이미 친구신청을 친구신청을 받았습니다.", Toast.LENGTH_SHORT).show()
                                     }else if (result == "already"){
                                         Toast.makeText(context, "차단상태입니다.", Toast.LENGTH_SHORT).show()
                                     }else {
@@ -933,6 +933,7 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+                            Log.d("이미지",imageDatas.toString())
                             println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
@@ -990,6 +991,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until imagePaths.size){
                                     val image = Config.url + imagePaths.get(i)
+                                    Log.d("이미지2",image)
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()

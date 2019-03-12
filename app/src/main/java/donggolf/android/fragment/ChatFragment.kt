@@ -182,6 +182,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 getmychat(2)
+                getmychat(1)
             }
         }
     }
@@ -337,7 +338,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
             }
-
+            room.put("readdiv", "1")
+            dongAdapter.notifyDataSetChanged()
         }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -509,6 +511,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
 
             adapter.notifyDataSetChanged()
+            dongAdapter.notifyDataSetChanged()
 
         }
 
@@ -840,10 +843,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             when (requestCode) {
                 RESET -> {
-                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("result")}")
+                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("reset")}")
                     if (data!!.getStringExtra("reset") != null) {
                         var division = data!!.getStringExtra("division")
                         if (division == "my") {
+                            println("--------reset")
                             adapterData.clear()
                             page = 1
                             getmychat(1)

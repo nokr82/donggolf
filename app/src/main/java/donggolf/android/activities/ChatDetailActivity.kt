@@ -111,8 +111,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         chatLV.adapter = adapter
         chatLV.setOnScrollListener(this)
 
-
-
         contentET.addTextChangedListener(object : TextWatcher {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -515,7 +513,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         ChattingAction.chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                println("-------------result : $result")
                 if (result == "ok") {
                     val list = response.getJSONArray("list")
                     val room = response.getJSONObject("chatroom")
@@ -581,9 +578,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         }
 
                     }
-
-
-                    println("------- first_id : ${first_id} list.size : ${list.length()} adddddddddddddddddddddddddddddd")
 
 //                    val roomtitle = Utils.getString(room,"title")
 //                    chattitleTV.setText(roomtitle)
@@ -923,6 +917,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     val room = response.getJSONObject("chatroom")
                     room_type = Utils.getInt(room, "type")
+                    founder_id = Utils.getString(room,"member_id")
 
                     memberlistLL.removeAllViews()
                     if (mate_nick != null){
@@ -955,7 +950,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (PrefUtils.getIntPreference(context,"member_id") != id.toInt()){
                                 chat_member_id = id.toInt()
                             }
-                            founder_id = id
 
 //                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")
@@ -1176,7 +1170,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("room_id", room_id)
         params.put("mate_id",chat_member_id)
-        params.put("block_yn","N")
+        params.put("block_yn","Y")
+
+        println("-----set_block 가쟈~~")
 
         ChattingAction.set_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1187,18 +1183,21 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 } else if (result == "ok"){
                     var intent = Intent()
                     intent.putExtra("reset","reset")
-                    intent.putExtra("division","my")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-//                println(responseString)
+                println(responseString)
+                println("----------------1")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-//                println(errorResponse)
+                println(errorResponse)
+                println("----------------2")
             }
         })
     }

@@ -48,7 +48,7 @@ open class NoticeAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
         var category = json.getJSONObject("Mynotice")
         var title:String = Utils.getString(category,"title")
         if (title!=""){
-            item.titleTV.text = title
+            item.titleTV.text = title+"게시판"
         }
         var content:String = Utils.getString(category,"keyword")
         item.keywordTV.text = content

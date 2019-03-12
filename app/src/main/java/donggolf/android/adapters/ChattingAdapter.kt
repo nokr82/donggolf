@@ -68,8 +68,6 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var difference = peoplecount - read_count
         var type = Utils.getString(chatting,"type")
 
-        var room = json.getJSONObject("Chatroom")
-
         item.userprofileIV.setOnClickListener {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("member_id", send_member_id)
@@ -110,6 +108,8 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
+        } else {
+            item.usernickTV.setTextColor(Color.parseColor("#EF5C34"))
         }
 
         var text_size = Utils.getString(json,"text_size")
@@ -189,9 +189,20 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     noon = "오후"
                 }
                 var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+                if (difference > 0){
+                    time += "(" + difference + ")"
+                } else {
+                    time += ""
+                }
+
                 item.userdateTV.setText(time)
             } else {
-                val since = Utils.since(messageCreated)
+                var since = Utils.since(messageCreated)
+                if (difference > 0){
+                    since += "(" + difference + ")"
+                } else {
+                    since += ""
+                }
                 item.userdateTV.setText(since)
             }
 

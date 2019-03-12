@@ -405,6 +405,8 @@ class SelectMemberActivity : RootActivity() {
                         finish()
                     } else if (result == "already"){
                         Toast.makeText(context,"이미 대화방에 선택하신 멤버가 있습니다.", Toast.LENGTH_SHORT).show()
+                    } else if (result == "block"){
+                        Toast.makeText(context,"선택하신 멤버가 대화방에 차단되어 있습니다.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()

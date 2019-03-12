@@ -124,7 +124,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
                         R.id.menu_posting -> {
                             p_type = 1
                             if (selected.size > 1) {
-                                Toast.makeText(context, "[ 프로필 사진변경은 1장만 선택하여 주세요", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "프로필 사진변경은 1장만 선택하여 주세요", Toast.LENGTH_SHORT).show()
                                 return@setOnMenuItemClickListener false
                             }
 
