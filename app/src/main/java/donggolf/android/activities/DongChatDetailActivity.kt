@@ -173,6 +173,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         detail_chatting()
+        set_in_yn("Y")
 
         cancleLL.setOnClickListener {
             noticevisibleLL.visibility = View.GONE
@@ -855,6 +856,9 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             timer!!.cancel()
             timer_yn = "N"
         }
+
+        set_in_yn("N")
+
     }
 
     override fun onResume() {
@@ -1142,6 +1146,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         if (timer_yn == "N"){
                             timer_yn == "Y"
                             timerStart()
+                            set_in_yn("Y")
                         }
 
                     }
@@ -1169,6 +1174,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     if (timer_yn == "N"){
                         timer_yn == "Y"
                         timerStart()
+                        set_in_yn("Y")
                     }
 
 //                    if (data != null)
@@ -1228,6 +1234,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         if (timer_yn == "N"){
                             timer_yn == "Y"
                             timerStart()
+                            set_in_yn("Y")
                         }
                     }
                 }
@@ -1289,6 +1296,41 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         return add
+    }
+
+    fun set_in_yn(in_yn:String){
+        val params = RequestParams()
+        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("room_id", room_id)
+        params.put("in_yn",in_yn)
+
+        ChattingAction.set_in_yn(params, object : JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                println(errorResponse)
+            }
+        })
+    }
+
+    override fun onBackPressed() {
+        var intent = Intent()
+        intent.putExtra("reset", "reset")
+        setResult(RESULT_OK, intent);
+
+        if (dongchat_right_menu.visibility == View.VISIBLE) {
+            dongchat_drawerMenu.closeDrawers()
+        } else {
+            finish()
+        }
+
     }
 
 }

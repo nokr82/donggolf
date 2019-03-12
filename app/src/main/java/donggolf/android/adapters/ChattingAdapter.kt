@@ -187,9 +187,20 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     noon = "오후"
                 }
                 var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+                if (difference > 0){
+                    time += "(" + difference + ")"
+                } else {
+                    time += ""
+                }
+
                 item.userdateTV.setText(time)
             } else {
-                val since = Utils.since(messageCreated)
+                var since = Utils.since(messageCreated)
+                if (difference > 0){
+                    since += "(" + difference + ")"
+                } else {
+                    since += ""
+                }
                 item.userdateTV.setText(since)
             }
 
