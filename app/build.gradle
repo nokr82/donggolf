@@ -41,6 +41,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.5'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
+    //가로형 세로형
+    implementation 'com.github.irshulx:laser-native-editor:3.0.3'
     //  universalimageloader
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     // commons-lang
