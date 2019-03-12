@@ -917,6 +917,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     val room = response.getJSONObject("chatroom")
                     room_type = Utils.getInt(room, "type")
+                    founder_id = Utils.getString(room,"member_id")
 
                     memberlistLL.removeAllViews()
                     if (mate_nick != null){
@@ -949,7 +950,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (PrefUtils.getIntPreference(context,"member_id") != id.toInt()){
                                 chat_member_id = id.toInt()
                             }
-                            founder_id = id
 
 //                            roomtitle = Utils.getString(chatroom,"title")
                             val visible = Utils.getString(chatroom,"visible")

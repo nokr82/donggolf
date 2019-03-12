@@ -159,7 +159,7 @@ class DongchatProfileActivity : RootActivity() {
 
         room_id = intent.getStringExtra("room_id")
 
-        detail_chatting()
+        detail_chatting("detail")
 
 //        backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
 //        backgroundVP.adapter = backgroundAdapter
@@ -382,11 +382,11 @@ class DongchatProfileActivity : RootActivity() {
         }
 
     }
-    fun detail_chatting(){
+    fun detail_chatting(type:String){
         val params = RequestParams()
         params.put("room_id", room_id)
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-        params.put("type","detail")
+        params.put("type",type)
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -680,7 +680,7 @@ class DongchatProfileActivity : RootActivity() {
             when (requestCode) {
                 SET_NOTICE -> {
                     if (data!!.getStringExtra("reset") != null){
-                        detail_chatting()
+                        detail_chatting("reset")
                     }
                 }
 
