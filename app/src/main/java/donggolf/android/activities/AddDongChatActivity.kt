@@ -257,8 +257,6 @@ class AddDongChatActivity : RootActivity() {
             }
         }
 
-
-
     }
 
 
