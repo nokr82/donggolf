@@ -65,7 +65,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var Content = json.getJSONObject("Content")
         val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
-        val text = Utils.getString(Content,"text")
+        var text = Utils.getString(Content,"text")
         val content_id = Utils.getString(Content,"id")
         val favorite_cnt = Utils.getString(Content,"favorite_cnt")
         val look_cnt = Utils.getString(Content,"look_cnt")
@@ -79,7 +79,13 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var uri = Utils.getString(Content,"image_uri")
         var video = Utils.getString(Content,"video")
         val since = Utils.since(created)
-
+        text = text.replace("<p data-tag=\"input\" style=\"color:#000000;\">".toRegex(), "")
+        text = text.replace("</p>".toRegex(), "")
+        text = text.replace("<p data-tag=\"img-sub\" style=\"color:#5E5E5E;\" class=\"editor-image-subtitle\">".toRegex(), "")
+        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
+        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
+        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
+        Log.d("텍스트",text)
         if (sex == "0"){
             item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
         }else{
@@ -130,7 +136,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
             var image = Config.url + profile
             ImageLoader.getInstance().displayImage(image, item.main_item_image, Utils.UILoptionsUserProfile)
         } else {
-            item.main_item_image.setImageResource(donggolf.android.R.drawable.icon_profiles)
+            item.main_item_image.setImageResource(R.drawable.icon_profiles)
         }
 
 
