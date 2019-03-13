@@ -1170,7 +1170,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
         params.put("room_id", room_id)
         params.put("mate_id",chat_member_id)
-        params.put("block_yn","N")
+        params.put("block_yn","Y")
+
+        println("-----set_block 가쟈~~")
 
         ChattingAction.set_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1181,18 +1183,21 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                 } else if (result == "ok"){
                     var intent = Intent()
                     intent.putExtra("reset","reset")
-                    intent.putExtra("division","my")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
                     setResult(RESULT_OK, intent);
                     finish()
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-//                println(responseString)
+                println(responseString)
+                println("----------------1")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-//                println(errorResponse)
+                println(errorResponse)
+                println("----------------2")
             }
         })
     }
