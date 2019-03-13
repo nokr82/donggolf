@@ -739,6 +739,10 @@ class MainDetailActivity : RootActivity() {
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
             getPost(id)
+            val url = Config.url + "/post/post"+"?content_id="+id
+
+            contentWV.settings.javaScriptEnabled = true
+            contentWV.loadUrl(url)
             getLooker(id)
         }
 
@@ -1113,6 +1117,27 @@ class MainDetailActivity : RootActivity() {
                 }
             })
 
+    }
+
+    fun Post(id:String){
+        login_id = PrefUtils.getIntPreference(context, "member_id")
+
+        var params = RequestParams()
+        params.put("content_id",id)
+
+        PostAction.post(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                val result = response!!.getString("result")
+                if (result == "ok" || result == "yes") {
+                    val Looker = response.getJSONArray("Looker")
+                    viewTV.text = Looker.length().toString()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+
+            }
+        })
     }
 
     fun getLooker(id:String){

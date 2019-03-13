@@ -72,8 +72,20 @@
                     android:background="@drawable/img_line_1" />
 
 
-
+                <com.github.irshulx.Editor
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/editor"
+                    app:render_type="Editor"
+                    app:placeholder="내용을 입력해주세요."
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="100dp"
+                    />
                 <EditText
+                    android:visibility="gone"
                     android:id="@+id/contentET"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -113,7 +125,7 @@
                 </LinearLayout>
                 <HorizontalScrollView
                     android:id="@+id/pictureHS"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:fillViewport="true"
@@ -128,40 +140,40 @@
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
-     <!--       <LinearLayout
-                android:id="@+id/pictureLL"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="horizontal"
+            <!--       <LinearLayout
+                       android:id="@+id/pictureLL"
+                       android:layout_width="match_parent"
+                       android:layout_height="100dp"
+                       android:orientation="horizontal"
 
-                >
-                <LinearLayout
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    >
+                       >
+                       <LinearLayout
+                           android:layout_width="80dp"
+                           android:layout_height="match_parent"
+                           android:orientation="horizontal"
+                           >
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="나의 사진"
-                        android:textColor="#CDCDCD"
-                        android:gravity="center"
-                        android:id="@+id/tvPIC_FOLDER_TV1"
-                        />
+                           <TextView
+                               android:layout_width="0dp"
+                               android:layout_height="match_parent"
+                               android:layout_weight="1"
+                               android:text="나의 사진"
+                               android:textColor="#CDCDCD"
+                               android:gravity="center"
+                               android:id="@+id/tvPIC_FOLDER_TV1"
+                               />
 
-                </LinearLayout>
+                       </LinearLayout>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:maxLength="200"
-                    android:id="@+id/etPIC_FOLDERET"
-                    />
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="match_parent"
+                           android:maxLength="200"
+                           android:id="@+id/etPIC_FOLDERET"
+                           />
 
 
-            </LinearLayout>-->
+                   </LinearLayout>-->
 
             <LinearLayout
                 android:visibility="gone"
