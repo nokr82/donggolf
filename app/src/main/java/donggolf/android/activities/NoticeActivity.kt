@@ -81,15 +81,8 @@ class NoticeActivity : RootActivity() {
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
                 producttypeTV.text = title
-                producttypeTV.text = "선택"
-                main_edit_search.setText(title)
-//                for (i in 0 until productData.size) {
-//                    productData.add(productData.get(i) as JSONObject)
-//                    productData.get(i).put("isSelectedOp", false)
-//                }
 
-//                productData[position].put("isSelectedOp", true)
-//                productTypeAdapter.notifyDataSetChanged()
+
                 alert.dismiss()
             }
 
@@ -101,9 +94,10 @@ class NoticeActivity : RootActivity() {
     }
 
     fun addkeyword(){
-        val keyword = main_edit_search.text.toString()
 
-        if (keyword == "" || keyword == null){
+        val keyword = Utils.getString(main_edit_search)
+        val title = Utils.getString(producttypeTV)
+        if (keyword == "" || keyword == null||title==""||title == null){
             Toast.makeText(context, "빈칸은 입력하실 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
@@ -116,6 +110,7 @@ class NoticeActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("keyword",keyword)
+        params.put("title",title)
         params.put("member_id", member_id)
 
         MarketAction.add_keyword(params, object : JsonHttpResponseHandler() {

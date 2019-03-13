@@ -147,10 +147,11 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,
 
         item.accLL.setOnClickListener {
             val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
-            acceptItt.putExtra("mate_id",member_id)
+            acceptItt.putExtra("mates_id",member_id.toInt())
+            Log.d("2아뒤",member_id.toString())
             context.startActivity(acceptItt)
-            removeItem(position)
-            notifyDataSetChanged()
+           /* removeItem(position)
+            notifyDataSetChanged()*/
         }
 
         item.refuseLL.setOnClickListener {

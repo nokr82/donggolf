@@ -71,13 +71,27 @@ class ChatFragment : android.support.v4.app.Fragment() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 if (townChatOnRL.visibility == View.VISIBLE) {
+                    dongAdapterData.clear()
+                    getmychat(2)
+                } else {
+                    adapterData.clear()
+                    getmychat(1)
+                }
+            }
+        }
+    }
+
+  /*  internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                if (townChatOnRL.visibility == View.VISIBLE) {
                     getmychat(2)
                 } else {
                     getmychat(1)
                 }
             }
         }
-    }
+    }*/
 
     internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -168,6 +182,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
                 getmychat(2)
+                getmychat(1)
             }
         }
     }
@@ -231,6 +246,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         var filter3 = IntentFilter("CHAT_CHANGE")
         ctx!!.registerReceiver(reloadchatReciver, filter3)
 
+        var filter4 = IntentFilter("SET_REGION")
+        ctx!!.registerReceiver(reloadchatReciver, filter4)
+
 
         dong_chat_list.setOnItemClickListener { parent, view, position, id ->
             var json = dongAdapterData.get(position)
@@ -239,6 +257,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
             val founder = Utils.getString(room, "member_id")
             val type = Utils.getString(room, "type")
             val block_code = Utils.getString(room, "block_code")
+            val max_count = Utils.getString(room,"max_count")
+            println("----------------------id : $id")
 
             if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
                 if (type == "1") {
@@ -264,7 +284,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     dialogView.codevisibleLL.visibility = View.GONE
 
                     dialogView.btn_title_clear.setOnClickListener {
-                        dialogView.blockcodeTV.setText("")
+                        alert.dismiss()
                     }
 
                     dialogView.cancleTV.setOnClickListener {
@@ -279,6 +299,13 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         }
 
                         if (code == block_code) {
+                            var chatmember = json.getJSONArray("Chatmember")
+
+                            if (max_count.toInt() >= chatmember.length()){
+                                Toast.makeText(context, "멤버(FULL)상태라 입장 할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
                             if (type == "1") {
                                 var intent = Intent(activity, ChatDetailActivity::class.java)
                                 intent.putExtra("division", 1)
@@ -311,7 +338,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     }
                 }
             }
-
+            room.put("readdiv", "1")
+            dongAdapter.notifyDataSetChanged()
         }
 
         chat_list.setOnItemClickListener { parent, view, position, id ->
@@ -348,6 +376,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                         dialogView.btn_title_clear.setOnClickListener {
                             dialogView.blockcodeTV.setText("")
+                            alert.dismiss()
+
                         }
 
                         dialogView.cancleTV.setOnClickListener {
@@ -430,6 +460,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
                         dialogView.btn_title_clear.setOnClickListener {
                             dialogView.blockcodeTV.setText("")
+                            alert.dismiss()
                         }
 
                         dialogView.cancleTV.setOnClickListener {
@@ -480,6 +511,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
 
             adapter.notifyDataSetChanged()
+            dongAdapter.notifyDataSetChanged()
 
         }
 
@@ -489,7 +521,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 totalItemCountScroll = totalItemCount
             }
 
-            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+            override fun onScrollStateChanged(chat_list: AbsListView, newState: Int) {
+
+                if (!chat_list.canScrollVertically(-1)) {
+                    page = 1
+                    getmychat(1)
+                }
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
@@ -540,7 +577,12 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             }
 
-            override fun onScrollStateChanged(main_listview: AbsListView, newState: Int) {
+            override fun onScrollStateChanged(dong_chat_list: AbsListView, newState: Int) {
+
+                if (!dong_chat_list.canScrollVertically(-1)) {
+                    page = 1
+                    getmychat(1)
+                }
 
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     userScrolled = true
@@ -660,6 +702,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
         }
 
+        if (PrefUtils.getStringPreference(context, "region_id") != null) {
+            var region_id = PrefUtils.getStringPreference(context, "region_id")
+            params.put("region", region_id)
+        }
+
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         params.put("type", type)
@@ -670,6 +717,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 var region_id2 = PrefUtils.getStringPreference(context, "region_id2")
                 params.put("region", region_id)
                 params.put("region2", region_id2)
+                println("----------region_id : $region_id")
             } else {
                 Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -683,6 +731,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     todayCount = response!!.getInt("todayCount")
                     val mychat_count = response!!.getInt("mychat_count")
                     val dongchat_count = response!!.getInt("dongchat_count")
+
                     chatcountTV.setText(mychat_count.toString())
                     dongchatcountTV.setText(dongchat_count.toString())
                     mychatcountTV.setText(mychat_count.toString())
@@ -794,10 +843,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             when (requestCode) {
                 RESET -> {
-                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("result")}")
+                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("reset")}")
                     if (data!!.getStringExtra("reset") != null) {
                         var division = data!!.getStringExtra("division")
                         if (division == "my") {
+                            println("--------reset")
                             adapterData.clear()
                             page = 1
                             getmychat(1)
@@ -822,7 +872,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     if (data!!.getStringExtra("reset") != null) {
                         adapterData.clear()
                         page = 1
-                        getmychat(1)
+                        if (ChatOnRL.visibility == View.VISIBLE) {
+                            getmychat(1)
+                        } else {
+                            getmychat(2)
+                        }
 //                        timerStart()
                     }
                 }
@@ -843,6 +897,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
         if (reloadchatReciver != null) {
             context!!.unregisterReceiver(reloadchatReciver)
         }
+
+     /*   if (setregionReciver != null) {
+            context!!.unregisterReceiver(setregionReciver)
+        }*/
     }
 
     fun timerStart() {

@@ -4,218 +4,252 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.NoticeManageActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.NoticeManageActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/finishLL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="20dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/btn_back" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="공지"
-            android:textSize="15dp"
-            android:textColor="#000000" />
-
-        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="초기화"
-                android:textColor="#000000"
-                android:gravity="center|right"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:id="@+id/resetTV"/>
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/line_0"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/icon_profile"
-            android:id="@+id/profileIV"/>
-
-        <LinearLayout
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/nickTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="닉네임 일곱글자"/>
-                <TextView
-                    android:id="@+id/readcountTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0명 읽음"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="12dp"
-                    android:textColor="#CDCDCD"/>
-            </LinearLayout>
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/createdTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="방금"
-                android:textSize="12dp"
-                android:textColor="#CDCDCD"/>
-        </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/noticeLL"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/noticeTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="left|center_vertical"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/founderLL"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:gravity="center">
-        <EditText
-            android:id="@+id/founderTV"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@null"
-            android:hint="입력해주세요."
-            android:gravity="left|center_vertical"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/chatvisibleLL"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginLeft="5dp"
-            android:text="게시형태"/>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_centerInParent="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp">
                 <LinearLayout
-                    android:id="@+id/publicLL"
+                    android:id="@+id/finishLL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/btn_back" />
+                </LinearLayout>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_marginRight="15dp">
-                    <ImageView
-                        android:id="@+id/radio_public"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/btn_radio_off"/>
+                    android:text="공지"
+                    android:textColor="#000000"
+                    android:textSize="15dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
                     <TextView
+                        android:id="@+id/resetTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="13dp"
-                        android:layout_marginLeft="5dp"
-                        android:text="상단에 고정하기"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/secretLL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <ImageView
-                        android:id="@+id/radio_secret"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="5dp"
-                        android:src="@drawable/btn_radio_off"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="13dp"
-                        android:textStyle="bold"
-                        android:text="상단에서 내리기"/>
-                </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center|right"
+                        android:text="초기화"
+                        android:textColor="#000000" />
+                </RelativeLayout>
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/line_0" />
 
-        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
 
-    </LinearLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileIV"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/icon_profile" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/saveTV"
-            android:layout_marginTop="40dp"
-            android:layout_centerInParent="true"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_ok"
-            android:text="확인"
-            android:gravity="center"
-            android:textColor="#ffffff"/>
-    </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/nickTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="닉네임 일곱글자" />
+
+                        <TextView
+                            android:id="@+id/readcountTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="0명 읽음"
+                            android:textColor="#CDCDCD"
+                            android:textSize="12dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/createdTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="방금"
+                        android:textColor="#CDCDCD"
+                        android:textSize="12dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/noticeLL"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/noticeTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="left|center_vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/founderLL"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/founderTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:hint="입력해주세요."
+                    android:maxLength="50" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/chatvisibleLL"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:text="게시형태"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginRight="10dp">
+
+                        <LinearLayout
+                            android:id="@+id/publicLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="15dp"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/radio_public"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/btn_radio_off" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="상단에 고정하기"
+                                android:textSize="13dp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/secretLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/radio_secret"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="5dp"
+                                android:src="@drawable/btn_radio_off" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="상단에서 내리기"
+                                android:textSize="13dp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/saveTV"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/btn_ok"
+                    android:gravity="center"
+                    android:text="확인"
+                    android:textColor="#ffffff"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

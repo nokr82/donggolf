@@ -108,21 +108,26 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         if (sex == "0"){
             item.usernickTV.setTextColor(Color.parseColor("#000000"))
+        } else {
+            item.usernickTV.setTextColor(Color.parseColor("#EF5C34"))
         }
-
 
         var text_size = Utils.getString(json,"text_size")
         if (text_size == "1"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12f)
         } else if (text_size == "2"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14f)
         } else if (text_size == "3"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16f)
         } else if (text_size == "4"){
             item.usernickTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
+            item.usercontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
             item.mycontentTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
         }
 
@@ -142,9 +147,16 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.mycontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.myimageIV, Utils.UILoptionsUserProfile)
-            } else {
+            } else if (type == "c"){
                 item.myimageIV.visibility = View.GONE
                 item.mycontentTV.visibility = View.VISIBLE
+            }  else if (type == "d"){
+                item.myLL.visibility = View.GONE
+                item.userLL.visibility = View.VISIBLE
+                item.usernickTV.visibility = View.GONE
+                item.userprofileIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
+                item.usercontentTV.setText(content)
             }
 
         } else {
@@ -152,14 +164,19 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             item.userLL.visibility = View.VISIBLE
             item.usernickTV.setText(member_nick)
             item.usercontentTV.setText(content)
+            item.userprofileIV.visibility = View.VISIBLE
 
             if (type == "i"){
                 item.userimageIV.visibility = View.VISIBLE
                 item.usercontentTV.visibility = View.GONE
                 var image = Config.url + content_image
                 ImageLoader.getInstance().displayImage(image, item.userimageIV, Utils.UILoptionsUserProfile)
-            } else {
+            } else if (type == "c"){
                 item.userimageIV.visibility = View.GONE
+                item.usercontentTV.visibility = View.VISIBLE
+            } else  if (type == "d"){
+                item.usernickTV.visibility = View.GONE
+                item.userprofileIV.visibility = View.GONE
                 item.usercontentTV.visibility = View.VISIBLE
             }
 
@@ -172,9 +189,20 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                     noon = "오후"
                 }
                 var time = noon + " " + timesplit.get(0) + ":" + timesplit.get(1)
+                if (difference > 0){
+                    time += "(" + difference + ")"
+                } else {
+                    time += ""
+                }
+
                 item.userdateTV.setText(time)
             } else {
-                val since = Utils.since(messageCreated)
+                var since = Utils.since(messageCreated)
+                if (difference > 0){
+                    since += "(" + difference + ")"
+                } else {
+                    since += ""
+                }
                 item.userdateTV.setText(since)
             }
 

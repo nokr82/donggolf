@@ -26,6 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
+import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.*
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -43,6 +44,8 @@ import java.util.ArrayList
 class AddGoodsActivity : RootActivity() {
 
     private val SELECT_PICTURE: Int = 101
+
+    var gugunList: ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     private lateinit var context: Context
 
@@ -63,6 +66,7 @@ class AddGoodsActivity : RootActivity() {
     private lateinit var pdtCategoryAdapter: PdtCategoryAdapter
     private lateinit var tradeTypeAdatper: TradeTypeAdapater
     private lateinit var regionAdatper: RegionAdapter
+    private lateinit var gugunadapter: DlgGugunAdapter
 
     private var categoryData = ArrayList<JSONObject>()
     private var productData = ArrayList<JSONObject>()
@@ -70,6 +74,7 @@ class AddGoodsActivity : RootActivity() {
     private var pdtCategoryData = ArrayList<JSONObject>()
     private var tradeTypeData = ArrayList<JSONObject>()
     private var regionData = ArrayList<JSONObject>()
+
     //var category = 1
 
     //등록을 위해 전송할 데이터
@@ -81,7 +86,6 @@ class AddGoodsActivity : RootActivity() {
     var deliv_way = ""
 
     var modified_product_id = 0
-
     var todayCount = 0
     var monthCount = 0
 
@@ -110,6 +114,7 @@ class AddGoodsActivity : RootActivity() {
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, productCategoryData)
         tradeTypeAdatper = TradeTypeAdapater(context, R.layout.item_dlg_market_sel_op, tradeTypeData)
         regionAdatper = RegionAdapter(context, R.layout.item_dlg_market_sel_op, regionData)
+        gugunadapter = DlgGugunAdapter(context, R.layout.item_right_radio_btn_list, gugunList)
         pdtCategoryAdapter = PdtCategoryAdapter(context, R.layout.item_dlg_market_sel_op, pdtCategoryData)
 
         getCategory()
@@ -271,14 +276,20 @@ class AddGoodsActivity : RootActivity() {
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
 
-
                 var position = regionAdatper.getItem(position)
                 var type = position.getJSONObject("Region")
                 val title = Utils.getString(type, "name")
+                val id = Utils.getInt(type, "id")
+                if (id != 0){
+                    getGugun(id)
+                }
                 regionTV.text = title
                 prod_regoin = title
-
                 alert.dismiss()
+
+
+
+
             }
 
             dialogView.dlg_btn_okTV.setOnClickListener {
@@ -580,6 +591,39 @@ class AddGoodsActivity : RootActivity() {
         }
     }
 
+
+    fun gogundlg(){
+        val builder = android.app.AlertDialog.Builder(context)
+        val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
+        builder.setView(dialogView)
+        val alert = builder.show()
+        dialogView.dlg_titleTV.text = "지역 선택"
+        dialogView.dlg_btn_okTV.visibility = View.VISIBLE
+        dialogView.dlg_marketLV.visibility = View.VISIBLE
+        dialogView.dlg_exitIV.visibility = View.VISIBLE
+        dialogView.dlg_titleTV.visibility = View.VISIBLE
+        dialogView.dlg_marketLV.adapter = gugunadapter
+        dialogView.dlg_exitIV.setOnClickListener {
+            alert.dismiss()
+        }
+
+        dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
+            var title = Utils.getString(regionTV)
+
+            var position = gugunadapter.getItem(position)
+            var region = position.getJSONObject("Regions")
+            var name: String = Utils.getString(region, "name")
+            regionTV.text = title+"/"+name
+            prod_regoin =title+"/" + name
+            alert.dismiss()
+        }
+
+        dialogView.dlg_btn_okTV.setOnClickListener {
+            alert.dismiss()
+        }
+    }
+
+
     fun reset(str: String, i: Int) {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
@@ -748,6 +792,36 @@ class AddGoodsActivity : RootActivity() {
 
     }
 
+
+
+    fun getGugun(position: Int) {
+        if (gugunList != null) {
+            gugunList.clear()
+        }
+
+        val params = RequestParams()
+        params.put("sido", position)
+
+        RegionAction.api_gugun(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                var datalist = response!!.getJSONArray("gugun")
+
+                if (datalist.length() > 0 && datalist != null) {
+                    for (i in 0 until datalist.length()) {
+                        gugunList.add(datalist.get(i) as JSONObject)
+                        gugunList[i].put("isSelectedOp", false)
+                    }
+                    gugunadapter.notifyDataSetChanged()
+                    gogundlg()
+                }else{
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                Toast.makeText(context, "불러오기 실패", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
     fun getCategory() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))

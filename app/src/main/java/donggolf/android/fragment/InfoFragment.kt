@@ -61,12 +61,11 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.lang.Exception
 
-class InfoFragment : Fragment(){
+class InfoFragment : Fragment() {
     lateinit var myContext: Context
     private var progressDialog: ProgressDialog? = null
 
 
-    val SELECT_PROFILE = 104
     val SELECT_STATUS = 105
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
@@ -178,6 +177,12 @@ class InfoFragment : Fragment(){
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("테스트","etet")
+        member_info()
+    }
+
     override fun onPause() {
         super.onPause()
     }
@@ -189,119 +194,119 @@ class InfoFragment : Fragment(){
         startActivityForResult(galleryIntent, GALLERY)
     }
 
-fun member_info(){
-    val params = RequestParams()
-    params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+    fun member_info() {
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-    MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
 
-        override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-            if (progressDialog != null) {
-                progressDialog!!.dismiss()
-            }
-
-            val result = response!!.getString("result")
-            if (result == "ok") {
-                val member = response.getJSONObject("Member")
-
-                val friendCount = response.getString("friendCount")
-                val contentCount = response.getString("contentCount")
-                val chatCount = response.getInt("chatCount")
-                chatcountTV.setText(chatCount.toString())
-                postcountTV.setText(contentCount)
-                friendCountTV.setText(friendCount)
-
-                textDate.text = Utils.getString(member,"created").substringBefore(" ")
-                txUserName.text = Utils.getString(member,"nick")
-
-                //지역
-                var region = ""
-
-                if (Utils.getString(member,"region1") != null && Utils.getString(member,"region1") != "") {
-                    region += Utils.getString(member,"region1")
-                }
-                if (Utils.getString(member,"region2") != null && Utils.getString(member,"region2") != "") {
-                    region += "," + Utils.getString(member,"region2")
-                }
-                if (Utils.getString(member,"region3") != null && Utils.getString(member,"region3") != "") {
-                    region += "," + Utils.getString(member,"region3")
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
                 }
 
-                if (Utils.getString(member,"region1") == "전국"){
-                    region = "전국"
-                }
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    val member = response.getJSONObject("Member")
 
-                /*       if (region.substring(region.length-1) == ","){
-                           region = region.substring(0, region.length-2)
-                       }*/
-                txUserRegion.text = region
+                    val friendCount = response.getString("friendCount")
+                    val contentCount = response.getString("contentCount")
+                    val chatCount = response.getInt("chatCount")
+                    chatcountTV.setText(chatCount.toString())
+                    postcountTV.setText(contentCount)
+                    friendCountTV.setText(friendCount)
 
-                //상메
-                var statusMessage = Utils.getString(member,"status_msg")
-                if (statusMessage != null) {
-                    infoStatusMsg.text = statusMessage
-                }
+                    textDate.text = Utils.getString(member, "created").substringBefore(" ")
+                    txUserName.text = Utils.getString(member, "nick")
 
-                knowTogether.visibility = View.GONE
+                    //지역
+                    var region = ""
 
-                //해시태그
-                val data = response.getJSONArray("MemberTags")
-                if (data != null) {
-                    var string_tag = ""
-                    for (i in 0 until data.length()) {
-                        var json = data[i] as JSONObject
-                        val memberTag = json.getJSONObject("MemberTag")
-
-                        string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+                    if (Utils.getString(member, "region1") != null && Utils.getString(member, "region1") != "") {
+                        region += Utils.getString(member, "region1")
                     }
-                    hashtagTV.text = string_tag
+                    if (Utils.getString(member, "region2") != null && Utils.getString(member, "region2") != "") {
+                        region += "," + Utils.getString(member, "region2")
+                    }
+                    if (Utils.getString(member, "region3") != null && Utils.getString(member, "region3") != "") {
+                        region += "," + Utils.getString(member, "region3")
+                    }
+
+                    if (Utils.getString(member, "region1") == "전국") {
+                        region = "전국"
+                    }
+
+                    /*       if (region.substring(region.length-1) == ","){
+                               region = region.substring(0, region.length-2)
+                           }*/
+                    txUserRegion.text = region
+
+                    //상메
+                    var statusMessage = Utils.getString(member, "status_msg")
+                    if (statusMessage != null) {
+                        infoStatusMsg.text = statusMessage
+                    }
+
+                    knowTogether.visibility = View.GONE
+
+                    //해시태그
+                    val data = response.getJSONArray("MemberTags")
+                    if (data != null) {
+                        var string_tag = ""
+                        for (i in 0 until data.length()) {
+                            var json = data[i] as JSONObject
+                            val memberTag = json.getJSONObject("MemberTag")
+
+                            string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+                        }
+                        hashtagTV.text = string_tag
+                    }
+
+                    //프로필 이미지
+                    val imgData = response.getJSONArray("MemberImgs")
+                    mngTXPhotoCnt.text = imgData.length().toString()
+
+                    //val tmpProfileImage = imgData.getJSONObject(0)
+                    val img_uri = Utils.getString(member, "profile_img")//small_uri
+                    val image = Config.url + img_uri
+
+                    ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
+
                 }
 
-                //프로필 이미지
-                val imgData = response.getJSONArray("MemberImgs")
-                mngTXPhotoCnt.text = imgData.length().toString()
-
-                //val tmpProfileImage = imgData.getJSONObject(0)
-                val img_uri = Utils.getString(member,"profile_img")//small_uri
-                val image = Config.url + img_uri
-
-                ImageLoader.getInstance().displayImage(image, imgProfile, Utils.UILoptionsProfile)
-
             }
 
-        }
-
-        private fun error() {
-            Utils.alert(context, "조회중 장애가 발생하였습니다.")
-        }
-
-        override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
-            if (progressDialog != null) {
-                progressDialog!!.dismiss()
+            private fun error() {
+                Utils.alert(context, "조회중 장애가 발생하였습니다.")
             }
 
-            // System.out.println(responseString);
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
 
-            throwable.printStackTrace()
-            error()
-        }
+                // System.out.println(responseString);
 
-        override fun onStart() {
-            // show dialog
-            if (progressDialog != null) {
-
-                progressDialog!!.show()
+                throwable.printStackTrace()
+                error()
             }
-        }
 
-        override fun onFinish() {
-            if (progressDialog != null) {
-                progressDialog!!.dismiss()
+            override fun onStart() {
+                // show dialog
+                if (progressDialog != null) {
+
+                    progressDialog!!.show()
+                }
             }
-        }
-    })
 
-}
+            override fun onFinish() {
+                if (progressDialog != null) {
+                    progressDialog!!.dismiss()
+                }
+            }
+        })
+
+    }
 
     @SuppressLint("NewApi")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -310,9 +315,7 @@ fun member_info(){
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                SELECT_PROFILE -> {
-                    member_info()
-                }
+
                 SELECT_STATUS -> {
                     member_info()
                 }
@@ -326,24 +329,21 @@ fun member_info(){
                     member_info()
                 }
                 GALLERY -> {
-                    if (data != null)
-                    {
+                    if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri",contentURI.toString())
+                        Log.d("uri", contentURI.toString())
 
-                        try
-                        {
+                        try {
                             val selectedImageUri = data.data
-                            var bt :Bitmap? = null
+                            var bt: Bitmap? = null
 
                             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
 
-                            val cursor =
-                                    context!!.contentResolver.query(selectedImageUri!!, filePathColumn, null, null, null)
+                            val cursor = context!!.contentResolver.query(selectedImageUri!!, filePathColumn, null, null, null)
                             if (cursor!!.moveToFirst()) {
                                 val columnIndex = cursor.getColumnIndex(filePathColumn[0])
                                 val picturePath = cursor.getString(columnIndex)
-                                bt = Utils.getImage(context!!.contentResolver,picturePath)
+                                bt = Utils.getImage(context!!.contentResolver, picturePath)
                                 cursor.close()
                             }
                             val img = ByteArrayInputStream(Utils.getByteArray(bt))
@@ -352,7 +352,7 @@ fun member_info(){
                             val params = RequestParams()
                             params.put("files", img)
                             params.put("type", "image")
-                            params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
+                            params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
                             MemberAction.update_info(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -372,8 +372,7 @@ fun member_info(){
                             })
 
 
-                        }
-                        catch (e: IOException) {
+                        } catch (e: IOException) {
                             e.printStackTrace()
                             Toast.makeText(myContext, "바꾸기실패", Toast.LENGTH_SHORT).show()
                         }
@@ -385,13 +384,9 @@ fun member_info(){
 
     }
 
-    fun updateprofile(bt:Bitmap){
-
-    }
 
 
-
-    fun getTempUserInformation(type : String) {
+    fun getTempUserInformation(type: String) {
 
         var sttsMsg = ""
         var newNick = ""
@@ -399,9 +394,9 @@ fun member_info(){
         var newRegionStr = ""
 
         val params = RequestParams()
-        params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        MemberAction.get_member_info(params, object :JsonHttpResponseHandler() {
+        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
@@ -413,28 +408,28 @@ fun member_info(){
                         sttsMsg = Utils.getString(member, "status_msg")
                         newNick = Utils.getString(member, "nick")
                         newRegion.clear()
-                        var tmprg = Utils.getString(member,"region1")
-                        if (tmprg != null){
+                        var tmprg = Utils.getString(member, "region1")
+                        if (tmprg != null) {
                             newRegion.add(tmprg)
                             //rg1 = tmprg
                         }
-                        tmprg = Utils.getString(member,"region2")
-                        if (tmprg != null){
+                        tmprg = Utils.getString(member, "region2")
+                        if (tmprg != null) {
                             newRegion.add(tmprg)
                             //rg2 = tmprg
                         }
-                        tmprg = Utils.getString(member,"region3")
-                        if (tmprg != null){
+                        tmprg = Utils.getString(member, "region3")
+                        if (tmprg != null) {
                             newRegion.add(tmprg)
                             //rg3 = tmprg
                         }
-                        for (i in 0 until newRegion.size){
+                        for (i in 0 until newRegion.size) {
                             newRegionStr += newRegion[i] + ","
                         }
                         println("newRegionStr $newRegionStr")
 
 
-                        when(type){
+                        when (type) {
                             "status_msg" -> {
                                 infoStatusMsg.text = sttsMsg
                             }
@@ -442,14 +437,14 @@ fun member_info(){
                                 txUserName.text = newNick
                             }
                             "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0,newRegionStr.length-1)
+                                txUserRegion.text = newRegionStr.substring(0, newRegionStr.length - 1)
 
                             }
                             "tag" -> {
                                 var taglist = ""
-                                for (i in 0..memberTags.length()-1){
+                                for (i in 0..memberTags.length() - 1) {
                                     val data = memberTags[i] as JSONObject
-                                    taglist += "#"+Utils.getString(data,"tag")
+                                    taglist += "#" + Utils.getString(data, "tag")
                                     println(taglist)
                                 }
                                 hashtagTV.text = taglist
@@ -468,7 +463,7 @@ fun member_info(){
                                 }*/
                                 val images = response.getJSONArray("MemberImgs")
                                 val json = images[0] as JSONObject
-                                val img_uri = Utils.getString(json,"image_uri")
+                                val img_uri = Utils.getString(json, "image_uri")
                                 //var image = Config.url + image_uri
                                 val image = Config.url + img_uri
 
@@ -486,7 +481,7 @@ fun member_info(){
 
                     }
 
-                } catch (e : JSONException) {
+                } catch (e: JSONException) {
                     e.printStackTrace()
                 }
             }

@@ -55,6 +55,9 @@ class SelectMemberActivity : RootActivity() {
     var block = "nomal"
     var searchKeyword = ""
 
+    var block_yn = ""
+    var last_id = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_member)
@@ -87,7 +90,8 @@ class SelectMemberActivity : RootActivity() {
         if (intent.getStringExtra("block") != null){
             block = intent.getStringExtra("block")
             room_id = intent.getStringExtra("room_id")
-            var block_yn = intent.getStringExtra("block_yn")
+            block_yn = intent.getStringExtra("block_yn")
+            last_id = intent.getIntExtra("last_id",0)
             if (block_yn == "Y"){
                 titleTV.setText("차단하기")
             } else {
@@ -386,6 +390,7 @@ class SelectMemberActivity : RootActivity() {
         params.put("mate_id", mate_ids)
         params.put("room_id", room_id)
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("type", "add")
 
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -400,6 +405,8 @@ class SelectMemberActivity : RootActivity() {
                         finish()
                     } else if (result == "already"){
                         Toast.makeText(context,"이미 대화방에 선택하신 멤버가 있습니다.", Toast.LENGTH_SHORT).show()
+                    } else if (result == "block"){
+                        Toast.makeText(context,"선택하신 멤버가 대화방에 차단되어 있습니다.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()
@@ -458,6 +465,12 @@ class SelectMemberActivity : RootActivity() {
 
         if (searchKeyword != "" && searchKeyword.length > 0){
             params.put("searchKeyword", searchKeyword)
+        }
+
+        if (block_yn == "Y"){
+            params.put("type", "block_n")
+        } else {
+            params.put("type", "block_y")
         }
 
         ChattingAction.get_chat_member(params, object : JsonHttpResponseHandler(){
@@ -519,15 +532,25 @@ class SelectMemberActivity : RootActivity() {
         }
 
         val params = RequestParams()
-        params.put("member_id",block_member_ids)
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("block_member_ids",block_member_ids)
         params.put("room_id", room_id)
+        params.put("last_id", last_id)
+
+        println("-------blocks")
+
 
         ChattingAction.set_dongchat_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                var intent = Intent()
-                intent.putExtra("reset","reset")
-                setResult(RESULT_OK, intent);
-                finish()
+                val result = response!!.getString("result")
+                if (result == "ok") {
+                    var intent = Intent()
+                    intent.putExtra("reset","reset")
+                    intent.action = "RESET_CHATTING"
+                    sendBroadcast(intent)
+                    setResult(RESULT_OK, intent);
+                    finish()
+                }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {

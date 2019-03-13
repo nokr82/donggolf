@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -77,6 +79,23 @@ class NoticeManageActivity : RootActivity() {
             alert.show()
         }
 
+
+        founderTV.addTextChangedListener(object : TextWatcher {
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length>49){
+                    Toast.makeText(context,"공지내용은 50자까지 입력가능합니다.",Toast.LENGTH_SHORT).show()
+                    return
+                }
+            }
+
+            override fun afterTextChanged(count: Editable) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+        })
+
     }
 
     fun get_announcement(){
@@ -100,6 +119,7 @@ class NoticeManageActivity : RootActivity() {
                             noticeLL.visibility = View.GONE
                             founderLL.visibility = View.VISIBLE
                             founderTV.isCursorVisible = true
+                            saveTV.visibility = View.VISIBLE
                         }
 
                         val Member = room.getJSONObject("Member")

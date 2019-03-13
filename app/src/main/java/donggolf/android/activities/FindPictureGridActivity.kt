@@ -70,7 +70,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         context = this
 
         var intent = getIntent()
-        if (intent.getStringExtra("category") != null){
+        if (intent.getStringExtra("category") != null) {
             category = intent.getStringExtra("category")
             val bucketName = getIntent().getStringExtra("bucketName")
             val total = getIntent().getIntExtra("total", 0)
@@ -78,7 +78,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
             limit = getIntent().getIntExtra("limit", 0)
             nowPicCount = getIntent().getIntExtra("nowPicCount", 1)
 
-            if (category == "image"){
+            if (category == "image" || category == "profile") {
 
                 val resolver = contentResolver
                 var cursor: Cursor? = null
@@ -140,14 +140,14 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                 val resolver = contentResolver
                 var cursor: Cursor? = null
                 try {
-                    val proj = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.DISPLAY_NAME,MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+                    val proj = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
                     val idx = IntArray(proj.size)
 
                     val selection = MediaStore.Video.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
                     cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        
+
                         println(" cursor : " + cursor.count)
                     } else {
 //                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
@@ -190,7 +190,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                 val imageLoader: ImageLoader = ImageLoader(resolver)
 
-                val adapter = VideoAdapter(this, videoList, imageLoader,selected)
+                val adapter = VideoAdapter(this, videoList, imageLoader, selected)
 
                 selectGV.setAdapter(adapter)
 
@@ -201,72 +201,10 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
         }
 
 
-//        mAuth = FirebaseAuth.getInstance();
-//        var cursor: Cursor? = null
-//        val resolver = contentResolver
-//
-//        try {
-//            val proj = arrayOf(
-//                    MediaStore.Images.Media._ID,
-//                    MediaStore.Images.Media.DATA,
-//                    MediaStore.Images.Media.DISPLAY_NAME,
-//                    MediaStore.Images.Media.ORIENTATION,
-//                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-//            )
-//            val idx = IntArray(proj.size)
-//
-//            cursor = MediaStore.Images.Media.query(
-//                    resolver,
-//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                    null,
-//                    null,
-//                    MediaStore.Images.Media.DATE_ADDED + " DESC"
-//            )
-//            if (cursor != null && cursor.moveToFirst()) {
-//                idx[0] = cursor.getColumnIndex(proj[0])
-//                idx[1] = cursor.getColumnIndex(proj[1])
-//                idx[2] = cursor.getColumnIndex(proj[2])
-//                idx[3] = cursor.getColumnIndex(proj[3])
-//                idx[4] = cursor.getColumnIndex(proj[4])
-//
-//                var photo = ImageAdapter.PhotoData()
-//
-//                do {
-//                    val photoID = cursor.getInt(idx[0])
-//                    val photoPath = cursor.getString(idx[1])
-//                    val displayName = cursor.getString(idx[2])
-//                    val orientation = cursor.getInt(idx[3])
-//                    val bucketDisplayName = cursor.getString(idx[4])
-//                    if (displayName != null) {
-//                        photo = ImageAdapter.PhotoData()
-//                        photo.photoID = photoID
-//                        photo.photoPath = photoPath
-//                        //Log.d("yjs", "name : " + displayName)
-//                        photo.displayName = displayName
-//                        photo.orientation = orientation
-//                        photo.bucketPhotoName = bucketDisplayName
-//                        photoList!!.add(photo)
-//                    }
-//
-//                } while (cursor.moveToNext())
-//
-//                cursor.close()
-//            }
-//        } catch (ex: Exception) {
-//            // Log the exception's message or whatever you like
-//        } finally {
-//            try {
-//                if (cursor != null && !cursor.isClosed) {
-//                    cursor.close()
-//                }
-//            } catch (ex: Exception) {
-//            }
-//
-//        }
 
 
         finishBT.setOnClickListener {
-//            try {
+            //            try {
 //                if (cursor != null && !cursor.isClosed) {
 //                    cursor.close()
 //                }
@@ -282,65 +220,71 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 //                    var bt: Bitmap = Utils.getImage(context.getContentResolver(), selected[0], 10)
 
                 val builder = AlertDialog.Builder(context)
-                 if (category == "image"){
-                     builder.setMessage("사진을 등록하시겠습니까 ?")
+                if (category == "image") {
+                    builder.setMessage("사진을 등록하시겠습니까 ?")
+                } else if (category == "profile") {
+                    builder.setMessage("프로필사진을 변경하시겠습니까 ?")
                 } else {
-                     builder.setMessage("동영상을 등록하시겠습니까 ?")
-                 }
+                    builder.setMessage("동영상을 등록하시겠습니까 ?")
+                }
+                builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
 
 
-                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
+                    val ids = ArrayList<Int>(selected.size)
+                    val result = arrayOfNulls<String>(selected.size)
+                    val name = arrayOfNulls<String>(selected.size)
 
+                    var idx = 0
+                    var idxn = 0
 
-                            val ids = ArrayList<Int>(selected.size)
-                            val result = arrayOfNulls<String>(selected.size)
-                            val name = arrayOfNulls<String>(selected.size)
+                    if (category == "image" || category == "profile") {
 
-                            var idx = 0
-                            var idxn = 0
-
-                            if (category == "image") {
-
-                                for (strPo in selected) {
-                                    result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
-                                    name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
+                        for (strPo in selected) {
+                            result[idx++] = photoList[Integer.parseInt(strPo)].photoPath
+                            name[idxn++] = photoList[Integer.parseInt(strPo)].displayName
 
 //                                    Log.d("yjs", "Path : " + photoList[0].photoPath + photoList[0].displayName)
-                                }
+                        }
 
-                                val returnIntent = Intent()
-                                returnIntent.putExtra("images", result)
-                                returnIntent.putExtra("displayname", name)
-                                setResult(RESULT_OK, returnIntent)
+                        if (category == "profile") {
+                            Toast.makeText(context, "프로필 사진이 변경 되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+
+                        val returnIntent = Intent()
+                        returnIntent.putExtra("images", result)
+                        returnIntent.putExtra("displayname", name)
+                        setResult(RESULT_OK, returnIntent)
 //                            try {
 //                                if (cursor != null && !cursor.isClosed) {
 //                                    cursor.close()
 //                                }
 //                            } catch (ex: Exception) {
 //                            }
-                                finish()
-                                println("확인time:::::::::::::::::::::::::::${System.currentTimeMillis()}")
-                            } else {
+                        finish()
+                        println("확인time:::::::::::::::::::::::::::${System.currentTimeMillis()}")
+                    } else {
 
-                                for (strPo in selected) {
-                                    ids.add(videoList[Integer.parseInt(strPo)].videoID)
-                                    result[idx] = videoList[Integer.parseInt(strPo)].videoPath
-                                    name[idxn] = videoList[Integer.parseInt(strPo)].displayName
-                                    idx++
-                                    idxn++
-                                }
+                        for (strPo in selected) {
+                            ids.add(videoList[Integer.parseInt(strPo)].videoID)
+                            result[idx] = videoList[Integer.parseInt(strPo)].videoPath
+                            name[idxn] = videoList[Integer.parseInt(strPo)].displayName
+                            idx++
+                            idxn++
+                        }
 
-                                val returnIntent = Intent()
-                                returnIntent.putExtra("videos", result)
-                                returnIntent.putExtra("displayname", name)
-                                returnIntent.putExtra("ids", ids)
-                                setResult(RESULT_OK, returnIntent)
-                                finish()
-                            }
-                        })
+                        val returnIntent = Intent()
+                        returnIntent.putExtra("videos", result)
+                        returnIntent.putExtra("displayname", name)
+                        returnIntent.putExtra("ids", ids)
+                        returnIntent.action = "REGION_CHANGE"
+                        sendBroadcast(intent)
+                        setResult(RESULT_OK, returnIntent)
+                        finish()
+                    }
+                })
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
+                            dialog.cancel()
                         })
                 val alert = builder.create()
                 alert.show()
@@ -353,7 +297,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-        if (category == "image") {
+        if (category == "image" || category == "profile") {
 
             val strPo = position.toString()
 
@@ -380,20 +324,38 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     }
 
                 } else {
-                    if (count + selected.size > 9) {
-                        Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                        return
+                    if (category == "image") {
+                        if (count + selected.size > 9) {
+                            Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+
+                        selected.add(strPo)
+
+                        countTV.text = selected.size.toString()
+
+                        val adapter = selectGV.getAdapter()
+                        if (adapter != null) {
+                            val f = adapter as ImageAdapter
+                            (f as BaseAdapter).notifyDataSetChanged()
+                        }
+                    } else {
+                        if (count + selected.size > 0) {
+                            Toast.makeText(context, "프로필 사진변경은 1장만 선택하여 주세요.", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+
+                        selected.add(strPo)
+
+                        countTV.text = selected.size.toString()
+
+                        val adapter = selectGV.getAdapter()
+                        if (adapter != null) {
+                            val f = adapter as ImageAdapter
+                            (f as BaseAdapter).notifyDataSetChanged()
+                        }
                     }
 
-                    selected.add(strPo)
-
-                    countTV.text = selected.size.toString()
-
-                    val adapter = selectGV.getAdapter()
-                    if (adapter != null) {
-                        val f = adapter as ImageAdapter
-                        (f as BaseAdapter).notifyDataSetChanged()
-                    }
                 }
             }
         } else {
@@ -423,7 +385,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     }
 
                 } else {
-                    if (selected.size  + 1 > 1) {
+                    if (selected.size + 1 > 1) {
                         Toast.makeText(context, "동영상은 1개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
                         return
                     }

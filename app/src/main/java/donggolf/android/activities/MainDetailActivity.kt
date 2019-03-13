@@ -38,7 +38,6 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import kotlin.collections.ArrayList
 
-
 class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
@@ -106,7 +105,7 @@ class MainDetailActivity : RootActivity() {
         intent = intent
         login_id = PrefUtils.getIntPreference(context, "member_id")
 
-        cmtET.hint = ""
+
         //댓글 관련 어댑터
         commentAdapter = MainDeatilAdapter(context,R.layout.main_detail_listview_item,commentList)
 
@@ -623,7 +622,9 @@ class MainDetailActivity : RootActivity() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                     val result = response!!.getString("result")
                                     if (result == "yes") {
-                                        Toast.makeText(context, "이미 친구신청을 하셨습니다.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "이미 친구신청을 친구신청을 받았습니다.", Toast.LENGTH_SHORT).show()
+                                    }else if (result == "already"){
+                                        Toast.makeText(context, "차단상태입니다.", Toast.LENGTH_SHORT).show()
                                     }else {
                                         Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
                                     }
@@ -932,6 +933,7 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
+                            Log.d("이미지",imageDatas.toString())
                             println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
@@ -989,6 +991,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until imagePaths.size){
                                     val image = Config.url + imagePaths.get(i)
+                                    Log.d("이미지2",image)
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
@@ -1263,6 +1266,7 @@ class MainDetailActivity : RootActivity() {
                                 var params = RequestParams()
                                 params.put("content_id", content_id)
                                 params.put("member_id", login_id)
+                                params.put("type", "1")
 
                                 PostAction.add_report(params, object : JsonHttpResponseHandler() {
                                     override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

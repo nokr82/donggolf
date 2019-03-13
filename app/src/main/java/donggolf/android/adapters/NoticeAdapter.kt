@@ -46,7 +46,10 @@ open class NoticeAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
         var json = data.get(position)
 
         var category = json.getJSONObject("Mynotice")
-
+        var title:String = Utils.getString(category,"title")
+        if (title!=""){
+            item.titleTV.text = title+"게시판"
+        }
         var content:String = Utils.getString(category,"keyword")
         item.keywordTV.text = content
 
@@ -104,12 +107,13 @@ open class NoticeAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
 
     class ViewHolder(v: View) {
 
-
+        var titleTV : TextView
         var keywordTV : TextView
         var removeLL : LinearLayout
 
         init {
             keywordTV = v.findViewById<View>(R.id.keywordTV) as TextView
+            titleTV = v.findViewById<View>(R.id.titleTV) as TextView
             removeLL = v.findViewById<View>(R.id.removeLL) as LinearLayout
         }
     }

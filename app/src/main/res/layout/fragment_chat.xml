@@ -86,11 +86,20 @@
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
             <ImageView
                 android:id="@+id/dongChatOnRL"
-                android:layout_width="160dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:layout_alignParentRight="true"/>
+            </LinearLayout>
             <LinearLayout
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
@@ -141,12 +150,20 @@
             android:orientation="horizontal"
             android:background="@mipmap/chat_my_chat_off">
 
-            <ImageView
-                android:id="@+id/ChatOnRL"
-                android:layout_width="180dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="210dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/ChatOnRL"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <ImageView
+
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_centerVertical="true"

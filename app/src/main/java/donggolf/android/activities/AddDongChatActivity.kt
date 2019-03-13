@@ -9,6 +9,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Adapter
@@ -40,23 +42,23 @@ class AddDongChatActivity : RootActivity() {
 
     lateinit var context: Context
 
-    var regionList1 = ArrayList<Map<String,Boolean>>()
-    var regionList2 = ArrayList<Map<String,Boolean>>()
+    var regionList1 = ArrayList<Map<String, Boolean>>()
+    var regionList2 = ArrayList<Map<String, Boolean>>()
 
     var peoplecounts: ArrayList<String> = ArrayList<String>()
-    lateinit var countAdapter:PeopleCountAdapter
+    lateinit var countAdapter: PeopleCountAdapter
 
     var bigcitylist: ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  lateinit var  cityadapter : DlgRegionAdapter
+    private lateinit var cityadapter: DlgRegionAdapter
     var gugunList: ArrayList<JSONObject> = ArrayList<JSONObject>()
-    private  lateinit var  gugunadapter : DlgGugunAdapter
+    private lateinit var gugunadapter: DlgGugunAdapter
     var region_id = "48"
 
     private val PROFILE = 1
     private val BACKGROUND = 2
 
     var profile: Bitmap? = null
-    var background:Bitmap? = null
+    var background: Bitmap? = null
 
     var secretcode = ""
     var todaycount = 0
@@ -67,7 +69,7 @@ class AddDongChatActivity : RootActivity() {
 
         context = this
 
-        getpeoplecount()
+//        getpeoplecount()
         countAdapter = PeopleCountAdapter(this, R.layout.item_people_count, peoplecounts)
         cityadapter = DlgRegionAdapter(context, R.layout.item_right_radio_btn_list, bigcitylist)
         gugunadapter = DlgGugunAdapter(context, R.layout.item_right_radio_btn_list, gugunList)
@@ -75,6 +77,7 @@ class AddDongChatActivity : RootActivity() {
         getGugun(2)
 
         btn_cancelAddDongchat.setOnClickListener {
+            Utils.hideKeyboard(this)
             finish()
         }
 
@@ -92,28 +95,28 @@ class AddDongChatActivity : RootActivity() {
             dialogView.dlg_region_LV.adapter = cityadapter
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
                 val item = bigcitylist.get(position)
-                for (i in 0 until bigcitylist.size){
-                    bigcitylist[i].put("isSelectedOp",false)
+                for (i in 0 until bigcitylist.size) {
+                    bigcitylist[i].put("isSelectedOp", false)
                 }
-                item.put("isSelectedOp",true)
+                item.put("isSelectedOp", true)
                 cityadapter.notifyDataSetChanged()
             }
 
             dialogView.btn_regionOK.setOnClickListener {
-                for (i in 0 until bigcitylist.size){
+                for (i in 0 until bigcitylist.size) {
                     val item = bigcitylist.get(i)
                     var isSel = item.getBoolean("isSelectedOp")
-                    if (isSel){
+                    if (isSel) {
                         var region = item.getJSONObject("Regions")
-                        var name:String = Utils.getString(region,"name")
-                        val parent_id = Utils.getString(region,"id")
+                        var name: String = Utils.getString(region, "name")
+                        val parent_id = Utils.getString(region, "id")
                         leftregionTV.setText(name)
                         getGugun(parent_id.toInt())
                     }
                 }
 
                 var name = leftregionTV.text.toString()
-                if (name == "전국"){
+                if (name == "전국") {
                     rightregionTV.setText("전국")
                     region_id = "0"
                 } else {
@@ -129,6 +132,28 @@ class AddDongChatActivity : RootActivity() {
             }
 
         }
+        peoplecountET.addTextChangedListener(object : TextWatcher {
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                var cnt = 0
+                var num = s.toString()
+                if (num != "") {
+                    cnt = num.toInt()
+                    if (cnt > 80) {
+                        Toast.makeText(context, "가용인원수는 최대80명입니다.", Toast.LENGTH_SHORT).show()
+                        peoplecountET.setText("80")
+                        return
+                    }
+                }
+            }
+
+            override fun afterTextChanged(count: Editable) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+        })
+
 
         region2TV.setOnClickListener {
             val builder = android.app.AlertDialog.Builder(this)
@@ -139,21 +164,21 @@ class AddDongChatActivity : RootActivity() {
             dialogView.dlg_region_LV.adapter = gugunadapter
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
                 val item = gugunList.get(position)
-                for (i in 0 until gugunList.size){
-                    gugunList[i].put("isSelectedOp",false)
+                for (i in 0 until gugunList.size) {
+                    gugunList[i].put("isSelectedOp", false)
                 }
-                item.put("isSelectedOp",true)
+                item.put("isSelectedOp", true)
                 gugunadapter.notifyDataSetChanged()
             }
 
             dialogView.btn_regionOK.setOnClickListener {
-                for (i in 0 until gugunList.size){
+                for (i in 0 until gugunList.size) {
                     val item = gugunList.get(i)
                     var isSel = item.getBoolean("isSelectedOp")
-                    if (isSel){
+                    if (isSel) {
                         var region = item.getJSONObject("Regions")
-                        var name:String = Utils.getString(region,"name")
-                        val id = Utils.getString(region,"id")
+                        var name: String = Utils.getString(region, "name")
+                        val id = Utils.getString(region, "id")
                         region_id = id
                         rightregionTV.setText(name)
                     }
@@ -167,33 +192,33 @@ class AddDongChatActivity : RootActivity() {
 
         }
 
-        moreRL.setOnClickListener {
-            val builder = android.app.AlertDialog.Builder(this)
-            val dialogView = layoutInflater.inflate(R.layout.dlg_people_count, null)
-            builder.setView(dialogView)
-            val alert = builder.show()
+        /* moreRL.setOnClickListener {
+             val builder = android.app.AlertDialog.Builder(this)
+             val dialogView = layoutInflater.inflate(R.layout.dlg_people_count, null)
+             builder.setView(dialogView)
+             val alert = builder.show()
 
-            dialogView.dlg_count_LV.adapter = countAdapter
+             dialogView.dlg_count_LV.adapter = countAdapter
 
-            dialogView.dlg_count_LV.setOnItemClickListener { parent, view, position, id ->
-                val title = peoplecounts.get(position)
-                peoplecountTV.setText(title)
-                alert.dismiss()
-            }
+             dialogView.dlg_count_LV.setOnItemClickListener { parent, view, position, id ->
+                 val title = peoplecounts.get(position)
+                 peoplecountTV.setText(title)
+                 alert.dismiss()
+             }
 
-            dialogView.btn_dlg_dismisss.setOnClickListener {
-                alert.dismiss()
-            }
+             dialogView.btn_dlg_dismisss.setOnClickListener {
+                 alert.dismiss()
+             }
 
-            dialogView.btn_countOK.setOnClickListener {
-                alert.dismiss()
-            }
+             dialogView.btn_countOK.setOnClickListener {
+                 alert.dismiss()
+             }
 
 
-        }
+         }*/
 
         profileRL.setOnClickListener {
-//            chooseProfile()
+            //            chooseProfile()
             permissionprofile()
         }
 
@@ -205,7 +230,7 @@ class AddDongChatActivity : RootActivity() {
         }
 
         backgroundRV.setOnClickListener {
-//            chooseBackground()
+            //            chooseBackground()
             permissionbackground()
         }
 
@@ -236,8 +261,7 @@ class AddDongChatActivity : RootActivity() {
                 dialogView.codevisibleLL.visibility = View.GONE
             }
             dialogView.btn_title_clear.setOnClickListener {
-                dialogView.blockcodeTV.setText("")
-                secretcode = ""
+                alert.dismiss()
             }
 
             dialogView.cancleTV.setOnClickListener {
@@ -257,10 +281,11 @@ class AddDongChatActivity : RootActivity() {
             }
         }
 
+
     }
 
 
-    fun adddongchat(){
+    fun adddongchat() {
         val title = titleET.text.toString()
         if (title.isEmpty()) {
             Utils.alert(context, "제목을 입력해주세요.")
@@ -273,49 +298,60 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
-        if (!agreeCB.isChecked){
+        if (!agreeCB.isChecked) {
             Utils.alert(context, "운영정책 동의를 체크해 주세요.")
             return
         }
 
-        if (region_id == "-1"){
+        var max_count = peoplecountET.text.toString()
+        if (max_count.isEmpty()){
+            Utils.alert(context, "인원수를 입력해주세요.")
+            return
+        } else if (max_count.toInt() > 80){
+            Utils.alert(context, "인원 최대 제한은 80명입니다.")
+            return
+        }
+
+        if (region_id == "-1") {
             Utils.alert(context, "지역 선택은 필수 입니다다.")
-           return
+            return
         }
 
         val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         params.put("title", title)
+        params.put("max_count", max_count.toInt())
         params.put("introduce", content)
         params.put("regions", region_id)
 
-        if (profile == null){
+
+        if (profile == null) {
             Utils.alert(context, "프로필사진은 필수 입력입니다.")
             return
         } else {
             params.put("intro", ByteArrayInputStream(Utils.getByteArray(profile)))
         }
 
-        if (background == null){
+        if (background == null) {
             Utils.alert(context, "대문/배경사진은 필수 입력입니다.")
             return
         } else {
             params.put("background", ByteArrayInputStream(Utils.getByteArray(background)))
         }
         params.put("type", "2")
-        params.put("division",0)
+        params.put("division", 0)
 
-        if (secretcode != ""){
-            params.put("block_code",secretcode)
+        if (secretcode != "") {
+            params.put("block_code", secretcode)
         }
 
-        ChattingAction.add_chat(params, object : JsonHttpResponseHandler(){
+        ChattingAction.add_chat(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     var intent = Intent()
-                    intent.putExtra("reset","reset")
-                    setResult(Activity.RESULT_OK,intent)
+                    intent.putExtra("reset", "reset")
+                    setResult(Activity.RESULT_OK, intent)
                     finish()
                 }
             }
@@ -331,46 +367,46 @@ class AddDongChatActivity : RootActivity() {
 
     }
 
-    fun getpeoplecount(){
-        val item = "2"
-        val item2 = "5"
-        val item3 = "10"
-        val item4 = "20"
-        val item5 = "30"
-        val item6 = "40"
-        val item7 = "50"
-        val item8 = "60"
-        val item9 = "70"
-        val item10 = "80"
-        val item11 = "90"
-        val item12 = "100"
+    /* fun getpeoplecount(){
+         val item = "2"
+         val item2 = "5"
+         val item3 = "10"
+         val item4 = "20"
+         val item5 = "30"
+         val item6 = "40"
+         val item7 = "50"
+         val item8 = "60"
+         val item9 = "70"
+         val item10 = "80"
+         val item11 = "90"
+         val item12 = "100"
 
-        peoplecounts.add(item)
-        peoplecounts.add(item2)
-        peoplecounts.add(item3)
-        peoplecounts.add(item4)
-        peoplecounts.add(item5)
-        peoplecounts.add(item6)
-        peoplecounts.add(item7)
-        peoplecounts.add(item8)
-        peoplecounts.add(item9)
-        peoplecounts.add(item10)
-    }
+         peoplecounts.add(item)
+         peoplecounts.add(item2)
+         peoplecounts.add(item3)
+         peoplecounts.add(item4)
+         peoplecounts.add(item5)
+         peoplecounts.add(item6)
+         peoplecounts.add(item7)
+         peoplecounts.add(item8)
+         peoplecounts.add(item9)
+         peoplecounts.add(item10)
+     }*/
 
-    fun getBigCity(){
+    fun getBigCity() {
 
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        RegionAction.api_sido(params,object : JsonHttpResponseHandler(){
+        RegionAction.api_sido(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val datalist = response!!.getJSONArray("sido")
 
-                if (datalist.length() > 0 && datalist != null){
-                    for (i in 0 until datalist.length()){
+                if (datalist.length() > 0 && datalist != null) {
+                    for (i in 0 until datalist.length()) {
                         bigcitylist.add(datalist.get(i) as JSONObject)
-                        bigcitylist[i].put("isSelectedOp",false)
+                        bigcitylist[i].put("isSelectedOp", false)
                     }
 
                     todaycount = response!!.getInt("todayCount")
@@ -388,22 +424,22 @@ class AddDongChatActivity : RootActivity() {
 
     }
 
-    fun getGugun(position: Int){
-        if (gugunList != null){
+    fun getGugun(position: Int) {
+        if (gugunList != null) {
             gugunList.clear()
         }
 
         val params = RequestParams()
-        params.put("sido",position)
+        params.put("sido", position)
 
-        RegionAction.api_gugun(params, object : JsonHttpResponseHandler(){
+        RegionAction.api_gugun(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
 
-                if (datalist.length() > 0 && datalist != null){
-                    for (i in 0 until datalist.length()){
+                if (datalist.length() > 0 && datalist != null) {
+                    for (i in 0 until datalist.length()) {
                         gugunList.add(datalist.get(i) as JSONObject)
-                        gugunList[i].put("isSelectedOp",false)
+                        gugunList[i].put("isSelectedOp", false)
                     }
                     gugunadapter.notifyDataSetChanged()
                 }
@@ -436,14 +472,12 @@ class AddDongChatActivity : RootActivity() {
 
             when (requestCode) {
                 PROFILE -> {
-                    if (data != null)
-                    {
+                    if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri",contentURI.toString())
+                        Log.d("uri", contentURI.toString())
 //                        profile = contentURI
                         //content://media/external/images/media/1200
-                        try
-                        {
+                        try {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
 
@@ -456,7 +490,7 @@ class AddDongChatActivity : RootActivity() {
 
                                 cursor.close()
 
-                                profile = Utils.getImage(context.contentResolver,picturePath.toString())
+                                profile = Utils.getImage(context.contentResolver, picturePath.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
                                 basicIV.visibility = View.GONE
@@ -472,8 +506,7 @@ class AddDongChatActivity : RootActivity() {
 //                            val bitmap = profileIV.drawable as BitmapDrawable
 //                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
-                        }
-                        catch (e: IOException) {
+                        } catch (e: IOException) {
                             e.printStackTrace()
                             Toast.makeText(context, "바꾸기실패", Toast.LENGTH_SHORT).show()
                         }
@@ -481,19 +514,17 @@ class AddDongChatActivity : RootActivity() {
                     }
                 }
 
-                BACKGROUND ->{
-                    if (data != null)
-                    {
+                BACKGROUND -> {
+                    if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri",contentURI.toString())
+                        Log.d("uri", contentURI.toString())
                         //content://media/external/images/media/1200
 //                        background = contentURI
                         backgroundIV.setImageResource(0)
-                        try
-                        {
+                        try {
                             //갤러리에서 가져온 이미지를 프로필에 세팅
 //                            var thumbnail = MediaStore.Images.Media.getBitmap(context.contentResolver, contentURI)
-                            var thumbnail = Utils.getImage(context.contentResolver,contentURI.toString())
+                            var thumbnail = Utils.getImage(context.contentResolver, contentURI.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            background = thumbnail
 //                            backgroundIV.setImageURI(contentURI)
@@ -509,7 +540,7 @@ class AddDongChatActivity : RootActivity() {
 
                                 cursor.close()
 
-                                background = Utils.getImage(context.contentResolver,picturePath.toString())
+                                background = Utils.getImage(context.contentResolver, picturePath.toString())
 //                            val resized = Utils.resizeBitmap(thumbnail, 100)
 //                            profile = thumbnail
                                 backbasicIV.visibility = View.GONE
@@ -524,9 +555,7 @@ class AddDongChatActivity : RootActivity() {
 //                            val img = ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap))
 
 
-
-                        }
-                        catch (e: IOException) {
+                        } catch (e: IOException) {
                             e.printStackTrace()
                             Toast.makeText(context, "바꾸기실패", Toast.LENGTH_SHORT).show()
                         }
@@ -547,7 +576,7 @@ class AddDongChatActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "권한설정을 해주셔야 합니다.", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -568,7 +597,7 @@ class AddDongChatActivity : RootActivity() {
             }
 
             override fun onPermissionDenied(deniedPermissions: List<String>) {
-                Toast.makeText(context,"권한설정을 해주셔야 합니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "권한설정을 해주셔야 합니다.", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -580,8 +609,6 @@ class AddDongChatActivity : RootActivity() {
                 .check();
 
     }
-
-
 
 
 }

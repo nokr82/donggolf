@@ -35,6 +35,7 @@ class ChatMemberActivity : RootActivity() {
     var room_id = ""
     var founder = ""
     var division = ""
+    var founder_id = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,8 @@ class ChatMemberActivity : RootActivity() {
         room_id = intent.getStringExtra("room_id")
         founder = intent.getStringExtra("founder")
         division = intent.getStringExtra("division")
+        founder_id = intent.getStringExtra("founder_id")
+
 
         chatMemberAdapter = ChatMemberAdapter(context, R.layout.item_chat_member_list, chatMemberList)
         joinMemberLV.adapter = chatMemberAdapter
@@ -54,6 +57,12 @@ class ChatMemberActivity : RootActivity() {
         detail_chatting()
 
         addmemberLL.setOnClickListener {
+
+            if (founder_id == "1"){
+                Toast.makeText(context,"1촌이 아니시면 대화멤버를 추가하실 수 없습니다..",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (division == "0") {
                 val intent = Intent(context, SelectMemberActivity::class.java)
                 intent.putExtra("founder", founder)
