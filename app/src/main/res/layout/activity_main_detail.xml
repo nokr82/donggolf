@@ -210,15 +210,35 @@
 
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/textTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="7dp"
                             android:textColor="#000000"
                             android:textSize="13dp" />
-
+                        <WebView
+                            android:id="@+id/contentWV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:ignore="WebViewLayout">
+                        </WebView>
+                        <donggolf.android.base.RationalRelativeLayout
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="7dp"
+                            android:layout_marginRight="7dp"
+                            app:ratio="1020:574">
+                        <!--<WebView-->
+                            <!--android:id="@+id/contentWV"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="match_parent">-->
+                        <!--</WebView>-->
+                        </donggolf.android.base.RationalRelativeLayout>
                         <donggolf.android.base.RationalRelativeLayout
                             android:id="@+id/imageRL"
+                            android:visibility="gone"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_marginLeft="7dp"

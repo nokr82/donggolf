@@ -11,15 +11,18 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.MediaController
-import android.widget.Toast
+import android.widget.*
+import com.github.irshulx.EditorListener
+import com.google.api.AnnotationsProto.http
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.kakao.kakaostory.StringSet.content
+import com.kakao.kakaostory.StringSet.text
+import com.kakao.kakaotalk.StringSet.members
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -28,6 +31,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
+import donggolf.android.actions.PostAction.up_load_image
 import donggolf.android.base.*
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
@@ -36,12 +40,13 @@ import org.json.JSONObject
 import java.io.*
 import java.util.*
 import kotlin.collections.ArrayList
+var html = ""
 
 
 class AddPostActivity : RootActivity() {
 
     private lateinit var mAuth: FirebaseAuth
-
+    private var editorImageLayout = com.github.irshulx.R.layout.tmpl_image_view
     private lateinit var context: Context
     private val FROM_CAMERA: Int = 100
     private val SELECT_PICTURE: Int = 101
@@ -67,7 +72,7 @@ class AddPostActivity : RootActivity() {
     private var addPicturesLL: LinearLayout? = null
 
     private val imgSeq = 0
-
+    var content_imglist: ArrayList<String> = ArrayList<String>()
     var pk: String? = null
     var images_path: ArrayList<String> = ArrayList<String>()
     var modi_path: ArrayList<String> = ArrayList<String>()
@@ -89,7 +94,7 @@ class AddPostActivity : RootActivity() {
 
     var album_video = false
     var video_id = ""
-
+    var text_ex = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_post)
@@ -115,6 +120,28 @@ class AddPostActivity : RootActivity() {
               reset2(path,i)
 
           }*/
+        //위지위그 사용
+        editor.setEditorImageLayout(editorImageLayout)
+        editor.setDividerLayout(R.layout.tmpl_divider_layout)
+        editor.editorListener = object : EditorListener {
+            override fun onRenderMacro(name: String?, props: MutableMap<String, Any>?, index: Int): View? {
+                val layout = layoutInflater.inflate(R.layout.activity_add_post, null)
+                return layout
+            }
+
+            override fun onTextChanged(editText: EditText, text: Editable) {
+                text_ex = text.toString()
+                Log.d("텍스트", text_ex)
+            }
+
+            override fun onUpload(image: Bitmap, uuid: String) {
+                up_load_image(uuid, image)
+
+                println("uuid::::::::::::::::::::::::::::::::::${uuid}")
+
+            }
+        }
+        editor.render()
 
         if (cht_yn == "Y") {
             chatableIV.visibility = View.VISIBLE
@@ -177,7 +204,7 @@ class AddPostActivity : RootActivity() {
 
         }
 
-        loadData(dbManager, member_id.toString())
+//        loadData(dbManager, member_id.toString())
 
         permission()
 
@@ -207,6 +234,7 @@ class AddPostActivity : RootActivity() {
 //                        loadData(dbManager,member_id.toString())
 
                             if (tmpContent.id == null) {
+                                Log.d("끝","")
                                 finish()
                             }
 
@@ -216,6 +244,7 @@ class AddPostActivity : RootActivity() {
 
                             if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
+                                Log.d("2끝","")
                                 finish()
                             }
 
@@ -269,7 +298,7 @@ class AddPostActivity : RootActivity() {
                                     dbManager.insertimagespath(hastag)
                                 }
                             }
-
+                            Log.d("끝3","")
                             finish()
                             dialog.cancel()
 
@@ -291,7 +320,7 @@ class AddPostActivity : RootActivity() {
                             if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
                             }
-
+                            Log.d("끝4","")
                             finish()
                             dialog.cancel()
                             Utils.hideKeyboard(this)
@@ -344,6 +373,7 @@ class AddPostActivity : RootActivity() {
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
+                        Log.d("끝5","")
                         finish()
                     })
 
@@ -386,7 +416,7 @@ class AddPostActivity : RootActivity() {
 
     }
 
-    private fun loadData(dbManager: DataBaseHelper, userid: String) {
+  /*  private fun loadData(dbManager: DataBaseHelper, userid: String) {
 
         //임시저장 데이터 불러오기
         val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
@@ -472,7 +502,7 @@ class AddPostActivity : RootActivity() {
         contentET.setText(tmpcontent.texts)
 
 //        getPost()
-    }
+    }*/
 
     private fun modify(id: String) {
         val title = Utils.getString(titleET)
@@ -480,6 +510,7 @@ class AddPostActivity : RootActivity() {
             Utils.alert(context, "제목을 입력해주세요.")
             return
         }
+
 
         var text = Utils.getString(contentET)
         if (text.isEmpty()) {
@@ -578,6 +609,7 @@ class AddPostActivity : RootActivity() {
                     intent.putExtra("id", id)
                     intent.putExtra("reset", "reset")
                     setResult(RESULT_OK, intent);
+                    Log.d("끝5","")
                     finish()
                 }
             }
@@ -598,16 +630,19 @@ class AddPostActivity : RootActivity() {
             return
         }
 
-        var text = Utils.getString(contentET)
+        var text = text_ex
         if (text.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
 
+        html = editor.getContentAsHTML()
+        Log.d("텟스2", html)
+
         val params = RequestParams()
         params.put("member_id", member_id)
         params.put("title", title)
-        params.put("text", text)
+        params.put("text", html)
         params.put("deleted", "N")
         params.put("cht_yn", cht_yn)
         params.put("cmt_yn", cmt_yn)
@@ -646,46 +681,20 @@ class AddPostActivity : RootActivity() {
         }
 
 
-//        var seq = 0
-//        if (addPicturesLL != null){
-//            println("------------------addpicture")
-//            for (i in 0 until addPicturesLL!!.childCount) {
-//                val v = addPicturesLL!!.getChildAt(i)
-//                val imageIV : SelectableRoundedImageView = v!!.findViewById(R.id.imageIV)
-//                if (imageIV is SelectableRoundedImageView) {
-//                    val bitmap = imageIV.resolveResource()
-//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
-//                    seq++
-//                    println("------seq----$seq")
-//                }
-//            }
-//        }
-
-//        if (images_path != null){
-//            Log.d("작성",images_path.toString())
-//            if (images_path!!.size != 0){
-//                for (i in 0..images_path!!.size - 1){
-//
-//                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-//
-//                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
-//                }
-//            }
-//        }
-
         var seq = 0
-        if (addPicturesLL != null) {
+        /*if (addPicturesLL != null) {
             for (i in 0 until addPicturesLL!!.childCount) {
                 val v = addPicturesLL?.getChildAt(i)
                 val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
                 if (imageIV is ImageView) {
                     val bitmap = imageIV.drawable as BitmapDrawable
+                    Log.d("로그", bitmap.toString())
                     params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
                     seq++
                     println("add-------------$seq")
                 }
             }
-        }
+        }*/
 
         if (videoPaths != null) {
             if (videoPaths.size != 0) {
@@ -706,27 +715,15 @@ class AddPostActivity : RootActivity() {
                     val file = File(videoPaths.get(i))
                     println("----------videoPath ${videoPaths.get(i)}")
                     println("file ---- ${file.length()}")
-//                    val size = file.length() as Int
-//                    println("size ---- $size")
-//                    val bytes = ByteArray(size)
+
                     var bytes = file.readBytes()
                     println("bytes ---- $bytes")
 
-//                    try {
-//                        val buf = BufferedInputStream( FileInputStream(file));
-//                        buf.read(bytes, 0, bytes.size);
-//                        buf.close();
-//                        bytes = Utils.getByteArray(buf)
-//                    } catch (e:FileNotFoundException){
-//
-//                    } catch (e:IOException){
-//
-//                    }
+
                     var n: Int
                     val baos = ByteArrayOutputStream()
                     val videoBytes = baos.toByteArray()
 
-//                    params.put("videos[" + i + "]",  ByteArrayInputStream(videofile))
                     params.put("videos[" + i + "]", ByteArrayInputStream(bytes))
 
                 }
@@ -736,6 +733,11 @@ class AddPostActivity : RootActivity() {
         PostAction.add_post(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                /*var content_id = response!!.getString("content_id")
+                Log.d("아뒤컨",content_id)*/
+
+//                get_content_file(content_id)
                 var intent = Intent()
                 intent.action = "ADD_POST"
                 sendBroadcast(intent)
@@ -750,14 +752,16 @@ class AddPostActivity : RootActivity() {
 
         val dbManager = DataBaseHelper(context)
 
-        loadData(dbManager, member_id.toString())
+//        loadData(dbManager, member_id.toString())
 
         if (tmpContent.id == null) {
+            Log.d("끝6","")
             finish()
         }
 
         if (tmpContent.id != null) {
             dbManager.deleteTmpContent(tmpContent.id!!)
+            Log.d("끝7","")
             finish()
         }
 
@@ -766,7 +770,6 @@ class AddPostActivity : RootActivity() {
         }
 
     }
-
     private fun moveMyPicture() {
 //        var intent = Intent(context, FindPictureGridActivity::class.java);
         var intent = Intent(context, FindPictureActivity::class.java);
@@ -776,6 +779,43 @@ class AddPostActivity : RootActivity() {
         startActivityForResult(intent, SELECT_PICTURE);
 
         println("SELECT_PICTURE:::::::::::::::::::::::::${time}")
+
+    }
+
+    private fun up_load_image(path:String, image:Bitmap) {
+
+        val params = RequestParams()
+        params.put("file", ByteArrayInputStream(Utils.getByteArray(image!!)))
+
+
+
+        PostAction.up_load_image(params, object : JsonHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                print("response:::::::::::::${response}")
+
+                var result = response!!.getString("result")
+
+                if (result == "ok") {
+                    var image_uri = response!!.getString("image_uri")
+
+//                    html = html.replace(path, image_uri)
+
+
+                    editor.onImageUploadComplete(Config.url + image_uri, path)
+//                    editor.render(html)
+
+                    println("html::::::::::::::::::::::::::${html}")
+                    Log.d("image_uri",image_uri)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+            }
+
+        })
+
 
     }
 
@@ -903,6 +943,7 @@ class AddPostActivity : RootActivity() {
         }
 
     }
+
 
     fun reset2(str: String, i: Int) {
 //        val options = BitmapFactory.Options()
@@ -1124,6 +1165,7 @@ class AddPostActivity : RootActivity() {
 
                         }
 
+                        editor.insertImage(add_file)
                         reset(str, i)
 
                     }
@@ -1236,7 +1278,6 @@ class AddPostActivity : RootActivity() {
             }
         }
     }
-
 
     fun clickMethod(v: View) {
         val builder = AlertDialog.Builder(context)
@@ -1360,6 +1401,7 @@ class AddPostActivity : RootActivity() {
 //                        loadData(dbManager,member_id.toString())
 
                         if (tmpContent.id == null) {
+                            Log.d("끝10","")
                             finish()
                         }
 
@@ -1369,6 +1411,7 @@ class AddPostActivity : RootActivity() {
 
                         if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
+                            Log.d("끝11","")
                             finish()
                         }
 
@@ -1433,7 +1476,7 @@ class AddPostActivity : RootActivity() {
                         }
 
                         temp_yn = "N"
-
+                        Log.d("끝12","")
                         finish()
 
                         Utils.hideKeyboard(this)
@@ -1466,6 +1509,13 @@ class AddPostActivity : RootActivity() {
 
 
     }
+
+    override fun finish() {
+        super.finish()
+
+        println(":::::::::::::::::::::::::finishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinish")
+    }
+
 }
 
 

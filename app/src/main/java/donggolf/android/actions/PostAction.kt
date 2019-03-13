@@ -6,6 +6,16 @@ import donggolf.android.base.HttpClient
 
 object PostAction {
 
+    fun get_content_file(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/get_content_file.json", params, handler)
+    }
+
+
+    fun up_load_image(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/post/up_load_image.json", params, handler)
+    }
+
+
     fun add_post(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/post/add_post.json", params, handler)
     }
@@ -13,7 +23,9 @@ object PostAction {
     fun load_post(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/post/load_post.json", params, handler)
     }
-
+    fun post(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.get("/post/post", params, handler)
+    }
     fun get_post(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/post/get_post.json", params, handler)
     }
