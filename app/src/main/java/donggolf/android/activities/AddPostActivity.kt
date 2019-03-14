@@ -204,7 +204,7 @@ class AddPostActivity : RootActivity() {
 
         }
 
-//        loadData(dbManager, member_id.toString())
+        loadData(dbManager, member_id.toString())
 
         permission()
 
@@ -261,7 +261,8 @@ class AddPostActivity : RootActivity() {
 
                         .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                             val title = Utils.getString(titleET)
-                            val content = Utils.getString(contentET)
+//                            val content = Utils.getString(contentET)
+                            val content = editor.getContentAsHTML()
 
                             if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                                 dbManager.deleteImagePaths(member_id.toString())
@@ -416,7 +417,7 @@ class AddPostActivity : RootActivity() {
 
     }
 
-  /*  private fun loadData(dbManager: DataBaseHelper, userid: String) {
+    private fun loadData(dbManager: DataBaseHelper, userid: String) {
 
         //임시저장 데이터 불러오기
         val query = "SELECT * FROM tmpcontent WHERE owner ='" + userid + "'"
@@ -442,40 +443,40 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        if (images_path!!.size > 0) {
-            for (i in 0..(images_path!!.size - 1)) {
-                val str = images_path!![i]
-
-                val add_file = Utils.getImage(context.contentResolver, str)
-
-                if (images?.size == 0) {
-
-                    images?.add(add_file)
-
-                } else {
-                    try {
-                        images?.set(images!!.size, add_file)
-                    } catch (e: IndexOutOfBoundsException) {
-                        images?.add(add_file)
-                    }
-
-                }
-
-                reset(str, i)
-
-            }
-
-            val child = addPicturesLL!!.getChildCount()
-            for (i in 0 until child) {
-
-                println("test : $i")
-
-                val v = addPicturesLL!!.getChildAt(i)
-
-                val delIV = v.findViewById(R.id.delIV) as ImageView
-
-            }
-        }
+//        if (images_path!!.size > 0) {
+//            for (i in 0..(images_path!!.size - 1)) {
+//                val str = images_path!![i]
+//
+//                val add_file = Utils.getImage(context.contentResolver, str)
+//
+//                if (images?.size == 0) {
+//
+//                    images?.add(add_file)
+//
+//                } else {
+//                    try {
+//                        images?.set(images!!.size, add_file)
+//                    } catch (e: IndexOutOfBoundsException) {
+//                        images?.add(add_file)
+//                    }
+//
+//                }
+//
+//                reset(str, i)
+//
+//            }
+//
+//            val child = addPicturesLL!!.getChildCount()
+//            for (i in 0 until child) {
+//
+//                println("test : $i")
+//
+//                val v = addPicturesLL!!.getChildAt(i)
+//
+//                val delIV = v.findViewById(R.id.delIV) as ImageView
+//
+//            }
+//        }
 
         if (videoPaths.size > 0) {
             videoVV.visibility = View.VISIBLE
@@ -497,12 +498,13 @@ class AddPostActivity : RootActivity() {
 
         tmpContent = tmpcontent
         this.tmpImagesPath = tmpImagesPath
+        val text: String = if(tmpcontent.texts == null || tmpcontent.texts!!.isEmpty() || tmpcontent.texts!!.count() < 1) "" else tmpcontent.texts!!
 
         titleET.setText(tmpcontent.title)
-        contentET.setText(tmpcontent.texts)
-
+        editor.render(text)
+//        contentET.setText(tmpcontent.texts)
 //        getPost()
-    }*/
+    }
 
     private fun modify(id: String) {
         val title = Utils.getString(titleET)
@@ -512,18 +514,26 @@ class AddPostActivity : RootActivity() {
         }
 
 
-        var text = Utils.getString(contentET)
-        if (text.isEmpty()) {
-            Utils.alert(context, "내용을 입력해주세요.")
-            return
-        }
+//        var text = Utils.getString(contentET)
+//        if (text.isEmpty()) {
+//            Utils.alert(context, "내용을 입력해주세요.")
+//            return
+//        }
 
         val params = RequestParams()
         params.put("content_id", id)
         val login_id = PrefUtils.getIntPreference(context, "member_id")
         params.put("member_id", login_id)
         params.put("title", title)
-        params.put("text", text)
+
+        var html = editor.getContentAsHTML()
+
+        if (text_ex.isEmpty()) {
+            Utils.alert(context, "내용을 입력해주세요.")
+            return
+        }
+
+        params.put("text", html)
         params.put("cht_yn", cht_yn)
         params.put("cmt_yn", cmt_yn)
 
@@ -542,19 +552,19 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-        var seq = 0
-        if (addPicturesLL != null) {
-            for (i in 0 until addPicturesLL!!.childCount) {
-                val v = addPicturesLL?.getChildAt(i)
-                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-                if (imageIV is ImageView) {
-                    val bitmap = imageIV.drawable as BitmapDrawable
-                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
-                    seq++
-                    println("add-------------$seq")
-                }
-            }
-        }
+//        var seq = 0
+//        if (addPicturesLL != null) {
+//            for (i in 0 until addPicturesLL!!.childCount) {
+//                val v = addPicturesLL?.getChildAt(i)
+//                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+//                if (imageIV is ImageView) {
+//                    val bitmap = imageIV.drawable as BitmapDrawable
+//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
+//                    seq++
+//                    println("add-------------$seq")
+//                }
+//            }
+//        }
 
 //        if (images_path != null){
 //            Log.d("작성",images_path.toString())
@@ -1119,6 +1129,8 @@ class AddPostActivity : RootActivity() {
                                 replyableIV.visibility = View.GONE
                             }
 
+                            editor.render(text)
+
                         }
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -1429,7 +1441,8 @@ class AddPostActivity : RootActivity() {
                     .setPositiveButton("유지하고 나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
                         val title = Utils.getString(titleET)
-                        val content = Utils.getString(contentET)
+//                        val content = Utils.getString(contentET)
+                        val content = editor.getContentAsHTML()
 
                         if (tmpImagesPath != null && tmpImagesPath.size > 0) {
                             dbManager.deleteImagePaths(member_id.toString())
