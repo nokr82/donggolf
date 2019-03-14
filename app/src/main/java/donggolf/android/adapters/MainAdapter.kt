@@ -79,13 +79,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var uri = Utils.getString(Content,"image_uri")
         var video = Utils.getString(Content,"video")
         val since = Utils.since(created)
-        text = text.replace("<p data-tag=\"input\" style=\"color:#000000;\">".toRegex(), "")
-        text = text.replace("</p>".toRegex(), "")
-        text = text.replace("<p data-tag=\"img-sub\" style=\"color:#5E5E5E;\" class=\"editor-image-subtitle\">".toRegex(), "")
-        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
-        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
-        text = text.replace("<div data-tag=\"img\">".toRegex(), "")
-        Log.d("텍스트",text)
+
         if (sex == "0"){
             item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
         }else{
@@ -93,7 +87,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         }
 
         item.main_item_title.text = title.toString()
-        item.main_item_content.text = text.toString()
+        item.main_item_content.text = Utils.getString(Content, "content")
         item.main_item_view_count.text = look_cnt.toString()
         item.main_item_like_count.text = like_cnt.toString()
         item.main_item_nickname.text = nick.toString()
@@ -102,15 +96,22 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         val type =Utils.getInt(Content,"type")
 
         var image = Config.url + uri
+
         if (type == 2){
             item.videoIV.visibility = View.VISIBLE
         }else{
             item.videoIV.visibility = View.GONE
         }
-        if (uri != null){
-            if (uri != "") {
 
-                item.profileIV.visibility = View.VISIBLE
+
+        if (Utils.getString(Content, "image_yn") == "Y") {
+            ImageLoader.getInstance().displayImage(Utils.getString(Content, "first_image_uri"), item.profileIV, Utils.UILoptionsProfile)
+        } else {
+
+            if (uri != null){
+                if (uri != "") {
+
+                    item.profileIV.visibility = View.VISIBLE
 
 
 //                if (image_type == "1") {
@@ -125,11 +126,13 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 //                    item.profileIV.setImageBitmap(bitmapThumb)
 //                }
 
+                } else {
+                    item.profileIV.visibility = View.GONE
+                }
             } else {
                 item.profileIV.visibility = View.GONE
             }
-        } else {
-            item.profileIV.visibility = View.GONE
+
         }
 
         if (profile != null){

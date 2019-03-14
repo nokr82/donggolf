@@ -1385,6 +1385,9 @@ class MainDetailActivity : RootActivity() {
                         modify_division = data!!.getStringExtra("id")
                         val id = data!!.getStringExtra("id")
                         getPost(id)
+
+                        contentWV.loadUrl(Config.url + "/post/post"+"?content_id="+id)
+
 //                    if (data!!.getStringExtra("reset") != null) {
 
 //                    }
