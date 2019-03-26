@@ -9,10 +9,6 @@ object CommentAction {
     fun get_content_comment_list(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/comment/get_content_comment.json", params, handler)
     }
-
-    fun comment_at_content(params: RequestParams, handler: JsonHttpResponseHandler) {
-        HttpClient.post("/comment/add_content_comment.json", params, handler)
-    }
     fun write_comments(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/comment/write_comments.json", params, handler)
     }

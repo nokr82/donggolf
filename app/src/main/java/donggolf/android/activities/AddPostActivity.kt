@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,13 +15,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import com.github.irshulx.EditorListener
-import com.google.api.AnnotationsProto.http
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import com.kakao.kakaostory.StringSet.content
-import com.kakao.kakaostory.StringSet.text
-import com.kakao.kakaotalk.StringSet.members
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -31,7 +26,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
-import donggolf.android.actions.PostAction.up_load_image
 import donggolf.android.base.*
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
@@ -228,10 +222,9 @@ class AddPostActivity : RootActivity() {
                             Utils.hideKeyboard(this)
 
                         })
-                        .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                        .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
-//                        loadData(dbManager,member_id.toString())
 
                             if (tmpContent.id == null) {
                                 Log.d("끝","")
@@ -1407,7 +1400,7 @@ class AddPostActivity : RootActivity() {
                         Utils.hideKeyboard(this)
 
                     })
-                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                    .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
 //                        loadData(dbManager,member_id.toString())

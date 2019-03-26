@@ -63,20 +63,7 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         item.main_detail_comment_dateTV.text = Utils.getString(comment,"created")
         item.main_detail_comment_typeIV.visibility = View.GONE
 
-//        var typeAdt = Utils.getString(comment,"type")
 
-       /* if (typeAdt == "r"){
-            item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
-
-        } else if (typeAdt == "c") {
-            item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
-
-        } else {
-            item.main_detail_comment_typeIV.visibility = View.GONE
-
-        }*/
         var p_comments_id = Utils.getInt(comment,"p_comments_id")
         var op_comments_id = Utils.getInt(comment,"op_comments_id")
 
