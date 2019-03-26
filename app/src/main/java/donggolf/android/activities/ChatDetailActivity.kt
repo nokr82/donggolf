@@ -228,9 +228,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         finishaLL.setOnClickListener {
             var intent = Intent()
             intent.putExtra("reset", "reset")
-            setResult(RESULT_OK, intent);
-            finish()
+            setResult(RESULT_OK, intent)
             Utils.hideKeyboard(this)
+            finish()
+
         }
 
         addchattingTV.setOnClickListener {
@@ -1302,7 +1303,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     override fun onBackPressed() {
         var intent = Intent()
         intent.putExtra("reset", "reset")
-        setResult(RESULT_OK, intent);
+        Utils.hideKeyboard(context)
+        setResult(RESULT_OK, intent)
 
         if (chat_right_menu.visibility == View.VISIBLE) {
             drawerMenu.closeDrawers()
@@ -1314,7 +1316,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     override fun finish() {
         super.finish()
-
+        Utils.hideKeyboard(context)
         if (chattingList.size > 0) {
             val data = chattingList[chattingList.size - 1]
 
@@ -1323,15 +1325,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val content = Utils.getString(chatting, "content")
             val chatting_type = Utils.getString(chatting, "type")
             val chat_created = Utils.getString(chatting, "created")
-
-//            var intent = Intent()
-//            intent.putExtra("room_id", room_id.toInt())
-//            intent.putExtra("room_type", room_type)
-//            intent.putExtra("content", content)
-//            intent.putExtra("chatting_type", chatting_type)
-//            intent.putExtra("chat_created", chat_created)
-//            setResult(Activity.RESULT_OK, intent)
-
         }
 
     }

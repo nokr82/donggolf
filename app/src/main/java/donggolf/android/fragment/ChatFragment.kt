@@ -301,7 +301,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                         if (code == block_code) {
                             var chatmember = json.getJSONArray("Chatmember")
 
-                            if (max_count.toInt() >= chatmember.length()){
+                            if (max_count.toInt() <= chatmember.length()){
                                 Toast.makeText(context, "멤버(FULL)상태라 입장 할 수 없습니다.", Toast.LENGTH_SHORT).show()
                                 return@setOnClickListener
                             }
