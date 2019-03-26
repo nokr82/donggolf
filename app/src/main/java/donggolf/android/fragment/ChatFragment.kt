@@ -81,17 +81,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
         }
     }
 
-  /*  internal var setregionReciver: BroadcastReceiver? = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null) {
-                if (townChatOnRL.visibility == View.VISIBLE) {
-                    getmychat(2)
-                } else {
-                    getmychat(1)
-                }
-            }
-        }
-    }*/
 
     internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -211,12 +200,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*tabMyChat = view.findViewById(R.id.tabMyChat)
-        tabTownChat = view.findViewById(R.id.tabTownChat)
-        btn_myChat_mng = view.findViewById(R.id.btn_myChat_mng)
-        btn_make_chat = view.findViewById(R.id.btn_make_chat)
-        txMyChat = view.findViewById(R.id.txMyChat)
-        txTownChat = view.findViewById(R.id.txTownChat)*/
 
         chat_list = view.findViewById(R.id.chat_list)
         dong_chat_list = view.findViewById(R.id.dong_chat_list)
