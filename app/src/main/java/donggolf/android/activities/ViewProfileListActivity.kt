@@ -178,7 +178,7 @@ class ViewProfileListActivity : RootActivity() {
                     }
 
                     if (member_id != PrefUtils.getIntPreference(context, "member_id")){
-                        showProfImgAlbumIV.visibility = View.GONE
+                        showProfImgAlbumIV.visibility = View.VISIBLE
                     }
                 }
 

@@ -61,6 +61,10 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
         tmp_member_id = intent.getIntExtra("viewAlbumListUserID",0)
         login_id = PrefUtils.getIntPreference(context,"member_id")
 
+        if (tmp_member_id !=login_id ){
+            albumMenuIV.visibility = View.GONE
+        }
+
         selectGV.setOnItemClickListener(this)
         eachViewAdapter = ViewAlbumAdapter(context, R.layout.findpicture_gridview_item, albumList,selected)
         selectGV.adapter = eachViewAdapter

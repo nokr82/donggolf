@@ -740,6 +740,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     if (type == 1) {
                         if (page == 1) {
                             adapterData.clear()
+                            adapter.notifyDataSetChanged()
                         }
                         totalPage = response.getInt("totalPage");
                         page = response.getInt("page");
@@ -760,6 +761,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     } else {
                         if (page == 1) {
                             dongAdapterData.clear()
+                            dongAdapter.notifyDataSetChanged()
                         }
                         totalPage = response.getInt("totalPage");
                         page = response.getInt("page");
