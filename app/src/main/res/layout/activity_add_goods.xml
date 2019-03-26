@@ -165,7 +165,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_margin="5dp"
                                     android:background="@null"
-                                    android:hint="브랜드명 모델명 모두 입력해 주세요."
+                                    android:hint="제품명 또는 모델명을 포함하여 제목을 입력해주세요"
                                     android:inputType="textEmailAddress"
                                     android:singleLine="true"
                                     android:textSize="12dp" />
