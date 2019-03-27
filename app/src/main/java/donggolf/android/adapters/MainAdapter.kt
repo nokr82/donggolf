@@ -112,19 +112,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
                 if (uri != "") {
 
                     item.profileIV.visibility = View.VISIBLE
-
-
-//                if (image_type == "1") {
                     ImageLoader.getInstance().displayImage(image, item.profileIV, Utils.UILoptionsProfile)
-//                } else {
-//
-////                    val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image,0);
-//                    println("image::::::::::::::::::::::::::::::::::::$image")
-////                    val bitmapThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, photo.videoID.toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
-//                    // val bitmapThumb = ThumbnailUtils.createVideoThumbnail(image, MediaStore.Video.Thumbnails.MINI_KIND)
-//                    val bitmapThumb = Utils.retriveVideoFrameFromVideo(image)
-//                    item.profileIV.setImageBitmap(bitmapThumb)
-//                }
 
                 } else {
                     item.profileIV.visibility = View.GONE
