@@ -223,26 +223,6 @@ open class FreeFragment : Fragment() {
 
                 }
 
-//                if (!main_listview.canScrollVertically(-1)) {
-//                    page=1
-//                    var keyword = main_edit_search.text.toString()
-//                    if (keyword == null || keyword == "") {
-//                        mainData("")
-//                    } else {
-//                        mainData(keyword)
-//                    }
-//                } else if (!main_listview.canScrollVertically(1)) {
-//                    if (totalPage > page) {
-//                        page++
-//                        lastcount = totalItemCountScroll
-//                        var keyword = main_edit_search.text.toString()
-//                        if (keyword == null || keyword == "") {
-//                            mainData("")
-//                        } else {
-//                            mainData(keyword)
-//                        }
-//                    }
-//                }
 
             }
         })
@@ -499,47 +479,6 @@ open class FreeFragment : Fragment() {
         })
     }
 
-    fun resetList(keyWord: String) {
-
-        if (keyWord == null || keyWord == "") {
-            mainData("")
-        } else {
-            val params = RequestParams()
-            params.put("searchKeyword", keyWord)
-
-            PostAction.load_post(params, object : JsonHttpResponseHandler() {
-
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        try {
-                            val list = response!!.getJSONArray("content")
-
-                            if (adapterData != null) {
-                                adapterData.clear()
-                                adapter.notifyDataSetChanged()
-                            }
-
-                            for (i in 0..(list.length() - 1)) {
-                                val Content = list.get(i) as JSONObject
-                                adapterData.add(Content as JSONObject)
-                            }
-                            adapter.notifyDataSetChanged()
-                            main_listview_search.visibility = View.GONE
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-
-                }
-
-            })
-        }
-
-    }
 
     override fun onDestroy() {
         super.onDestroy()

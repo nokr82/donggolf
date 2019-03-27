@@ -106,6 +106,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
 
         if (Utils.getString(Content, "image_yn") == "Y") {
             ImageLoader.getInstance().displayImage(Utils.getString(Content, "first_image_uri"), item.profileIV, Utils.UILoptionsProfile)
+            item.profileIV.visibility = View.VISIBLE
         } else {
 
             if (uri != null){
