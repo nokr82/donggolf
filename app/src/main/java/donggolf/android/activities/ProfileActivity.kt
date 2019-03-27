@@ -177,10 +177,7 @@ class ProfileActivity : RootActivity() {
 
     }
 
-    fun get_user_information(){
-        val params = RequestParams()
-        //params.put("member_id")//상대방 홈페이지로 넘어갈 때 주는 인텐트값을 줌
-    }
+
 
     fun member_info(member_id:String){
         val params = RequestParams()
@@ -288,9 +285,10 @@ class ProfileActivity : RootActivity() {
                         }
 
                         val status = Utils.getString(member,"status")
+                        val user_status = Utils.getString(member,"user_status")
                         if (status == "b"){
                             profile_opIV.setImageResource(R.drawable.btn_block)
-                            profile_opTV.text = "차단취소"
+                            profile_opTV.text = "차단해제"
                         } else if (status == "w"){
                             profile_opIV.setImageResource(R.drawable.btn_add_friend_cancel)
                             profile_opTV.text = "신청취소"
