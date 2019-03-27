@@ -1322,7 +1322,8 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     override fun onBackPressed() {
         var intent = Intent()
         intent.putExtra("reset", "reset")
-        setResult(RESULT_OK, intent);
+        Utils.hideKeyboard(context)
+        setResult(RESULT_OK, intent)
 
         if (dongchat_right_menu.visibility == View.VISIBLE) {
             dongchat_drawerMenu.closeDrawers()

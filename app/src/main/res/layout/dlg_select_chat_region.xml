@@ -41,9 +41,10 @@
         android:scrollbars="none"
         android:id="@+id/dlg_region_LV"
         android:layout_width="match_parent"
-        android:layout_height="400dp"/>
+        android:layout_height="match_parent"/>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/btn_regionOK"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

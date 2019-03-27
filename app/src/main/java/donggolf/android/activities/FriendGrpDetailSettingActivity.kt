@@ -59,9 +59,9 @@ class FriendGrpDetailSettingActivity : RootActivity() {
                 Toast.makeText(context,"1촌 골퍼는 카테고리명을 변경하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null) //사용자 정의 다이얼로그 xml 붙이기
+            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
             dialogView.dlgTitle.text = "카테고리 이름변경"
             dialogView.categoryTitleET.setText(title)
             dialogView.categoryTitleET.addTextChangedListener(object : TextWatcher {
@@ -89,13 +89,10 @@ class FriendGrpDetailSettingActivity : RootActivity() {
                         updateCategory("title")
                     }
                     .show()
-            val alert = builder.show() //builder를 끄기 위해서는 alertDialog에 이식해줘야 함
-
             dialogView.btn_title_clear.setOnClickListener {
                 alert.dismiss()
             }
         }
-
         btn_back.setOnClickListener {
             finish()
         }

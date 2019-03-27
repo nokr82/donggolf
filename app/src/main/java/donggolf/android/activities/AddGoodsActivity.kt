@@ -32,6 +32,8 @@ import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import donggolf.android.models.ImagesPath
+import donggolf.android.models.TmpContent
 import kotlinx.android.synthetic.main.activity_add_goods.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
@@ -126,7 +128,7 @@ class AddGoodsActivity : RootActivity() {
         }
 
         finishLL.setOnClickListener {
-            finish()
+            dlg()
         }
 
         goodsinfoLL.setOnClickListener {
@@ -623,6 +625,9 @@ class AddGoodsActivity : RootActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        dlg()
+    }
 
     fun reset(str: String, i: Int) {
         val options = BitmapFactory.Options()
@@ -1055,6 +1060,28 @@ class AddGoodsActivity : RootActivity() {
         }
 
 
+    }
+
+
+    fun dlg(){
+        val builder = AlertDialog.Builder(context)
+        builder
+                .setMessage("글쓰기를 종료할까요 ?")
+
+                .setPositiveButton("나가기", DialogInterface.OnClickListener { dialog, id ->
+
+                    finish()
+                    dialog.cancel()
+                    Utils.hideKeyboard(this)
+
+                })
+                .setNegativeButton("계속쓰기", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+                    Utils.hideKeyboard(this)
+
+                })
+        val alert = builder.create()
+        alert.show()
     }
 
     fun modifyProductInform() {

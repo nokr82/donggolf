@@ -99,7 +99,7 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             if (block_yn == "Y") {
-                Toast.makeText(context, "차단된 채팅방 입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "채팅방에 접근할 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

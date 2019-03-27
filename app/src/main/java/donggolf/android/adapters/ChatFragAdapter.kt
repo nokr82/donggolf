@@ -3,6 +3,7 @@ package donggolf.android.adapters
 import android.content.Context
 import android.graphics.Color
 import android.media.Image
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -60,6 +61,7 @@ open class ChatFragAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         var nick = ""
         val readdiv = Utils.getString(room,"readdiv")
         val room_created = Utils.getString(room,"room_created")
+
         if (readdiv == "0"){
             item.readIV.visibility = View.VISIBLE
         } else {
