@@ -171,30 +171,7 @@ class AddDongChatActivity : RootActivity() {
 
         }
 
-        /* moreRL.setOnClickListener {
-             val builder = android.app.AlertDialog.Builder(this)
-             val dialogView = layoutInflater.inflate(R.layout.dlg_people_count, null)
-             builder.setView(dialogView)
-             val alert = builder.show()
 
-             dialogView.dlg_count_LV.adapter = countAdapter
-
-             dialogView.dlg_count_LV.setOnItemClickListener { parent, view, position, id ->
-                 val title = peoplecounts.get(position)
-                 peoplecountTV.setText(title)
-                 alert.dismiss()
-             }
-
-             dialogView.btn_dlg_dismisss.setOnClickListener {
-                 alert.dismiss()
-             }
-
-             dialogView.btn_countOK.setOnClickListener {
-                 alert.dismiss()
-             }
-
-
-         }*/
 
         profileRL.setOnClickListener {
             //            chooseProfile()
@@ -221,6 +198,7 @@ class AddDongChatActivity : RootActivity() {
         }
 
         adddongchatTV.setOnClickListener {
+            adddongchatTV.isEnabled = false
             adddongchat()
         }
 
@@ -327,6 +305,7 @@ class AddDongChatActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+
                     var intent = Intent()
                     intent.putExtra("reset", "reset")
                     setResult(Activity.RESULT_OK, intent)

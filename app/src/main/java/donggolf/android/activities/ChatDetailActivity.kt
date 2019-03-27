@@ -585,7 +585,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.get(i).put("text_size",text_size)
                             }
 
-                            chatLV.setSelection(adapter.count - 1)
+//                            chatLV.setSelection(adapter.count - 1)
                         }
                     }
 
@@ -596,6 +596,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     }
 
                     (adapter as BaseAdapter).notifyDataSetChanged()
+
                 }
             }
 
