@@ -135,6 +135,9 @@
             android:name=".activities.MarketManageActivity"
             android:theme="@style/NoTitleDialog" />
         <activity
+            android:name=".activities.WebPictureDetailActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
             android:name=".activities.GoodsDetailActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />

@@ -17,8 +17,10 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
+import android.webkit.JavascriptInterface
 import android.widget.MediaController
 import android.widget.Toast
+import com.kakao.kakaostory.StringSet.text
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -42,7 +44,6 @@ class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
     private  var commentList = ArrayList<JSONObject>()
-    private var commentBlockList = ArrayList<JSONObject>()
 
     private  lateinit var  commentAdapter : MainDeatilAdapter
 
@@ -52,16 +53,11 @@ class MainDetailActivity : RootActivity() {
     var adPosition = 0
 
     var PICTURE_DETAIL = 1
-    var editComments  = false
-    var detailowner: String? = ""
 
     var pressStartTime: Long?  = 0
-    var pressedX: Float? = 0F
-    var pressedY: Float? = 0F
     var stayedWithinClickDistance: Boolean? = false
 
     val MAX_CLICK_DURATION = 1000
-    val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
 
@@ -658,6 +654,8 @@ class MainDetailActivity : RootActivity() {
             comment_path = null
         }
 
+        contentWV.addJavascriptInterface(ImageClick(context), "ImageClick")
+
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
             getPost(id)
@@ -668,6 +666,16 @@ class MainDetailActivity : RootActivity() {
             getLooker(id)
         }
 
+    }
+
+    class ImageClick(context: Context) {
+        var context = context
+        @JavascriptInterface
+        fun imageClick(src : String){
+            val intent = Intent(context, WebPictureDetailActivity::class.java)
+            intent.putExtra("src", src)
+            context.startActivity(intent)
+        }
     }
 
     //이미지 자세히 보기 액티비티
