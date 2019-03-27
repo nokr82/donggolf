@@ -36,7 +36,7 @@ class ProfileActivity : RootActivity() {
     var type = -1
     var matediv = 0
     var chat_id = 0
-
+    var member_recive ="N"
     var RESET = 100
 
 
@@ -121,7 +121,8 @@ class ProfileActivity : RootActivity() {
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
                 alert.show()
-            } else if(profileTV == "채팅"){
+            }
+            else if(profileTV == "채팅"){
                 if (matediv == 0){
                     Toast.makeText(context, "1촌이 아니시면 채팅을 하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -146,6 +147,8 @@ class ProfileActivity : RootActivity() {
                         .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
                 val alert = builder.create()
                 alert.show()
+            }else if (profileTV == "신청불가"){
+                Toast.makeText(context,"신청거절 상태입니다.",Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -246,8 +249,11 @@ class ProfileActivity : RootActivity() {
                             for (i in 0 until data.length()) {
                                 var json = data[i] as JSONObject
                                 val memberTag = json.getJSONObject("MemberTag")
-
                                 string_tag += "#" + Utils.getString(memberTag, "tag") + " "
+
+                                val other_member = json.getJSONObject("Member")
+                                member_recive = Utils.getString(other_member,"recive_mate")
+
                             }
 //                            hashtagTV.text = string_tag
                         }
@@ -270,6 +276,7 @@ class ProfileActivity : RootActivity() {
                         }
 
                         matediv = response.getInt("mateDiv")
+
                         if (matediv > 0){
                             imgRelation.setBackgroundResource(R.drawable.icon_first)
                         } else {
@@ -293,12 +300,18 @@ class ProfileActivity : RootActivity() {
                             profile_opIV.setImageResource(R.drawable.btn_add_friend_cancel)
                             profile_opTV.text = "신청취소"
                         }
+                        if (member_recive == "Y"){
+                            profile_opIV.setImageResource(R.drawable.btn_block)
+                            profile_opTV.text = "신청불가"
+                        }
 
                         if (PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
                             knowTogether.visibility = View.GONE
                             profile_opIV.setImageResource(R.drawable.btn_chat_on)
                             profile_opTV.text = "채팅"
                         }
+
+
 
                     }
                 } catch (e : JSONException) {
