@@ -42,12 +42,6 @@ class ChatFragment : android.support.v4.app.Fragment() {
     private lateinit var adapter: ChatFragAdapter
     private lateinit var dongAdapter: DongChatAdapter
 
-    lateinit var tabMyChat: ImageView
-    lateinit var tabTownChat: ImageView
-    lateinit var btn_myChat_mng: ImageView
-    lateinit var btn_make_chat: ImageView
-    lateinit var txMyChat: TextView
-    lateinit var txTownChat: TextView
     lateinit var chat_list: ListView
     lateinit var viewpagerChat: ViewPager
     lateinit var dong_chat_list: ListView
@@ -82,79 +76,79 @@ class ChatFragment : android.support.v4.app.Fragment() {
     }
 
 
-    internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null) {
-
-                val room_id = intent.getIntExtra("room_id", -1)
-                val room_type = intent.getIntExtra("room_type", -1)
-
-                if (room_id > 0) {
-
-                    var has = false
-
-                    var content = intent.getStringExtra("content")
-                    val chatting_type = intent.getStringExtra("chatting_type")
-                    val chat_created = intent.getStringExtra("chat_created")
-
-                    if (chatting_type == "i") {
-                        content = "사진"
-                    }
-
-                    for (i in 0 until adapterData.size) {
-                        val data = adapterData[i]
-                        val chatroom = data.getJSONObject("Chatroom")
-
-                        val id = Utils.getInt(chatroom, "id")
-
-                        if (id == room_id) {
-                            has = true
-                            chatroom.put("contents", content)
-                            chatroom.put("created", chat_created)
-                            chatroom.put("readdiv", "0")
-                            adapterData.removeAt(i)
-                            adapterData.add(0, data)
-                            break
-                        }
-
-                    }
-
-                    adapter.notifyDataSetChanged()
-
-                    if (room_type != 1) {
-
-                        for (i in 0 until dongAdapterData.size) {
-                            val data = dongAdapterData[i]
-                            val chatroom = data.getJSONObject("Chatroom")
-
-                            val id = Utils.getInt(chatroom, "id")
-
-                            if (id == room_id) {
-                                has = true
-                                chatroom.put("contents", content)
-                                chatroom.put("created", chat_created)
-                                chatroom.put("readdiv", "0")
-                                dongAdapterData.removeAt(i)
-                                dongAdapterData.add(0, data)
-                                break
-                            }
-
-                        }
-
-                        dongAdapter.notifyDataSetChanged()
-
-                    }
-
-                    if (!has) {
-                        load_add_new_chatting(room_id)
-                    }
-
-
-                }
-
-            }
-        }
-    }
+//    internal var chattingReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent?) {
+//            if (intent != null) {
+//
+//                val room_id = intent.getIntExtra("room_id", -1)
+//                val room_type = intent.getIntExtra("room_type", -1)
+//
+//                if (room_id > 0) {
+//
+//                    var has = false
+//
+//                    var content = intent.getStringExtra("content")
+//                    val chatting_type = intent.getStringExtra("chatting_type")
+//                    val chat_created = intent.getStringExtra("chat_created")
+//
+//                    if (chatting_type == "i") {
+//                        content = "사진"
+//                    }
+//
+//                    for (i in 0 until adapterData.size) {
+//                        val data = adapterData[i]
+//                        val chatroom = data.getJSONObject("Chatroom")
+//
+//                        val id = Utils.getInt(chatroom, "id")
+//
+//                        if (id == room_id) {
+//                            has = true
+//                            chatroom.put("contents", content)
+//                            chatroom.put("created", chat_created)
+//                            chatroom.put("readdiv", "0")
+//                            adapterData.removeAt(i)
+//                            adapterData.add(0, data)
+//                            break
+//                        }
+//
+//                    }
+//
+//                    adapter.notifyDataSetChanged()
+//
+//                    if (room_type != 1) {
+//
+//                        for (i in 0 until dongAdapterData.size) {
+//                            val data = dongAdapterData[i]
+//                            val chatroom = data.getJSONObject("Chatroom")
+//
+//                            val id = Utils.getInt(chatroom, "id")
+//
+//                            if (id == room_id) {
+//                                has = true
+//                                chatroom.put("contents", content)
+//                                chatroom.put("created", chat_created)
+//                                chatroom.put("readdiv", "0")
+//                                dongAdapterData.removeAt(i)
+//                                dongAdapterData.add(0, data)
+//                                break
+//                            }
+//
+//                        }
+//
+//                        dongAdapter.notifyDataSetChanged()
+//
+//                    }
+//
+//                    if (!has) {
+//                        load_add_new_chatting(room_id)
+//                    }
+//
+//
+//                }
+//
+//            }
+//        }
+//    }
 
     internal var loadDataHandler: Handler = object : Handler() {
         override fun handleMessage(msg: android.os.Message) {
@@ -223,8 +217,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)
 
-        var filter2 = IntentFilter("CHATTING")
-        ctx!!.registerReceiver(chattingReciver, filter2)
+//        var filter2 = IntentFilter("CHATTING")
+//        ctx!!.registerReceiver(chattingReciver, filter2)
 
         var filter3 = IntentFilter("CHAT_CHANGE")
         ctx!!.registerReceiver(reloadchatReciver, filter3)
@@ -876,9 +870,9 @@ class ChatFragment : android.support.v4.app.Fragment() {
         if (resetChattingReciver != null) {
             context!!.unregisterReceiver(resetChattingReciver)
         }
-        if (chattingReciver != null) {
+        /*if (chattingReciver != null) {
             context!!.unregisterReceiver(chattingReciver)
-        }
+        }*/
         if (reloadchatReciver != null) {
             context!!.unregisterReceiver(reloadchatReciver)
         }
@@ -910,6 +904,8 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
     override fun onResume() {
         super.onResume()
+        getmychat(1)
+        getmychat(2)
         if (timer != null) {
             timer!!.cancel()
         }
