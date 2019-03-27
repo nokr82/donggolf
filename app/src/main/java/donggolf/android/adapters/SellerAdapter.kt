@@ -54,10 +54,13 @@ open class SellerAdapter(context: Context, view:Int, data:ArrayList<JSONObject>)
         item.timeTV.text = created.substringBefore(" ")
         item.priceTV.text = price
         item.moreTV.text = region
-        item.divisionTV.text = status
-        if (status != null){
+        if (status == "판매중"){
+            item.divisionTV.visibility = View.GONE
+        }else{
             item.divisionTV.visibility = View.VISIBLE
         }
+        item.divisionTV.text = status
+
 
         val marketImg = json.getJSONArray("MarketImg")
         if (marketImg.length() != 0) {
