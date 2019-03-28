@@ -334,16 +334,23 @@ class MainDetailActivity : RootActivity() {
             p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
             op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
             var user_nick =  Utils.getString(contentcomment,"nick")
-            if (p_comments_id!=-1){
+           if (op_comments_id != -1){
+               op_comments_id = op_comments_id
+               p_comments_id = -1
+               cmtET.requestFocus()
+               Utils.showKeyboard(context)
+               cmtET.hint = user_nick+ "님의 댓글에 대대댓글"
+           }else if (p_comments_id!=-1){
                 op_comments_id = p_comments_id
+                p_comments_id = -1
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
                 cmtET.hint = user_nick+ "님의 댓글에 대댓글"
-            }else if (comments_id != -1) {
+            } else if (comments_id != -1) {
                 p_comments_id = comments_id
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
-                cmtET.hint = user_nick+ "님의 댓글에 답글"
+                cmtET.hint = user_nick + "님의 댓글에 답글"
             }
 
         }
