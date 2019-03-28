@@ -335,13 +335,13 @@ class MainDetailActivity : RootActivity() {
             op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
             var user_nick =  Utils.getString(contentcomment,"nick")
            if (op_comments_id != -1){
-               op_comments_id = op_comments_id
+               op_comments_id = comments_id
                p_comments_id = -1
                cmtET.requestFocus()
                Utils.showKeyboard(context)
                cmtET.hint = user_nick+ "님의 댓글에 대대댓글"
            }else if (p_comments_id!=-1){
-                op_comments_id = p_comments_id
+                op_comments_id = comments_id
                 p_comments_id = -1
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
