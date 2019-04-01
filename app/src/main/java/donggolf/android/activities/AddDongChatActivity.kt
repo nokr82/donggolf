@@ -94,28 +94,13 @@ class AddDongChatActivity : RootActivity() {
 
             dialogView.dlg_region_LV.adapter = cityadapter
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
-                val item = bigcitylist.get(position)
-                for (i in 0 until bigcitylist.size) {
-                    bigcitylist[i].put("isSelectedOp", false)
-                }
-                item.put("isSelectedOp", true)
-                cityadapter.notifyDataSetChanged()
-            }
+                    val item = bigcitylist.get(position)
+                    Log.d("아템",item.toString())
+                    var region = item.getJSONObject("Regions")
+                    var name = Utils.getString(region, "name")
+                    val parent_id = Utils.getString(region, "id")
 
-            dialogView.btn_regionOK.setOnClickListener {
-                for (i in 0 until bigcitylist.size) {
-                    val item = bigcitylist.get(i)
-                    var isSel = item.getBoolean("isSelectedOp")
-                    if (isSel) {
-                        var region = item.getJSONObject("Regions")
-                        var name: String = Utils.getString(region, "name")
-                        val parent_id = Utils.getString(region, "id")
-                        leftregionTV.setText(name)
-                        getGugun(parent_id.toInt())
-                    }
-                }
-
-                var name = leftregionTV.text.toString()
+                    leftregionTV.text = name
                 if (name == "전국") {
                     rightregionTV.setText("전국")
                     region_id = "0"
@@ -124,8 +109,14 @@ class AddDongChatActivity : RootActivity() {
                     region_id = "-1"
                 }
 
+                getGugun(parent_id.toInt())
+                region2TV.callOnClick()
                 alert.dismiss()
+
+
             }
+
+
 
             dialogView.btn_dlg_dismiss.setOnClickListener {
                 alert.dismiss()
@@ -163,59 +154,24 @@ class AddDongChatActivity : RootActivity() {
 
             dialogView.dlg_region_LV.adapter = gugunadapter
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
+
                 val item = gugunList.get(position)
-                for (i in 0 until gugunList.size) {
-                    gugunList[i].put("isSelectedOp", false)
-                }
-                item.put("isSelectedOp", true)
-                gugunadapter.notifyDataSetChanged()
-            }
-
-            dialogView.btn_regionOK.setOnClickListener {
-                for (i in 0 until gugunList.size) {
-                    val item = gugunList.get(i)
-                    var isSel = item.getBoolean("isSelectedOp")
-                    if (isSel) {
-                        var region = item.getJSONObject("Regions")
-                        var name: String = Utils.getString(region, "name")
-                        val id = Utils.getString(region, "id")
-                        region_id = id
-                        rightregionTV.setText(name)
-                    }
-                }
+                Log.d("아템",item.toString())
+                var region = item.getJSONObject("Regions")
+                var name = Utils.getString(region, "name")
+                val id = Utils.getString(region, "id")
+                region_id = id
+                rightregionTV.text = name
                 alert.dismiss()
-            }
 
+            }
             dialogView.btn_dlg_dismiss.setOnClickListener {
                 alert.dismiss()
             }
 
         }
 
-        /* moreRL.setOnClickListener {
-             val builder = android.app.AlertDialog.Builder(this)
-             val dialogView = layoutInflater.inflate(R.layout.dlg_people_count, null)
-             builder.setView(dialogView)
-             val alert = builder.show()
 
-             dialogView.dlg_count_LV.adapter = countAdapter
-
-             dialogView.dlg_count_LV.setOnItemClickListener { parent, view, position, id ->
-                 val title = peoplecounts.get(position)
-                 peoplecountTV.setText(title)
-                 alert.dismiss()
-             }
-
-             dialogView.btn_dlg_dismisss.setOnClickListener {
-                 alert.dismiss()
-             }
-
-             dialogView.btn_countOK.setOnClickListener {
-                 alert.dismiss()
-             }
-
-
-         }*/
 
         profileRL.setOnClickListener {
             //            chooseProfile()
@@ -242,6 +198,7 @@ class AddDongChatActivity : RootActivity() {
         }
 
         adddongchatTV.setOnClickListener {
+            adddongchatTV.isEnabled = false
             adddongchat()
         }
 
@@ -347,6 +304,7 @@ class AddDongChatActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+
                     var intent = Intent()
                     intent.putExtra("reset", "reset")
                     setResult(Activity.RESULT_OK, intent)

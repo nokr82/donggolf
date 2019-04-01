@@ -40,7 +40,6 @@
             android:layout_width="120dp"
             android:scaleType="centerCrop"
             android:layout_height="120dp"
-            android:background="@color/com_kakao_button_background_press"
             android:gravity="right"/>
 
             <ImageView

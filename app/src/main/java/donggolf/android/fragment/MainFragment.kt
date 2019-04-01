@@ -36,8 +36,6 @@ open class MainFragment : Fragment() {
     //원본 데이터 정의 부분
     private  var adapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
     private  lateinit var  adapter : MainAdapter
-    private  lateinit var  editadapter : MainEditAdapter
-    private  var editadapterData : ArrayList<JSONObject> = ArrayList<JSONObject>()
 
     val user = HashMap<String, Any>()
 

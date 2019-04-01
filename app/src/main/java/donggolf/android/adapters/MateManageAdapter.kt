@@ -150,12 +150,12 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,
             acceptItt.putExtra("mates_id",member_id.toInt())
             Log.d("2아뒤",member_id.toString())
             context.startActivity(acceptItt)
-           /* removeItem(position)
-            notifyDataSetChanged()*/
         }
 
         item.refuseLL.setOnClickListener {
             requestFriendActivity.refuse(member_id)
+            removeItem(position)
+            notifyDataSetChanged()
         }
 
         item.cancleLL.setOnClickListener {

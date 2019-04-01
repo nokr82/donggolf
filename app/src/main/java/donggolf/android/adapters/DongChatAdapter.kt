@@ -2,6 +2,7 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.media.Image
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter

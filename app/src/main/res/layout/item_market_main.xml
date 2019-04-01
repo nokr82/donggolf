@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="245dp"
+        android:layout_height="250dp"
         android:layout_margin="5dp"
         android:background="@mipmap/box_product_list_left">
 
@@ -16,19 +17,20 @@
             android:orientation="vertical">
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="159dp">
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <ImageView
                         android:id="@+id/imageIV"
                         android:layout_width="match_parent"
-                        android:scaleType="centerCrop"
-                        android:layout_height="159dp"
-                        />
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
                     <TextView
                         android:visibility="gone"
                         android:id="@+id/divisionTV"
@@ -40,8 +42,17 @@
                         android:textColor="#ffffff"
                         android:gravity="center"/>
                 </RelativeLayout>
+
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
             <TextView
+                android:singleLine="true"
+                android:textStyle="bold"
                 android:id="@+id/contentTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,15 +87,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+
+                <me.grantland.widget.AutofitTextView
+                    android:textStyle="bold"
                     android:id="@+id/priceTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5000원"
-                    android:textSize="15dp"
                     android:layout_margin="3dp"
-                    android:textColor="#EF5B33"/>
-                <TextView
+                    android:text="5000원"
+                    android:textColor="#EF5B33"
+                    android:textSize="15dp" />
+                <me.grantland.widget.AutofitTextView
+                    android:singleLine="true"
+                    android:textStyle="bold"
                     android:id="@+id/moreTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,8 +108,7 @@
                     android:gravity="right"
                     android:layout_margin="3dp"/>
             </LinearLayout>
-
-
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 

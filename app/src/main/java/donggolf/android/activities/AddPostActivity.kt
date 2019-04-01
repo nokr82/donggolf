@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,13 +15,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import com.github.irshulx.EditorListener
-import com.google.api.AnnotationsProto.http
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import com.kakao.kakaostory.StringSet.content
-import com.kakao.kakaostory.StringSet.text
-import com.kakao.kakaotalk.StringSet.members
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -31,7 +26,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
-import donggolf.android.actions.PostAction.up_load_image
 import donggolf.android.base.*
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
@@ -48,7 +42,6 @@ class AddPostActivity : RootActivity() {
     private lateinit var mAuth: FirebaseAuth
     private var editorImageLayout = com.github.irshulx.R.layout.tmpl_image_view
     private lateinit var context: Context
-    private val FROM_CAMERA: Int = 100
     private val SELECT_PICTURE: Int = 101
     private val SELECT_VIDEO: Int = 102
     private val SELECT_HASHTAG: Int = 103
@@ -72,8 +65,6 @@ class AddPostActivity : RootActivity() {
     private var addPicturesLL: LinearLayout? = null
 
     private val imgSeq = 0
-    var content_imglist: ArrayList<String> = ArrayList<String>()
-    var pk: String? = null
     var images_path: ArrayList<String> = ArrayList<String>()
     var modi_path: ArrayList<String> = ArrayList<String>()
     var images: ArrayList<Bitmap>? = null
@@ -84,16 +75,13 @@ class AddPostActivity : RootActivity() {
 
     var video_image: ArrayList<String> = ArrayList<String>()
 
-    lateinit var videofile: ByteArray
 
     var cht_yn = "Y"
     var cmt_yn = "Y"
 
-    var MODIFYY = 100
     var temp_yn = ""
 
     var album_video = false
-    var video_id = ""
     var text_ex = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,25 +89,13 @@ class AddPostActivity : RootActivity() {
 
         context = this
 
-//        mAuth = FirebaseAuth.getInstance()
 
         val dbManager = DataBaseHelper(context)
 
-//        val db = FirebaseFirestore.getInstance()
-        val dataList: Array<String> = arrayOf("*");
 
-        val one = 1
 
         val setContent = TmpContent()
 
-        /*  intent = getIntent()
-          selectedImageViewList = intent.getStringArrayListExtra("image_uri")
-          Log.d("선택된이미지",selectedImageViewList.lastIndex.toString())
-          for (i in 0 until selectedImageViewList.lastIndex){
-              var path = Config.url + selectedImageViewList[i]
-              reset2(path,i)
-
-          }*/
         //위지위그 사용
         editor.setEditorImageLayout(editorImageLayout)
         editor.setDividerLayout(R.layout.tmpl_divider_layout)
@@ -131,7 +107,6 @@ class AddPostActivity : RootActivity() {
 
             override fun onTextChanged(editText: EditText, text: Editable) {
                 text_ex = text.toString()
-                Log.d("텍스트", text_ex)
             }
 
             override fun onUpload(image: Bitmap, uuid: String) {
@@ -168,7 +143,6 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-//        images_path = ArrayList();
         images = ArrayList()
         images_url = ArrayList()
 
@@ -228,10 +202,9 @@ class AddPostActivity : RootActivity() {
                             Utils.hideKeyboard(this)
 
                         })
-                        .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                        .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
                             dialog.cancel()
 
-//                        loadData(dbManager,member_id.toString())
 
                             if (tmpContent.id == null) {
                                 Log.d("끝","")
@@ -443,40 +416,6 @@ class AddPostActivity : RootActivity() {
             }
         }
 
-//        if (images_path!!.size > 0) {
-//            for (i in 0..(images_path!!.size - 1)) {
-//                val str = images_path!![i]
-//
-//                val add_file = Utils.getImage(context.contentResolver, str)
-//
-//                if (images?.size == 0) {
-//
-//                    images?.add(add_file)
-//
-//                } else {
-//                    try {
-//                        images?.set(images!!.size, add_file)
-//                    } catch (e: IndexOutOfBoundsException) {
-//                        images?.add(add_file)
-//                    }
-//
-//                }
-//
-//                reset(str, i)
-//
-//            }
-//
-//            val child = addPicturesLL!!.getChildCount()
-//            for (i in 0 until child) {
-//
-//                println("test : $i")
-//
-//                val v = addPicturesLL!!.getChildAt(i)
-//
-//                val delIV = v.findViewById(R.id.delIV) as ImageView
-//
-//            }
-//        }
 
         if (videoPaths.size > 0) {
             videoVV.visibility = View.VISIBLE
@@ -513,13 +452,6 @@ class AddPostActivity : RootActivity() {
             return
         }
 
-
-//        var text = Utils.getString(contentET)
-//        if (text.isEmpty()) {
-//            Utils.alert(context, "내용을 입력해주세요.")
-//            return
-//        }
-
         val params = RequestParams()
         params.put("content_id", id)
         val login_id = PrefUtils.getIntPreference(context, "member_id")
@@ -528,7 +460,7 @@ class AddPostActivity : RootActivity() {
 
         var html = editor.getContentAsHTML()
 
-        if (text_ex.isEmpty()) {
+        if (html.replace("<p data-tag=\"input\" style=\"color:#000000;\"></p>","").isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
@@ -551,32 +483,6 @@ class AddPostActivity : RootActivity() {
                 }
             }
         }
-
-//        var seq = 0
-//        if (addPicturesLL != null) {
-//            for (i in 0 until addPicturesLL!!.childCount) {
-//                val v = addPicturesLL?.getChildAt(i)
-//                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-//                if (imageIV is ImageView) {
-//                    val bitmap = imageIV.drawable as BitmapDrawable
-//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
-//                    seq++
-//                    println("add-------------$seq")
-//                }
-//            }
-//        }
-
-//        if (images_path != null){
-//            Log.d("작성",images_path.toString())
-//            if (images_path!!.size != 0){
-//                for (i in 0..images_path!!.size - 1){
-//
-//                    var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-//
-//                    params.put("files[" + i + "]",  ByteArrayInputStream(Utils.getByteArray(bt)))
-//                }
-//            }
-//        }
 
         if (video_image.size > 0) {
             params.put("video_delete", "delete")
@@ -641,13 +547,12 @@ class AddPostActivity : RootActivity() {
         }
 
         var text = text_ex
-        if (text.isEmpty()) {
+        html = editor.getContentAsHTML()
+        if (html.replace("<p data-tag=\"input\" style=\"color:#000000;\"></p>","").isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
         }
 
-        html = editor.getContentAsHTML()
-        Log.d("텟스2", html)
 
         val params = RequestParams()
         params.put("member_id", member_id)
@@ -691,21 +596,6 @@ class AddPostActivity : RootActivity() {
         }
 
 
-        var seq = 0
-        /*if (addPicturesLL != null) {
-            for (i in 0 until addPicturesLL!!.childCount) {
-                val v = addPicturesLL?.getChildAt(i)
-                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-                if (imageIV is ImageView) {
-                    val bitmap = imageIV.drawable as BitmapDrawable
-                    Log.d("로그", bitmap.toString())
-                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
-                    seq++
-                    println("add-------------$seq")
-                }
-            }
-        }*/
-
         if (videoPaths != null) {
             if (videoPaths.size != 0) {
 
@@ -744,10 +634,6 @@ class AddPostActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
 
-                /*var content_id = response!!.getString("content_id")
-                Log.d("아뒤컨",content_id)*/
-
-//                get_content_file(content_id)
                 var intent = Intent()
                 intent.action = "ADD_POST"
                 sendBroadcast(intent)
@@ -1407,7 +1293,7 @@ class AddPostActivity : RootActivity() {
                         Utils.hideKeyboard(this)
 
                     })
-                    .setNegativeButton("삭제하고 나가기", DialogInterface.OnClickListener { dialog, id ->
+                    .setNegativeButton("나가기", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
 
 //                        loadData(dbManager,member_id.toString())

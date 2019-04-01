@@ -71,14 +71,15 @@ class RequestFriendActivity : RootActivity() {
         } else if (type == "send") {
             wait = "send"
             titleTV.setText("보낸 친구 요청")
+            confrandLL.visibility = View.GONE
             swc_alarm_req_frd.visibility = View.GONE
             titlevatLL.visibility = View.GONE
             getFriendList("w", 0)
         } else {
             wait = "block"
             titleTV.setText("차단 목록")
+            confrandLL.visibility = View.GONE
             swc_alarm_req_frd.visibility = View.GONE
-
             titlevatLL.visibility = View.GONE
             getFriendList("b", 0)
         }
@@ -86,6 +87,7 @@ class RequestFriendActivity : RootActivity() {
 
         swc_alarm_req_frd.setOnClickListener {
             recive_mate = "Y"
+            Toast.makeText(context,"당분간 친구신청을 받을 수 없습니다.",Toast.LENGTH_SHORT).show()
             swc_alarm_req_frd_on.visibility = View.VISIBLE
             swc_alarm_req_frd.visibility = View.GONE
             updateInfo()

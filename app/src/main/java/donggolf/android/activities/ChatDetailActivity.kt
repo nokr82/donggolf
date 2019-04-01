@@ -187,23 +187,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         chatLV.setOnItemClickListener { parent, view, position, id ->
             drawerMenu.closeDrawer(chat_right_menu)
 
-            val item = chattingList.get(position) as JSONObject
-//            val chatting = item.getJSONObject("Chatting")
-//            val type = Utils.getString(chatting,"type")
-//            println("--------typ[e====== $type")
-//            if (type == "i"){
-//                val img = Utils.getString(chatting,"img")
-//                val imglist:ArrayList<String> = ArrayList<String>()
-//                imglist.add(img)
-//                val id = intent.getStringExtra("id")
-//                var intent = Intent(context, PictureDetailActivity::class.java)
-//                intent.putExtra("id", id)
-//                intent.putExtra("adPosition",0)
-//                intent.putExtra("paths",imglist)
-//                intent.putExtra("type","chat")
-//                startActivity(intent)
-//            }
-
         }
 
 
@@ -228,9 +211,10 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         finishaLL.setOnClickListener {
             var intent = Intent()
             intent.putExtra("reset", "reset")
-            setResult(RESULT_OK, intent);
-            finish()
+            setResult(RESULT_OK, intent)
             Utils.hideKeyboard(this)
+            finish()
+
         }
 
         addchattingTV.setOnClickListener {
@@ -579,9 +563,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     }
 
-//                    val roomtitle = Utils.getString(room,"title")
-//                    chattitleTV.setText(roomtitle)
-
                     if (first_id > 0) {
                         for (i in 0 until list.length()) {
                             val data = list.get(i) as JSONObject
@@ -604,7 +585,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.get(i).put("text_size",text_size)
                             }
 
-                            chatLV.setSelection(adapter.count - 1)
+//                            chatLV.setSelection(adapter.count - 1)
                         }
                     }
 
@@ -615,6 +596,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     }
 
                     (adapter as BaseAdapter).notifyDataSetChanged()
+
                 }
             }
 
@@ -961,35 +943,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             val female = fv.findViewById(R.id.nickTV) as TextView
                             nickTV.setTextColor(Color.parseColor("#000000"))
                             female.setTextColor(Color.parseColor("#EF5C34"))
-//                            if (i == 0) {
-//                                nickTV.setText(nick)
-//                                if (gander == "1"){
-//                                    nickTV.setText("/")
-//                                    addNickLL.addView(v)
-//                                    female.setText(nick)
-//                                    addNickLL.addView(fv)
-//                                } else {
-//                                    addNickLL.addView(v)
-//                                }
-//                            } else if (i < 3) {
-//                                nickTV.setText("/"+nick)
-//                                if (gander == "1"){
-//                                    nickTV.setText("/")
-//                                    addNickLL.addView(v)
-//                                    female.setText(nick)
-//                                    addNickLL.addView(fv)
-//                                } else {
-//                                    addNickLL.addView(v)
-//                                }
-//                            } else if (i == 3) {
-//                                nickTV.setText("외 " + count.toString() + "명")
-//                                addNickLL.addView(v)
-//                            }
-
-//                            chattitleTV.setText(roomtitle)
-
-
-
 
                             var view:View = View.inflate(context, R.layout.item_profile, null)
                             var profileIV:CircleImageView = view.findViewById(R.id.profileIV)
@@ -1253,7 +1206,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                         comment_path!!.add(str)
 
-                        val add_file = Utils.getImage(context.contentResolver, str)
                     }
 
                     add_chatting()
@@ -1261,39 +1213,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
                     timerStart()
 
-                    if (data != null)
-                    {
-
-//                        val contentURI = data.data
-//
-//                        try
-//                        {
-////                            commentLL.visibility = View.VISIBLE
-////                            gofindpictureLL.visibility = View.GONE
-//
-//                            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
-//
-//                            val cursor = context.contentResolver.query(contentURI, filePathColumn, null, null, null)
-//                            if (cursor!!.moveToFirst()) {
-//                                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-//                                val picturePath = cursor.getString(columnIndex)
-//
-//                                cursor.close()
-//
-//                                comment_path = Utils.getImage(context.contentResolver,picturePath.toString())
-////                                addedImgIV.setImageBitmap(comment_path)
-//                                add_chatting()
-//
-//                            }
-//
-//                        }
-//                        catch (e: IOException) {
-//                            e.printStackTrace()
-//                        }
-
-
-
-                    }
                 }
             }
         }
@@ -1302,7 +1221,8 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
     override fun onBackPressed() {
         var intent = Intent()
         intent.putExtra("reset", "reset")
-        setResult(RESULT_OK, intent);
+        Utils.hideKeyboard(context)
+        setResult(RESULT_OK, intent)
 
         if (chat_right_menu.visibility == View.VISIBLE) {
             drawerMenu.closeDrawers()
@@ -1314,7 +1234,7 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
     override fun finish() {
         super.finish()
-
+        Utils.hideKeyboard(context)
         if (chattingList.size > 0) {
             val data = chattingList[chattingList.size - 1]
 
@@ -1323,15 +1243,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val content = Utils.getString(chatting, "content")
             val chatting_type = Utils.getString(chatting, "type")
             val chat_created = Utils.getString(chatting, "created")
-
-//            var intent = Intent()
-//            intent.putExtra("room_id", room_id.toInt())
-//            intent.putExtra("room_type", room_type)
-//            intent.putExtra("content", content)
-//            intent.putExtra("chatting_type", chatting_type)
-//            intent.putExtra("chat_created", chat_created)
-//            setResult(Activity.RESULT_OK, intent)
-
         }
 
     }

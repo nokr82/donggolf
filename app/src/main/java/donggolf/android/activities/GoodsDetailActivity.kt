@@ -41,15 +41,11 @@ class GoodsDetailActivity : RootActivity() {
     var _Images = ArrayList<String>()
     private lateinit var prodImgAdapter: FullScreenImageAdapter
     var pressStartTime: Long?  = 0
-    var pressedX: Float? = 0F
-    var pressedY: Float? = 0F
     var stayedWithinClickDistance: Boolean? = false
 
     val MAX_CLICK_DURATION = 1000
-    val MAX_CLICK_DISTANCE = 15
 
     var imgPosition = 0
-    val PRODUCT_DETAIL = 111
     val PRODUCT_MODIFY = 112
     var REPORT_OK = 113
 
@@ -61,7 +57,6 @@ class GoodsDetailActivity : RootActivity() {
 
     var commentType = ""
     var commentParent = ""
-    var writer = ""
     var seller_id2 = ""
     var blockYN = ""
 
@@ -662,11 +657,18 @@ class GoodsDetailActivity : RootActivity() {
 
 
                     tmp_prod_status = Utils.getString(market,"status")
+
+
                     sale_statusTV.text = tmp_prod_status
                     prd_titleTV.text = Utils.getString(market,"title")
                     writtenDateTV.text = Utils.getString(market,"created")
                     descriptionTV.text = Utils.getString(market,"description")
-                    prd_priceTV.text = Utils._comma(Utils.getString(market,"price"))
+                    if (tmp_prod_status.equals("판매완료")){
+                        prd_priceTV.text ="********"
+                    }else{
+                        prd_priceTV.text = Utils._comma(Utils.getString(market,"price"))
+                    }
+
                     if (Utils.getString(market,"deliv_pay") == "구매자 부담"){
                         delivPayTV.visibility = View.VISIBLE
                     } else {
@@ -870,83 +872,5 @@ class GoodsDetailActivity : RootActivity() {
     }
 
 
-  /*  //기존댓글
-    fun getcomment(){
-        val params = RequestParams()
-        params.put("market_id", product_id)
-
-        MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
-                val result = response!!.getString("result")
-                if (result == "ok"){
-                    val comments = response.getJSONArray("comments")
-
-                    if (comments != null && comments.length() > 0){
-                        for (i in 0 until comments.length()){
-                            commentList.add(comments.get(i) as JSONObject)
-                        }
-                    }
-
-                    commentAdapter.notifyDataSetChanged()
-
-                    Utils.hideKeyboard(this@GoodsDetailActivity)
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
-            }
-        })
-    }
-
-    fun addcomment(){
-          if (PrefUtils.getIntPreference(context, "member_id") == -1){
-              Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
-              return
-          }
-
-          var comment = Utils.getString(commentET)
-
-          if (comment == null || comment == ""){
-              Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
-              return
-          }
-
-          val params = RequestParams()
-          params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
-          params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
-          params.put("market_id", product_id)
-          params.put("comment", comment)
-          params.put("parent", commentParent)
-          params.put("type", commentType)
-
-          MarketAction.add_market_comment(params,object :JsonHttpResponseHandler(){
-              override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                  println(response)
-                  val result = response!!.getString("result")
-                  if (result == "ok"){
-                      commentET.setText("")
-                      val comments = response.getJSONObject("comments")
-                      commentList.add(comments)
-                      commentAdapter.notifyDataSetChanged()
-                      Utils.hideKeyboard(this@GoodsDetailActivity)
-                  }
-              }
-
-              override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                  println(errorResponse)
-              }
-
-              override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                  println(responseString)
-              }
-          })
-
-      }*/
 
 }
