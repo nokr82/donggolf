@@ -220,26 +220,18 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         //엔터키
         frdSearchET.setOnEditorActionListener() { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                //var searchCond : HashMap<String, String> = HashMap<String,String>()
+
                 var keyWord = frdSearchET.text.toString()
                 if (keyWord == "" || keyWord == null){
-//                    friendData.clear()
                     get_region_member("")
                 }
 
-              /*  if (keyWord != null && keyWord != "") {
-                    friendSearchWords(keyWord)
-                }*/
-
-                //println("Search Words : $keyWord in FriendSearchActivity")
                 if (keyWord.startsWith("#")) {
                     keyWord = keyWord.replace("#","")
-//                    type = "1"
-//                    friendSearchWords(keyWord)
+
                     get_region_member(keyWord)
                 } else {
-//                    type = "2"
-//                    friendSearchWords(keyWord)
+
                     get_region_member(keyWord)
                 }
 
