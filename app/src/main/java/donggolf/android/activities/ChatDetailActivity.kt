@@ -577,7 +577,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     } else {
                         for (i in 0 until list.length()) {
 
-                            println("-------list.size : ${list.length()} adddddddddddddddddddddddddddddd")
                             val data = list.get(i) as JSONObject
 
                             if (insertCheckData(data.getJSONObject("Chatting"))) {
@@ -595,7 +594,9 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    (adapter as BaseAdapter).notifyDataSetChanged()
+                    if (list.length() > 0) {
+                        (adapter as BaseAdapter).notifyDataSetChanged()
+                    }
 
                 }
             }
