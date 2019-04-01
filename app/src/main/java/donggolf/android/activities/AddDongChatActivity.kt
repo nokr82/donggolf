@@ -283,7 +283,6 @@ class AddDongChatActivity : RootActivity() {
 
     }
 
-
     fun adddongchat() {
         val title = titleET.text.toString()
         if (title.isEmpty()) {
