@@ -809,7 +809,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.add(data)
                                 chattingList.get(i).put("text_size",text_size)
                             }
-                            chatCont.setSelection(adapter.count - 1)
+//                            chatCont.setSelection(adapter.count - 1)
 
                         }
                     }
@@ -820,11 +820,9 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    (adapter as BaseAdapter).notifyDataSetChanged()
-//                    if (list.length() > 0) {
-//                        (adapter as BaseAdapter).notifyDataSetChanged()
-//                        println("-------notify")
-//                    }
+                    if (list.length() > 0) {
+                        (adapter as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
             }
 
