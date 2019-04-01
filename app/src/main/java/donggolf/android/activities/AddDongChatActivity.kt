@@ -253,10 +253,10 @@ class AddDongChatActivity : RootActivity() {
             return
         }
 
-        if (!agreeCB.isChecked) {
+       /* if (!agreeCB.isChecked) {
             Utils.alert(context, "운영정책 동의를 체크해 주세요.")
             return
-        }
+        }*/
 
         var max_count = peoplecountET.text.toString()
         if (max_count.isEmpty()){
