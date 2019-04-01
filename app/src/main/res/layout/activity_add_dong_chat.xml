@@ -258,7 +258,7 @@
                             android:checked="true"
                             android:defaultFocusHighlightEnabled="true"
                             android:text="공개"
-                            android:textSize="12dp" />
+                            android:textSize="14dp" />
 
                         <RadioButton
                             android:id="@+id/invisibleRB"
@@ -268,7 +268,7 @@
                             android:layout_marginLeft="25dp"
                             android:buttonTint="#0EDA2F"
                             android:text="비공개"
-                            android:textSize="12dp" />
+                            android:textSize="14dp" />
                     </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
