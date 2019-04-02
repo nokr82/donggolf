@@ -218,6 +218,7 @@
                             android:textColor="#000000"
                             android:textSize="13dp" />
                         <WebView
+                            android:layout_margin="10dp"
                             android:id="@+id/contentWV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
