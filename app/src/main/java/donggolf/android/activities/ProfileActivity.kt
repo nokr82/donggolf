@@ -148,7 +148,7 @@ class ProfileActivity : RootActivity() {
                 val alert = builder.create()
                 alert.show()
             }else if (profileTV == "신청불가"){
-                Toast.makeText(context,"신청거절 상태입니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,"당분간 친구신청을 받을수 없습니다.",Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -293,6 +293,9 @@ class ProfileActivity : RootActivity() {
 
                         val status = Utils.getString(member,"status")
                         val user_status = Utils.getString(member,"user_status")
+
+
+
                         if (status == "b"){
                             profile_opIV.setImageResource(R.drawable.btn_block)
                             profile_opTV.text = "차단해제"
@@ -304,6 +307,12 @@ class ProfileActivity : RootActivity() {
                             profile_opIV.setImageResource(R.drawable.btn_block)
                             profile_opTV.text = "신청불가"
                         }
+
+                        if (user_status=="b"){
+                            profile_opIV.setImageResource(R.drawable.btn_add_friend_cancel)
+                            profile_opTV.text = "신청불가"
+                        }
+
 
                         if (PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
                             knowTogether.visibility = View.GONE
