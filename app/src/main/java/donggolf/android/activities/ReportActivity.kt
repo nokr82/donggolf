@@ -23,6 +23,7 @@ class ReportActivity : RootActivity() {
 
     var member_id = 0
     var market_id = 0
+    var market_member_id = 0
     var reportListData:ArrayList<JSONObject> = ArrayList<JSONObject>()
     lateinit var reportAdapter: ReportAdapter
 
@@ -37,6 +38,7 @@ class ReportActivity : RootActivity() {
         if (intent.getIntExtra("member_id",0) != null){
             member_id = intent.getIntExtra("member_id",0)
             market_id = intent.getIntExtra("market_id",0)
+            market_member_id =  intent.getIntExtra("market_member_id",0)
         }
 
 
@@ -109,14 +111,7 @@ class ReportActivity : RootActivity() {
     }
 
     fun add_report(){
-//        val title = titleTV.text.toString()
         val content = contentTV.text.toString()
-
-//        if (title.isEmpty()) {
-//            Utils.alert(context, "제목을 입력해주세요.")
-//            return
-//        }
-
         if (content.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
@@ -125,6 +120,7 @@ class ReportActivity : RootActivity() {
         val params = RequestParams()
         params.put("market_id", market_id)
         params.put("report_member_id",PrefUtils.getIntPreference(context, "member_id"))
+        params.put("member_id",market_member_id)
         params.put("title",title)
         params.put("content",content)
 

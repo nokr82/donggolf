@@ -50,6 +50,7 @@ class GoodsDetailActivity : RootActivity() {
     var REPORT_OK = 113
 
     var product_id = 0
+    var market_member_id = 0
     var seller_phone = ""
     var seller_id = 0
     var tmp_prod_status = ""
@@ -613,6 +614,7 @@ class GoodsDetailActivity : RootActivity() {
             var intent = Intent(this, ReportActivity::class.java)
             intent.putExtra("member_id", member_id)
             intent.putExtra("market_id",product_id)
+            intent.putExtra("market_member_id",market_member_id)
             startActivityForResult(intent,REPORT_OK)
         }
 
@@ -632,6 +634,7 @@ class GoodsDetailActivity : RootActivity() {
                     }
                     val product = response.getJSONObject("product")
                     val market = product.getJSONObject("Market")
+                    market_member_id = Utils.getInt(market,"member_id")
                     var seller_cnt = Utils.getString(market,"seller_cnt")
                     sellercountTV.setText("("+seller_cnt+")")
                     seller_id2 = Utils.getString(market,"member_id")
