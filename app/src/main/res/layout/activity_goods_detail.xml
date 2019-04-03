@@ -564,7 +564,6 @@
                     android:background="@null"
                     android:gravity="center"
                     android:hint="댓글을 남겨주세요"
-                    android:singleLine="true"
                     android:textSize="13dp" />
 
                 <View
