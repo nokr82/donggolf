@@ -157,6 +157,13 @@ class IntroActivity : RootActivity() {
 
                         val member = response.getJSONObject("member")
 
+                        val admin_del_yn = Utils.getString(member,"admin_del_yn")
+                        if (admin_del_yn == "Y"){
+                            alert("동네골프 접근이 영구차단되었습니다.")
+                            return
+                        }
+
+
                         val isActive = Utils.getString(member,"status")
 
                         if (isActive == "a") {
