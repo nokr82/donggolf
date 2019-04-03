@@ -584,18 +584,21 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.get(i).put("text_size",text_size)
                             }
 
-//                            chatLV.setSelection(adapter.count - 1)
+                            chatLV.post {
+                                chatLV.setSelection(adapter.count - 1)
+                            }
+
                         }
+                    }
+
+                    if (list.length() > 0) {
+                        adapter.notifyDataSetChanged()
                     }
 
                     if (chattingList.size > 0) {
                         val data = chattingList[chattingList.size - 1]
                         val chatting = data.getJSONObject("Chatting")
                         last_id = Utils.getInt(chatting, "id")
-                    }
-
-                    if (list.length() > 0) {
-                        (adapter as BaseAdapter).notifyDataSetChanged()
                     }
 
                 }
@@ -642,15 +645,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         val first_data = chattingList[0]
         val first_chat = first_data.getJSONObject("Chatting")
-        val first_id = Utils.getInt(first_chat, "id")
+        val read_first_id = Utils.getInt(first_chat, "id")
 
         val last_data = chattingList[chattingList.size - 1]
         val last_chat = last_data.getJSONObject("Chatting")
-        val last_id = Utils.getInt(last_chat, "id")
+        val read_last_id = Utils.getInt(last_chat, "id")
 
         val params = RequestParams()
-        params.put("first_id", first_id)
-        params.put("last_id", last_id)
+        params.put("first_id", read_first_id)
+        params.put("last_id", read_last_id)
         params.put("room_id", room_id)
 
         ChattingAction.chatting_read_count(params, object : JsonHttpResponseHandler(){

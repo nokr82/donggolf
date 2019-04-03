@@ -797,6 +797,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.add(0, data)
                                 chattingList.get(i).put("text_size",text_size)
                             }
+
+                            chatCont.post {
+                                chatCont.setSelection(0)
+                            }
+
                         }
 
                     } else {
@@ -809,9 +814,12 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.add(data)
                                 chattingList.get(i).put("text_size",text_size)
                             }
-//                            chatCont.setSelection(adapter.count - 1)
 
                         }
+                    }
+
+                    if (list.length() > 0) {
+                        adapter.notifyDataSetChanged()
                     }
 
                     if (chattingList.size > 0) {
@@ -820,9 +828,6 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    if (list.length() > 0) {
-                        (adapter as BaseAdapter).notifyDataSetChanged()
-                    }
                 }
             }
 
@@ -1269,6 +1274,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         if (resetReceiver != null) {
             context.unregisterReceiver(resetReceiver)
+        }
+
+        if (timer != null) {
+            timer!!.cancel()
         }
 
     }
