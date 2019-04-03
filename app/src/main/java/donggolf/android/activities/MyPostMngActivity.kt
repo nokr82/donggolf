@@ -275,7 +275,7 @@ class MyPostMngActivity : RootActivity() {
 
                         val data = response!!.getJSONArray("contents")
                         myPostList.clear()
-                        Log.d("데이타",data.toString())
+                        //Log.d("데이타",data.toString())
                         for (i in 0 until data.length()) {
                             myPostList.add(data[i] as JSONObject)
                             myPostList[i].put("willDel", false)

@@ -103,7 +103,7 @@ open class FreeFragment : Fragment() {
 
                     if (success && data != null) {
                         data.forEach {
-                            println(it)
+                            //println(it)
 
                             if (it != null) {
 //                                adapterData.add(it)
@@ -129,7 +129,7 @@ open class FreeFragment : Fragment() {
 
                     if (success && data != null) {
                         data.forEach {
-                            println(it)
+                            //println(it)
 
                             if (it != null) {
 //                                adapterData.add(it)
@@ -313,7 +313,7 @@ open class FreeFragment : Fragment() {
             val item = editadapterData.get(position)
             val SearchList = item.getJSONObject("SearchList")
             val content = Utils.getString(SearchList, "content")
-            println("----content$content")
+            //println("----content$content")
             main_edit_search.setText(content)
 //            resetList(content)
             mainData(content)
@@ -514,9 +514,9 @@ open class FreeFragment : Fragment() {
 
             when (requestCode) {
                 RESET_DATA -> {
-                    Log.d("리절트", "야스")
+                    //Log.d("리절트", "야스")
                     if (data != null) {
-                        Log.d("리절트", "야스")
+                        //Log.d("리절트", "야스")
                         page = 1
                         mainData("")
                     }

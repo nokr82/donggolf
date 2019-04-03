@@ -293,11 +293,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
     }
@@ -345,7 +345,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                         PrefUtils.setPreference(context, "region_id", region_id)
 //                    region_id2 = data!!.getStringExtra("region_id2")
 //                    PrefUtils.setPreference(context, "region_id2", region_id2)
-                        Log.d("시도", sidotype)
+                        //Log.d("시도", sidotype)
 
                         sidotype = PrefUtils.getStringPreference(context, "sidotype")
 //                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
@@ -618,11 +618,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
     }

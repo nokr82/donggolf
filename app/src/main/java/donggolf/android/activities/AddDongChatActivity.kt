@@ -95,7 +95,7 @@ class AddDongChatActivity : RootActivity() {
             dialogView.dlg_region_LV.adapter = cityadapter
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
                     val item = bigcitylist.get(position)
-                    Log.d("아템",item.toString())
+                    //Log.d("아템",item.toString())
                     var region = item.getJSONObject("Regions")
                     var name = Utils.getString(region, "name")
                     val parent_id = Utils.getString(region, "id")
@@ -156,7 +156,7 @@ class AddDongChatActivity : RootActivity() {
             dialogView.dlg_region_LV.setOnItemClickListener { parent, view, position, id ->
 
                 val item = gugunList.get(position)
-                Log.d("아템",item.toString())
+                //Log.d("아템",item.toString())
                 var region = item.getJSONObject("Regions")
                 var name = Utils.getString(region, "name")
                 val id = Utils.getString(region, "id")
@@ -313,11 +313,11 @@ class AddDongChatActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
 
@@ -430,7 +430,7 @@ class AddDongChatActivity : RootActivity() {
                 PROFILE -> {
                     if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri", contentURI.toString())
+                        //Log.d("uri", contentURI.toString())
 //                        profile = contentURI
                         //content://media/external/images/media/1200
                         try {
@@ -473,7 +473,7 @@ class AddDongChatActivity : RootActivity() {
                 BACKGROUND -> {
                     if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri", contentURI.toString())
+                        //Log.d("uri", contentURI.toString())
                         //content://media/external/images/media/1200
 //                        background = contentURI
                         backgroundIV.setImageResource(0)

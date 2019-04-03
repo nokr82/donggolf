@@ -11,7 +11,7 @@
         android:id="@+id/titleTagTV"
         android:textSize="13dp"
         android:layout_marginRight="3dp"
-        android:text="대구광역시"/>
+        android:text=""/>
     <LinearLayout
         android:id="@+id/removeLL"
         android:layout_width="match_parent"

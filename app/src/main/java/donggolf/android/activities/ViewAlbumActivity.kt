@@ -386,7 +386,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             var member_img =   albumList[position].getJSONObject("MemberImg")
             var src = Utils.getString(member_img,"image_uri")
 
-            Log.d("알라",  albumList[position].toString())
+            //Log.d("알라",  albumList[position].toString())
 
             val intent = Intent(context,WebPictureDetailActivity::class.java)
             intent.putExtra("src", Config.url+src)

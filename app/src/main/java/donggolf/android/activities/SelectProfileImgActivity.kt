@@ -185,9 +185,9 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
     fun uploadProfileImage() {
 
         var bt: Bitmap = Utils.getImage(context.contentResolver, displaynamePaths, 800)
-        println("displaynamePaths $displaynamePaths")
-        println("이미지 ::: ${ByteArrayInputStream(Utils.getByteArray(bt))}")
-        println("bt ------ $bt")
+//        println("displaynamePaths $displaynamePaths")
+//        println("이미지 ::: ${ByteArrayInputStream(Utils.getByteArray(bt))}")
+//        println("bt ------ $bt")
 
         val params = RequestParams()
 
@@ -202,11 +202,11 @@ class SelectProfileImgActivity() : RootActivity(), AdapterView.OnItemClickListen
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                if (errorResponse != null)
-                    println(errorResponse!!.getString("message"))
+//                if (errorResponse != null)
+//                    println(errorResponse!!.getString("message"))
             }
         })
     }

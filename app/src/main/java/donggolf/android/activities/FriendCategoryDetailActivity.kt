@@ -70,7 +70,7 @@ class FriendCategoryDetailActivity : RootActivity() {
 
             MateAction.blockList(params, object : JsonHttpResponseHandler(){
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
+//                    println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         val blocks = response.getJSONArray("blocks")
@@ -87,11 +87,11 @@ class FriendCategoryDetailActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+//                    println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+//                    println(responseString)
                 }
             })
 
@@ -121,7 +121,7 @@ class FriendCategoryDetailActivity : RootActivity() {
                 mateUpdate.add(mateList.get(i).getInt("mate_id"))
             }
             friendAdapter.notifyDataSetChanged()
-            println(mateUpdate)
+//            println(mateUpdate)
         }
 
         //설정
@@ -142,8 +142,8 @@ class FriendCategoryDetailActivity : RootActivity() {
         moveTV.setOnClickListener {
             matemove.clear()
             for (i in 0 until mateList.size) {
-                Log.d("메이트리스트",mateList.get(i).toString())
-                Log.d("불리언",mateList.get(i).getBoolean("check").toString())
+                //Log.d("메이트리스트",mateList.get(i).toString())
+                //Log.d("불리언",mateList.get(i).getBoolean("check").toString())
                 if (mateList.get(i).getBoolean("check")){
                     matemove.add(mateList.get(i).getInt("mate_id"))
 
@@ -156,7 +156,7 @@ class FriendCategoryDetailActivity : RootActivity() {
             val intent = Intent(context, FriendReqSelectCategoryActivity::class.java)
             intent.putExtra("category_id",category_id.toString())
             intent.putExtra("mate_id",matemove)
-            Log.d("메이트아디",matemove.toString())
+            //Log.d("메이트아디",matemove.toString())
             startActivityForResult(intent,MOVEtoCATEGORY)
         }
 
@@ -181,7 +181,7 @@ class FriendCategoryDetailActivity : RootActivity() {
 
                             MateAction.blockMember(params, object : JsonHttpResponseHandler() {
                                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                    println(response)
+                                    //println(response)
                                     val result = response!!.getString("result")
                                     if (result == "ok") {
                                         getFriendList("m", category_id)
@@ -189,11 +189,11 @@ class FriendCategoryDetailActivity : RootActivity() {
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                                    println(errorResponse)
+                                    //println(errorResponse)
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                                    println(responseString)
+                                    //println(responseString)
                                 }
                             })
                         } else {
@@ -229,9 +229,9 @@ class FriendCategoryDetailActivity : RootActivity() {
                         val category_id = data!!.getStringExtra("category_id")
                         val mate_id = data!!.getSerializableExtra("mate_id")
                         val get_category_id = data!!.getStringExtra("get_category_id")
-                        Log.d("스트링",mate_id.toString())
-                        Log.d("스트링",get_category_id)
-                        Log.d("스트링",category_id)
+                        //Log.d("스트링",mate_id.toString())
+                        //Log.d("스트링",get_category_id)
+                        //Log.d("스트링",category_id)
                         moveMateOtherCategory(mate_id as ArrayList<Int>, category_id,get_category_id)
                         var intent = Intent()
                         intent.putExtra("reset","reset")
@@ -272,10 +272,10 @@ class FriendCategoryDetailActivity : RootActivity() {
 
         MateAction.update_mates_status(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 //getFriendList("m",category_id)
                 val result = response!!.getString("result")
-                println("----result ---- $result")
+                //println("----result ---- $result")
                 if (result == "ok") {
                     val mates = response.getJSONArray("mates")
                     mateList.clear()
@@ -296,11 +296,11 @@ class FriendCategoryDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }
@@ -335,11 +335,11 @@ class FriendCategoryDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
     }

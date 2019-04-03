@@ -213,7 +213,7 @@ class AreaMyRangeActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("AreaRangeActivity save changed data :: $response")
+//                    println("AreaRangeActivity save changed data :: $response")
                     if (result == "ok") {
                         Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
 
@@ -260,7 +260,7 @@ class AreaMyRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG1 = ""
                                 actArea--
-                                println("userRG1 : $userRG1, actArea : $actArea")
+//                                println("userRG1 : $userRG1, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }
@@ -278,7 +278,7 @@ class AreaMyRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG2 = ""
                                 actArea--
-                                println("userRG2 : $userRG2, actArea : $actArea")
+//                                println("userRG2 : $userRG2, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }
@@ -296,7 +296,7 @@ class AreaMyRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG3 = ""
                                 actArea--
-                                println("userRG3 : $userRG3, actArea : $actArea")
+//                                println("userRG3 : $userRG3, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }

@@ -179,7 +179,7 @@ class InfoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("테스트","etet")
+        //Log.d("테스트","etet")
         member_info()
     }
 
@@ -331,7 +331,7 @@ class InfoFragment : Fragment() {
                 GALLERY -> {
                     if (data != null) {
                         val contentURI = data.data
-                        Log.d("uri", contentURI.toString())
+                        //Log.d("uri", contentURI.toString())
 
                         try {
                             val selectedImageUri = data.data
@@ -362,12 +362,12 @@ class InfoFragment : Fragment() {
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                                    println(responseString)
+                                    //println(responseString)
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                                    if (errorResponse != null)
-                                        println(errorResponse.getString("message"))
+//                                    if (errorResponse != null)
+                                        //println(errorResponse.getString("message"))
                                 }
                             })
 
@@ -400,7 +400,7 @@ class InfoFragment : Fragment() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("response : $response")
+                    //println("response : $response")
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
                         val memberTags = response.getJSONArray("MemberTags")
@@ -426,7 +426,7 @@ class InfoFragment : Fragment() {
                         for (i in 0 until newRegion.size) {
                             newRegionStr += newRegion[i] + ","
                         }
-                        println("newRegionStr $newRegionStr")
+                        //println("newRegionStr $newRegionStr")
 
 
                         when (type) {
@@ -445,7 +445,7 @@ class InfoFragment : Fragment() {
                                 for (i in 0..memberTags.length() - 1) {
                                     val data = memberTags[i] as JSONObject
                                     taglist += "#" + Utils.getString(data, "tag")
-                                    println(taglist)
+                                    //println(taglist)
                                 }
                                 hashtagTV.text = taglist
                             }
@@ -487,7 +487,7 @@ class InfoFragment : Fragment() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {

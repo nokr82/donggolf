@@ -329,7 +329,7 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
+                //println(errorResponse.toString())
             }
         })
 
@@ -380,7 +380,7 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
+                //println(errorResponse.toString())
             }
         })
 
@@ -421,11 +421,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
 
@@ -447,11 +447,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("reject action error : $errorResponse")
+                //println("reject action error : $errorResponse")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("reject error : $responseString")
+                //println("reject error : $responseString")
             }
         })
     }
@@ -464,7 +464,7 @@ class ProfileActivity : RootActivity() {
 
         MateAction.block_cancle(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     member_info(member_id)
@@ -472,11 +472,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }
@@ -489,12 +489,12 @@ class ProfileActivity : RootActivity() {
             when (requestCode) {
                 RESET -> {
 
-                    println("---------------reset 타기")
+                    //println("---------------reset 타기")
                     if (data!!.getStringExtra("reset") != null) {
                         var intent = Intent()
                         intent.action = "RESET_CHATTING"
                         sendBroadcast(intent)
-                        println("-------------reset_chatting")
+                        //println("-------------reset_chatting")
                     }
                 }
 

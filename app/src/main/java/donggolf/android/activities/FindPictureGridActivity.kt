@@ -89,7 +89,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     val selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
 
                     cursor = MediaStore.Images.Media.query(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, proj, selection, MediaStore.Images.Media.DATE_ADDED + " DESC")
-                    println(" cursor : " + cursor.count)
+                    //println(" cursor : " + cursor.count)
                     if (cursor != null && cursor.moveToFirst()) {
                         idx[0] = cursor.getColumnIndex(proj[0])
                         idx[1] = cursor.getColumnIndex(proj[1])
@@ -148,7 +148,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
                     cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, selection, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                        println(" cursor : " + cursor.count)
+                        //println(" cursor : " + cursor.count)
                     } else {
 //                        cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
                     }
@@ -262,7 +262,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 //                            } catch (ex: Exception) {
 //                            }
                         finish()
-                        println("확인time:::::::::::::::::::::::::::${System.currentTimeMillis()}")
+                        //println("확인time:::::::::::::::::::::::::::${System.currentTimeMillis()}")
                     } else {
 
                         for (strPo in selected) {
@@ -315,7 +315,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                     countTV.text = selected.size.toString()
 
-                    println("---selected.size ${selected.size}")
+                    //println("---selected.size ${selected.size}")
 
                     val adapter = selectGV.getAdapter()
                     if (adapter != null) {
@@ -422,7 +422,7 @@ class FindPictureGridActivity() : RootActivity(), AdapterView.OnItemClickListene
 
                 //                imageUri = Uri.fromFile(photo);
                 imageUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", photo)
-                Log.d("yjs", "Uri : " + imageUri)
+                //Log.d("yjs", "Uri : " + imageUri)
                 imagePath = photo.absolutePath
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 startActivityForResult(intent, FROM_CAMERA)

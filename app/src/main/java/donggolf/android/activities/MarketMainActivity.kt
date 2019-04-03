@@ -279,7 +279,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 var json = productTypeAdapter.getItem(position)
                 var type2 = json.getJSONObject("ProductType")
                 var title = Utils.getString(type2, "title")
-                Log.d("타이틀",title)
+                //Log.d("타이틀",title)
                 entireTypeTV.text = title
                 if (title.equals("종류전체")){
                     title = ""
@@ -382,7 +382,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     override fun onResume() {
         super.onResume()
         getSecondHandMarketItems(type,1)
-        Log.d("로그",type+page.toString())
+        //Log.d("로그",type+page.toString())
     }
 
     //마켓 목록뽑기
@@ -403,7 +403,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok"){
                     val marketItems = response.getJSONArray("marketItems")
 
-                    Log.d("마켓목록",marketItems.toString())
+                    //Log.d("마켓목록",marketItems.toString())
                     this@MarketMainActivity.page = response.getInt("page")
                     totalPage = response.getInt("totalPage")
                     todayCount = response.getInt("todayCount")

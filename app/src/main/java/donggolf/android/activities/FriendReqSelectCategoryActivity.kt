@@ -38,7 +38,7 @@ class FriendReqSelectCategoryActivity : RootActivity() {
         context = this
         val intent = getIntent()
         mates_id = intent.getIntExtra("mates_id", -1)
-        Log.d("2아뒤",mates_id.toString())
+        //Log.d("2아뒤",mates_id.toString())
         selCategAdapter = FriendCategoryAdapter(context, R.layout.item_friend_category_list, categoryList)
         selectCategoryLV.adapter = selCategAdapter
 
@@ -239,7 +239,7 @@ class FriendReqSelectCategoryActivity : RootActivity() {
 
         MateAction.accept_mates(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                Log.d("결과",response.toString())
+                //Log.d("결과",response.toString())
                 Toast.makeText(context,"친구추가되었습니다.", Toast.LENGTH_SHORT).show()
                 var intent = Intent()
                 intent.action = "ADD_FRIEND"

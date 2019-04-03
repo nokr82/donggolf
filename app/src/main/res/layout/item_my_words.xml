@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/item_chat_box_my"
         android:padding="8dp"
-        android:text="내 채팅 메시지"/>
+        android:text=""/>
 
 </LinearLayout>

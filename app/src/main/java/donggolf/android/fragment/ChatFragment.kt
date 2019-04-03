@@ -235,7 +235,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
             val type = Utils.getString(room, "type")
             val block_code = Utils.getString(room, "block_code")
             val max_count = Utils.getString(room,"max_count")
-            println("----------------------id : $id")
+            //println("----------------------id : $id")
 
             if (founder.toInt() == PrefUtils.getIntPreference(context, "member_id")) {
                 if (type == "1") {
@@ -694,7 +694,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
                 var region_id2 = PrefUtils.getStringPreference(context, "region_id2")
                 params.put("region", region_id)
                 params.put("region2", region_id2)
-                println("----------region_id : $region_id")
+                //println("----------region_id : $region_id")
             } else {
                 Toast.makeText(context, "지역설정부터 해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -758,11 +758,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
     }
@@ -806,11 +806,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
     }
@@ -822,11 +822,11 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
             when (requestCode) {
                 RESET -> {
-                    println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("reset")}")
+                    //println("data::::::::::::::::::::::::::::::::::::::${data!!.getStringExtra("reset")}")
                     if (data!!.getStringExtra("reset") != null) {
                         var division = data!!.getStringExtra("division")
                         if (division == "my") {
-                            println("--------reset")
+                            //println("--------reset")
                             adapterData.clear()
                             page = 1
                             getmychat(1)

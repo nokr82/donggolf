@@ -408,7 +408,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="9999명이 좋아합니다."
+                        android:text=""
                         android:textSize="13dp" />
 
                     <LinearLayout

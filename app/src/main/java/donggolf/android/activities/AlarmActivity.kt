@@ -146,7 +146,7 @@ class AlarmActivity : RootActivity(), AbsListView.OnScrollListener {
                     progressDialog!!.dismiss()
                 }
 
-                 System.out.println(responseString);
+//                 System.out.println(responseString);
 
                 throwable.printStackTrace()
                 error()

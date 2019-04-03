@@ -153,7 +153,7 @@ class FriendManageActivity : RootActivity() {
 
         MateAction.getCategoryInfo(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     val categories = response.getJSONArray("categories")
@@ -173,11 +173,11 @@ class FriendManageActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
     }
@@ -189,7 +189,7 @@ class FriendManageActivity : RootActivity() {
 
         MateAction.addCategory(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     getCategoryList()
@@ -199,11 +199,11 @@ class FriendManageActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }
@@ -214,7 +214,7 @@ class FriendManageActivity : RootActivity() {
 
         MateAction.delete_category(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     getCategoryList()
@@ -222,11 +222,11 @@ class FriendManageActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }

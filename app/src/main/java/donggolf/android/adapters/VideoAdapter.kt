@@ -67,7 +67,7 @@ open class VideoAdapter(context: Context, data:ArrayList<VideoData>, imageLoader
             val idx = selected.indexOf(position.toString())
             holder.picture_grid_click.text = (idx + 1).toString()
 
-            Log.d("yjs" ,"idx : " + idx.toString()  )
+            //Log.d("yjs" ,"idx : " + idx.toString()  )
         }else {
             holder.picture_grid_click.text = ""
         }

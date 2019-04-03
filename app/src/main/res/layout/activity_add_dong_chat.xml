@@ -80,7 +80,7 @@
                         android:background="@drawable/box_region"
                         android:gravity="center_vertical"
                         android:paddingLeft="10dp"
-                        android:text="경기도"
+                        android:text=""
                         android:textSize="14dp" />
 
                     <ImageView
@@ -106,7 +106,7 @@
                         android:background="@drawable/box_region"
                         android:gravity="center_vertical"
                         android:paddingLeft="10dp"
-                        android:text="부천시"
+                        android:text=""
                         android:textSize="14dp" />
 
                     <ImageView

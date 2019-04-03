@@ -159,7 +159,7 @@ class ContentTagChangeActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     try {
                         val result = response!!.getString("result")
-                        Log.d("태그",response.toString())
+                        //Log.d("태그",response.toString())
 
                         if (result == "ok") {
 

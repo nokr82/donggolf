@@ -207,7 +207,7 @@ class AddPostActivity : RootActivity() {
 
 
                             if (tmpContent.id == null) {
-                                Log.d("끝","")
+                                //Log.d("끝","")
                                 finish()
                             }
 
@@ -217,7 +217,7 @@ class AddPostActivity : RootActivity() {
 
                             if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
-                                Log.d("2끝","")
+                                //Log.d("2끝","")
                                 finish()
                             }
 
@@ -272,7 +272,7 @@ class AddPostActivity : RootActivity() {
                                     dbManager.insertimagespath(hastag)
                                 }
                             }
-                            Log.d("끝3","")
+                            //Log.d("끝3","")
                             finish()
                             dialog.cancel()
 
@@ -294,7 +294,7 @@ class AddPostActivity : RootActivity() {
                             if (tmpContent.id != null) {
                                 dbManager.deleteTmpContent(tmpContent.id!!)
                             }
-                            Log.d("끝4","")
+                            //Log.d("끝4","")
                             finish()
                             dialog.cancel()
                             Utils.hideKeyboard(this)
@@ -347,7 +347,7 @@ class AddPostActivity : RootActivity() {
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
-                        Log.d("끝5","")
+                        //Log.d("끝5","")
                         finish()
                     })
 
@@ -476,7 +476,7 @@ class AddPostActivity : RootActivity() {
         }
 
         if (delids != null) {
-            Log.d("삭제", delids.toString())
+            //Log.d("삭제", delids.toString())
             if (delids.size != 0) {
                 for (i in 0..delids.size - 1) {
                     params.put("del_ids[" + i + "]", delids[i])
@@ -525,7 +525,7 @@ class AddPostActivity : RootActivity() {
                     intent.putExtra("id", id)
                     intent.putExtra("reset", "reset")
                     setResult(RESULT_OK, intent);
-                    Log.d("끝5","")
+                    //Log.d("끝5","")
                     finish()
                 }
             }
@@ -583,7 +583,7 @@ class AddPostActivity : RootActivity() {
             var region_id = 1
             params.put("region2", region_id)
         }
-        Log.d("태그", hashtag.toString())
+        //Log.d("태그", hashtag.toString())
 
         if (hashtag != null) {
             for (i in 0..hashtag.size - 1) {
@@ -651,13 +651,13 @@ class AddPostActivity : RootActivity() {
 //        loadData(dbManager, member_id.toString())
 
         if (tmpContent.id == null) {
-            Log.d("끝6","")
+            //Log.d("끝6","")
             finish()
         }
 
         if (tmpContent.id != null) {
             dbManager.deleteTmpContent(tmpContent.id!!)
-            Log.d("끝7","")
+            //Log.d("끝7","")
             finish()
         }
 
@@ -703,7 +703,7 @@ class AddPostActivity : RootActivity() {
 //                    editor.render(html)
 
                     println("html::::::::::::::::::::::::::${html}")
-                    Log.d("image_uri",image_uri)
+                    //Log.d("image_uri",image_uri)
                 }
             }
 
@@ -886,7 +886,7 @@ class AddPostActivity : RootActivity() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
                 val iv = imageUrlToIVs.get(imageUri!!)
                 iv!!.setImageBitmap(loadedImage)
-                Log.d("높이23", loadedImage!!.height.toString())
+                //Log.d("높이23", loadedImage!!.height.toString())
             }
         })
 
@@ -1038,7 +1038,7 @@ class AddPostActivity : RootActivity() {
             when (requestCode) {
                 SELECT_PICTURE -> {
 
-                    println("resulttime:::::::::::::::::::::::::::${System.currentTimeMillis()}")
+//                    println("resulttime:::::::::::::::::::::::::::${System.currentTimeMillis()}")
 
                     var item = data?.getStringArrayExtra("images")
                     var name = data?.getStringArrayExtra("displayname")
@@ -1299,7 +1299,7 @@ class AddPostActivity : RootActivity() {
 //                        loadData(dbManager,member_id.toString())
 
                         if (tmpContent.id == null) {
-                            Log.d("끝10","")
+                            //Log.d("끝10","")
                             finish()
                         }
 
@@ -1309,7 +1309,7 @@ class AddPostActivity : RootActivity() {
 
                         if (tmpContent.id != null) {
                             dbManager.deleteTmpContent(tmpContent.id!!)
-                            Log.d("끝11","")
+                            //Log.d("끝11","")
                             finish()
                         }
 
@@ -1375,7 +1375,7 @@ class AddPostActivity : RootActivity() {
                         }
 
                         temp_yn = "N"
-                        Log.d("끝12","")
+                        //Log.d("끝12","")
                         finish()
 
                         Utils.hideKeyboard(this)

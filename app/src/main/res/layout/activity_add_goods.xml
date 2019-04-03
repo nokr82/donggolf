@@ -631,7 +631,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:gravity="center_vertical"
-                            android:text="010-2534-5553"
+                            android:text=""
                             android:textSize="14dp" />
 
                         <TextView

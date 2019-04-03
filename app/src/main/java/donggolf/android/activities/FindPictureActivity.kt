@@ -60,7 +60,7 @@ class FindPictureActivity : RootActivity() {
         var intent = getIntent()
 //        time = intent.getLongExtra("time", 0L)
 
-        println("startactivirtytime:::::${System.currentTimeMillis()}")
+//        println("startactivirtytime:::::${System.currentTimeMillis()}")
 
 //        videoSize()
 //        photoSize()
@@ -306,7 +306,7 @@ class FindPictureActivity : RootActivity() {
                     intent.putExtra("images", item)
                     intent.putExtra("displayname", name)
 
-                    Log.d("yjs", "findpicture : " + item)
+                    //Log.d("yjs", "findpicture : " + item)
 
                     setResult(RESULT_OK, intent)
                     finish()
@@ -323,8 +323,8 @@ class FindPictureActivity : RootActivity() {
                     intent.putExtra("displayname", name)
                     intent.putExtra("ids", ids)
 
-                    Log.d("yjs", "findpicture : " + item)
-                    Log.d("yjs", "video_ids : " + ids)
+                    //Log.d("yjs", "findpicture : " + item)
+                    //Log.d("yjs", "video_ids : " + ids)
 
                     setResult(RESULT_OK, intent)
                     finish()

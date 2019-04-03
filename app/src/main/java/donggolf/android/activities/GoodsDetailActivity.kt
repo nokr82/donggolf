@@ -347,7 +347,7 @@ class GoodsDetailActivity : RootActivity() {
 
                     MarketAction.delete_market_comment(params, object :JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            println(response)
+                            //println(response)
 
                             val result = response!!.getString("result")
                             if (result == "ok"){
@@ -361,11 +361,11 @@ class GoodsDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            //println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            //println(responseString)
                         }
                     })
                 }
@@ -414,7 +414,7 @@ class GoodsDetailActivity : RootActivity() {
                     MarketAction.market_block_commenter(params, object : JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                             try {
-                                println(response)
+                                //println(response)
                                 //차단 성공하면 표시하고 토스트
                                 val result = response!!.getString("result")
                                 if (result == "ok") {
@@ -462,7 +462,7 @@ class GoodsDetailActivity : RootActivity() {
                 return@setOnItemClickListener
             }
             var data = commentList.get(i)
-            Log.d("데이데이",data.toString())
+            //Log.d("데이데이",data.toString())
             val contentcomment = data.getJSONObject("MarketComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")

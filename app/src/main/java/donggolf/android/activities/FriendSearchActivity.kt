@@ -187,7 +187,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             val item = editadapterData.get(position)
             val SearchList = item.getJSONObject("MateSearch")
             val content = Utils.getString(SearchList,"keyword")
-            println("----content$content")
+//            println("----content$content")
             frdSearchET.setText(content)
             friendSearchWords(content)
             frdSearchET.isCursorVisible = false
@@ -278,7 +278,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                 for (signature in info.signatures) {
                     val md = MessageDigest.getInstance("SHA")
                     md.update(signature.toByteArray())
-                    Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                    //Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
                 }
 
             } catch (e: PackageManager.NameNotFoundException) {
@@ -438,11 +438,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("친구 최근검색하다 오류난 부분 :: $responseString")
+//                println("친구 최근검색하다 오류난 부분 :: $responseString")
             }
         })
     }
@@ -457,7 +457,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println("친구검색 ::: $response")
+//                    println("친구검색 ::: $response")
                     val result = response!!.getString("result")
                     friendData.clear()
                     main_listview_search.visibility = View.GONE
@@ -470,7 +470,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                             val member = members[i] as JSONObject
                             val member_o = member.getJSONObject("Member")
                             val member_id = Utils.getInt(member_o,"id")
-                            Log.d("멤버다",member.toString())
+                            //Log.d("멤버다",member.toString())
                             if (member_id!=PrefUtils.getIntPreference(context, "member_id")){
                                 friendData.add(member)
                             }
@@ -488,11 +488,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
     }
@@ -510,7 +510,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println("친구검색 ::: $response")
+//                    println("친구검색 ::: $response")
                     val result = response!!.getString("result")
                     friendData.clear()
                     if (result == "ok") {
@@ -522,7 +522,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                             val member = members[i] as JSONObject
                             val member_o = member.getJSONObject("Member")
                             val member_id = Utils.getInt(member_o,"id")
-                            Log.d("멤버다",member.toString())
+                            //Log.d("멤버다",member.toString())
                             if (member_id!=PrefUtils.getIntPreference(context, "member_id")){
                                 friendData.add(member)
                             }
@@ -540,11 +540,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
         })
     }
@@ -710,7 +710,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+//                    println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         editadapterData.clear()
@@ -718,7 +718,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                         if (mateSearchHistories.length() > 0) {
                             for (i in 0 until mateSearchHistories.length()) {
                                 val mateSearch = mateSearchHistories[i] as JSONObject
-                                Log.d("메이트",mateSearch.toString())
+                                //Log.d("메이트",mateSearch.toString())
                                 editadapterData.add(mateSearch)
                             }
                         }
@@ -787,8 +787,8 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                         totalPage = response.getInt("totalPage");
                         page = response.getInt("page");
 
-                        println("-------page $page")
-                        println("-------totalpage $totalPage")
+//                        println("-------page $page")
+//                        println("-------totalpage $totalPage")
 
                         val members = response.getJSONArray("members")
                         if (members.length() == 0) {
@@ -818,11 +818,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
-                println(responseString)
+//                println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println(errorResponse)
+//                println(errorResponse)
             }
 
             override fun onStart() {

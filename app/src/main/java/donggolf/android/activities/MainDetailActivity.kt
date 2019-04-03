@@ -326,7 +326,7 @@ class MainDetailActivity : RootActivity() {
                 return@setOnItemClickListener
             }
             var data = commentList.get(i)
-            Log.d("데이데이",data.toString())
+            //Log.d("데이데이",data.toString())
             val contentcomment = data.getJSONObject("ContentComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")
@@ -853,7 +853,7 @@ class MainDetailActivity : RootActivity() {
 
                             freind = Utils.getString(data,"freind")
                             val mate_cnt = Utils.getString(data,"mate_cnt")
-                            Log.d("친구",freind)
+                            //Log.d("친구",freind)
                             if (freind == "0"){
                                 if (mate_cnt.toInt() > 0){
                                     freindIV.setBackgroundResource(R.drawable.icon_second)
@@ -876,7 +876,7 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
-                            Log.d("이미지",imageDatas.toString())
+                            //Log.d("이미지",imageDatas.toString())
                             println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
@@ -934,7 +934,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until imagePaths.size){
                                     val image = Config.url + imagePaths.get(i)
-                                    Log.d("이미지2",image)
+                                    //Log.d("이미지2",image)
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
