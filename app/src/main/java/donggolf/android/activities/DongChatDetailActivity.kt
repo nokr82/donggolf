@@ -810,6 +810,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.get(i).put("text_size",text_size)
                             }
 
+                            chatCont.post {
+                                chatCont.setSelection(adapter.count - 1)
+                            }
+
                         }
                     }
 
