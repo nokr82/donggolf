@@ -109,8 +109,6 @@ class AddGoodsActivity : RootActivity() {
         images = ArrayList()
         images_url = ArrayList()
 
-
-
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, categoryData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, productCategoryData)

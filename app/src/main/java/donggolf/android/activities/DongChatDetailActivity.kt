@@ -808,10 +808,18 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (insertCheckData(data.getJSONObject("Chatting"))) {
                                 chattingList.add(data)
                                 chattingList.get(i).put("text_size",text_size)
+
                             }
-//                            chatCont.setSelection(adapter.count - 1)
+
+                            chatCont.post {
+                                chatCont.setSelection(adapter.count - 1)
+                            }
 
                         }
+                    }
+
+                    if (list.length() > 0) {
+                        adapter.notifyDataSetChanged()
                     }
 
                     if (chattingList.size > 0) {
@@ -820,9 +828,6 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    if (list.length() > 0) {
-                        (adapter as BaseAdapter).notifyDataSetChanged()
-                    }
                 }
             }
 
@@ -1269,6 +1274,10 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         if (resetReceiver != null) {
             context.unregisterReceiver(resetReceiver)
+        }
+
+        if (timer != null) {
+            timer!!.cancel()
         }
 
     }
