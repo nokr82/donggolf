@@ -119,11 +119,9 @@ class ReportActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("market_id", market_id)
-        params.put("report_member_id",PrefUtils.getIntPreference(context, "member_id"))
         params.put("member_id",market_member_id)
-        params.put("title",title)
         params.put("content",content)
-
+        params.put("type",2)
         MarketAction.add_report(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
