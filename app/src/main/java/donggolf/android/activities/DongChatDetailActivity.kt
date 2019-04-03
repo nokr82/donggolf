@@ -808,6 +808,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                             if (insertCheckData(data.getJSONObject("Chatting"))) {
                                 chattingList.add(data)
                                 chattingList.get(i).put("text_size",text_size)
+
                             }
 
                             chatCont.post {
