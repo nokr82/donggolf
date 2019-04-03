@@ -21,6 +21,12 @@ class ViewDocumentActivity : RootActivity() {
             finish()
         }
 
+
+        operLL.setOnClickListener {
+            val intent: Intent = Intent(context, OperatingActivity::class.java)
+            startActivity(intent)
+        }
+
         termspecifLL.setOnClickListener {
             var intent: Intent = Intent(context, TermSpecifActivity::class.java)
             startActivity(intent)

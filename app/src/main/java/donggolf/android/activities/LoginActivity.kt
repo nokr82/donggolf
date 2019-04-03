@@ -151,6 +151,17 @@ class LoginActivity : RootActivity() {
                         }
                         val member = response.getJSONObject("member")
 
+                        val admin_del_yn = Utils.getString(member,"admin_del_yn")
+                        val admin_day_del_yn = Utils.getString(member,"admin_day_del_yn")
+                        val admin_day = Utils.getString(member,"admin_day")
+                        val del_day = response.getString("del_day")
+                        if (admin_del_yn == "Y"){
+                            alert("동네골프 접근이 영구차단되었습니다.")
+                            return
+                        }else if (admin_day_del_yn == "Y"){
+                            alert("동네골프 접근이 "+admin_day+"부터 "+del_day+"까지 차단되었습니다.")
+                            return
+                        }
                         val member_id = Utils.getInt(member, "id")
 
                         println("member_id -------$member_id")

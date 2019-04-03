@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -24,6 +25,7 @@ import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import donggolf.android.adapters.ViewAlbumAdapter
+import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
 import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
@@ -380,52 +382,66 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 
         val strPo = position.toString()
 
-        if (p_type !=1){
-            if (selected.contains(strPo)) {
-                selected.remove(strPo)
+        if (login_id != tmp_member_id ){
+            var member_img =   albumList[position].getJSONObject("MemberImg")
+            var src = Utils.getString(member_img,"image_uri")
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
-                }
+            Log.d("알라",  albumList[position].toString())
 
-            } else {
-                if (selected.size > 9) {
-                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                selected.add(strPo)
-
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
-                }
-            }
+            val intent = Intent(context,WebPictureDetailActivity::class.java)
+            intent.putExtra("src", Config.url+src)
+            context.startActivity(intent)
         }else{
-            if (selected.contains(strPo)) {
-                selected.remove(strPo)
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
+            if (p_type !=1){
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
+                    if (selected.size > 9) {
+                        Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    selected.add(strPo)
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
+            }else{
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
 
-            } else {
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
 
 
-                selected.add(strPo)
+                    selected.add(strPo)
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
             }
         }
+
+
 
     }
 }
