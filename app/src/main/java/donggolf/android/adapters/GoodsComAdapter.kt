@@ -88,7 +88,13 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
                 item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
             }
-        } else {
+        }else  if (op_comments_id != -1) {
+            item.main_detail_comment_typeIV.visibility = View.VISIBLE
+            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+
+        }
+
+        else {
             item.main_detail_comment_typeIV.visibility = View.GONE
         }
 

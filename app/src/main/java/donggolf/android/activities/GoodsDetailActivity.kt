@@ -463,26 +463,34 @@ class GoodsDetailActivity : RootActivity() {
             }
             var data = commentList.get(i)
             Log.d("데이데이",data.toString())
-            val marketcomment = data.getJSONObject("MarketComment")
+            val contentcomment = data.getJSONObject("MarketComment")
 
-            val comments_id = Utils.getInt(marketcomment, "id")
+            val comments_id = Utils.getInt(contentcomment, "id")
 
-            p_comments_id = Utils.getInt(marketcomment,"p_comments_id")
-            op_comments_id = Utils.getInt(marketcomment,"op_comments_id")
-            var user_nick =  Utils.getString(marketcomment,"nick")
-            if (p_comments_id!=-1){
-                op_comments_id = p_comments_id
+            p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+            var user_nick =  Utils.getString(contentcomment,"nick")
+            if (op_comments_id != -1){
+                op_comments_id = comments_id
+                p_comments_id = -1
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 대대댓글"
+            }else if (p_comments_id!=-1){
+                op_comments_id = comments_id
+                p_comments_id = -1
                 commentET.requestFocus()
                 Utils.showKeyboard(context)
                 commentET.hint = user_nick+ "님의 댓글에 대댓글"
-            }else if (comments_id != -1) {
+            } else if (comments_id != -1) {
                 p_comments_id = comments_id
                 commentET.requestFocus()
                 Utils.showKeyboard(context)
-                commentET.hint = user_nick+ "님의 댓글에 답글"
+                commentET.hint = user_nick + "님의 댓글에 답글"
             }
 
         }
+
 
     }
 
@@ -822,12 +830,10 @@ class GoodsDetailActivity : RootActivity() {
         params.put("market_id", product_id)
         params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("comment", comment)
-        params.put("parent", commentParent)
-        params.put("type", commentType)
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)
 
-        MarketAction.add_market_comment(params, object : JsonHttpResponseHandler() {
+        CommentAction.add_market_comment(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
