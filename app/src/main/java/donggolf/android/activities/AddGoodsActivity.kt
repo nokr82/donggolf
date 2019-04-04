@@ -86,6 +86,7 @@ class AddGoodsActivity : RootActivity() {
     var prod_regoin = ""
     var trade_type = ""//거래 방법
     var deliv_way = ""
+    var product_id = -1
 
     var modified_product_id = 0
     var todayCount = 0
@@ -153,12 +154,14 @@ class AddGoodsActivity : RootActivity() {
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
+                product_id = Utils.getInt(type, "id")
                 producttypeTV.text = title
                 tendencyTV.text = "선택"
                 prod_type = title
                 productData[position].put("isSelectedOp", true)
                 productTypeAdapter.notifyDataSetChanged()
                 //println("title ------ $title")
+                getCategory()
                 alert.dismiss()
             }
 
@@ -168,6 +171,11 @@ class AddGoodsActivity : RootActivity() {
         }
 
         brandLL.setOnClickListener {
+           if(product_id ==-1){
+               Toast.makeText(context,"제품종류를 선택해주세요.",Toast.LENGTH_SHORT).show()
+               return@setOnClickListener
+           }
+
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
@@ -204,6 +212,10 @@ class AddGoodsActivity : RootActivity() {
         }
 
         configRV.setOnClickListener {
+            if(product_id ==-1){
+                Toast.makeText(context,"제품종류를 선택해주세요.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
@@ -828,6 +840,7 @@ class AddGoodsActivity : RootActivity() {
     fun getCategory() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("product_id", product_id)
 
         if (categoryData != null) {
             categoryData.clear()
