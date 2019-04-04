@@ -52,6 +52,9 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var totalPage = 1
     var todayCount = 0
     var monthCount = 0
+    var product_id = -1
+
+
     private var userScrolled = false
     private var lastItemVisibleFlag = false
     private var totalItemCountScroll = 0
@@ -147,6 +150,12 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //분류전체(form)
         entireClassificationTV.setOnClickListener {
+            if (product_id == -1){
+                Toast.makeText(context,"제품종류를 먼저 선택해주세요.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
             init_menu()
             entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -203,6 +212,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 }
 
 
+
                 alert.dismiss()
             }
 
@@ -215,6 +225,10 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //브랜드전체(brand)
         entireBrandTV.setOnClickListener {
+            if (product_id == -1){
+                Toast.makeText(context,"제품종류를 먼저 선택해주세요.",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             init_menu()
             entireBrandTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -258,6 +272,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //종류전체(type)
         entireTypeTV.setOnClickListener {
+
             init_menu()
             entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -279,6 +294,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 var json = productTypeAdapter.getItem(position)
                 var type2 = json.getJSONObject("ProductType")
                 var title = Utils.getString(type2, "title")
+                product_id = Utils.getInt(type2,"id")
                 //Log.d("타이틀",title)
                 entireTypeTV.text = title
                 if (title.equals("종류전체")){
@@ -290,6 +306,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
                 productTypeAdapter.notifyDataSetChanged()
                 getSecondHandMarketItems(type,1)
+                getCategory()
                 alert.dismiss()
                 entireClassificationTV.setText("분류 전체")
             }
@@ -314,7 +331,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     fun getCategory() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-
+        params.put("product_id", product_id)
         if (brandData != null) {
             brandData.clear()
         }
