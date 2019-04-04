@@ -154,7 +154,11 @@ class AddGoodsActivity : RootActivity() {
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
-                product_id = Utils.getInt(type, "id")
+                if (title=="종류전체"){
+                    product_id = -1
+                }else{
+                    product_id = Utils.getInt(type,"id")
+                }
                 producttypeTV.text = title
                 tendencyTV.text = "선택"
                 prod_type = title

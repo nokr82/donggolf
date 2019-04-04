@@ -294,7 +294,11 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 var json = productTypeAdapter.getItem(position)
                 var type2 = json.getJSONObject("ProductType")
                 var title = Utils.getString(type2, "title")
-                product_id = Utils.getInt(type2,"id")
+                if (title=="종류전체"){
+                    product_id = -1
+                }else{
+                    product_id = Utils.getInt(type2,"id")
+                }
                 //Log.d("타이틀",title)
                 entireTypeTV.text = title
                 if (title.equals("종류전체")){
