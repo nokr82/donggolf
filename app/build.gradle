@@ -14,10 +14,27 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
     }
+    signingConfigs {
+        release {
+            storeFile file("D:/CloudStation/android_keystore/golf/golf.jks")
+            keyAlias "golf"
+            keyPassword "123456"
+            storePassword '123456'
+            v2SigningEnabled true
+        }
+    }
+
+
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
