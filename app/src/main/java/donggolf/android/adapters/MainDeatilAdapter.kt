@@ -44,7 +44,6 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
 
         var data = data.get(position)
 
-        Log.d("댓글데이터", data.toString())
         //val member_info = data.getJSONObject("Member")
         val comment = data.getJSONObject("ContentComment")
         var image_uri = Utils.getString(comment, "image_uri")
