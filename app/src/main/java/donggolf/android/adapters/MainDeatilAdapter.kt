@@ -3,6 +3,7 @@ package donggolf.android.adapters
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -12,17 +13,18 @@ import donggolf.android.R
 import donggolf.android.activities.PictureDetailActivity
 import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
 
-open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context, view, data) {
 
     private lateinit var item: ViewHolder
-    var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var view: Int = view
+    var data: ArrayList<JSONObject> = data
 
-    override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
         lateinit var retView: View
 
@@ -41,83 +43,90 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         }
 
         var data = data.get(position)
+
+        Log.d("댓글데이터", data.toString())
         //val member_info = data.getJSONObject("Member")
         val comment = data.getJSONObject("ContentComment")
-        var image_uri = Utils.getString(comment,"image_uri")
-        if (image_uri != "" && image_uri != null){
+        var image_uri = Utils.getString(comment, "image_uri")
+        if (image_uri != "" && image_uri != null) {
             item.itemimageIV.visibility = View.VISIBLE
             var image = Config.url + image_uri
             ImageLoader.getInstance().displayImage(image, item.itemimageIV, Utils.UILoptionsUserProfile)
-        }else{
+        } else {
             item.itemimageIV.visibility = View.GONE
         }
 
 
-        var comment_id = Utils.getInt(comment,"id")
+        var comment_id = Utils.getInt(comment, "id")
         data.put("comment_id", comment_id)
 
 
-        item.main_detail_comment_conditionTV.text = Utils.getString(comment,"comment")
-        data.put("comment_content", Utils.getString(comment,"comment"))
-        item.main_detail_comment_nicknameTV.text = Utils.getString(comment,"nick")
-        item.main_detail_comment_dateTV.text = Utils.getString(comment,"created")
+        item.main_detail_comment_conditionTV.text = Utils.getString(comment, "comment")
+        data.put("comment_content", Utils.getString(comment, "comment"))
+        item.main_detail_comment_nicknameTV.text = Utils.getString(comment, "nick")
+        item.main_detail_comment_dateTV.text = Utils.getString(comment, "created")
         item.main_detail_comment_typeIV.visibility = View.GONE
 
 
-        var p_comments_id = Utils.getInt(comment,"p_comments_id")
-        var op_comments_id = Utils.getInt(comment,"op_comments_id")
+        var p_comments_id = Utils.getInt(comment, "p_comments_id")
+        var op_comments_id = Utils.getInt(comment, "op_comments_id")
 
 
 
-        if (p_comments_id != -1){
-                if (op_comments_id != -1) {
-                    item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                    item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+        if (p_comments_id != -1) {
+            if (op_comments_id != -1) {
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
 
-                }else{
-                    item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                    item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
-                }
-            }else  if (op_comments_id != -1) {
+            } else {
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+            }
+        } else if (op_comments_id != -1) {
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
             item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
 
-        }
-
-        else {
-                item.main_detail_comment_typeIV.visibility = View.GONE
-        }
-
-
-        val freind = Utils.getString(comment,"freind")
-
-        //println("-=------freind : $freind")
-        if (freind == "0"){
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
         } else {
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+            item.main_detail_comment_typeIV.visibility = View.GONE
         }
+
+
+        val freind = Utils.getString(comment, "freind")
+        val member_id = Utils.getInt(comment, "member_id")
+        //println("-=------freind : $freind")
+
+        if (member_id == PrefUtils.getIntPreference(context, "member_id")) {
+            item.main_detail_comment_relationIV.visibility = View.GONE
+        } else {
+            item.main_detail_comment_relationIV.visibility = View.VISIBLE
+            if(freind == "0") {
+                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+            } else {
+                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+            }
+        }
+
 
         val Member = data.getJSONObject("Member")
-        val profile_img = Utils.getString(Member,"profile_img")
-        if (profile_img != null){
+        val profile_img = Utils.getString(Member, "profile_img")
+        if (profile_img != null) {
             var image = Config.url + profile_img
             ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
         }
 
-        var gender = Utils.getString(Member,"sex")
-        if (gender == "0"){
+        var gender = Utils.getString(Member, "sex")
+        if (gender == "0") {
             item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
         }
 
         item.itemimageIV.setOnClickListener {
-            val imglist:ArrayList<String> = ArrayList<String>()
+            val imglist: ArrayList<String> = ArrayList<String>()
             imglist.add(image_uri)
             var intent = Intent(context, PictureDetailActivity::class.java)
             intent.putExtra("id", "2")
-            intent.putExtra("adPosition",0)
-            intent.putExtra("paths",imglist)
-            intent.putExtra("type","chat")
+            intent.putExtra("adPosition", 0)
+            intent.putExtra("paths", imglist)
+            intent.putExtra("type", "chat")
             context.startActivity(intent)
         }
 
@@ -129,10 +138,10 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
             intent.putExtra("member_id", member_id)
             context.startActivity(intent)
         }
-        var comment_memberID = Utils.getInt(comment,"member_id")
+        var comment_memberID = Utils.getInt(comment, "member_id")
         data.put("cmt_wrt_id", comment_memberID)
 
-        var isBlocked = Utils.getString(comment,"block_yn")
+        var isBlocked = Utils.getString(comment, "block_yn")
 
         /*var cbyn = data.getString("changedBlockYN")
         if (cbyn == "Y"){
@@ -162,21 +171,21 @@ open class MainDeatilAdapter(context: Context, view:Int, data:ArrayList<JSONObje
         return data.count()
     }
 
-    fun removeItem(position: Int){
+    fun removeItem(position: Int) {
         data.removeAt(position)
         notifyDataSetChanged()
     }
 
     class ViewHolder(v: View) {
 
-        var main_detail_comment_typeIV : ImageView
-        var main_detail_comment_profileIV : CircleImageView
-        var main_detail_comment_nicknameTV : TextView
-        var main_detail_comment_relationIV : ImageView
-        var main_detail_comment_conditionTV : TextView
-        var main_detail_comment_dateTV : TextView
-        var main_detailLV : LinearLayout
-        var itemimageIV :ImageView
+        var main_detail_comment_typeIV: ImageView
+        var main_detail_comment_profileIV: CircleImageView
+        var main_detail_comment_nicknameTV: TextView
+        var main_detail_comment_relationIV: ImageView
+        var main_detail_comment_conditionTV: TextView
+        var main_detail_comment_dateTV: TextView
+        var main_detailLV: LinearLayout
+        var itemimageIV: ImageView
 
 
         init {

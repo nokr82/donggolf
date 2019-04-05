@@ -11,6 +11,7 @@ import donggolf.android.R
 import donggolf.android.activities.PictureDetailActivity
 import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import org.json.JSONObject
 
@@ -99,12 +100,20 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         val freind = Utils.getString(comment,"freind")
-
+        val member_id = Utils.getInt(comment, "member_id")
         //println("-=------freind : $freind")
-        if (freind == "0"){
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+
+
+
+        if (member_id == PrefUtils.getIntPreference(context, "member_id")) {
+            item.main_detail_comment_relationIV.visibility = View.GONE
         } else {
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+            item.main_detail_comment_relationIV.visibility = View.VISIBLE
+            if(freind == "0") {
+                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+            } else {
+                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
+            }
         }
 
         if (isBlocked == "Y") {
