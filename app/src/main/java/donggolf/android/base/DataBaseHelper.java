@@ -204,7 +204,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         query += " values (";
         query += " '" + imagespath.getOwner() + "'";
         query += ", '" + imagespath.getPath() + "'";
-        System.out.println("image-------------------" + imagespath.getPath());
+        //System.out.println("image-------------------" + imagespath.getPath());
         query += ", '" + imagespath.getType() + "'";
         query += " ); ";
 

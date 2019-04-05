@@ -238,7 +238,7 @@ class AreaRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG1 = ""
                                 actArea--
-                                println("userRG1 : $userRG1, actArea : $actArea")
+                                //println("userRG1 : $userRG1, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }
@@ -256,7 +256,7 @@ class AreaRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG2 = ""
                                 actArea--
-                                println("userRG2 : $userRG2, actArea : $actArea")
+                                //println("userRG2 : $userRG2, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }
@@ -274,7 +274,7 @@ class AreaRangeActivity : RootActivity() {
                             regionView.regionDelIV.setOnClickListener {
                                 userRG3 = ""
                                 actArea--
-                                println("userRG3 : $userRG3, actArea : $actArea")
+                                //println("userRG3 : $userRG3, actArea : $actArea")
                                 areaCnt.text = "지역 범위 설정 ($actArea/3)"
                                 tmpRegionLL.removeView(regionView)
                             }

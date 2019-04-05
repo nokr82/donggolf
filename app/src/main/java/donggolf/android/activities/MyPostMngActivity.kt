@@ -52,7 +52,7 @@ class MyPostMngActivity : RootActivity() {
 
         if (intent.getStringExtra("founder") != null) {
             member_id = intent.getStringExtra("founder").toInt()
-            println("-----------member_id$member_id")
+            //println("-----------member_id$member_id")
             type = intent.getStringExtra("type")
             nick = intent.getStringExtra("nick")
             titleTV.setText(nick)
@@ -109,7 +109,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("댓글단 글 보기 :: $response")
+                        //println("댓글단 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -131,12 +131,12 @@ class MyPostMngActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                    println("DataLoad failed. Because of")
-                    println(errorResponse)
+                    //println("DataLoad failed. Because of")
+                    //println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    //println(responseString)
                 }
 
             })
@@ -164,7 +164,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("내 보관 글 보기 :: $response")
+                        //println("내 보관 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -188,8 +188,8 @@ class MyPostMngActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                    println("DataLoad failed. Because of")
-                    println(errorResponse)
+                    //println("DataLoad failed. Because of")
+                    //println(errorResponse)
                 }
 
             })
@@ -240,11 +240,11 @@ class MyPostMngActivity : RootActivity() {
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                        println(responseString)
+                        //println(responseString)
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                        println(errorResponse)
+                        //println(errorResponse)
                     }
                 })
             }
@@ -269,7 +269,7 @@ class MyPostMngActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                 try {
-                    println("내 글 보기 :: $response")
+                    //println("내 글 보기 :: $response")
                     val result = response!!.getString("result")
                     if ("ok" == result) {
 
@@ -297,8 +297,8 @@ class MyPostMngActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println("DataLoad failed. Because of")
-                println(errorResponse)
+                //println("DataLoad failed. Because of")
+                //println(errorResponse)
             }
 
         })

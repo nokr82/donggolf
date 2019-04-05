@@ -279,7 +279,8 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
                     val md = MessageDigest.getInstance("SHA")
                     md.update(signature.toByteArray())
 //                    Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
-                    System.out.print("keyHash:"+ Base64.encodeToString(md.digest(), Base64.DEFAULT))
+//                    Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+//                    System.out.print("keyHash:"+ Base64.encodeToString(md.digest(), Base64.DEFAULT))
                 }
 
             } catch (e: PackageManager.NameNotFoundException) {
