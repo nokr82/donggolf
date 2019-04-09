@@ -143,7 +143,6 @@
                             android:id="@+id/prd_titleTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
                             android:text=""
                             android:textSize="16dp" />
 
@@ -155,7 +154,6 @@
                                 android:id="@+id/writtenDateTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
                                 android:text=""
                                 android:textColor="#c9c9c9"
                                 android:textSize="13dp" />
@@ -238,7 +236,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="55dp">
+                    android:layout_height="65dp">
 
                     <ImageView
                         android:layout_width="13dp"
@@ -251,6 +249,7 @@
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profileImgIV"
                         android:layout_width="36dp"
+                        android:layout_marginLeft="3dp"
                         android:layout_height="36dp"
                         android:layout_margin="7dp"
                         android:background="@mipmap/icon_profile" />
@@ -285,7 +284,7 @@
                     </LinearLayout>
 
                     <RelativeLayout
-
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <LinearLayout
