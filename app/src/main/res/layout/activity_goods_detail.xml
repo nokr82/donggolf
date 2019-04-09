@@ -60,23 +60,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp">
-                    <ImageView
-                        android:visibility="invisible"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/btn_option_sale" />
 
                     <TextView
-                        android:visibility="invisible"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
-                        android:text="판매중"
-                        android:textColor="#EF5B33"
-                        android:textSize="13dp" />
-                    <TextView
-                        android:gravity="center"
+                        android:gravity="left"
                         android:id="@+id/categoryTV"
                         android:layout_weight="1"
                         android:layout_width="0dp"
@@ -187,6 +173,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="10dp"
                                 android:text="0"
                                 android:textColor="#C9C9C9"
                                 android:textSize="12dp" />
@@ -205,6 +192,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:text="0"
+                                android:layout_marginLeft="10dp"
                                 android:textColor="#C9C9C9"
                                 android:textSize="10dp" />
                         </LinearLayout>
@@ -250,7 +238,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="55dp">
 
                     <ImageView
                         android:layout_width="13dp"
@@ -300,33 +288,27 @@
 
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
-
                         <LinearLayout
-                            android:id="@+id/moresellerpostTV"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:id="@+id/contact_sellerLL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="20dp"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center|right"
-                                android:text="판매자 글 더보기"
-                                android:textSize="15dp" />
+                            <ImageView
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:background="@mipmap/icon_send_text_message" />
 
                             <TextView
-                                android:id="@+id/sellercountTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_marginRight="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center|right"
-                                android:text="(0)"
-                                android:textSize="15dp" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="문자하기"
+                                android:textSize="13dp" />
                         </LinearLayout>
+
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -417,26 +399,6 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:id="@+id/contact_sellerLL"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="20dp"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:layout_gravity="center"
-                                android:background="@mipmap/icon_send_text_message" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="문자하기"
-                                android:textSize="13dp" />
-                        </LinearLayout>
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -505,16 +467,48 @@
                         android:text="제공 : 경찰청 사이버안전국"
                         android:textSize="13dp" />
                 </LinearLayout>
-
+                <View
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#c9c9c9" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp">
+                    android:layout_height="50dp">
+                    <LinearLayout
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_alignParentLeft="true"
+                        android:id="@+id/moresellerpostTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="판매자 글 더보기"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:layout_marginLeft="10dp"
+                            android:id="@+id/sellercountTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="40dp"
+                            android:gravity="center|right"
+                            android:text="(0)"
+                            android:textSize="15dp" />
+                    </LinearLayout>
 
                     <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:id="@+id/reportTV"
-                        android:layout_width="100dp"
+                        android:layout_width="97dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
                         android:layout_marginRight="20dp"
                         android:background="@drawable/btn_report_red"
                         android:gravity="center"
@@ -525,7 +519,6 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:layout_marginTop="10dp"
                     android:background="#c9c9c9" />
 
                 <donggolf.android.base.ExpandableHeightListView
