@@ -228,8 +228,8 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
                 if (keyWord.startsWith("#")) {
                     keyWord = keyWord.replace("#","")
-
-                    get_region_member(keyWord)
+                    friendSearchWords(keyWord)
+//                    get_region_member(keyWord)
                 } else {
 
                     get_region_member(keyWord)
@@ -251,7 +251,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
             if (which.startsWith("#")) {
                 which = which.replace("#","")
-
+                friendSearchWords(which)
 //                friendSearchhash(which)
 
             } else {
