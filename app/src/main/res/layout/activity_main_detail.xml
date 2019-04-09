@@ -203,7 +203,7 @@
                                         android:layout_width="300dp"
                                         android:layout_height="wrap_content"
                                         android:textColor="#AFAFAF"
-                                        android:textSize="8.67dp" />
+                                        android:textSize="12dp" />
                                 </LinearLayout>
                             </LinearLayout>
                         </RelativeLayout>
