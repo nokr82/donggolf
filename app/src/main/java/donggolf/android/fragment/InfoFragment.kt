@@ -1,71 +1,44 @@
 package donggolf.android.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.*
-import android.database.Cursor
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.util.Log
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.internal.InternalTokenResult
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache
-import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
-import com.nostra13.universalimageloader.core.assist.ImageScaleType
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.ProfileAction
 import donggolf.android.activities.*
-import donggolf.android.adapters.ImageAdapter
 import donggolf.android.base.*
-import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
-import donggolf.android.models.Content
-import donggolf.android.models.Photo
-import donggolf.android.models.Users
-import kotlinx.android.synthetic.main.activity_add_post.*
-import kotlinx.android.synthetic.main.activity_findid.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_mod_status_msg.*
 import kotlinx.android.synthetic.main.activity_profile_manage.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.lang.Exception
 
 class InfoFragment : Fragment() {
     lateinit var myContext: Context
     private var progressDialog: ProgressDialog? = null
 
-
+    private val REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1
     val SELECT_STATUS = 105
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
@@ -188,12 +161,24 @@ class InfoFragment : Fragment() {
     }
 
     private fun choosePhotoFromGallary() {
-        val galleryIntent = Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-        startActivityForResult(galleryIntent, GALLERY)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            loadPermissions(perms, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE)
+        } else {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent, GALLERY)
+        }
     }
-
+    private fun loadPermissions(perms: Array<String>, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(myContext, perms[0]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity as Activity, perms, requestCode)
+        } else {
+            val galleryIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent, GALLERY)
+        }
+    }
     fun member_info() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
@@ -384,118 +369,6 @@ class InfoFragment : Fragment() {
 
     }
 
-
-
-    fun getTempUserInformation(type: String) {
-
-        var sttsMsg = ""
-        var newNick = ""
-        var newRegion = ArrayList<String>()
-        var newRegionStr = ""
-
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    //println("response : $response")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        val memberTags = response.getJSONArray("MemberTags")
-                        //val memberImgs = response.getJSONArray("MemberImgs")
-                        sttsMsg = Utils.getString(member, "status_msg")
-                        newNick = Utils.getString(member, "nick")
-                        newRegion.clear()
-                        var tmprg = Utils.getString(member, "region1")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg1 = tmprg
-                        }
-                        tmprg = Utils.getString(member, "region2")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg2 = tmprg
-                        }
-                        tmprg = Utils.getString(member, "region3")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg3 = tmprg
-                        }
-                        for (i in 0 until newRegion.size) {
-                            newRegionStr += newRegion[i] + ","
-                        }
-                        //println("newRegionStr $newRegionStr")
-
-
-                        when (type) {
-                            "status_msg" -> {
-                                infoStatusMsg.text = sttsMsg
-                            }
-                            "nick" -> {
-                                txUserName.text = newNick
-                            }
-                            "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0, newRegionStr.length - 1)
-
-                            }
-                            "tag" -> {
-                                var taglist = ""
-                                for (i in 0..memberTags.length() - 1) {
-                                    val data = memberTags[i] as JSONObject
-                                    taglist += "#" + Utils.getString(data, "tag")
-                                    //println(taglist)
-                                }
-                                hashtagTV.text = taglist
-                            }
-                            "image" -> {
-                                /*if (memberImgs.length() > 0) {
-                                    val imgOb = memberImgs[0] as JSONObject
-                                    val imguri = Utils.getString(imgOb, "image_uri")
-                                    *//*val imgpath = Utils.getString(imgOb, "imgpath")
-                                newImg = imgpath + imguri*//*
-                                    newImg = imguri
-                                    val imgUri = Uri.parse(newImg)
-
-                                    imgProfile.setImageURI(imgUri)
-                                    imgProfile.background = ShapeDrawable(OvalShape())
-                                }*/
-                                val images = response.getJSONArray("MemberImgs")
-                                val json = images[0] as JSONObject
-                                val img_uri = Utils.getString(json, "image_uri")
-                                //var image = Config.url + image_uri
-                                val image = Config.url + img_uri
-
-                                val uri = Uri.parse(image)
-                                val inputStream = myContext!!.contentResolver.openInputStream(uri)
-                                val btm = BitmapFactory.decodeStream(inputStream)
-                                val resized = Utils.resizeBitmap(btm, 100)
-                                imgProfile.setImageBitmap(resized)
-
-                                //이미지 동그랗게
-//                                imgProfile.background = ShapeDrawable(OvalShape())
-//                                imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
-                            }
-                        }
-
-                    }
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                //println(responseString)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-
-    }
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context
