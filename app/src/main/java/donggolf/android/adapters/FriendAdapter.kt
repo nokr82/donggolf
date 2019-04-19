@@ -1,6 +1,8 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -44,6 +46,9 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
         val friend = Utils.getString(member,"friend")
         val mate_cnt = Utils.getString(member,"mate_cnt")
 
+        val sex = Utils.getString(member,"sex")
+        Log.d("성별",json.toString())
+
         if (friend == "0"){
             item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
             if (mate_cnt == "0"){
@@ -51,6 +56,12 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
             }
         } else {
             item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_first)
+        }
+
+        if (sex == "1"){
+            item.main_detail_listitem_nickname.setTextColor(Color.parseColor("#EF5C34"))
+        }else{
+            item.main_detail_listitem_nickname.setTextColor(Color.parseColor("#000000"))
         }
 
         item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")

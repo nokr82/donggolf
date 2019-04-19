@@ -3,6 +3,7 @@ package donggolf.android.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -692,6 +693,12 @@ class GoodsDetailActivity : RootActivity() {
 
                     val seller = response.getJSONObject("seller")
                     val member = seller.getJSONObject("Member")
+                    val sex =  Utils.getString(member,"sex")
+                    if (sex == "1"){
+                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
+                    }else{
+                        nickTV.setTextColor(Color.parseColor("#000000"))
+                    }
                     nickTV.text = Utils.getString(member,"nick")
                     seller_id = Utils.getInt(member,"id")
 
