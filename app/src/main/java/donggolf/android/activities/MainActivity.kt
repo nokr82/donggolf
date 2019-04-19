@@ -134,27 +134,19 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         if (PrefUtils.getStringPreference(context, "sidotype") != null) {
             sidotype = PrefUtils.getStringPreference(context, "sidotype")
-//            sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
             goguntype = PrefUtils.getStringPreference(context, "goguntype")
-//            goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
             region_id = PrefUtils.getStringPreference(context, "region_id")
-//            region_id2  =PrefUtils.getStringPreference(context, "region_id2")
 
-//            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype
             areaTV.text = sidotype + " " + goguntype
         } else {
             PrefUtils.setPreference(context, "sidotype", sidotype)
-//            PrefUtils.setPreference(context, "sidotype2", sidotype2)
             PrefUtils.setPreference(context, "goguntype", goguntype)
-//            PrefUtils.setPreference(context, "goguntype2", goguntype2)
             PrefUtils.setPreference(context, "region_id", region_id)
-//            PrefUtils.setPreference(context, "region_id2", region_id2)
         }
 
         if (sidotype == "전국" && goguntype == "전국") {
             areaTV.text = "전국"
         } else {
-//            areaTV.text = sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
             areaTV.text = sidotype + " " + goguntype
         }
 
@@ -262,9 +254,47 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             intent.putExtra("membercnt", membercnt)
             startActivity(intent)
         }
+
+        goguntype = PrefUtils.getStringPreference(context,"region")
+
+        area_style()
         member_cnt()
         updateToken()
 
+    }
+
+    //지역별멤버수
+    fun area_style() {
+        val params = RequestParams()
+        params.put("goguntype", goguntype)
+        MemberAction.area_style(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+
+                    if (result == "ok") {
+                        var gogun = response!!.getJSONObject("gogun")
+                        var region = gogun.getJSONObject("Region")
+                        var area = Utils.getString(region,"name")
+                        areaTV.text = area + " " + goguntype
+
+                        areaCntTV.text = membercnt + " 명"
+                    }
+
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+//                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+//                println(errorResponse)
+            }
+        })
     }
 
     //지역별멤버수
@@ -272,6 +302,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         val params = RequestParams()
         params.put("sidotype", sidotype)
         params.put("goguntype", goguntype)
+        Log.d("지역",PrefUtils.getStringPreference(context,"region"))
         if (goguntype2 != "") {
             params.put("goguntype2", goguntype2)
         }

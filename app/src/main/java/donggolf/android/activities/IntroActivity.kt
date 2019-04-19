@@ -183,7 +183,7 @@ class IntroActivity : RootActivity() {
                             PrefUtils.setPreference(context, "auto", true)
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone", Utils.getString(member,"phone"))
-
+                            PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
                             var intent = Intent(context, MainActivity::class.java)
                             intent.putExtra("is_push", is_push)
                             intent.putExtra("market_id", market_id.toInt())

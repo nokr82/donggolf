@@ -981,32 +981,19 @@ class AddGoodsActivity : RootActivity() {
             params.put("description", Utils.getString(descriptionET))
             params.put("nick", PrefUtils.getStringPreference(context, "nickname"))
 
-            //이미지
-//        var seq = 0
-//        if (addPicturesLL != null){
-//            for (i in 0 until addPicturesLL!!.childCount) {
-//                val v = addPicturesLL?.getChildAt(i)
-//                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-//                if (imageIV is ImageView) {
-//                    val bitmap = imageIV.drawable as BitmapDrawable
-//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
-//                    seq++
-//                }
-//            }
-//        }
-
-
-            if (images_path != null) {
-                if (images_path!!.size != 0) {
-                    for (i in 0..images_path!!.size - 1) {
-
-                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-
-                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
-
+            var seq = 0
+            if (addPicturesLL != null){
+                for (i in 0 until addPicturesLL!!.childCount) {
+                    val v = addPicturesLL?.getChildAt(i)
+                    val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+                    if (imageIV is ImageView) {
+                        val bitmap = imageIV.drawable as BitmapDrawable
+                        params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
+                        seq++
                     }
                 }
             }
+
 
             //println(params)
 
@@ -1100,19 +1087,6 @@ class AddGoodsActivity : RootActivity() {
             }
         }
 
-        /*if (images_path != null) {
-            if (images_path!!.size != 0) {
-                for (i in 0 until images_path!!.size) {
-                    *//*if (images_path!!.get(i).substring(2, 6) == "data") {
-                        continue
-                    } else {*//*
-                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-
-                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
-                    //}
-                }
-            }
-        }*/
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

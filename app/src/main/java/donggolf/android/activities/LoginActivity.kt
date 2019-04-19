@@ -182,7 +182,7 @@ class LoginActivity : RootActivity() {
                                 PrefUtils.setPreference(context, "auto", false)
                                 //PrefUtils.setPreference(context, "auto", false)
                             }
-
+                            PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone",Utils.getString(member,"phone"))
 

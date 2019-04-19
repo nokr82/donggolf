@@ -204,6 +204,7 @@ class InfoFragment : Fragment() {
                     textDate.text = Utils.getString(member, "created").substringBefore(" ")
                     txUserName.text = Utils.getString(member, "nick")
 
+                    PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
                     //지역
                     var region = ""
 
