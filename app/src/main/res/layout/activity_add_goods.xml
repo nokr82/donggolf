@@ -241,7 +241,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_margin="5dp"
                                     android:background="@null"
-                                    android:text="브랜드 전체"
+                                    android:text="선택"
                                     android:textSize="14dp" />
                             </LinearLayout>
 

@@ -144,7 +144,7 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
-
+            productData.removeAt(0)
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 for (i in 0 until productData.size){
                     productData[position].put("isSelectedOp", false)
@@ -223,42 +223,23 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_exitIV.visibility = View.VISIBLE
             dialogView.dlg_titleTV.visibility = View.VISIBLE
             val product = producttypeTV.text.toString()
-            if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-                dialogView.dlg_marketLV.adapter = pdtCategoryAdapter
-             } else {
-                dialogView.dlg_marketLV.adapter = productCategoryAdatper
-            }
+            dialogView.dlg_marketLV.adapter = productCategoryAdatper
 
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-
-                    for (i in 0 until pdtCategoryData.size){
-                        pdtCategoryData[position].put("isSelectedOp", false)
-                    }
-                    var json = pdtCategoryAdapter.getItem(position)
-                    var type = json.getJSONObject("PdtCategory")
-                    val title = Utils.getString(type, "title")
-                    tendencyTV.text = title
-                    prod_form = title
-                    pdtCategoryData[position].put("isSelectedOp", true)
-                    pdtCategoryAdapter.notifyDataSetChanged()
-                } else {
-                    for (i in 0 until productCategoryData.size){
-                        productCategoryData[position].put("isSelectedOp", false)
-                    }
-
-                    var json = productCategoryAdatper.getItem(position)
-                    var type = json.getJSONObject("ProductCategory")
-                    val title = Utils.getString(type, "title")
-                    tendencyTV.text = title
-                    prod_form = title
-                    productCategoryData[position].put("isSelectedOp", true)
-                    productCategoryAdatper.notifyDataSetChanged()
+                for (i in 0 until productCategoryData.size){
+                    productCategoryData[position].put("isSelectedOp", false)
                 }
+                var json = productCategoryAdatper.getItem(position)
+                var type = json.getJSONObject("ProductCategory")
+                val title = Utils.getString(type, "title")
+                tendencyTV.text = title
+                prod_form = title
+                productCategoryData[position].put("isSelectedOp", true)
+                productCategoryAdatper.notifyDataSetChanged()
 
                 alert.dismiss()
             }
@@ -894,6 +875,7 @@ class AddGoodsActivity : RootActivity() {
                             productCategoryData.get(i).put("isSelectedOp", false)
                         }
                     }
+
 
                     if (pdtcategory.length() > 0 && pdtcategory != null) {
                         for (i in 0 until pdtcategory.length()) {
