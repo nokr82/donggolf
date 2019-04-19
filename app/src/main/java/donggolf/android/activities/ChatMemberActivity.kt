@@ -36,6 +36,7 @@ class ChatMemberActivity : RootActivity() {
     var founder = ""
     var division = ""
     var founder_id = ""
+    var member_id = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,7 @@ class ChatMemberActivity : RootActivity() {
         founder = intent.getStringExtra("founder")
         division = intent.getStringExtra("division")
         founder_id = intent.getStringExtra("founder_id")
-
+        member_id = PrefUtils.getIntPreference(context,"member_id")
 
         chatMemberAdapter = ChatMemberAdapter(context, R.layout.item_chat_member_list, chatMemberList)
         joinMemberLV.adapter = chatMemberAdapter
@@ -124,6 +125,7 @@ class ChatMemberActivity : RootActivity() {
     fun detail_chatting(){
         val params = RequestParams()
         params.put("room_id", room_id)
+        params.put("member_id", member_id)
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {

@@ -23,8 +23,8 @@
         android:text=""/>
     <ImageView
         android:id="@+id/item_relationIV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="13dp"
         android:layout_marginLeft="5dp"
         android:layout_gravity="center_vertical"
         android:src="@drawable/icon_first"/>
