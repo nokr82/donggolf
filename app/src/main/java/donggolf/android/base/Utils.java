@@ -1861,12 +1861,18 @@ public class Utils {
     }
 
 
+
+
+
     public static int getInt(String str) {
         if(str != null && str != "" && str.length() < 1) {
             return Integer.parseInt(str);
         }
         return -1;
     }
+
+
+
 
     public static Bitmap retriveVideoFrameFromVideo(String videoPath)
             throws Throwable {

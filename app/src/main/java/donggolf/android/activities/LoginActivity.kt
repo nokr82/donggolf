@@ -276,50 +276,7 @@ class LoginActivity : RootActivity() {
         })
     }
 
-/*
-    companion object {
-        fun setLoginData(context: Context, user: FirebaseUser?) {
-            println("loginActivity user : $user")
 
-            val uid = user?.uid
-            val email = user?.email
-
-            PrefUtils.setPreference(context, "uid", uid)
-            PrefUtils.setPreference(context, "email", email)
-        }
-
-        fun setInfoData(context: Context, info: Map<String, Any>?) {
-
-            println("loginActivity info : $info")
-
-            val sex = Utils.getString(info, "sex")
-            val phone = Utils.getString(info, "phone")
-            val nick = Utils.getString(info, "nick")
-
-
-            PrefUtils.setPreference(context, "sex", sex)
-            PrefUtils.setPreference(context, "phone", phone)
-            PrefUtils.setPreference(context, "nick", nick)
-
-        }
-    }*/
-
-    fun getKeyHash(context: Context) : String? {
-        try {
-            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                //Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-
-        } catch (e: NoSuchAlgorithmException) {
-
-        }
-
-        return null
-    }
 
     override fun onDestroy() {
         super.onDestroy()

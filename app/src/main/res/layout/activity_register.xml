@@ -130,7 +130,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="90dp"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -161,13 +161,16 @@
                                     android:layout_margin="5dp"
                                     android:background="@null"
                                     android:singleLine="true"
-                                    android:hint="비밀번호 입력 (2~7자 이내)"
+                                    android:hint="비밀번호 입력"
                                     android:inputType="textPassword"
-                                    android:maxLength="7"
+                                    android:maxLength="12"
                                     android:textSize="12dp" />
                             </LinearLayout>
                         </RelativeLayout>
+
+
                     </LinearLayout>
+
 
 
                     <LinearLayout
@@ -200,10 +203,23 @@
                                     android:hint="비밀번호 재입력"
                                     android:singleLine="true"
                                     android:inputType="textPassword"
-                                    android:maxLength="7"
+                                    android:maxLength="12"
                                     android:textSize="12dp" />
                             </LinearLayout>
                         </RelativeLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="*비밀번호는 영문숫자포함 8 ~ 12자이내로 입려해주세요."
+                            android:textColor="#0EDA2F"
+                            android:textSize="10dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -325,7 +341,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="13dp"
-                        android:text="닉네임"
+                        android:text="성별"
                         android:textColor="#000000"
                         android:textSize="13dp" />
                 </LinearLayout>
@@ -408,6 +424,7 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
@@ -469,38 +486,15 @@
                     android:buttonTint="#0EDA2F"/>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_marginTop="3dp"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="27.67dp"
-                    android:background="@drawable/box_" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="13dp"
-                    android:text="이용약관 상세보기"
-                    android:textColor="#000000"
-                    android:textSize="13dp" />
-
-                <ImageView
-                    android:layout_width="13dp"
-                    android:layout_height="10dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="39dp"
-                    android:background="@drawable/btn_fold" />
-            </RelativeLayout>
+                android:layout_height="0.5dp"
+                android:background="#c9c9c9"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -563,7 +557,7 @@
                 android:id="@+id/mysqRL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
