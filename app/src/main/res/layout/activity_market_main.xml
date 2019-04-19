@@ -56,12 +56,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent">
             <TextView
-                android:id="@+id/entireClassificationTV"
+                android:id="@+id/entireTypeTV"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="분류 전체"/>
+                android:text="종류 전체"/>
+
             <TextView
                 android:id="@+id/entireBrandTV"
                 android:layout_weight="1"
@@ -70,12 +71,12 @@
                 android:gravity="center"
                 android:text="브랜드 전체"/>
             <TextView
-                android:id="@+id/entireTypeTV"
+                android:id="@+id/entireClassificationTV"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="종류 전체"/>
+                android:text="분류 전체"/>
 
         </LinearLayout>
 

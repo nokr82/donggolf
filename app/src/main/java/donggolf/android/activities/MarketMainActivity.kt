@@ -105,7 +105,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         init_menu()
-        entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
+        entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
 
         //목록 가져와서 array에 추가
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, formData)
@@ -150,10 +150,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //분류전체(form)
         entireClassificationTV.setOnClickListener {
-            if (product_id == -1){
-                Toast.makeText(context,"제품종류를 먼저 선택해주세요.",Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+
 
 
             init_menu()
@@ -179,21 +176,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-
-                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-                    var json = genderAdatper.getItem(position)
-                    var type2 = json.getJSONObject("PdtCategory")
-                    var title = Utils.getString(type2, "title")
-                    entireClassificationTV.setText(title)
-                    if (title.equals("분류전체")){
-                        title = ""
-                    }
-                    type = "form"
-                    form = title
-                    getSecondHandMarketItems(type,1)
-                    genderAdatper.notifyDataSetChanged()
-
-                } else {
                     var json = productCategoryAdatper.getItem(position)
                     var type2 = json.getJSONObject("ProductCategory")
                     var title = Utils.getString(type2, "title")
@@ -206,10 +188,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 //                formData[position].put("isSelectedOp", true)
                     getSecondHandMarketItems(type,1)
 
-
-
                     productCategoryAdatper.notifyDataSetChanged()
-                }
 
 
 
@@ -225,10 +204,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //브랜드전체(brand)
         entireBrandTV.setOnClickListener {
-            if (product_id == -1){
-                Toast.makeText(context,"제품종류를 먼저 선택해주세요.",Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+
             init_menu()
             entireBrandTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -357,6 +333,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    Log.d("마켓목록",response.toString())
                     val category = response.getJSONArray("category")
                     val productType = response.getJSONArray("producttype")
                     val productForm = response.getJSONArray("productcategory")
@@ -368,8 +345,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                             productData.get(i).put("isSelectedOp", false)
                         }
                     }
-
-
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
                             brandData.add(category.get(i) as JSONObject)

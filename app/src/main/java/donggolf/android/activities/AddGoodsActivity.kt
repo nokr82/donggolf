@@ -175,10 +175,6 @@ class AddGoodsActivity : RootActivity() {
         }
 
         brandLL.setOnClickListener {
-           if(product_id ==-1){
-               Toast.makeText(context,"제품종류를 선택해주세요.",Toast.LENGTH_SHORT).show()
-               return@setOnClickListener
-           }
 
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
@@ -216,10 +212,7 @@ class AddGoodsActivity : RootActivity() {
         }
 
         configRV.setOnClickListener {
-            if(product_id ==-1){
-                Toast.makeText(context,"제품종류를 선택해주세요.",Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
