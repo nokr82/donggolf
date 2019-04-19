@@ -55,7 +55,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         const val TAG = "MainActivity"
     }
 
-    private var mAuth: FirebaseAuth? = null
 
     var is_push = false
     var market_id = -1
