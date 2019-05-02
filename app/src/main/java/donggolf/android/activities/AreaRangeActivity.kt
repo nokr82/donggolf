@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -65,6 +66,9 @@ class AreaRangeActivity : RootActivity() {
         intent = getIntent()
         type = intent.getStringExtra("region_type")//content_filter
 
+        titleTV.text = "동네탐방하기"
+
+
         getBigCity()
 
         adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
@@ -90,7 +94,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", sidotype)
                 intent.putExtra("region_id", id)
-                PrefUtils.setPreference(context, "region_id", region_id)
+//                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -102,7 +106,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("goguntype", sidotype)
 //                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
-                PrefUtils.setPreference(context, "region_id", region_id)
+//                PrefUtils.setPreference(context, "region_id", region_id)
 //                intent.putExtra("region_id2", id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
@@ -134,7 +138,7 @@ class AreaRangeActivity : RootActivity() {
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", goguntype)
                 intent.putExtra("region_id", region_id)
-                PrefUtils.setPreference(context, "region_id", region_id)
+//                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -270,7 +274,7 @@ class AreaRangeActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val datalist = response!!.getJSONArray("sido")
-
+                Log.d("리스트",response.toString())
                 if (datalist.length() > 0 && datalist != null){
                     for (i in 0 until datalist.length()){
                         bigcitylist.add(datalist.get(i) as JSONObject)
@@ -301,6 +305,7 @@ class AreaRangeActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
 
+                Log.d("리스트2",response.toString())
 //                tmpSV.visibility = View.VISIBLE
 
                 if (datalist.length() > 0 && datalist != null){
