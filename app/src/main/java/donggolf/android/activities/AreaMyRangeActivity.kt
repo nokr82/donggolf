@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +29,7 @@ import donggolf.android.models.NationalGrid
 import donggolf.android.models.Region
 import kotlinx.android.synthetic.main.activity_area_range.*
 import kotlinx.android.synthetic.main.item_area.view.*
+import kotlinx.android.synthetic.main.item_report.view.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -143,33 +146,14 @@ class AreaMyRangeActivity : RootActivity() {
             val item = gugunList.get(position)
             var type = item.getJSONObject("Regions")
             var name:String = Utils.getString(type,"name")
+            var sel = item.getBoolean("isSelectedOp")
 
             var index = areaCnt.text.toString().toInt()
             var nowIndex = index + 1
+            var taglist:ArrayList<String> = ArrayList()
             val regionView = View.inflate(context, R.layout.item_area,null)
-            regionView.regionNameTV.text = name
-
-            if (nowIndex == 4){
-                Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
-                areaCnt.text = "3"
-                return@setOnItemClickListener
-//                update_info()
-            } else {
-                tmpRegionLL.addView(regionView)
-                areaCnt.text = "${actArea.toString()}"
-            }
-
-            areaCnt.setText(nowIndex.toString())
-            gugunList[position].put("isSelectedOp",true)
-            GridAdapter.notifyDataSetChanged()
-            actArea++
-            when (actArea) {
-                1 -> userRG1 = name.toString()
-                2 -> userRG2 = name.toString()
-                3 -> userRG3 = name.toString()
-            }
-
             regionView.regionDelIV.setOnClickListener {
+                Log.d("멍미","2323")
                 when (actArea) {
                     1 -> userRG1 = ""
                     2 -> userRG2 = ""
@@ -181,6 +165,53 @@ class AreaMyRangeActivity : RootActivity() {
                 gugunList[position].put("isSelectedOp",false)
                 GridAdapter.notifyDataSetChanged()
             }
+            if (!sel){
+                regionView.regionNameTV.text = name
+
+                if (nowIndex == 4){
+                    Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    areaCnt.text = "3"
+                    return@setOnItemClickListener
+//                update_info()
+                } else {
+                    taglist.add(name)
+                    tmpRegionLL.addView(regionView)
+                    areaCnt.text = "${actArea.toString()}"
+                }
+
+                areaCnt.setText(nowIndex.toString())
+                gugunList[position].put("isSelectedOp",true)
+                GridAdapter.notifyDataSetChanged()
+                actArea++
+                when (actArea) {
+                    1 -> userRG1 = name.toString()
+                    2 -> userRG2 = name.toString()
+                    3 -> userRG3 = name.toString()
+                }
+            }else{
+                Log.d("멍미","2323")
+                when (actArea) {
+                    1 -> userRG1 = ""
+                    2 -> userRG2 = ""
+                    3 -> userRG3 = ""
+                }
+                actArea--
+                areaCnt.text = "${actArea.toString()}"
+
+                for (i in 0 until tmpRegionLL.childCount){
+                    val v = tmpRegionLL.getChildAt(i)
+                    val regionNameTV = v.findViewById<TextView>(R.id.regionNameTV)
+                    if (regionNameTV.text== name){
+                        tmpRegionLL.removeViewAt(i)
+                    }
+                }
+                gugunList[position].put("isSelectedOp",false)
+                GridAdapter.notifyDataSetChanged()
+
+            }
+
+
+
 
 
         }
@@ -238,87 +269,6 @@ class AreaMyRangeActivity : RootActivity() {
     }
 
 
-    fun tempMyActRegion() {
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        tmpRegionLL.removeAllViews()
-
-                        val region1 = Utils.getString(member,"region1")
-                        if (!region1.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region1
-                            userRG1 = region1
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG1 = ""
-                                actArea--
-//                                println("userRG1 : $userRG1, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region2 = Utils.getString(member,"region2")
-                        if (!region2.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region2
-                            userRG2 = region2
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG2 = ""
-                                actArea--
-//                                println("userRG2 : $userRG2, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region3 = Utils.getString(member,"region3")
-                        if (!region3.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region3
-                            userRG3 = region3
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG3 = ""
-                                actArea--
-//                                println("userRG3 : $userRG3, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        areaCnt.text = "지역 범위 설정 ($actArea/3)"
-
-                    } else {
-
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-    }
 
 
     fun getBigCity(){
