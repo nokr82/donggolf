@@ -31,6 +31,8 @@ class EventMembersActivity : RootActivity() {
     var event_id = -1
     var finish = ""
 
+    var limit = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_members)
@@ -90,7 +92,10 @@ class EventMembersActivity : RootActivity() {
 
                 if (result == "ok") {
 
+                    val event = response.getJSONObject("Event")
                     val list = response.getJSONArray("list")
+
+                    limit = Utils.getInt(event, "limit")
 
                     for (i in 0 until list.length()){
                         adapterData.add(list.get(i) as JSONObject)

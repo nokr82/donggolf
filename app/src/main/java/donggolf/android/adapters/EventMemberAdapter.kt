@@ -81,7 +81,17 @@ class EventMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObjec
 
         if (activity.finish == "Y") {
             item.gradeTV.visibility = View.VISIBLE
-            item.gradeTV.text = "${Utils.getInt(eventMember, "grade")}등"
+
+            val grade = Utils.getInt(eventMember, "grade")
+
+            item.gradeTV.text = "${grade}등"
+
+            if (activity.limit >= grade || activity.member_id == member_id) {
+                item.gradeTV.visibility = View.VISIBLE
+            } else {
+                item.gradeTV.visibility = View.GONE
+            }
+
         } else {
             item.gradeTV.visibility = View.GONE
         }
