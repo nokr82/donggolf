@@ -1975,4 +1975,52 @@ public class Utils {
         return bitmap;
     }
 
+
+
+
+    public static String dateString2(Context context, int timer) {
+        // Set up touch listener for non-text box views to hide keyboard.
+
+        if (timer > 0) {
+            int h = timer / 60 / 60;
+            int m = timer / 60 % 60;
+            int s = timer % 60;
+
+            String txt_d = "0";
+            String txt_h = "";
+            String txt_m = "";
+            String txt_s = "";
+
+            if (h < 10) {
+                txt_h = "" + h;
+            } else if (h > 24) {
+                txt_d = "" + h / 24;
+                txt_h = "" + h % 24;
+            } else {
+                txt_h = "" + h;
+            }
+
+            if (m < 10) {
+                txt_m = "0" + m;
+            } else {
+                txt_m = "" + m;
+            }
+
+            if (s < 10) {
+                txt_s = "0" + s;
+            } else {
+                txt_s = "" + s;
+            }
+
+            if (!"0".equals(txt_h)) {
+                return  txt_h + "시";
+            } else {
+                return  txt_m + "분";
+            }
+
+        }
+
+        return "";
+    }
+
 }
