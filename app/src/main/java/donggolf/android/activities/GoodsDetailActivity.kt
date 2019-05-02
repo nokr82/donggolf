@@ -259,6 +259,8 @@ class GoodsDetailActivity : RootActivity() {
         }
 
         contact_sellerLL.setOnClickListener {
+            var myPhoneNum = PrefUtils.getStringPreference(context, "userPhone")
+
 
             if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
                 Toast.makeText(context,"자신의 게시물에는 전송하실 수 없습니다.",Toast.LENGTH_SHORT).show()
@@ -266,39 +268,10 @@ class GoodsDetailActivity : RootActivity() {
 
                 var status = sale_statusTV.text.toString()
                 if (status == "판매중") {
-                    val permissionlistener = object : PermissionListener {
-                        override fun onPermissionGranted() {
-                            var myPhoneNum = PrefUtils.getStringPreference(context, "userPhone")
-
-                            val text = "[동네골프] $brand > $product_type 판매 게시글보고 연락드립니다."
-//                    try{
-//                        SmsManager.getDefault().sendTextMessage(phone,null, text, null, null)
-//                        Toast.makeText(context,"문자 전송 완료",Toast.LENGTH_SHORT).show()
-//                    }catch (e:Exception){
-//                        e.printStackTrace()
-//                    }
-
-                            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + seller_phone))
-                            intent.putExtra("sms_body", text)
-                            startActivity(intent)
-
-                        }
-
-                        override fun onPermissionDenied(deniedPermissions: List<String>) {
-                        }
-
-                    }
-
-                    TedPermission.with(this)
-                            .setPermissionListener(permissionlistener)
-                            .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
-                            .setPermissions(
-                                    android.Manifest.permission.READ_PHONE_STATE,
-                                    android.Manifest.permission.SEND_SMS,
-                                    android.Manifest.permission.RECEIVE_SMS
-                            )
-                            .check();
-
+                    val text = "[동네골프] $brand > $product_type 판매 게시글보고 연락드립니다."
+                    var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + seller_phone))
+                    intent.putExtra("sms_body", text)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener

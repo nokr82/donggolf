@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="275dp"
         android:layout_margin="5dp"
         android:background="@mipmap/box_product_list_left">
 
@@ -46,12 +47,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.3"
                 android:orientation="vertical">
             <TextView
-                android:singleLine="true"
                 android:textStyle="bold"
                 android:id="@+id/contentTV"
                 android:layout_width="wrap_content"
@@ -59,7 +60,7 @@
                 android:text=""
                 android:textSize="13dp"
                 android:maxLines="2"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"/>
             <LinearLayout
@@ -70,7 +71,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="JJAA"
-                    android:textColor="#c9c9c9"
                     android:textSize="13dp"
                     android:layout_marginLeft="3dp"/>
                 <TextView
@@ -81,7 +81,6 @@
                     android:gravity="right"
                     android:text="17 : 18"
                     android:textSize="13dp"
-                    android:textColor="#c9c9c9"
                     android:layout_marginRight="3dp"/>
             </LinearLayout>
             <LinearLayout
@@ -96,15 +95,14 @@
                     android:layout_margin="3dp"
                     android:text=""
                     android:textColor="#EF5B33"
-                    android:textSize="15dp" />
+                    android:textSize="13dp" />
                 <me.grantland.widget.AutofitTextView
                     android:singleLine="true"
-                    android:textStyle="bold"
                     android:id="@+id/moreTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textSize="15dp"
+                    android:textSize="13dp"
                     android:gravity="right"
                     android:layout_margin="3dp"/>
             </LinearLayout>

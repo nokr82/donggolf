@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
+import com.google.gson.JsonObject
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -92,7 +93,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         setContentView(R.layout.activity_market_main)
 
         context = this
-
         var filter1 = IntentFilter("GOODS_ADD")
         registerReceiver(reLoadDataReceiver, filter1)
         var filter2 = IntentFilter("DELETE_OK")
@@ -106,6 +106,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         init_menu()
         entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+
 
         //목록 가져와서 array에 추가
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, formData)
@@ -335,6 +337,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok") {
                     Log.d("마켓목록",response.toString())
                     val category = response.getJSONArray("category")
+
                     val productType = response.getJSONArray("producttype")
                     val productForm = response.getJSONArray("productcategory")
                     val pdtcategory = response.getJSONArray("pdtcategory")
@@ -350,6 +353,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                             brandData.add(category.get(i) as JSONObject)
                             brandData[i].put("isSelectedOp", false)
                         }
+
                     }
 
                     if (productForm.length() > 0 && productForm != null) {
