@@ -1,6 +1,5 @@
 package donggolf.android.activities
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,27 +8,19 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.MemberAction.update_info
-import donggolf.android.actions.PostAction
 import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.AreaRangeAdapter
 import donggolf.android.adapters.AreaRangeGridAdapter
-import donggolf.android.base.FirebaseFirestoreUtils
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import donggolf.android.models.National
-import donggolf.android.models.NationalGrid
-import donggolf.android.models.Region
 import kotlinx.android.synthetic.main.activity_area_range.*
 import kotlinx.android.synthetic.main.item_area.view.*
-import kotlinx.android.synthetic.main.item_report.view.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -146,6 +137,7 @@ class AreaMyRangeActivity : RootActivity() {
             val item = gugunList.get(position)
             var type = item.getJSONObject("Regions")
             var name:String = Utils.getString(type,"name")
+            var sido:String = Utils.getString(type,"sido")
             var sel = item.getBoolean("isSelectedOp")
 
             var index = areaCnt.text.toString().toInt()
@@ -166,8 +158,23 @@ class AreaMyRangeActivity : RootActivity() {
                 GridAdapter.notifyDataSetChanged()
             }
             if (!sel){
-                regionView.regionNameTV.text = name
-
+                if (sido.contains("시")){
+                    actArea++
+                    regionView.regionNameTV.text = sido+">"+name
+                    when (actArea) {
+                        1 -> userRG1 = sido+">"+name
+                        2 -> userRG2 = sido+">"+name
+                        3 -> userRG3 = sido+">"+name
+                    }
+                }else{
+                    actArea++
+                    regionView.regionNameTV.text = name
+                    when (actArea) {
+                        1 -> userRG1 = name.toString()
+                        2 -> userRG2 = name.toString()
+                        3 -> userRG3 = name.toString()
+                    }
+                }
                 if (nowIndex == 4){
                     Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
                     areaCnt.text = "3"
@@ -182,14 +189,7 @@ class AreaMyRangeActivity : RootActivity() {
                 areaCnt.setText(nowIndex.toString())
                 gugunList[position].put("isSelectedOp",true)
                 GridAdapter.notifyDataSetChanged()
-                actArea++
-                when (actArea) {
-                    1 -> userRG1 = name.toString()
-                    2 -> userRG2 = name.toString()
-                    3 -> userRG3 = name.toString()
-                }
             }else{
-                Log.d("멍미","2323")
                 when (actArea) {
                     1 -> userRG1 = ""
                     2 -> userRG2 = ""
@@ -201,9 +201,19 @@ class AreaMyRangeActivity : RootActivity() {
                 for (i in 0 until tmpRegionLL.childCount){
                     val v = tmpRegionLL.getChildAt(i)
                     val regionNameTV = v.findViewById<TextView>(R.id.regionNameTV)
-                    if (regionNameTV.text== name){
-                        tmpRegionLL.removeViewAt(i)
+
+                    if (sido.contains("시")){
+                        if (regionNameTV.text== sido+">"+name){
+                            tmpRegionLL.removeViewAt(i)
+                            break
+                        }
+                    }else{
+                        if (regionNameTV.text== name){
+                            tmpRegionLL.removeViewAt(i)
+                            break
+                        }
                     }
+
                 }
                 gugunList[position].put("isSelectedOp",false)
                 GridAdapter.notifyDataSetChanged()
@@ -309,6 +319,7 @@ class AreaMyRangeActivity : RootActivity() {
         RegionAction.api_gugun(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
+                Log.d("dasda",datalist.toString())
 
 
                 tmpSV.visibility = View.VISIBLE
