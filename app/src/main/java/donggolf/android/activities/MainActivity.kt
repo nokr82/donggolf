@@ -147,20 +147,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             sidotype = PrefUtils.getStringPreference(context, "sidotype")
             goguntype = PrefUtils.getStringPreference(context, "goguntype")
             region_id = PrefUtils.getStringPreference(context, "region_id")
-
-            areaTV.text = sidotype + " " + goguntype
         } else {
             PrefUtils.setPreference(context, "sidotype", sidotype)
             PrefUtils.setPreference(context, "goguntype", goguntype)
             PrefUtils.setPreference(context, "region_id", region_id)
         }
-
-        if (sidotype == "전국" && goguntype == "전국") {
-            areaTV.text = "전국"
-        } else {
-            areaTV.text = sidotype + " " + goguntype
-        }
-
 
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
         frags.adapter = pagerAdapter
@@ -287,7 +278,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                         var gogun = response!!.getJSONObject("gogun")
                         var region = gogun.getJSONObject("Region")
                         var area = Utils.getString(region,"name")
-                        areaTV.text = area + " " + goguntype
+
+                        if (area == "전국"||goguntype=="전국") {
+                            areaTV.text = goguntype
+                        } else {
+                            areaTV.text = area + " " + goguntype
+                        }
+
 
                         areaCntTV.text = membercnt + " 명"
                     }
