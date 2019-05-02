@@ -50,7 +50,8 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<JSONO
         var type = json.getJSONObject("Regions")
 
         var name:String = Utils.getString(type,"name")
-        item.item_option_nameTV.text = name
+        var member_cnt:String = Utils.getString(type,"member_cnt")
+        item.item_option_nameTV.text = name + "("+member_cnt+")"
 
         var isSel = json.getBoolean("isSelectedOp")
 

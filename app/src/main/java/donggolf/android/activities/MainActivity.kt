@@ -291,7 +291,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                         }
 
 
-                        areaCntTV.text = membercnt + " 명"
                     }
 
 

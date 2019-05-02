@@ -281,6 +281,9 @@ class RegisterActivity : RootActivity() {
                 } else if (result == "overlap"){
                     Toast.makeText(context, "동일한 핸드폰 번호가 있습니다.", Toast.LENGTH_SHORT).show()
                     return
+                }else if (result == "overnick"){
+                    Toast.makeText(context, "동일한 닉네임이 있습니다.", Toast.LENGTH_SHORT).show()
+                    return
                 }
             }
 

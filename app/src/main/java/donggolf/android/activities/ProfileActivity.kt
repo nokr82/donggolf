@@ -130,7 +130,7 @@ class ProfileActivity : RootActivity() {
                 } else {
                    chk_chat()
                 }
-            } else if (profileTV == "차단취소"){
+            } else if (profileTV == "차단해제"){
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(nick + "님을 차단취소 하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
