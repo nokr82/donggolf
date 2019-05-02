@@ -61,13 +61,9 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         }
 
         var json = data.get(position)
-        //Log.d("이미지",json.toString())
+        Log.d("이미지",json.toString())
         var Content = json.getJSONObject("Content")
-        val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
-        var text = Utils.getString(Content,"text")
-        val content_id = Utils.getString(Content,"id")
-        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
         val look_cnt = Utils.getString(Content,"look_cnt")
         val like_cnt = Utils.getString(Content,"like_cnt")
         val cmt_cnt = Utils.getString(Content,"cmt_cnt")
@@ -77,7 +73,6 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
         var uri = Utils.getString(Content,"image_uri")
-        var video = Utils.getString(Content,"video")
         val since = Utils.since(created)
 
         if (sex == "0"){

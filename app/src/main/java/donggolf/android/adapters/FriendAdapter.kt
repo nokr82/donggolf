@@ -50,9 +50,10 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
         Log.d("성별",json.toString())
 
         if (friend == "0"){
-            item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
             if (mate_cnt == "0"){
                 item.main_detail_listitem_firstimage.visibility = View.GONE
+            }else{
+                item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
             }
         } else {
             item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_first)

@@ -141,6 +141,7 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+
         myCommentLV.setOnItemClickListener { parent, view, position, id ->
             val data = myCommentPostList.get(position)
             val content = data.getJSONObject("Content")
@@ -194,6 +195,7 @@ class MyPostMngActivity : RootActivity() {
 
             })
         }
+
         myStorePostLV.setOnItemClickListener { parent, view, position, id ->
             val data = myStoredPostList.get(position)
             val content = data.getJSONObject("Content")
