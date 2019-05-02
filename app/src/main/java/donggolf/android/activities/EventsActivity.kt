@@ -63,29 +63,11 @@ class EventsActivity : RootActivity(), AbsListView.OnScrollListener {
 
             var data = adapterData.get(position)
 
-            var alarm = data.getJSONObject("Alarm")
+            var event = data.getJSONObject("Event")
 
-            var type = Utils.getInt(alarm, "type")
-
-            if(type == 1) {
-
-                var intent = Intent(context, MainDetailActivity::class.java)
-                intent.putExtra("id", Utils.getString(alarm, "content_id"))
-                startActivity(intent)
-
-            } else if (type == 2) {
-
-                var intent = Intent(context, GoodsDetailActivity::class.java)
-                intent.putExtra("product_id", Utils.getInt(alarm, "market_id"))
-                startActivity(intent)
-
-            } else {
-
-                var intent = Intent(context, RequestFriendActivity::class.java)
-                intent.putExtra("type","waiting")
-                startActivity(intent)
-
-            }
+            var intent = Intent(context, EventDetailActivity::class.java)
+            intent.putExtra("event_id", Utils.getString(event, "id"))
+            startActivity(intent)
 
         }
 

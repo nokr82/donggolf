@@ -66,6 +66,19 @@ class EventAdapter(context: Context, view : Int, data: ArrayList<JSONObject>) : 
             item.deadlineTV.setTextColor(Color.parseColor("#EF5C34"))
         }
 
+        val event = json.getJSONObject("Event")
+
+        val title = Utils.getString(event, "title")
+        val contents = Utils.getString(event, "contents")
+
+        if (Utils.getString(json, "participation_yn") == "Y") {
+            item.stateTV.text = "추첨번호 : " + Utils.getString(json, "number")
+        } else {
+            item.stateTV.text = "참여하기"
+        }
+
+        item.titleTV.text = title
+        item.contentsTV.text = contents
 
         return retView
     }
