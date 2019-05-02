@@ -13,4 +13,8 @@ object EventsAction {
         HttpClient.post("/events/index.json", params, handler)
     }
 
+    fun detail(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/events/detail.json", params, handler)
+    }
+
 }
