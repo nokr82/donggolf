@@ -168,43 +168,6 @@ class AreaRangeActivity : RootActivity() {
         }
 
         finishLL.setOnClickListener {
-        /*    if(arealistLV.visibility == View.VISIBLE){
-                //여기에 db 데이터 업데이트
-                val params = RequestParams()
-                params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
-                params.put("type", "region")
-                params.put("region1", userRG1)
-                params.put("region2", userRG2)
-                params.put("region3", userRG3)
-
-                MemberAction.update_info(params, object : JsonHttpResponseHandler(){
-                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                        try {
-                            val result = response!!.getString("result")
-                            println("AreaRangeActivity save changed data :: $response")
-                            if (result == "ok") {
-                                Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
-                                setResult(RESULT_OK,intent)
-                                finish()
-                            }
-                        } catch (e : JSONException) {
-                            e.printStackTrace()
-                        }
-
-                    }
-
-                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                        Toast.makeText(context, "지역 변경 실패", Toast.LENGTH_SHORT).show()
-                    }
-                })
-
-            }
-
-            if(gridGV.visibility == View.VISIBLE){
-                arealistLV.visibility = View.VISIBLE
-                gridGV.visibility = View.GONE
-            }*/
-
             if (gridGV.visibility == View.VISIBLE){
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
