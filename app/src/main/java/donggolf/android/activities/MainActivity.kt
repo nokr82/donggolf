@@ -257,6 +257,11 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             startActivity(intent)
         }
 
+        eventLL.setOnClickListener {
+            var intent = Intent(context, EventsActivity::class.java)
+            startActivity(intent)
+        }
+
         goguntype = PrefUtils.getStringPreference(context,"region")
 
         area_style()

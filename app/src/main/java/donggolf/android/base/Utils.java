@@ -2084,7 +2084,9 @@ public class Utils {
                 txt_s = "" + s;
             }
 
-            if (!"0".equals(txt_h)) {
+            if (!"0".equals(txt_d)) {
+                return  txt_h + "일";
+            } else if (!"0".equals(txt_h)) {
                 return  txt_h + "시";
             } else {
                 return  txt_m + "분";

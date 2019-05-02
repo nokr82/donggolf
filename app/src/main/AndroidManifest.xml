@@ -272,6 +272,15 @@
             android:name=".activities.EventDetailActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.EventMembersActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name=".activities.DlgEventActivity"
+            android:theme="@style/full_screen_dialog1"/>
+
     </application>
 
 </manifest>

@@ -66,7 +66,7 @@ class EventsActivity : RootActivity(), AbsListView.OnScrollListener {
             var event = data.getJSONObject("Event")
 
             var intent = Intent(context, EventDetailActivity::class.java)
-            intent.putExtra("event_id", Utils.getString(event, "id"))
+            intent.putExtra("event_id", Utils.getInt(event, "id"))
             startActivity(intent)
 
         }

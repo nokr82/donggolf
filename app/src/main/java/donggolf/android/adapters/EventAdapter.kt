@@ -80,6 +80,8 @@ class EventAdapter(context: Context, view : Int, data: ArrayList<JSONObject>) : 
         item.titleTV.text = title
         item.contentsTV.text = contents
 
+        ImageLoader.getInstance().displayImage(Config.url + Utils.getString(event, "image_uri"), item.imageIV, Utils.UILoptions)
+
         return retView
     }
 

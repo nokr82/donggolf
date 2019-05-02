@@ -17,4 +17,12 @@ object EventsAction {
         HttpClient.post("/events/detail.json", params, handler)
     }
 
+    fun participation(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/events/participation.json", params, handler)
+    }
+
+    fun event_members(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/events/event_members.json", params, handler)
+    }
+
 }

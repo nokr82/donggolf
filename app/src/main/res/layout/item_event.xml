@@ -65,8 +65,7 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="11dp"
                 android:text="참여하기"
-                android:textStyle="bold"
-                android:visibility="gone"/>
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
