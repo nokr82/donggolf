@@ -50,7 +50,9 @@
                 android:layout_width="120dp"
                 android:layout_height="100dp"
                 android:src="@mipmap/iconplay"/>
+
         </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -80,7 +82,7 @@
             android:layout_width="15dp"
             android:layout_height="12dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="3dp"
             android:background="@drawable/icon_view" />
         <TextView
@@ -98,7 +100,7 @@
             android:layout_marginRight="3dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/icon_comment"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="10dp"/>
         <TextView
             android:id="@+id/main_item_comment_count"
             android:layout_width="wrap_content"
@@ -115,7 +117,7 @@
             android:layout_marginRight="2dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/icon_like"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="10dp"/>
         <TextView
             android:id="@+id/main_item_like_count"
             android:layout_width="wrap_content"
