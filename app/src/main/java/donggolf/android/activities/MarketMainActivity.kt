@@ -337,7 +337,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 if (result == "ok") {
                     Log.d("마켓목록",response.toString())
                     val category = response.getJSONArray("category")
-
                     val productType = response.getJSONArray("producttype")
                     val productForm = response.getJSONArray("productcategory")
                     val pdtcategory = response.getJSONArray("pdtcategory")
