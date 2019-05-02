@@ -1411,8 +1411,6 @@ class AddPostActivity : RootActivity() {
 
     override fun finish() {
         super.finish()
-
-        println(":::::::::::::::::::::::::finishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinishfinish")
     }
 
 }
