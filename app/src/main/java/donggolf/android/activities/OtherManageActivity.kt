@@ -172,10 +172,6 @@ class OtherManageActivity : RootActivity() {
         finishLL.setOnClickListener {
             finish()
         }
-        eventLL.setOnClickListener {
-            var intent = Intent(context, EventsActivity::class.java)
-            startActivity(intent)
-        }
 
     }
 
