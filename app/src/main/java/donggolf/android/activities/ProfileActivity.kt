@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.*
 import android.view.View
 import android.widget.Toast
@@ -198,7 +199,7 @@ class ProfileActivity : RootActivity() {
                         profile_opTV.setText("채팅")
 
                         val member = response.getJSONObject("Member")
-
+                        var sex = Utils.getString(member,"sex")
                         val friendCount = response.getString("friendCount")
                         val contentCount = response.getString("contentCount")
                         val chatCount = response.getString("chatCount")
@@ -208,6 +209,12 @@ class ProfileActivity : RootActivity() {
                         }else{
                             txChatCnt.setText(chatCount)
 
+                        }
+
+                        if (sex == "1"){
+                            txUserName.setTextColor(Color.parseColor("#EF5C34"))
+                        }else{
+                            txUserName.setTextColor(Color.parseColor("#000000"))
                         }
 
                         txPostCnt.setText(contentCount)

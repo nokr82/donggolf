@@ -1240,8 +1240,8 @@ public class Utils {
             .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
     public static DisplayImageOptions UILoptionsProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
-             .showImageOnLoading(R.drawable.noimage)
-            .showImageForEmptyUri(R.drawable.noimage)
+             .showImageOnLoading(R.drawable.icon_profile)
+            .showImageForEmptyUri(R.drawable.icon_profile)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
             //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();

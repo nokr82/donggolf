@@ -163,40 +163,6 @@ class DongchatProfileActivity : RootActivity() {
 
         detail_chatting("detail")
 
-//        backgroundAdapter = FullScreenImageAdapter(this@DongchatProfileActivity, Image_path)
-//        backgroundVP.adapter = backgroundAdapter
-
-//        setnoticeTV.setOnClickListener {
-//            val builder = AlertDialog.Builder(this)
-//            val dialogView = layoutInflater.inflate(R.layout.dlg_chat_blockcode, null)
-//            builder.setView(dialogView)
-//            val alert = builder.show()
-//
-//            dialogView.dlgtextTV.setText("변경할 공지사항을 입력하세요")
-//            dialogView.dlgTitle.setText("공지사항 입력")
-//            dialogView.blockcodeTV.setText("")
-//
-//            dialogView.btn_title_clear.setOnClickListener {
-//                dialogView.blockcodeTV.setText(notice)
-//            }
-//
-//            dialogView.cancleTV.setOnClickListener {
-//                alert.dismiss()
-//            }
-//
-//            dialogView.okTV.setOnClickListener {
-//                val code = dialogView.categoryTitleET.text.toString()
-//                if (code == null || code == ""){
-//                    Toast.makeText(context, "빈칸은 입력하실 수 없습니다", Toast.LENGTH_SHORT).show()
-//                    return@setOnClickListener
-//                }
-//                notice = code
-//                alert.dismiss()
-//                noticeTV.setText(code)
-//                set_notice(code)
-//            }
-//
-//        }
 
         cntIV.setOnClickListener {
             if (founder_id.toInt() != PrefUtils.getIntPreference(context, "member_id")) {
@@ -425,6 +391,7 @@ class DongchatProfileActivity : RootActivity() {
                             val member_id = Utils.getString(chatmember, "member_id")
                             val chatroom = item.getJSONObject("Chatroom")
                             val memberinfo = item.getJSONObject("Member")
+                            var sex = Utils.getString(memberinfo,"sex")
                             val title = Utils.getString(chatroom, "title")
                             val visible = Utils.getString(chatroom, "visible")
                             val introduce = Utils.getString(chatroom, "introduce")
@@ -496,6 +463,11 @@ class DongchatProfileActivity : RootActivity() {
                                 var image = Config.url + Utils.getString(memberinfo, "profile_img")
                                 ImageLoader.getInstance().displayImage(image, founderIV, Utils.UILoptionsUserProfile)
                                 val nick = Utils.getString(memberinfo, "nick")
+                                if (sex == "1"){
+                                    nickTV.setTextColor(Color.parseColor("#EF5C34"))
+                                }else{
+                                    nickTV.setTextColor(Color.parseColor("#000000"))
+                                }
                                 nickTV.setText(nick)
                             }
 
