@@ -59,13 +59,32 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
         var comment_id = Utils.getInt(comment, "id")
         data.put("comment_id", comment_id)
 
+        val created = Utils.getString(comment, "created")
 
         item.main_detail_comment_conditionTV.text = Utils.getString(comment, "comment")
         data.put("comment_content", Utils.getString(comment, "comment"))
         item.main_detail_comment_nicknameTV.text = Utils.getString(comment, "nick")
-        item.main_detail_comment_dateTV.text = Utils.getString(comment, "created")
+//        item.main_detail_comment_dateTV.text = created
         item.main_detail_comment_typeIV.visibility = View.GONE
+        val today = Utils.todayStr()
+        if (created != null && created.length > 0){
+            var split = created.split(" ")
 
+            if (split != null && split.size > 0) {
+
+                if (split.get(0) == today){
+                    var timesplit = split.get(1).split(":")
+                    if (timesplit.get(0).toInt() >= 12){
+                    }
+                    var time =  timesplit.get(0) + ":" + timesplit.get(1)
+                    item.main_detail_comment_dateTV.setText(time)
+
+                } else {
+                    val since = Utils.since2(created)
+                    item.main_detail_comment_dateTV.setText(since)
+                }
+            }
+        }
 
         var p_comments_id = Utils.getInt(comment, "p_comments_id")
         var op_comments_id = Utils.getInt(comment, "op_comments_id")
@@ -75,15 +94,15 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
         if (p_comments_id != -1) {
             if (op_comments_id != -1) {
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
 
             } else {
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
             }
         } else if (op_comments_id != -1) {
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
 
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE

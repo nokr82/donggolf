@@ -348,46 +348,6 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
    }
 
 
-    fun visibleMenu(){
-
-        val builder = AlertDialog.Builder(context)
-        builder.setMessage("친구신청하시겠습니까 ?").setCancelable(false)
-                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
-
-                    if (member_id != null) {
-
-
-                        var params = RequestParams()
-                        params.put("mate_id", member_id)
-                        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-                        params.put("category_id",0)
-                        params.put("status","w")
-                        PostAction.add_friend(params, object : JsonHttpResponseHandler() {
-                            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                                val result = response!!.getString("result")
-                                if (result == "yes") {
-                                    Toast.makeText(context, "이미 친구신청을 친구신청을 받았습니다.", Toast.LENGTH_SHORT).show()
-                                }else if (result == "already"){
-                                    Toast.makeText(context, "차단상태입니다.", Toast.LENGTH_SHORT).show()
-                                }else {
-                                    Toast.makeText(context, "친구신청을 보냈습니다", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-
-                            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-                            }
-                        })
-
-                    }
-
-                })
-                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-        val alert = builder.create()
-        alert.show()
-
-
-    }
 
    fun getKeyHash(context: Context): String? {
         val packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES)
