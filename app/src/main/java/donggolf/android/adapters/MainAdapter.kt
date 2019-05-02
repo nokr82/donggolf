@@ -73,7 +73,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
         var uri = Utils.getString(Content,"image_uri")
-        val since = Utils.since(created)
+        val since = Utils.since3(created)
 
         if (sex == "0"){
             item.main_item_nickname.setTextColor(Color.parseColor("#000000"))

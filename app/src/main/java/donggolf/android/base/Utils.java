@@ -240,6 +240,78 @@ public class Utils {
         return reg_dt;
     }
 
+    public static String since3(String reg_dt) {
+        if (reg_dt == null || reg_dt.trim().length() == 0) {
+            return "";
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
+        try {
+            Date d1 = formatter.parse(reg_dt);
+            Date d2 = new Date();
+
+            long diff = d2.getTime() - d1.getTime();
+
+            // System.out.println("d1.getTime() : " + d1.getTime() +
+            // ", d2.getTime() : " + d2.getTime());
+
+            long oneMin = 60 * 1000;
+            long oneHour = 60 * oneMin;
+            long oneDay = 24 * oneHour;
+            long weekday = 7 * oneDay;
+            long month = 4 * weekday;
+            long oneYear = oneDay * 365;
+
+
+            // 3분 이내일 경우 "방금 전"
+            if (diff < oneMin * 3) {
+                return "방금 전";
+            }
+
+            // 3분에서 59분일 경우 "*분 전"
+            if(diff < oneHour) {
+                return Math.round(diff / oneMin) + "분 전";
+            }
+
+            // 1시간 후 부터는 분 단위 무시하고 시간 단위만 표시
+            if(diff >= oneHour && diff <= oneHour * 24) {
+                return Math.round(diff / oneHour) + "시간 전";
+            }
+            if(diff >= oneDay && diff <= oneDay * 7) {
+                return Math.round(diff / oneDay) + "일전";
+            }
+            if(diff >= weekday && diff <= weekday * 4) {
+                return Math.round(diff / weekday) + "주전";
+            }
+            if(diff >= month && diff <= month * 12) {
+                return Math.round(diff / month) + "달전";
+            }
+            // 1년 이상이면 년월일만 표시
+            if (diff >= oneYear) {
+                formatter = new SimpleDateFormat("yyyy년 MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            Calendar cal1 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal1.setTime(d1);
+
+            Calendar cal2 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal2.setTime(d2);
+            cal2.add(Calendar.DAY_OF_MONTH, -1);
+
+            if (cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH) || diff > oneDay) {
+                formatter = new SimpleDateFormat("MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            formatter = new SimpleDateFormat("HH시 mm분", java.util.Locale.KOREA);
+            return formatter.format(d1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return reg_dt;
+    }
 
 
 
@@ -1168,8 +1240,8 @@ public class Utils {
             .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
     public static DisplayImageOptions UILoptionsProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
-             .showImageOnLoading(R.drawable.noimage)
-            .showImageForEmptyUri(R.drawable.noimage)
+             .showImageOnLoading(R.drawable.icon_profile)
+            .showImageForEmptyUri(R.drawable.icon_profile)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
             //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();

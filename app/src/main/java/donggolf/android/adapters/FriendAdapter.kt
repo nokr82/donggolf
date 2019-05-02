@@ -9,9 +9,11 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 //import com.kakao.usermgmt.StringSet.nickname
 import donggolf.android.R
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.Users
 import org.json.JSONObject
@@ -43,34 +45,39 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
 
         val json = data.get(position)
         val member = json.getJSONObject("Member")
+        var member_id = Utils.getInt(member,"id")
         val friend = Utils.getString(member,"friend")
         val mate_cnt = Utils.getString(member,"mate_cnt")
 
         val sex = Utils.getString(member,"sex")
-        Log.d("성별",json.toString())
 
-        if (friend == "0"){
-            if (mate_cnt == "0"){
-                item.main_detail_listitem_firstimage.visibility = View.GONE
-            }else{
-                item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_second)
-            }
+        if (member_id == PrefUtils.getIntPreference(context, "member_id")) {
+            item.item_relationIV.visibility = View.GONE
         } else {
-            item.main_detail_listitem_firstimage.setBackgroundResource(R.drawable.icon_first)
+            item.item_relationIV.visibility = View.VISIBLE
+            if(friend == "0") {
+//                item.item_relationIV.setImageResource(R.drawable.icon_second)
+                if (mate_cnt!="0"){
+                    item.item_relationIV.setImageResource(R.drawable.icon_second)
+                }else{
+                    item.item_relationIV.visibility = View.GONE
+                }
+            } else {
+                item.item_relationIV.setImageResource(R.drawable.icon_first)
+            }
         }
 
         if (sex == "1"){
-            item.main_detail_listitem_nickname.setTextColor(Color.parseColor("#EF5C34"))
+            item.item_nickNameTV.setTextColor(Color.parseColor("#EF5C34"))
         }else{
-            item.main_detail_listitem_nickname.setTextColor(Color.parseColor("#000000"))
+            item.item_nickNameTV.setTextColor(Color.parseColor("#000000"))
         }
 
-        item.main_detail_listitem_nickname.text = Utils.getString(member, "nick")
-        item.main_detail_listitem_condition.text = Utils.getString(member, "status_msg")
+        item.item_nickNameTV.text = Utils.getString(member, "nick")
 
         val img_uri = Utils.getString(member,"profile_img")//small_uri
         val image = Config.url + img_uri
-        ImageLoader.getInstance().displayImage(image, item.main_detail_listitem_profileimage, Utils.UILoptionsProfile)
+        ImageLoader.getInstance().displayImage(image, item.item_profileImg, Utils.UILoptionsProfile)
 
         return retView
     }
@@ -94,22 +101,18 @@ class FriendAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) : A
         data.removeAt(position)
         notifyDataSetChanged()
     }
-
     class ViewHolder(v: View) {
 
-
-        var main_detail_listitem_profileimage : de.hdodenhof.circleimageview.CircleImageView //프사
-        var isOnlineIV : ImageView //프사에 붙은 초록불
-        var main_detail_listitem_nickname : TextView //닉네임
-        var main_detail_listitem_firstimage : ImageView //일촌인지 이촌인지
-        var main_detail_listitem_condition : TextView //상메
+        var item_profileImg : CircleImageView
+        var item_nickNameTV : TextView
+        var item_relationIV : ImageView
+        var item_authorizationTV : TextView
 
         init {
-            main_detail_listitem_profileimage = v.findViewById<View>(R.id.main_detail_listitem_profileimage) as de.hdodenhof.circleimageview.CircleImageView
-            isOnlineIV = v.findViewById<View>(R.id.isOnlineIV) as ImageView
-            main_detail_listitem_nickname = v.findViewById<View>(R.id.main_detail_listitem_nickname) as TextView
-            main_detail_listitem_firstimage = v.findViewById<View>(R.id.main_detail_listitem_firstimage) as ImageView
-            main_detail_listitem_condition = v.findViewById<View>(R.id.main_detail_listitem_condition) as TextView
+            item_profileImg = v.findViewById(R.id.item_profileImg) as CircleImageView
+            item_nickNameTV = v.findViewById(R.id.item_nickNameTV) as TextView
+            item_relationIV = v.findViewById(R.id.item_relationIV) as ImageView
+            item_authorizationTV = v.findViewById(R.id.item_authorizationTV) as TextView
         }
     }
 }

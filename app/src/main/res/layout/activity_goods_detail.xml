@@ -62,11 +62,11 @@
                     android:padding="10dp">
 
                     <TextView
-                        android:gravity="left"
                         android:id="@+id/categoryTV"
-                        android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
                         android:text=""
                         android:textSize="14dp"
                         android:textStyle="bold" />
@@ -79,25 +79,27 @@
                         android:textSize="15dp"
                         android:textStyle="bold"
                         android:visibility="gone" />
+
                     <LinearLayout
                         android:id="@+id/change_prod_stateLL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/btn_option_sale" />
 
-                    <TextView
-                        android:id="@+id/sale_statusTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
-                        android:text="판매중"
-                        android:textColor="#EF5B33"
-                        android:textSize="13dp" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/btn_option_sale" />
+
+                        <TextView
+                            android:id="@+id/sale_statusTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:text="판매중"
+                            android:textColor="#EF5B33"
+                            android:textSize="13dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -144,6 +146,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
+                            android:textStyle="bold"
                             android:textSize="16dp" />
 
                         <LinearLayout
@@ -189,8 +192,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
-                                android:text="0"
                                 android:layout_marginLeft="10dp"
+                                android:text="0"
                                 android:textColor="#C9C9C9"
                                 android:textSize="10dp" />
                         </LinearLayout>
@@ -225,6 +228,8 @@
                     android:id="@+id/descriptionTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="15dp"
                     android:padding="10dp"
                     android:text="판매자의 본문내용 텍스트가 들어갈 자리입니다."
                     android:textColor="#000000" />
@@ -234,9 +239,9 @@
                     android:layout_height="0.5dp"
                     android:background="#c9c9c9" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:layout_width="13dp"
@@ -249,31 +254,16 @@
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profileImgIV"
                         android:layout_width="36dp"
-                        android:layout_marginLeft="3dp"
                         android:layout_height="36dp"
                         android:layout_margin="7dp"
+                        android:layout_marginLeft="3dp"
                         android:background="@mipmap/icon_profile" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLength="7"
-                                android:text=""
-                                android:textSize="15dp" />
-                        </LinearLayout>
 
                         <TextView
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="50dp"
                             android:id="@+id/nickTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -281,35 +271,36 @@
                             android:textColor="#EF5C34"
                             android:textSize="13dp"
                             android:textStyle="bold" />
-                    </LinearLayout>
 
-                    <RelativeLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <LinearLayout
-                            android:id="@+id/contact_sellerLL"
+                    <LinearLayout
+                        android:gravity="center"
+                        android:id="@+id/contact_sellerLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginRight="10dp">
+
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="20dp"
-                            android:orientation="vertical">
+                            android:layout_centerInParent="true"
+                            android:text="문자하기"
+                            android:textSize="13dp" />
 
-                            <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:layout_gravity="center"
-                                android:background="@mipmap/icon_send_text_message" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="문자하기"
-                                android:textSize="13dp" />
-                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center"
+                            android:background="@mipmap/icon_send_text_message" />
 
-                    </RelativeLayout>
-                </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -379,6 +370,7 @@
                             </LinearLayout>
 
                             <LinearLayout
+                                android:layout_marginBottom="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp">
@@ -466,21 +458,25 @@
                         android:text="제공 : 경찰청 사이버안전국"
                         android:textSize="13dp" />
                 </LinearLayout>
+
                 <View
-                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
+                    android:layout_marginTop="10dp"
                     android:background="#c9c9c9" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
+
                     <LinearLayout
-                        android:layout_centerInParent="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_alignParentLeft="true"
                         android:id="@+id/moresellerpostTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -490,10 +486,10 @@
                             android:textSize="15dp" />
 
                         <TextView
-                            android:layout_marginLeft="10dp"
                             android:id="@+id/sellercountTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
                             android:layout_marginRight="40dp"
                             android:gravity="center|right"
                             android:text="(0)"
@@ -501,14 +497,14 @@
                     </LinearLayout>
 
                     <TextView
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
                         android:id="@+id/reportTV"
                         android:layout_width="97dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerInParent="true"
+                        android:layout_marginTop="10dp"
                         android:layout_marginRight="20dp"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/btn_report_red"
                         android:gravity="center"
                         android:text="신고하기(0)"
@@ -531,6 +527,7 @@
 
 
         <LinearLayout
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -544,7 +541,7 @@
             <LinearLayout
                 android:id="@+id/cmtLL"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:background="#ffffff"
                 android:orientation="horizontal">
 
@@ -552,11 +549,12 @@
                     android:id="@+id/commentET"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="6"
                     android:background="@null"
-                    android:gravity="center"
+                    android:gravity="left|center"
                     android:hint="댓글을 남겨주세요"
-                    android:textSize="15dp" />
+                    android:textSize="16dp" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -570,11 +568,11 @@
                     android:layout_weight="0"
                     android:background="#ffffff"
                     android:gravity="center"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:text="등록"
                     android:textColor="#0EDA2F"
-                    android:textSize="13dp" />
+                    android:textSize="14dp" />
 
             </LinearLayout>
 

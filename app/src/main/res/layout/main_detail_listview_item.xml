@@ -35,7 +35,7 @@
                     android:id="@+id/main_detail_comment_nicknameTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="sdsdsdsds"
+                    android:text=""
                     android:textColor="#EF5C34"
                     android:textSize="15dp"
                     android:maxLength="7"/>
@@ -45,7 +45,7 @@
                     android:layout_gravity="left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="dsdsdsd"
+                    android:text=""
                     android:textSize="13dp"
                     android:textColor="#95000000"/>
                 <ImageView
@@ -55,16 +55,15 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"/>
             </LinearLayout>
+
             <TextView
-                android:layout_marginTop="7dp"
                 android:id="@+id/main_detail_comment_conditionTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sdsdsdsds
-sadasdasdasdsad"
-                android:lineSpacingExtra="2dp"
+                android:layout_marginTop="7dp"
+                android:text=""
                 android:textColor="#AFAFAF"
-                android:textSize="15dp"/>
+                android:textSize="15dp" />
 
         </LinearLayout>
 

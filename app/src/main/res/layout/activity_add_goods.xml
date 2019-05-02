@@ -306,10 +306,10 @@
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_vertical"
                                     android:background="@null"
-                                    android:hint="제품명 또는 모델명을 포함하여 제목을 입력해주세요"
+                                    android:hint="제품명을 포함해주세요"
                                     android:inputType="textEmailAddress"
                                     android:singleLine="true"
-                                    android:textSize="12dp" />
+                                    android:textSize="16dp" />
                             </LinearLayout>
                         </RelativeLayout>
                     </LinearLayout>
@@ -437,7 +437,7 @@
                                     android:hint="상품금액을 입력해 주세요."
                                     android:inputType="number"
                                     android:singleLine="true"
-                                    android:textSize="14dp" />
+                                    android:textSize="16dp" />
 
                                 <TextView
                                     android:textSize="14dp"
@@ -706,7 +706,7 @@
                     android:hint="상품상세설명을 입력해 주세요."
                     android:lines="10"
                     android:padding="10dp"
-                    android:textSize="14dp" />
+                    android:textSize="16dp" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"

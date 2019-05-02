@@ -864,8 +864,13 @@ class AddGoodsActivity : RootActivity() {
 
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
-                            categoryData.add(category.get(i) as JSONObject)
-                            categoryData[i].put("isSelectedOp", false)
+                            var json = category.get(i)as JSONObject
+                            Log.d("자이",json.toString())
+                            var type = json.getJSONObject("GoodsCategory")
+                            val title = Utils.getString(type, "title")
+                            if (title != "브랜드전체"){
+                                categoryData.add(json)
+                            }
                         }
                     }
 

@@ -41,7 +41,6 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MateAction
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.PostAction
 import donggolf.android.adapters.FriendAdapter
 import donggolf.android.adapters.FriendSearchAdapter
 import donggolf.android.base.Config
@@ -123,7 +122,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
 
         //main list view setting
-        friendAdapter = FriendAdapter(context, R.layout.item_friend_search, friendData)
+        friendAdapter = FriendAdapter(context, R.layout.item_chat_member_list, friendData)
         frdResultLV.adapter = friendAdapter
 
         frdResultLV.setOnItemClickListener{ parent, view, position, id ->

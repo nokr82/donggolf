@@ -65,7 +65,8 @@ class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObject
         } else {
             item.item_relationIV.visibility = View.VISIBLE
             if(freind == "0") {
-                item.item_relationIV.setImageResource(R.drawable.icon_second)
+//                item.item_relationIV.setImageResource(R.drawable.icon_second)
+                item.item_relationIV.visibility = View.GONE
             } else {
                 item.item_relationIV.setImageResource(R.drawable.icon_first)
             }
