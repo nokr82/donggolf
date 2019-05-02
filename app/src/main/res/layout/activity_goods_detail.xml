@@ -544,7 +544,7 @@
             <LinearLayout
                 android:id="@+id/cmtLL"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
                 android:background="#ffffff"
                 android:orientation="horizontal">
 
@@ -554,9 +554,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="6"
                     android:background="@null"
-                    android:gravity="center"
+                    android:gravity="left|center"
                     android:hint="댓글을 남겨주세요"
-                    android:textSize="15dp" />
+                    android:textSize="16dp" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -570,11 +570,11 @@
                     android:layout_weight="0"
                     android:background="#ffffff"
                     android:gravity="center"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:text="등록"
                     android:textColor="#0EDA2F"
-                    android:textSize="13dp" />
+                    android:textSize="14dp" />
 
             </LinearLayout>
 

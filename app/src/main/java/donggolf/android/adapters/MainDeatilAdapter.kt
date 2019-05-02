@@ -118,7 +118,7 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
         } else {
             item.main_detail_comment_relationIV.visibility = View.VISIBLE
             if(freind == "0") {
-                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+                item.main_detail_comment_relationIV.visibility = View.GONE
             } else {
                 item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
             }

@@ -3,10 +3,12 @@ package donggolf.android.adapters
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.nostra13.universalimageloader.core.ImageLoader
+import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.activities.PictureDetailActivity
 import donggolf.android.activities.ProfileActivity
@@ -16,13 +18,13 @@ import donggolf.android.base.Utils
 import org.json.JSONObject
 
 
-open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
+open class GoodsComAdapter(context: Context, view: Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context, view, data) {
 
     private lateinit var item: ViewHolder
-    var view:Int = view
-    var data:ArrayList<JSONObject> = data
+    var view: Int = view
+    var data: ArrayList<JSONObject> = data
 
-    override fun getView(position: Int, convertView: View?, parent : ViewGroup?): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
         lateinit var retView: View
 
@@ -41,107 +43,107 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         }
 
         var data = data.get(position)
+
         //val member_info = data.getJSONObject("Member")
         val comment = data.getJSONObject("MarketComment")
-
         var comment_id = Utils.getInt(comment,"id")
         data.put("market_id", comment_id)
-
-        item.main_detail_comment_conditionTV.text = Utils.getString(comment,"comment")
-        data.put("comment_content", Utils.getString(comment,"comment"))
-        item.main_detail_comment_nicknameTV.text = Utils.getString(comment,"nick")
-        item.main_detail_comment_dateTV.text = Utils.getString(comment,"created")
+        var created =  Utils.getString(comment, "created")
+        item.main_detail_comment_conditionTV.text = Utils.getString(comment, "comment")
+        item.main_detail_comment_nicknameTV.text = Utils.getString(comment, "nick")
         item.main_detail_comment_typeIV.visibility = View.GONE
+        val today = Utils.todayStr()
+        if (created != null && created.length > 0){
+            var split = created.split(" ")
 
-        var typeAdt = Utils.getString(comment,"type")
+            if (split != null && split.size > 0) {
 
- /*       if (typeAdt == "r"){
+                if (split.get(0) == today){
+                    var timesplit = split.get(1).split(":")
+                    if (timesplit.get(0).toInt() >= 12){
+                    }
+                    var time =  timesplit.get(0) + ":" + timesplit.get(1)
+                    item.main_detail_comment_dateTV.setText(time)
+
+                } else {
+                    val since = Utils.since2(created)
+                    item.main_detail_comment_dateTV.setText(since)
+                }
+            }
+        }
+
+        var p_comments_id = Utils.getInt(comment, "p_comments_id")
+        var op_comments_id = Utils.getInt(comment, "op_comments_id")
+
+
+
+        if (p_comments_id != -1) {
+            if (op_comments_id != -1) {
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+
+            } else {
+                item.main_detail_comment_typeIV.visibility = View.VISIBLE
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+            }
+        } else if (op_comments_id != -1) {
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
             item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
 
-        } else if (typeAdt == "c") {
-            item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
-
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE
-
-        }*/
-
-
-        var comment_memberID = Utils.getInt(comment,"member_id")
-        data.put("cmt_wrt_id", comment_memberID)
-
-        var isBlocked = Utils.getString(comment,"block_yn")
-
-        /*var cbyn = data.getString("changedBlockYN")
-        if (cbyn == "Y"){
-            isBlocked = data.getString("block_yn")
-        }*/
-        var p_comments_id = Utils.getInt(comment,"p_comments_id")
-        var op_comments_id = Utils.getInt(comment,"op_comments_id")
-        if (p_comments_id != -1){
-            if (op_comments_id != -1) {
-                item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
-
-            }else{
-                item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
-            }
-        }else  if (op_comments_id != -1) {
-            item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
-
         }
 
-        else {
-            item.main_detail_comment_typeIV.visibility = View.GONE
-        }
 
-        val freind = Utils.getString(comment,"freind")
+        val freind = Utils.getString(comment, "freind")
         val member_id = Utils.getInt(comment, "member_id")
         //println("-=------freind : $freind")
-
-
 
         if (member_id == PrefUtils.getIntPreference(context, "member_id")) {
             item.main_detail_comment_relationIV.visibility = View.GONE
         } else {
             item.main_detail_comment_relationIV.visibility = View.VISIBLE
             if(freind == "0") {
-                item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
+                item.main_detail_comment_relationIV.visibility = View.GONE
             } else {
                 item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_first)
             }
         }
 
-        if (isBlocked == "Y") {
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
-            notifyDataSetChanged()
-        } else {
-            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_second)
-            notifyDataSetChanged()
-        }
+
         val Member = data.getJSONObject("Member")
-        val profile_img = Utils.getString(Member,"profile_img")
-        if (profile_img != null){
+        val profile_img = Utils.getString(Member, "profile_img")
+        if (profile_img != null) {
             var image = Config.url + profile_img
             ImageLoader.getInstance().displayImage(image, item.main_detail_comment_profileIV, Utils.UILoptionsUserProfile)
         }
 
-        var gender = Utils.getString(Member,"sex")
-        if (gender == "0"){
+        var gender = Utils.getString(Member, "sex")
+        if (gender == "0") {
             item.main_detail_comment_nicknameTV.setTextColor(Color.parseColor("#000000"))
         }
 
         item.main_detail_comment_profileIV.setOnClickListener {
+
             val member_id = Utils.getString(Member, "id")
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("member_id", member_id)
             context.startActivity(intent)
         }
+        var comment_memberID = Utils.getInt(comment, "member_id")
+        data.put("cmt_wrt_id", comment_memberID)
 
+        var isBlocked = Utils.getString(comment, "block_yn")
+
+        /*var cbyn = data.getString("changedBlockYN")
+        if (cbyn == "Y"){
+            isBlocked = data.getString("block_yn")
+        }*/
+
+        if (isBlocked == "Y") {
+            item.main_detail_comment_relationIV.setImageResource(R.drawable.icon_block)
+            notifyDataSetChanged()
+        }
 
         return retView
     }
@@ -161,20 +163,21 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
         return data.count()
     }
 
-    fun removeItem(position: Int){
+    fun removeItem(position: Int) {
         data.removeAt(position)
         notifyDataSetChanged()
     }
 
     class ViewHolder(v: View) {
 
-        var main_detail_comment_typeIV : ImageView
-        var main_detail_comment_profileIV : ImageView
-        var main_detail_comment_nicknameTV : TextView
-        var main_detail_comment_relationIV : ImageView
-        var main_detail_comment_conditionTV : TextView
-        var main_detail_comment_dateTV : TextView
-        var main_detailLV : LinearLayout
+        var main_detail_comment_typeIV: ImageView
+        var main_detail_comment_profileIV: CircleImageView
+        var main_detail_comment_nicknameTV: TextView
+        var main_detail_comment_relationIV: ImageView
+        var main_detail_comment_conditionTV: TextView
+        var main_detail_comment_dateTV: TextView
+        var main_detailLV: LinearLayout
+        var itemimageIV: ImageView
 
 
         init {
@@ -185,6 +188,7 @@ open class GoodsComAdapter(context: Context, view:Int, data:ArrayList<JSONObject
             main_detail_comment_conditionTV = v.findViewById(R.id.main_detail_comment_conditionTV)
             main_detail_comment_dateTV = v.findViewById(R.id.main_detail_comment_dateTV)
             main_detailLV = v.findViewById(R.id.main_detailLV)
+            itemimageIV = v.findViewById(R.id.itemimageIV)
 
         }
     }
