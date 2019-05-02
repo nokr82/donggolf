@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -109,7 +110,13 @@ class ProfileNameModifActivity : RootActivity() {
                             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                                 try {
                                     val result = response!!.getString("result")
-                                    if (result == "ok") {
+                                    val over = response!!.getString("over")
+                                    Log.d("아니",response.toString())
+                                    if (over == "yes") {
+                                        Utils.alert(context, "이미 사용 중입니다. 다른 이름을 입력해주세요.")
+                                        nameET.setText("")
+                                        return
+                                    }else if (result == "ok") {
                                         var intent = Intent()
                                         setResult(RESULT_OK,intent)
                                         finish()
