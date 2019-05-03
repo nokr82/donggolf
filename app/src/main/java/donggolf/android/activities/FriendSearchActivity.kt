@@ -48,6 +48,8 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_search.*
+import kotlinx.android.synthetic.main.activity_friend_search.areaTV
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -69,10 +71,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     lateinit var user: HashMap<String, Any>
 
     var membercnt = ""
-    var sidotype = ""
-    var sidotype2 = ""
-    var goguntype = ""
-    var goguntype2 = ""
+    var region_id = ""
     //초대
     private var callback: SessionCallback? = null
 
@@ -107,17 +106,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
         intent = getIntent()
         membercnt = intent.getStringExtra("membercnt")
-        sidotype = PrefUtils.getStringPreference(context, "sidotype")
-//        sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
-        goguntype = PrefUtils.getStringPreference(context, "goguntype")
-//        goguntype2 = PrefUtils.getStringPreference(context, "goguntype2")
+        var title = intent.getStringExtra("title")
+        region_id = PrefUtils.getStringPreference(context, "region_id")
         member_cntTV.text = "골퍼 " + membercnt + "명"
-        if (sidotype != "전국") {
-//            areaTV.text = sidotype + " " + goguntype + "/ " + sidotype2 + " " + goguntype2
-            areaTV.text = sidotype + " " + goguntype
-        } else {
-            areaTV.text = sidotype
-        }
+        areaTV.text = title
+
 
 
 
@@ -372,10 +365,9 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     fun friendSearchWords(keyWord: String) {
         val params = RequestParams()
         params.put("keyword", keyWord)
-        params.put("goguntype", goguntype)
+        params.put("region_id", region_id)
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
-        Log.d("고군",goguntype.toString())
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
@@ -574,66 +566,15 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         }
     }
 
-    fun searchList(){
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-
-        MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-//                    println(response)
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        editadapterData.clear()
-                        val mateSearchHistories = response.getJSONArray("mateSearchHistories")
-                        if (mateSearchHistories.length() > 0) {
-                            for (i in 0 until mateSearchHistories.length()) {
-                                val mateSearch = mateSearchHistories[i] as JSONObject
-                                //Log.d("메이트",mateSearch.toString())
-                                editadapterData.add(mateSearch)
-                            }
-                        }
-
-
-                        editadapter.notifyDataSetChanged()
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-        })
-    }
 
 
     override fun onDestroy() {
         super.onDestroy()
         Utils.hideKeyboard(context)
     }
-
-    fun deleteSearchList(searchid:String){
-        val params = RequestParams()
-        params.put("searchid",searchid)
-
-        MemberAction.delete_search(params,object : JsonHttpResponseHandler(){
-
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-
-            }
-        })
-    }
-
-
     fun get_region_member(keyword:String) {
         val params = RequestParams()
-        params.put("sidotype", sidotype)
-        params.put("goguntype", goguntype)
-        if (goguntype2 != ""){
-            params.put("goguntype2", goguntype2)
-        }
+        params.put("region_id", region_id)
         params.put("page", page)
         params.put("keyword", keyword)
         params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
@@ -711,6 +652,55 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             }
         })
     }
+
+
+    fun deleteSearchList(searchid:String){
+        val params = RequestParams()
+        params.put("searchid",searchid)
+
+        MemberAction.delete_search(params,object : JsonHttpResponseHandler(){
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+
+            }
+        })
+    }
+    fun searchList(){
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+
+        MateAction.view_mate_search_history(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+//                    println(response)
+                    val result = response!!.getString("result")
+                    if (result == "ok") {
+                        editadapterData.clear()
+                        val mateSearchHistories = response.getJSONArray("mateSearchHistories")
+                        if (mateSearchHistories.length() > 0) {
+                            for (i in 0 until mateSearchHistories.length()) {
+                                val mateSearch = mateSearchHistories[i] as JSONObject
+                                //Log.d("메이트",mateSearch.toString())
+                                editadapterData.add(mateSearch)
+                            }
+                        }
+
+
+                        editadapter.notifyDataSetChanged()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+        })
+    }
+
+
+
 
     override fun onScroll(p0: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
 
