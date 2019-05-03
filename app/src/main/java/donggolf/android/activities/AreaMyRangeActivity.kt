@@ -61,9 +61,9 @@ class AreaMyRangeActivity : RootActivity() {
 
         accTV.setOnClickListener {
             if (actArea == 0){
-                userRG1 = "전국"
-                userRG2 = "전국"
-                userRG3 = "전국"
+                userRG1 = "0"
+                userRG2 = "0"
+                userRG3 = "0"
                 update_info()
                 Toast.makeText(context, "전국으로 변경 되었습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -77,7 +77,7 @@ class AreaMyRangeActivity : RootActivity() {
         arealistLV.setOnItemClickListener { parent, view, position, id ->
             val item = bigcitylist.get(position)
             var type = item.getJSONObject("Regions")
-            val parent_id = Utils.getString(type,"id")
+            val region_id = Utils.getString(type,"id")
             var name:String = Utils.getString(type,"name")
             if (name == "세종특별자치시"){
                 var index = areaCnt.text.toString().toInt()
@@ -92,9 +92,9 @@ class AreaMyRangeActivity : RootActivity() {
                 actArea++
 
                 when (actArea) {
-                    1 -> userRG1 = name.toString()
-                    2 -> userRG2 = name.toString()
-                    3 -> userRG3 = name.toString()
+                    1 -> userRG1 = region_id.toString()
+                    2 -> userRG2 = region_id.toString()
+                    3 -> userRG3 = region_id.toString()
                 }
 
                 regionView.regionDelIV.setOnClickListener {
@@ -119,12 +119,12 @@ class AreaMyRangeActivity : RootActivity() {
                     tmpSV.visibility = View.VISIBLE
                 }
             } else if (name == "전국"){
-                userRG1 = "전국"
-                userRG2 = "전국"
-                userRG3 = "전국"
+                userRG1 = "0"
+                userRG2 = "0"
+                userRG3 = "0"
                 update_info()
             } else {
-                getGugun(parent_id.toInt())
+                getGugun(region_id.toInt())
                 arealistLV.visibility = View.GONE
                 gridGV.visibility = View.VISIBLE
             }
@@ -136,6 +136,7 @@ class AreaMyRangeActivity : RootActivity() {
         gridGV.setOnItemClickListener { parent, view, position, id ->
             val item = gugunList.get(position)
             var type = item.getJSONObject("Regions")
+            var region_id:String = Utils.getString(type,"id")
             var name:String = Utils.getString(type,"name")
             var sido:String = Utils.getString(type,"sido")
             var sel = item.getBoolean("isSelectedOp")
@@ -162,17 +163,17 @@ class AreaMyRangeActivity : RootActivity() {
                     actArea++
                     regionView.regionNameTV.text = sido+">"+name
                     when (actArea) {
-                        1 -> userRG1 = sido+">"+name
-                        2 -> userRG2 = sido+">"+name
-                        3 -> userRG3 = sido+">"+name
+                        1 -> userRG1 = region_id
+                        2 -> userRG2 = region_id
+                        3 -> userRG3 = region_id
                     }
                 }else{
                     actArea++
                     regionView.regionNameTV.text = name
                     when (actArea) {
-                        1 -> userRG1 = name.toString()
-                        2 -> userRG2 = name.toString()
-                        3 -> userRG3 = name.toString()
+                        1 -> userRG1 = region_id
+                        2 -> userRG2 = region_id
+                        3 -> userRG3 =  region_id
                     }
                 }
                 if (nowIndex == 4){

@@ -143,12 +143,13 @@
             android:text="부천,인천,구로"
             android:layout_marginRight="5dp"
             android:id="@+id/txUserRegion" />
+
         <ImageView
             android:id="@+id/setRegion"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="bottom|right"
-            android:src="@drawable/btn_change_region"/>
+            android:src="@drawable/btn_change_region" />
     </LinearLayout>
 
     <LinearLayout
