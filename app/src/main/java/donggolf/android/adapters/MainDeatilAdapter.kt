@@ -54,7 +54,12 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
         } else {
             item.itemimageIV.visibility = View.GONE
         }
-
+        var isSel = data.getBoolean("isSelectedOp")
+        if (isSel){
+            item.cmtLL.setBackgroundColor(Color.parseColor("#993333ff"))
+        } else {
+            item.cmtLL.setBackgroundColor(0)
+        }
 
         var comment_id = Utils.getInt(comment, "id")
         data.put("comment_id", comment_id)
@@ -204,9 +209,10 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
         var main_detail_comment_dateTV: TextView
         var main_detailLV: LinearLayout
         var itemimageIV: ImageView
-
+        var cmtLL:LinearLayout
 
         init {
+            cmtLL = v.findViewById(R.id.cmtLL)
             main_detail_comment_typeIV = v.findViewById(R.id.main_detail_comment_typeIV)
             main_detail_comment_profileIV = v.findViewById(R.id.main_detail_comment_profileIV)
             main_detail_comment_nicknameTV = v.findViewById(R.id.main_detail_comment_nicknameTV)

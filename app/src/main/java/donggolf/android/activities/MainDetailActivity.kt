@@ -166,8 +166,6 @@ class MainDetailActivity : RootActivity() {
 
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
-
-
             var commenter = commentList[position].getInt("cmt_wrt_id")
 
             val builder = AlertDialog.Builder(this)
@@ -177,8 +175,6 @@ class MainDetailActivity : RootActivity() {
 
             dialogView.dlg_comment_delTV.visibility = View.GONE
             dialogView.dlg_comment_blockTV.visibility = View.GONE
-
-
             //댓삭
             if (commenter == login_id){
                 dialogView.dlg_comment_delTV.visibility = View.VISIBLE
@@ -330,27 +326,33 @@ class MainDetailActivity : RootActivity() {
             val contentcomment = data.getJSONObject("ContentComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")
-
             p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
             op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
             var user_nick =  Utils.getString(contentcomment,"nick")
+            var chk = Utils.getBoolen(data, "isSelectedOp")
            if (op_comments_id != -1){
                op_comments_id = comments_id
                p_comments_id = -1
-               cmtET.requestFocus()
-               Utils.showKeyboard(context)
                cmtET.hint = user_nick+ "님의 댓글에 대대댓글"
            }else if (p_comments_id!=-1){
                 op_comments_id = comments_id
                 p_comments_id = -1
-                cmtET.requestFocus()
-                Utils.showKeyboard(context)
                 cmtET.hint = user_nick+ "님의 댓글에 대댓글"
             } else if (comments_id != -1) {
                 p_comments_id = comments_id
+                cmtET.hint = user_nick + "님의 댓글에 답글"
+            }
+            if (chk){
+                op_comments_id = -1
+                p_comments_id = -1
+                cmtET.hint = "댓글을 남겨주세요"
+                commentList[i].put("isSelectedOp",false)
+                commentAdapter.notifyDataSetChanged()
+            }else{
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
-                cmtET.hint = user_nick + "님의 댓글에 답글"
+                commentList[i].put("isSelectedOp",true)
+                commentAdapter.notifyDataSetChanged()
             }
 
         }
@@ -685,10 +687,6 @@ class MainDetailActivity : RootActivity() {
         }
     }
 
-    //이미지 자세히 보기 액티비티
-    fun MoveFindPictureActivity(){
-        startActivity(Intent(this,FindPictureActivity::class.java))
-    }
 
     fun modify(){
         if (intent.getStringExtra("id") != null) {
@@ -808,12 +806,6 @@ class MainDetailActivity : RootActivity() {
     }
 
 
-    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val dx = x1 - x2
-        val dy = y1 - y2
-        val distanceInPx = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-        return pxToDp(distanceInPx)
-    }
 
     private fun pxToDp(px: Float): Float {
         return px / resources.displayMetrics.density
@@ -842,8 +834,6 @@ class MainDetailActivity : RootActivity() {
                             val text = Utils.getString(data,"text")
                             val member_id = Utils.getString(data,"member_id")
                             writer = member_id
-                            val door_image = Utils.getString(data,"door_image")
-                            val deleted = Utils.getString(data,"deleted")
                             val Looker = response.getJSONArray("Looker")
                             val Like = response.getJSONArray("Like")
                             val Comments = response.getJSONArray("Comments")
@@ -946,7 +936,8 @@ class MainDetailActivity : RootActivity() {
                                     } 
                                 }
 
-                            } else {
+                            }
+                            else {
                                 imageRL.visibility = View.GONE
                             }
 
@@ -1116,7 +1107,7 @@ class MainDetailActivity : RootActivity() {
                     commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
-                        //commentList.get(i).put("changedBlockYN", "N")
+                        commentList[i].put("isSelectedOp",false)
                     }
                     commentAdapter.notifyDataSetChanged()
                 }
