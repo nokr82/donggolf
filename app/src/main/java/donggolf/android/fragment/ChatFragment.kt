@@ -709,10 +709,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
                     val mychat_count = response!!.getInt("mychat_count")
                     val dongchat_count = response!!.getInt("dongchat_count")
 
-                    chatcountTV.setText(mychat_count.toString())
-                    dongchatcountTV.setText(dongchat_count.toString())
-                    mychatcountTV.setText(mychat_count.toString())
-                    dongcountTV.setText(dongchat_count.toString())
+                    chatcountTV.text=mychat_count.toString()
+                    dongchatcountTV.text=dongchat_count.toString()
+                    mychatcountTV.text=mychat_count.toString()
+                    dongcountTV.text=dongchat_count.toString()
 
                     if (type == 1) {
                         if (page == 1) {

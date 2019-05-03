@@ -351,20 +351,13 @@ open class FreeFragment : Fragment() {
 
     fun mainData(keyWord: String) {
         val params = RequestParams()
-        var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
-        var goguntype = PrefUtils.getStringPreference(ctx, "goguntype")
-        var goguntype2 = PrefUtils.getStringPreference(ctx, "goguntype2")
         var region_id = PrefUtils.getStringPreference(ctx, "region_id")
-        var region_id2 = PrefUtils.getStringPreference(ctx, "region_id2")
 
+        Log.d("아뒤",region_id.toString())
         params.put("member_id", member_id)
-        params.put("goguntype", goguntype)
-        params.put("sidotype", sidotype)
         params.put("region_id", region_id)
         params.put("searchKeyword", keyWord)
-        if (region_id2 != "") {
-            params.put("region_id2", region_id2)
-        }
+
         params.put("page", page)
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
