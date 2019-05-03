@@ -1,6 +1,7 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -56,9 +57,9 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<JSONO
         var isSel = json.getBoolean("isSelectedOp")
 
         if (isSel){
-            item.item_option_checkIV.visibility = View.VISIBLE
+            item.item_option_nameTV.setTextColor(Color.parseColor("#33FF33"))
         } else {
-            item.item_option_checkIV.visibility = View.INVISIBLE
+            item.item_option_nameTV.setTextColor(Color.parseColor("#000000"))
         }
 
         return retView
@@ -88,11 +89,9 @@ open class AreaRangeGridAdapter(context: Context, view:Int, data:ArrayList<JSONO
 
 
         var item_option_nameTV : TextView
-        var item_option_checkIV : ImageView
 
         init {
             item_option_nameTV = v.findViewById<View>(R.id.item_option_nameTV) as TextView
-            item_option_checkIV = v.findViewById<View>(R.id.item_option_checkIV) as ImageView
         }
     }
 }

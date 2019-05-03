@@ -125,6 +125,7 @@
 
 
                     </LinearLayout>
+
                     <EditText
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
@@ -135,7 +136,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@null"
-                        android:gravity="center"
+                        android:gravity="left"
+                        android:paddingLeft="6dp"
                         android:textSize="16dp"
                         android:hint="입력"/>
 
