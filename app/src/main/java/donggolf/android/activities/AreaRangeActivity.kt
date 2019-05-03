@@ -270,6 +270,18 @@ class AreaRangeActivity : RootActivity() {
                         var r_name2 = Utils.getString(region2,"name")
                         var r_name3 = Utils.getString(region3,"name")
 
+                        var region_s = ""
+                        if (Utils.getString(region1, "id")!=""){
+                            region_s += Utils.getString(region1, "id")
+                        }
+                        if (Utils.getString(region2, "id")!=""){
+                            region_s += ","+ Utils.getString(region2, "id")
+                        }
+                        if (Utils.getString(region3, "id")!=""){
+                            region_s += ","+ Utils.getString(region3, "id")
+                        }
+                        PrefUtils.setPreference(context,"region_id",region_s)
+
                         var region1_name = Utils.getString(region1,"region_name")
                         var region2_name = Utils.getString(region2,"region_name")
                         var region3_name = Utils.getString(region3,"region_name")

@@ -159,12 +159,12 @@
                                 android:layout_height="wrap_content"
                                 android:text=""
                                 android:textColor="#c9c9c9"
-                                android:textSize="13dp" />
+                                android:textSize="14dp" />
 
                             <ImageView
                                 android:id="@+id/main_item_view_image"
-                                android:layout_width="13dp"
-                                android:layout_height="10dp"
+                                android:layout_width="15dp"
+                                android:layout_height="12dp"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="5dp"
                                 android:background="@drawable/icon_view" />
@@ -177,12 +177,12 @@
                                 android:layout_marginLeft="10dp"
                                 android:text="0"
                                 android:textColor="#C9C9C9"
-                                android:textSize="12dp" />
+                                android:textSize="14dp" />
 
                             <ImageView
                                 android:id="@+id/main_item_comment_image"
-                                android:layout_width="12dp"
-                                android:layout_height="10dp"
+                                android:layout_width="15dp"
+                                android:layout_height="12dp"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="15dp"
                                 android:background="@drawable/icon_comment" />
@@ -195,7 +195,7 @@
                                 android:layout_marginLeft="10dp"
                                 android:text="0"
                                 android:textColor="#C9C9C9"
-                                android:textSize="10dp" />
+                                android:textSize="14dp" />
                         </LinearLayout>
                     </LinearLayout>
 

@@ -1258,7 +1258,7 @@ public class Utils {
 
     public static String fullDateTime(String created) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월 dd일 EEE요일 a h시 mm분", java.util.Locale.KOREA);
+        SimpleDateFormat sdf2 = new SimpleDateFormat("MM월 dd일 h시 mm분", java.util.Locale.KOREA);
         try {
             Date d = sdf1.parse(created);
             return sdf2.format(d);

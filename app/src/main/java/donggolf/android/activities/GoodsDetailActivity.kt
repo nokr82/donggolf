@@ -644,9 +644,10 @@ class GoodsDetailActivity : RootActivity() {
                     tmp_prod_status = Utils.getString(market,"status")
 
 
+                    var created =  Utils.getString(market,"created")
                     sale_statusTV.text = tmp_prod_status
                     prd_titleTV.text = Utils.getString(market,"title")
-                    writtenDateTV.text = Utils.getString(market,"created")
+                    writtenDateTV.text = Utils.fullDateTime(created)
                     descriptionTV.text = Utils.getString(market,"description")
                     if (tmp_prod_status.equals("판매완료")){
                         prd_priceTV.text ="********"
