@@ -182,6 +182,17 @@ class LoginActivity : RootActivity() {
                                 PrefUtils.setPreference(context, "auto", false)
                                 //PrefUtils.setPreference(context, "auto", false)
                             }
+                            var region = ""
+                            if (Utils.getString(member, "region1")!=""){
+                                region += Utils.getString(member, "region1")
+                            }
+                            if (Utils.getString(member, "region2")!=""){
+                                region  += ","+Utils.getString(member, "region2")
+                            }
+                            if (Utils.getString(member, "region3")!=""){
+                                region +=  ","+Utils.getString(member, "region3")
+                            }
+                            PrefUtils.setPreference(context,"region_id",region)
                             PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone",Utils.getString(member,"phone"))

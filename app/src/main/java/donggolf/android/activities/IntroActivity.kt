@@ -184,6 +184,18 @@ class IntroActivity : RootActivity() {
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone", Utils.getString(member,"phone"))
                             PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
+                            var region = ""
+                            if (Utils.getString(member, "region1")!=""){
+                                region += Utils.getString(member, "region1")
+                            }
+                            if (Utils.getString(member, "region2")!=""){
+                                region  += ","+Utils.getString(member, "region2")
+                            }
+                            if (Utils.getString(member, "region3")!=""){
+                                region +=  ","+Utils.getString(member, "region3")
+                            }
+                            PrefUtils.setPreference(context,"region_id",region)
+
                             var intent = Intent(context, MainActivity::class.java)
                             intent.putExtra("is_push", is_push)
                             intent.putExtra("market_id", market_id.toInt())
