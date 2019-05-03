@@ -262,70 +262,26 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             startActivity(intent)
         }
 
-        goguntype = PrefUtils.getStringPreference(context,"region")
-
-        area_style()
-        member_cnt()
+        my_member_cnt()
         updateToken()
 
     }
 
-    //지역별멤버수
-    fun area_style() {
-        val params = RequestParams()
-        params.put("goguntype", goguntype)
-        MemberAction.area_style(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-
-                    if (result == "ok") {
-                        var gogun = response!!.getJSONObject("gogun")
-                        var region = gogun.getJSONObject("Region")
-                        var area = Utils.getString(region,"name")
-
-                        if (area == "전국"||goguntype=="전국") {
-                            areaTV.text = goguntype
-                        } else {
-                            areaTV.text = area + " " + goguntype
-                        }
-
-
-                    }
-
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-//                println(responseString)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-//                println(errorResponse)
-            }
-        })
-    }
 
     //지역별멤버수
-    fun member_cnt() {
+    fun my_member_cnt() {
         val params = RequestParams()
-        params.put("sidotype", sidotype)
-        params.put("goguntype", goguntype)
-        Log.d("지역",PrefUtils.getStringPreference(context,"region"))
-        if (goguntype2 != "") {
-            params.put("goguntype2", goguntype2)
-        }
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
-        MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
+        MemberAction.my_membercnt(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
+                    Log.d("지역멤버",response.toString())
                     val result = response!!.getString("result")
 
                     if (result == "ok") {
                         membercnt = response!!.getString("membercnt")
+                        areaTV.text = "우리동네"
                         areaCntTV.text = membercnt + " 명"
                     }
 
@@ -344,18 +300,46 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             }
         })
     }
+    //지역별멤버수
+    fun member_cnt() {
+        val params = RequestParams()
+        params.put("region_id", region_id)
+
+        MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    Log.d("지역멤버",response.toString())
+                    val result = response!!.getString("result")
+
+                    if (result == "ok") {
+                        membercnt = response!!.getString("membercnt")
+                        var region = response!!.getJSONObject("region")
+                        var region_name = Utils.getString(region,"region_name")
+                        var name =  Utils.getString(region,"name")
+                        if (name =="전국"){
+                            areaTV.text = name
+                        }else if( name =="세종특별시"){
+                            areaTV.text = name
+                        }else{
+                            areaTV.text = region_name+" "+name
+                        }
+                        areaCntTV.text = membercnt + " 명"
+                    }
 
 
-    fun MoveAddPostActivity() {
-        var intent = Intent(context, AddPostActivity::class.java);
-        intent.putExtra("category", 1)
-        startActivityForResult(intent, SELECT_PICTURE);
-    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
 
-    fun MoveMainDetailActivity(id: String) {
-        var intent: Intent = Intent(this, MainDetailActivity::class.java)
-        intent.putExtra("id", id)
-        startActivity(intent)
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+//                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+//                println(errorResponse)
+            }
+        })
     }
 
     fun MoveAreaRangeActivity() {
@@ -376,44 +360,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             when (requestCode) {
                 AREA_OK -> {
                     if (data != null) {
-                        sidotype = data!!.getStringExtra("sidotype")
-                        PrefUtils.setPreference(context, "sidotype", sidotype)
-//                    sidotype2  = data!!.getStringExtra("sidotype2")
-//                    PrefUtils.setPreference(context, "sidotype2", sidotype2)
-                        goguntype = data!!.getStringExtra("goguntype")
-                        PrefUtils.setPreference(context, "goguntype", goguntype)
-//                    goguntype2 =  data!!.getStringExtra("goguntype2")
-//                    PrefUtils.setPreference(context, "goguntype2", goguntype2)
                         region_id = data!!.getStringExtra("region_id")
-                        PrefUtils.setPreference(context, "region_id", region_id)
-//                    region_id2 = data!!.getStringExtra("region_id2")
-//                    PrefUtils.setPreference(context, "region_id2", region_id2)
-                        //Log.d("시도", sidotype)
-
-                        sidotype = PrefUtils.getStringPreference(context, "sidotype")
-//                    sidotype2 = PrefUtils.getStringPreference(context, "sidotype2")
-                        goguntype = PrefUtils.getStringPreference(context, "goguntype")
-//                    goguntype2  =PrefUtils.getStringPreference(context, "goguntype2")
-                        region_id = PrefUtils.getStringPreference(context, "region_id")
-//                    region_id2 = PrefUtils.getStringPreference(context,"region_id2")
                         member_cnt()
                         var intent = Intent()
                         intent.action = "MSG_NEXT"
                         context.sendBroadcast(intent)
 
-                        if (sidotype == "전국") {
-                            areaTV.text = sidotype
-                        } else if (sidotype == "세종특별자치시") {
-//                        areaTV.text =  sidotype +"/ "+ sidotype2+" " +goguntype2
-                            areaTV.text = sidotype
-                        }
-//                    else if (sidotype2 == "세종특별자치시"){
-//                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2
-//                    }
-                        else {
-//                        areaTV.text =  sidotype+" " +goguntype +"/ "+ sidotype2+" " +goguntype2
-                            areaTV.text = sidotype + " " + goguntype
-                        }
+
                     }
 
                 }

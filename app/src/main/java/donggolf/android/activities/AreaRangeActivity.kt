@@ -86,15 +86,9 @@ class AreaRangeActivity : RootActivity() {
             }
 
             if (Utils.getString(type,"name") == "세종특별자치시") {
-//                region_id = Utils.getString(type,"id")
-//                goguntype = name
-//                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
-//                areacount++
-
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", sidotype)
                 intent.putExtra("region_id", id)
-//                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -102,12 +96,8 @@ class AreaRangeActivity : RootActivity() {
             } else if (Utils.getString(type,"name") == "전국"){
                 var intent = Intent();
                 intent.putExtra("sidotype", sidotype)
-//                intent.putExtra("sidotype2", sidotype)
                 intent.putExtra("goguntype", sidotype)
-//                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
-//                PrefUtils.setPreference(context, "region_id", region_id)
-//                intent.putExtra("region_id2", id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -183,87 +173,6 @@ class AreaRangeActivity : RootActivity() {
 
     }
 
-    fun tempMyActRegion() {
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        tmpRegionLL.removeAllViews()
-
-                        val region1 = Utils.getString(member,"region1")
-                        if (!region1.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region1
-                            userRG1 = region1
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG1 = ""
-                                actArea--
-                                //println("userRG1 : $userRG1, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region2 = Utils.getString(member,"region2")
-                        if (!region2.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region2
-                            userRG2 = region2
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG2 = ""
-                                actArea--
-                                //println("userRG2 : $userRG2, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region3 = Utils.getString(member,"region3")
-                        if (!region3.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region3
-                            userRG3 = region3
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG3 = ""
-                                actArea--
-                                //println("userRG3 : $userRG3, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        areaCnt.text = "지역 범위 설정 ($actArea/3)"
-
-                    } else {
-
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-    }
 
 
     fun getBigCity(){
