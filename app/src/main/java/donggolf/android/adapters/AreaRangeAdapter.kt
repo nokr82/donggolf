@@ -48,9 +48,9 @@ open class AreaRangeAdapter(context: Context, view:Int, data:ArrayList<JSONObjec
         var json = data.get(position)
 
         var type = json.getJSONObject("Regions")
-
+        var member_cnt:String = Utils.getString(type,"member_cnt")
         var name:String = Utils.getString(type,"name")
-        item.item_option_nameTV.text = name
+        item.item_option_nameTV.text = name+"("+member_cnt+")"
 
         var isSel = json.getBoolean("isSelectedOp")
         if (isSel){

@@ -40,6 +40,7 @@ class AreaMyRangeActivity : RootActivity() {
     var userRG2 = ""
     var userRG3 = ""
 
+    var parent_id = 0
     lateinit var type :String
 
     var bigcitylist: ArrayList<JSONObject> = ArrayList<JSONObject>()
@@ -77,7 +78,7 @@ class AreaMyRangeActivity : RootActivity() {
         arealistLV.setOnItemClickListener { parent, view, position, id ->
             val item = bigcitylist.get(position)
             var type = item.getJSONObject("Regions")
-            val region_id = Utils.getString(type,"id")
+            parent_id = Utils.getInt(type,"id")
             var name:String = Utils.getString(type,"name")
             if (name == "세종특별자치시"){
                 var index = areaCnt.text.toString().toInt()
@@ -92,9 +93,9 @@ class AreaMyRangeActivity : RootActivity() {
                 actArea++
 
                 when (actArea) {
-                    1 -> userRG1 = region_id.toString()
-                    2 -> userRG2 = region_id.toString()
-                    3 -> userRG3 = region_id.toString()
+                    1 -> userRG1 = parent_id.toString()
+                    2 -> userRG2 = parent_id.toString()
+                    3 -> userRG3 = parent_id.toString()
                 }
 
                 regionView.regionDelIV.setOnClickListener {
@@ -124,7 +125,7 @@ class AreaMyRangeActivity : RootActivity() {
                 userRG3 = "0"
                 update_info()
             } else {
-                getGugun(region_id.toInt())
+                getGugun(parent_id)
                 arealistLV.visibility = View.GONE
                 gridGV.visibility = View.VISIBLE
             }
@@ -250,6 +251,7 @@ class AreaMyRangeActivity : RootActivity() {
         params.put("region1", userRG1)
         params.put("region2", userRG2)
         params.put("region3", userRG3)
+        params.put("parent_id", parent_id)
 
         MemberAction.update_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
