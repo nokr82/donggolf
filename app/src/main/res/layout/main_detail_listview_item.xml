@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLength="7"
-                    android:text="sdsdsds"
+                    android:text=""
                     android:textColor="#EF5C34"
                     android:textSize="15dp" />
 
@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:layout_marginLeft="10dp"
-                    android:text="sdsdsddsasdasdasdad"
+                    android:text=""
                     android:textColor="#95000000"
                     android:textSize="13dp" />
 
