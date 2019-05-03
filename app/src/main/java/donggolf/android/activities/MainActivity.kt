@@ -361,10 +361,15 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 AREA_OK -> {
                     if (data != null) {
                         region_id = data!!.getStringExtra("region_id")
-                        member_cnt()
-                        var intent = Intent()
-                        intent.action = "MSG_NEXT"
-                        context.sendBroadcast(intent)
+                        if (region_id=="no"){
+                            my_member_cnt()
+                        }else{
+                            member_cnt()
+                            var intent = Intent()
+                            intent.action = "MSG_NEXT"
+                            context.sendBroadcast(intent)
+                        }
+
 
 
                     }
@@ -386,22 +391,6 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         infoIV.setBackgroundResource(R.drawable.img_line_1)
     }
 
-    private fun updateUI(currentUser: FirebaseUser?) {
-//        mAuth!!.signInWithCustomToken(mCustomToken)
-//                .addOnCompleteListener(this) { task ->
-//                    if (task.isSuccessful) {
-//                        // Sign in success, update UI with the signed-in user's information
-//                        Log.d(TAG, "signInWithCustomToken:success")
-//                        val user = mAuth!!.getCurrentUser()
-//                        updateUI(user)
-//                    } else {
-//                        // If sign in fails, display a message to the user.
-//                        Log.w(TAG, "signInWithCustomToken:failure", task.exception)
-//                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-//                        updateUI(null)
-//                    }
-//                }
-    }
 
     class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 

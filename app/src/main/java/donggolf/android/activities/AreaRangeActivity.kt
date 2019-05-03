@@ -20,7 +20,9 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_area_range.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_area.view.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -68,8 +70,17 @@ class AreaRangeActivity : RootActivity() {
 
         titleTV.text = "동네탐방하기"
 
+        accTV.visibility = View.GONE
+
+        myTV.visibility = View.VISIBLE
 
         getBigCity()
+
+        myTV.setOnClickListener {
+            intent.putExtra("region_id", "no")
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
 
         adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
         arealistLV.adapter = adapter
@@ -78,6 +89,7 @@ class AreaRangeActivity : RootActivity() {
             var type = item.getJSONObject("Regions")
             var id  = Utils.getString(type,"id")
             var name:String = Utils.getString(type,"name")
+            myTV.visibility = View.GONE
 
             if (areacount == 0){
                 sidotype = Utils.getString(type,"name")
@@ -163,6 +175,7 @@ class AreaRangeActivity : RootActivity() {
 
         finishLL.setOnClickListener {
             if (gridGV.visibility == View.VISIBLE){
+                myTV.visibility = View.VISIBLE
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
             } else {
@@ -170,7 +183,7 @@ class AreaRangeActivity : RootActivity() {
             }
 
         }
-
+        my_member_cnt()
     }
 
 
@@ -231,6 +244,82 @@ class AreaRangeActivity : RootActivity() {
             }
         })
     }
+    //지역별멤버수
+    fun my_member_cnt() {
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
+        MemberAction.my_membercnt(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    Log.d("지역멤버",response.toString())
+                    val result = response!!.getString("result")
+
+
+
+
+                    if (result == "ok") {
+
+
+                        val region1 = response.getJSONObject("region1")
+                        val region2 = response.getJSONObject("region2")
+                        val region3 = response.getJSONObject("region3")
+
+                        var r_name1 = Utils.getString(region1,"name")
+                        var r_name2 = Utils.getString(region2,"name")
+                        var r_name3 = Utils.getString(region3,"name")
+
+                        var region1_name = Utils.getString(region1,"region_name")
+                        var region2_name = Utils.getString(region2,"region_name")
+                        var region3_name = Utils.getString(region3,"region_name")
+                        var region = ""
+
+                        if (r_name1 != null && r_name1 != "") {
+                            if (region1_name.contains("시")){
+                                region += region1_name+"<"+r_name1
+                            }else{
+                                region += r_name1
+                            }
+                        }
+
+                        if (r_name2 != null && r_name2 != "") {
+                            if (region2_name.contains("시")){
+                                region += ","+region2_name+"<"+r_name2
+                            }else{
+                                region +=","+ r_name2
+                            }
+                        }
+
+                        if (r_name3 != null && r_name3 != "") {
+                            if (region3_name.contains("시")){
+                                region += ","+region3_name+"<"+r_name3
+                            }else{
+                                region +=","+ r_name3
+                            }
+                        }
+
+                        if (r_name1 == "전국") {
+                            region = "전국"
+                        }
+
+                        var membercnt = response!!.getString("membercnt")
+                        myTV.text = "우리동네"+"("+membercnt+")"+"   "+region
+                    }
+
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+//                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+//                println(errorResponse)
+            }
+        })
+    }
 
 }
