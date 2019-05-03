@@ -14,7 +14,6 @@ import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.*
-import com.github.irshulx.EditorListener
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -27,6 +26,7 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
 import donggolf.android.base.*
+import donggolf.android.editor.EditorListener
 import donggolf.android.models.*
 import kotlinx.android.synthetic.main.activity_add_post.*
 import org.json.JSONException
