@@ -2058,6 +2058,8 @@ public class Utils {
             int m = timer / 60 % 60;
             int s = timer % 60;
 
+            System.out.println("h : " + h);
+
             String txt_d = "0";
             String txt_h = "";
             String txt_m = "";
@@ -2085,9 +2087,9 @@ public class Utils {
             }
 
             if (!"0".equals(txt_d)) {
-                return  txt_h + "일";
+                return  txt_d + "일 " + txt_h + "시간";
             } else if (!"0".equals(txt_h)) {
-                return  txt_h + "시";
+                return  txt_h + "시간";
             } else {
                 return  txt_m + "분";
             }

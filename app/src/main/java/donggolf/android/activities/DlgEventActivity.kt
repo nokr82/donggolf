@@ -44,11 +44,16 @@ class DlgEventActivity : RootActivity() {
 
         event_id = intent.getIntExtra("event_id", -1)
         participation = intent.getStringExtra("participation")
+        val myNumber1 = intent.getStringExtra("myNumber1")
+        val myNumber2 = intent.getStringExtra("myNumber2")
+
+        number1ET.setText(myNumber1)
+        number2ET.setText(myNumber2)
 
         if (participation == "Y") {
-            titleTV.text = "추첨 번호 수정"
+            titleTV.text = "이벤트 참여번호 수정"
         } else {
-            titleTV.text = "추첨 번호 등록"
+            titleTV.text = "이벤트 참여번호 등록"
         }
 
         finishLL.setOnClickListener {
@@ -63,6 +68,13 @@ class DlgEventActivity : RootActivity() {
             val number2 = Utils.getInt(number2ET)
 
             if (number1 < 1 || number2 < 1 || number1 > 64 || number2 > 64) {
+                errorTV.text = "1 ~ 64번 사이에 숫자를 입력해 주세요"
+                errorTV.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+
+            if(number1 == number2) {
+                errorTV.text = "중복되지 않게 숫자를 입력해 주세요"
                 errorTV.visibility = View.VISIBLE
                 return@setOnClickListener
             }
@@ -71,11 +83,11 @@ class DlgEventActivity : RootActivity() {
             var number2_str = number2.toString()
 
             if (number1 < 10) {
-                number1_str = "0" + number1_str
+                number1_str = "0$number1_str"
             }
 
             if (number2 < 10) {
-                number2_str = "0" + number2_str
+                number2_str = "0$number2_str"
             }
 
             eventParticipation(number1_str, number2_str)

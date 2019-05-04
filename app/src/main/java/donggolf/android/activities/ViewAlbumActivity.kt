@@ -6,17 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
-import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
-import cz.msebera.android.httpclient.Header
-import donggolf.android.R
-import donggolf.android.actions.MemberAction
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import kotlinx.android.synthetic.main.activity_view_album.*
-import org.json.JSONException
-import org.json.JSONObject
 import android.view.View
 import android.widget.AdapterView
 import android.widget.BaseAdapter
@@ -24,11 +13,20 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
+import donggolf.android.R
+import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.ViewAlbumAdapter
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
+import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_view_album.*
 import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
-import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.util.*
 
@@ -388,7 +386,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 
             //Log.d("알라",  albumList[position].toString())
 
-            val intent = Intent(context,WebPictureDetailActivity::class.java)
+            val intent = Intent(context, WebPictureDetailActivity::class.java)
             intent.putExtra("src", Config.url+src)
             context.startActivity(intent)
         }else{

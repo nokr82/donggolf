@@ -11,9 +11,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
-import android.util.Log
 import android.view.View
 import android.widget.*
+import com.github.irshulx.EditorListener
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -26,12 +26,14 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
 import donggolf.android.base.*
-import donggolf.android.editor.EditorListener
-import donggolf.android.models.*
+import donggolf.android.models.ImagesPath
+import donggolf.android.models.TmpContent
 import kotlinx.android.synthetic.main.activity_add_post.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 var html = ""
@@ -40,7 +42,7 @@ var html = ""
 class AddPostActivity : RootActivity() {
 
     private lateinit var mAuth: FirebaseAuth
-    private var editorImageLayout = com.github.irshulx.R.layout.tmpl_image_view
+    private var editorImageLayout = R.layout.tmpl_image_view
     private lateinit var context: Context
     private val SELECT_PICTURE: Int = 101
     private val SELECT_VIDEO: Int = 102

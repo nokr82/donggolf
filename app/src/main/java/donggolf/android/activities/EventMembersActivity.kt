@@ -47,11 +47,12 @@ class EventMembersActivity : RootActivity() {
 
         event_id = intent.getIntExtra("event_id", -1)
         finish = intent.getStringExtra("finish")
+        val numbers = intent.getStringExtra("numbers")
 
         if (finish == "Y") {
-            titleTV.text = "이벤트 참여자 보기"
+            titleTV.text = "추첨 결과 보기(추첨번호 : ${numbers})"
         } else {
-            titleTV.text = "이벤트 결과보기"
+            titleTV.text = "이벤트 참여자 보기"
         }
 
         adapter = EventMemberAdapter(context, R.layout.item_event_member, adapterData, this)
@@ -69,7 +70,7 @@ class EventMembersActivity : RootActivity() {
             }
 
             val intent = Intent(context, ProfileActivity::class.java)
-            intent.putExtra("member_id", member_id)
+            intent.putExtra("member_id", member_id.toString())
             startActivity(intent)
 
         }
@@ -81,6 +82,7 @@ class EventMembersActivity : RootActivity() {
         loadData()
 
     }
+
     fun loadData(){
         val params = RequestParams()
         params.put("member_id", member_id)
@@ -89,6 +91,8 @@ class EventMembersActivity : RootActivity() {
         EventsAction.event_members(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
+
+                println("res : $response")
 
                 if (result == "ok") {
 

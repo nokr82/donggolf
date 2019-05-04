@@ -72,7 +72,7 @@
                     android:background="@drawable/img_line_1" />
 
 
-                <donggolf.android.editor.Editor
+                <com.github.irshulx.Editor
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"

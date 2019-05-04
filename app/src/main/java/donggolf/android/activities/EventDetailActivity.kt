@@ -2,7 +2,8 @@ package donggolf.android.activities
 
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.*
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -32,6 +33,10 @@ class EventDetailActivity : RootActivity() {
     var finish = ""
     var participation = ""
     var participation_possible = ""
+    var number1 = ""
+    var number2 = ""
+    var myNumber1 = ""
+    var myNumber2 = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,8 @@ class EventDetailActivity : RootActivity() {
                     var intent = Intent(context, DlgEventActivity::class.java)
                     intent.putExtra("event_id", event_id)
                     intent.putExtra("participation", participation)
+                    intent.putExtra("myNumber1", myNumber1)
+                    intent.putExtra("myNumber2", myNumber2)
                     startActivityForResult(intent, PARTICIPATION_EVENT)
                 }
             }
@@ -79,6 +86,7 @@ class EventDetailActivity : RootActivity() {
             var intent = Intent(context, EventMembersActivity::class.java)
             intent.putExtra("event_id", event_id)
             intent.putExtra("finish", finish)
+            intent.putExtra("numbers", "$number1,$number2")
             startActivity(intent)
         }
 
@@ -101,6 +109,8 @@ class EventDetailActivity : RootActivity() {
 
                     val event = response.getJSONObject("Event")
 
+                    webWV.loadUrl( Config.url + "/events/view?id=${Utils.getInt(event, "id")}")
+
                     finish = Utils.getString(response, "finish")
                     participation = Utils.getString(response, "participation")
                     participation_possible = Utils.getString(response, "participation_possible")
@@ -109,9 +119,10 @@ class EventDetailActivity : RootActivity() {
                         membersLL.visibility = View.GONE
                         resultLL.visibility = View.VISIBLE
 
+                        numberTV.visibility = View.GONE
 
-                        val number1 = Utils.getString(event, "number1")
-                        val number2 = Utils.getString(event, "number2")
+                        number1 = Utils.getString(event, "number1")
+                        number2 = Utils.getString(event, "number2")
 
                         if (number1.length == 2 && number2.length == 2) {
                             num1TV.text = number1.substring(0, 1)
@@ -126,8 +137,11 @@ class EventDetailActivity : RootActivity() {
                         membersLL.visibility = View.VISIBLE
                         resultLL.visibility = View.GONE
 
-                        leftTimeTV.dest_date_time = Utils.getInt(response, "timer")
-                        leftTimeTV.start()
+                        numberTV.visibility = View.VISIBLE
+
+                        val dest_date_time = Utils.getInt(response, "timer")
+                        leftTimeTV.text = "추첨 : ${Utils.dateString2(context, dest_date_time)}전"
+                        // leftTimeTV.start()
                     }
 
                     membersTV.text = "${Utils.getInt(response, "eventMembers")}명 참여자 보기"
@@ -135,7 +149,10 @@ class EventDetailActivity : RootActivity() {
                     if (participation == "Y") {
                         val eventMember = response.getJSONObject("EventMember")
 
-                        numberTV.text = Utils.getString(eventMember, "number1") + Utils.getString(eventMember, "number2")
+                        myNumber1 = Utils.getString(eventMember, "number1")
+                        myNumber2 = Utils.getString(eventMember, "number2")
+
+                        numberTV.text = myNumber1 + myNumber2
                     } else {
                         numberTV.text = "참여하기"
                     }
@@ -147,8 +164,6 @@ class EventDetailActivity : RootActivity() {
 
                     titleTV.text = title
                     dateTV.text = created_str
-
-                    webWV.loadUrl( Config.url + "/events/view?id=${Utils.getInt(event, "id")}")
 
                 } else {
 

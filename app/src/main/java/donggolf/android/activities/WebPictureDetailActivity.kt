@@ -19,7 +19,7 @@ class WebPictureDetailActivity : RootActivity() {
 
         context = this
         src = intent.getStringExtra("src")
-        ImageLoader.getInstance().displayImage(src,webIV, Utils.UILoptionsProfile)
+        ImageLoader.getInstance().displayImage(src, webIV, Utils.UILoptionsProfile)
 
         ifinishLL.setOnClickListener {
             finish()

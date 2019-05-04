@@ -39,18 +39,17 @@
         android:layout_marginRight="15dp"
         android:gravity="right"
         android:textSize="13dp"
-        android:text="추첨번호 4504"/>
+        android:text="이벤트 참여번호 4504"/>
 
     <TextView
         android:id="@+id/gradeTV"
-        android:layout_width="0dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="15dp"
         android:gravity="right"
         android:textSize="13dp"
-        android:text="45등"
+        android:text=""
         android:visibility="invisible"/>
 
 </LinearLayout>
