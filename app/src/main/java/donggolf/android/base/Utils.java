@@ -94,6 +94,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import donggolf.android.R;
+import donggolf.android.activities.EventDetailActivity;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public class Utils {
     private static Bitmap noImageBitmap = null;
@@ -918,22 +921,28 @@ public class Utils {
         alert.show();
     }
 
-    public static void alert(Context context, String msg, final AlertListener alertListener) {
-        if (alertListener != null && alertListener.before()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage(msg).setCancelable(false).setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
+    public static void alert(Context context, String msg, String okBtnText, Function0<Unit> function) {
+        Utils.alert(context, msg, okBtnText, "취소", function);
+    }
 
-                    if (alertListener != null) {
-                        alertListener.after();
-                    }
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
+    public static void alert(Context context, String msg, String okBtnText, String noBtnText, final Function0<Unit> function) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(msg).setCancelable(false);
+        builder.setPositiveButton(okBtnText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                function.invoke();
+            }
+        });
+        builder.setNegativeButton(noBtnText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public static String getipAddress() {
@@ -2058,8 +2067,6 @@ public class Utils {
             int m = timer / 60 % 60;
             int s = timer % 60;
 
-            System.out.println("h : " + h);
-
             String txt_d = "0";
             String txt_h = "";
             String txt_m = "";
@@ -2098,5 +2105,4 @@ public class Utils {
 
         return "";
     }
-
 }

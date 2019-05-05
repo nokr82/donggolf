@@ -84,7 +84,7 @@ class ModStatusMsgActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("InfoFrag :: ${response.toString()}")
+                    // println("InfoFrag :: ${response.toString()}")
 
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")

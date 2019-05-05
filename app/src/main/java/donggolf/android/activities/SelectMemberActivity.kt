@@ -3,7 +3,6 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -22,10 +21,9 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_select_member.*
-import kotlinx.android.synthetic.main.item_select_member.view.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 class SelectMemberActivity : RootActivity() {
 
@@ -264,7 +262,7 @@ class SelectMemberActivity : RootActivity() {
                                 }
                             }
 
-                            println("member_count ----- $member_count")
+                            // println("member_count ----- $member_count")
 
                             if (room_id == "") {
                                 for (i in 0 until mate_nicks.size) {
@@ -354,7 +352,7 @@ class SelectMemberActivity : RootActivity() {
         MateAction.mateList(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         if (memberList != null){
@@ -376,11 +374,11 @@ class SelectMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -414,11 +412,11 @@ class SelectMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -447,11 +445,11 @@ class SelectMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
 
@@ -476,7 +474,7 @@ class SelectMemberActivity : RootActivity() {
         ChattingAction.get_chat_member(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         if (blockMemberList != null){
@@ -507,11 +505,11 @@ class SelectMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -537,7 +535,7 @@ class SelectMemberActivity : RootActivity() {
         params.put("room_id", room_id)
         params.put("last_id", last_id)
 
-        println("-------blocks")
+        // println("-------blocks")
 
 
         ChattingAction.set_dongchat_block(params, object : JsonHttpResponseHandler(){
@@ -554,11 +552,11 @@ class SelectMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

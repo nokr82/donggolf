@@ -50,8 +50,6 @@ class GoodsImageAdapter(private val context: Context, private var pictures: Arra
 
         val picture = pictures.get(position)
 
-        print("picture:::::::::::::::::::$picture")
-
         val image_uri = Utils.getString(picture, "image_uri")
         val id = Utils.getInt(picture, "id")
         val path = Utils.getString(picture, "path")

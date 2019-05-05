@@ -205,11 +205,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -235,12 +235,13 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                if (errorResponse != null)
-                    println(errorResponse.getString("message"))
+                if (errorResponse != null) {
+                    // println(errorResponse.getString("message"))
+                }
             }
         })
     }
@@ -256,7 +257,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             val MemberImg = item.getJSONObject("MemberImg")
             val image_id = Utils.getString(MemberImg,"id")
             selectedImageList.add(image_id)
-            println("---------$image_id")
+            // println("---------$image_id")
         }
 
         val params = RequestParams()
@@ -267,8 +268,8 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
 
-                    println(response)
-                    println(selImgViewPositions)
+                    // println(response)
+                    // println(selImgViewPositions)
                     /*for (i in 0 until selImgViewPositions.size) {
                         //eachViewAdapter.removeItem(selImgViewPositions[i])
                         albumList.removeAt(selImgViewPositions[i])
@@ -289,11 +290,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
@@ -329,11 +330,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

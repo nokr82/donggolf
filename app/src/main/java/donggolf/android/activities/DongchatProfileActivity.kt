@@ -11,9 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -23,21 +21,19 @@ import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
-import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_dongchat_profile.*
-import kotlinx.android.synthetic.main.dlg_chat_blockcode.*
 import kotlinx.android.synthetic.main.dlg_chat_blockcode.view.*
 import kotlinx.android.synthetic.main.dlg_comment_menu.view.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.util.ArrayList
+import java.util.*
 
 
 class DongchatProfileActivity : RootActivity() {
@@ -127,7 +123,7 @@ class DongchatProfileActivity : RootActivity() {
 
 
         backgroundVP.setOnClickListener {
-            println("-------backgroundPath : $backgroundPath")
+            // println("-------backgroundPath : $backgroundPath")
             if (backgroundPath == "") {
                 return@setOnClickListener
             }
@@ -143,7 +139,7 @@ class DongchatProfileActivity : RootActivity() {
         }
 
         profileIV.setOnClickListener {
-            println("-------profilePath : $profilePath")
+            // println("-------profilePath : $profilePath")
             if (profilePath == "") {
                 return@setOnClickListener
             }
@@ -513,7 +509,7 @@ class DongchatProfileActivity : RootActivity() {
         ChattingAction.add_chat_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         val intent = Intent(context, DongChatDetailActivity::class.java)
@@ -532,11 +528,11 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -549,7 +545,7 @@ class DongchatProfileActivity : RootActivity() {
         ChattingAction.set_notice(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
 
@@ -560,11 +556,11 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -578,7 +574,7 @@ class DongchatProfileActivity : RootActivity() {
         ChattingAction.set_title(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         if (title!=""){
@@ -594,11 +590,11 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -611,7 +607,7 @@ class DongchatProfileActivity : RootActivity() {
         ChattingAction.set_introduce(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         introduceTV.setText(introduce)
@@ -622,11 +618,11 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -656,11 +652,11 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -774,7 +770,7 @@ class DongchatProfileActivity : RootActivity() {
     override fun finish() {
         super.finish()
 
-        println("DONG_CHAT_RESULT::::::::::::::::::::::::::::::$DONG_CHAT_RESULT")
+        // println("DONG_CHAT_RESULT::::::::::::::::::::::::::::::$DONG_CHAT_RESULT")
 
         if (DONG_CHAT_RESULT == true) {
             var intent = getIntent()

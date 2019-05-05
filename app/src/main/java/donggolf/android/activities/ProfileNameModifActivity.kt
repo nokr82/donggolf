@@ -68,7 +68,7 @@ class ProfileNameModifActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("InfoFrag :: $response")
+                    // println("InfoFrag :: $response")
 
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")

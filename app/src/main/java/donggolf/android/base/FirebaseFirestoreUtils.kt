@@ -63,8 +63,8 @@ class FirebaseFirestoreUtils {
                 val key = it
                 val value = params[key]
 
-                println("key in FireBaseFireStoreUtils===================================================================$key")
-                println("value in FireBaseFireStoreUtils=================================================================$value")
+                // println("key in FireBaseFireStoreUtils===================================================================$key")
+                // println("value in FireBaseFireStoreUtils=================================================================$value")
 
                 query = ref.whereEqualTo(key, value)
             }
@@ -240,9 +240,9 @@ class FirebaseFirestoreUtils {
                 val key = it
                 val value = params[key]
 
-                println("key : " + key)
-                println("value : " + value)
-                println("================================================================")
+                // println("key : " + key)
+                // println("value : " + value)
+                // println("================================================================")
 
                 ref.whereEqualTo(key.toString(), value);
             }
@@ -298,7 +298,7 @@ class FirebaseFirestoreUtils {
             val ref = storage.reference.child(path)
             ref.putBytes(bytes)
                     .addOnSuccessListener {
-                        println(it.storage)
+                        // println(it.storage)
                         result(true)
                     }
                     .addOnFailureListener {

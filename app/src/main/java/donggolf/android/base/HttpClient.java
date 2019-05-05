@@ -20,7 +20,8 @@ public class HttpClient {
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-          System.out.println("GET : " + Config.url + url + "?" + params);
+          // System.out.println("GET : " + Config.url + url + "?" + params);
+
         if (params != null) {
             client.get(Config.url + url, params, responseHandler);
         } else {
@@ -30,7 +31,7 @@ public class HttpClient {
 
     public static void get2(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-        System.out.println("GET2 : " + url + "?" + params);
+        // System.out.println("GET2 : " + url + "?" + params);
 
         if (params != null) {
             client.get(url, params, responseHandler);
@@ -41,7 +42,7 @@ public class HttpClient {
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-        System.out.println("POST : " + Config.url + url + "?" + params);
+        // System.out.println("POST : " + Config.url + url + "?" + params);
 
         client.setTimeout(60 * 1000);
 
@@ -67,8 +68,8 @@ public class HttpClient {
         StringEntity entity = new StringEntity(jsonParams.toString(), Charset.forName("UTF-8"));
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 
-         System.out.println("params.toString() : " + jsonParams.toString());
-         System.out.println("entity : " + entity);
+         // System.out.println("params.toString() : " + jsonParams.toString());
+         // System.out.println("entity : " + entity);
 
         Header[] headers = new Header[1];
         headers[0] = new BasicHeader("Accept", "application/vnd.tosslab.jandi-v2+json");

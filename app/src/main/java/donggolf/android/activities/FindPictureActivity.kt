@@ -115,7 +115,7 @@ class FindPictureActivity : RootActivity() {
                 }
 
                 c.close()
-                println("videodata${videodata}")
+                // println("videodata${videodata}")
                 videoadapter = CustomVideoFolderArrayAdapter(context, R.layout.item_custom_gallery_folder, videodata)
                 findpictre_listview.setAdapter(videoadapter)
 
@@ -201,7 +201,7 @@ class FindPictureActivity : RootActivity() {
             cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
 //            cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, null);
 
-            println(" cursor : " + cursor.count)
+            // println(" cursor : " + cursor.count)
 
             if (cursor != null && cursor.moveToFirst()) {
 
