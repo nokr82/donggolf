@@ -141,10 +141,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun isAppRunning(context: Context): Boolean {
         val PackageName = packageName
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val componentInfo: ComponentName?
+        var componentInfo: ComponentName? = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val tasks = manager.appTasks
-            componentInfo = tasks[0].taskInfo.topActivity
+            if(tasks != null && tasks.count() > 0) {
+                componentInfo = tasks[0].taskInfo.topActivity
+            }
         } else {
             val tasks = manager.getRunningTasks(1)
             componentInfo = tasks[0].topActivity

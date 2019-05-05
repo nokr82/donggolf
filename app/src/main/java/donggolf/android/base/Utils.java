@@ -476,7 +476,7 @@ public class Utils {
                     exif = new ExifInterface(photoPath);
                     int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                     orientation = Utils.exifOrientationToDegrees(exifOrientation);
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
 
