@@ -921,6 +921,10 @@ public class Utils {
         alert.show();
     }
 
+    public static void alert(Context context, String msg, Function0<Unit> function) {
+        Utils.alert(context, msg, "확인", "취소", function);
+    }
+
     public static void alert(Context context, String msg, String okBtnText, Function0<Unit> function) {
         Utils.alert(context, msg, okBtnText, "취소", function);
     }

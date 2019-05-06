@@ -30,10 +30,10 @@
                 android:textColor="#000000"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/friendsLL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:id="@+id/friendsLL">
+            android:layout_margin="10dp">
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="19dp"

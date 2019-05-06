@@ -130,16 +130,18 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/setRegionLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:orientation="horizontal"
         android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="15dp"
+            android:textSize="14dp"
             android:text="부천,인천,구로"
             android:layout_marginRight="5dp"
             android:id="@+id/txUserRegion" />

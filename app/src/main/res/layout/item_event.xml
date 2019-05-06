@@ -17,8 +17,7 @@
             android:id="@+id/titleTV"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:singleLine="true"
-            android:maxLines="1"
+            android:maxLines="2"
             android:ellipsize="end"
             android:textSize="16dp"
             android:textStyle="bold"
@@ -28,7 +27,7 @@
             android:id="@+id/contentsTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:maxLines="3"
             android:ellipsize="end"
             android:textColor="#707070"
@@ -39,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="4dp">
 
             <donggolf.android.base.ElapsedTimeTextView
                 android:id="@+id/deadlineTV"

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -48,8 +47,6 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_friend_search.*
-import kotlinx.android.synthetic.main.activity_friend_search.areaTV
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dlg_invite_frd.view.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -71,7 +68,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     lateinit var user: HashMap<String, Any>
 
     var membercnt = ""
-    var region_id = ""
+    // var region_id = ""
     //초대
     private var callback: SessionCallback? = null
 
@@ -107,7 +104,7 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
         intent = getIntent()
         membercnt = intent.getStringExtra("membercnt")
         var title = intent.getStringExtra("title")
-        region_id = PrefUtils.getStringPreference(context, "region_id")
+        // region_id = PrefUtils.getStringPreference(context, "region_id")
         member_cntTV.text = "골퍼 " + membercnt + "명"
         areaTV.text = title
 
@@ -363,9 +360,12 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
     //키워드로 찾음
     fun friendSearchWords(keyWord: String) {
+
+        val main_region_id = PrefUtils.getStringPreference(context, "main_region_id")
+
         val params = RequestParams()
         params.put("keyword", keyWord)
-        params.put("region_id", region_id)
+        params.put("region_id", main_region_id)
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
 
         MemberAction.search_member(params, object : JsonHttpResponseHandler() {
@@ -571,10 +571,15 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
     override fun onDestroy() {
         super.onDestroy()
         Utils.hideKeyboard(context)
+
+        progressDialog = null;
     }
+
     fun get_region_member(keyword:String) {
+        val main_region_id = PrefUtils.getStringPreference(context, "main_region_id")
+
         val params = RequestParams()
-        params.put("region_id", region_id)
+        params.put("region_id", main_region_id)
         params.put("page", page)
         params.put("keyword", keyword)
         params.put("member_id",PrefUtils.getIntPreference(context, "member_id"))
@@ -583,6 +588,11 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
 
         MemberAction.get_region_member(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
+                if(isDestroyed || isFinishing) {
+                    return
+                }
+
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
@@ -640,15 +650,14 @@ class FriendSearchActivity : RootActivity() , AbsListView.OnScrollListener{
             override fun onStart() {
                 // show dialog
                 if (progressDialog != null) {
-
                     progressDialog!!.show()
                 }
             }
 
             override fun onFinish() {
-                if (progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
+//                if (progressDialog != null) {
+//                    progressDialog!!.dismiss()
+//                }
             }
         })
     }

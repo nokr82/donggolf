@@ -3,14 +3,15 @@ package donggolf.android.adapters
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
-import donggolf.android.activities.PictureDetailActivity
 import donggolf.android.activities.ProfileActivity
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -80,15 +81,15 @@ open class GoodsComAdapter(context: Context, view: Int, data: ArrayList<JSONObje
         if (p_comments_id != -1) {
             if (op_comments_id != -1) {
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
 
             } else {
                 item.main_detail_comment_typeIV.visibility = View.VISIBLE
-                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
+                item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
             }
         } else if (op_comments_id != -1) {
             item.main_detail_comment_typeIV.visibility = View.VISIBLE
-            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment1)
+            item.main_detail_comment_typeIV.setImageResource(R.drawable.icon_comment2)
 
         } else {
             item.main_detail_comment_typeIV.visibility = View.GONE

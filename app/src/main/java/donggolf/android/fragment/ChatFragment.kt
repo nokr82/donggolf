@@ -214,7 +214,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var isMyChat = true
 
-        getmychat(1)
+        // getmychat(1)
 
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)

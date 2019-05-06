@@ -564,26 +564,26 @@ class AddPostActivity : RootActivity() {
         params.put("cht_yn", cht_yn)
         params.put("cmt_yn", cmt_yn)
 
-        if (PrefUtils.getStringPreference(context, "region_id") != null) {
-            var region_id = PrefUtils.getStringPreference(context, "region_id")
+        val region_id = PrefUtils.getStringPreference(context, "region_id")
+        if (region_id != null && region_id.isNotEmpty()) {
             params.put("region", region_id)
         } else {
-            var region_id = 0
+            val region_id = 0
             params.put("region", region_id)
         }
 
         if (PrefUtils.getStringPreference(context, "region_id2") != null) {
-            var region_id = PrefUtils.getStringPreference(context, "region_id2")
+            val region_id = PrefUtils.getStringPreference(context, "region_id2")
             params.put("region2", region_id)
         } else {
-            var region_id = 1
+            val region_id = 1
             params.put("region2", region_id)
         }
         //Log.d("태그", hashtag.toString())
 
         if (hashtag != null) {
             for (i in 0..hashtag.size - 1) {
-                params.put("tag[" + i + "]", hashtag.get(i))
+                params.put("tag[$i]", hashtag.get(i))
             }
         }
 
@@ -602,17 +602,17 @@ class AddPostActivity : RootActivity() {
 
                     if (album_video) {
                         val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
-                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
+                        params.put("video_thumbnail[$i]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
                     } else {
                         val bitmap = Utils.retriveVideoFrameFromVideo(videoPaths[i])
-                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
+                        params.put("video_thumbnail[$i]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
                     }
 
                     val file = File(videoPaths.get(i))
                     // println("----------videoPath ${videoPaths.get(i)}")
                     // println("file ---- ${file.length()}")
 
-                    var bytes = file.readBytes()
+                    val bytes = file.readBytes()
                     // println("bytes ---- $bytes")
 
 

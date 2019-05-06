@@ -5,29 +5,25 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants">
 
-    <RelativeLayout
-        android:layout_width="110dp"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/areaItemLL"
+    <LinearLayout
+        android:id="@+id/areaItemLL"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:layout_margin="15dp">
+        <ImageView
+            android:id="@+id/item_option_checkIV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
-            <ImageView
-                android:id="@+id/item_option_checkIV"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:layout_weight="1"
-                android:visibility="invisible"
-                android:src="@mipmap/icon_check"/>
-            <TextView
-                android:id="@+id/item_option_nameTV"
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text=""/>
-        </LinearLayout>
-    </RelativeLayout>
+            android:visibility="invisible"
+            android:src="@mipmap/icon_check"/>
+        <TextView
+            android:id="@+id/item_option_nameTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text=""/>
+    </LinearLayout>
 
 </LinearLayout>
