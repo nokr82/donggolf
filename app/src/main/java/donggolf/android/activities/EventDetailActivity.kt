@@ -169,7 +169,12 @@ class EventDetailActivity : RootActivity() {
                         // leftTimeTV.start()
                     }
 
-                    membersTV.text = "${Utils.getInt(response, "eventMembers")}명 참여자 보기"
+                    val eventMemberCount = Utils.getInt(response, "eventMemberCount")
+                    if (eventMemberCount > 99) {
+                        membersTV.text = "${eventMemberCount}+명 참여자 보기"
+                    } else {
+                        membersTV.text = "${eventMemberCount}명 참여자 보기"
+                    }
 
                     if (participation == "Y") {
                         val eventMember = response.getJSONObject("EventMember")

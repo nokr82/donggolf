@@ -1,17 +1,14 @@
 package donggolf.android.activities
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import donggolf.android.R
+import donggolf.android.adapters.CustomGalleryFolderArrayAdapter
 import donggolf.android.adapters.CustomVideoFolderArrayAdapter
-import donggolf.android.adapters.FindPictureAdapter
 import donggolf.android.adapters.ImageAdapter
 import donggolf.android.adapters.VideoAdapter
 import donggolf.android.base.RootActivity

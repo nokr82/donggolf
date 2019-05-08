@@ -66,7 +66,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     // var goguntype2 = "전국"
     var membercnt = ""
     // var region_id = "0"
-    var region_id2 = ""
+    // var region_id2 = ""
 
     internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -237,7 +237,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 return@setOnClickListener
             }
 //            setButtonImage()
-            var intent = Intent(context, AlarmActivity::class.java)
+            val intent = Intent(context, AlarmActivity::class.java)
             startActivity(intent)
         }
 
@@ -287,13 +287,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         MemberAction.my_membercnt(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    Log.d("지역멤버",response.toString())
                     val result = response!!.getString("result")
 
                     if (result == "ok") {
-                        membercnt = response!!.getString("membercnt")
+                        membercnt = response.getString("membercnt")
                         areaTV.text = "우리동네"
-                        areaCntTV.text = membercnt + " 명"
+                        areaCntTV.text = "$membercnt 명"
                     }
 
 

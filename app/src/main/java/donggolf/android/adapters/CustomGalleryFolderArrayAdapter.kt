@@ -1,4 +1,4 @@
-package donggolf.android.activities
+package donggolf.android.adapters
 
 import android.content.Context
 import android.database.Cursor
@@ -23,13 +23,13 @@ class CustomGalleryFolderArrayAdapter(context: Context, textViewResourceId: Int,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
-        if (data!!.size == 0) {
+        if (data.size == 0) {
 //            convertView = View.inflate(context, R.layout.no_item_list_row, null);
 
-            convertView = View.inflate(context, R.layout.item_custom_gallery_folder, null);
+            convertView = View.inflate(context, R.layout.item_custom_gallery_folder, null)
 
-            var tv:TextView = convertView.findViewById(R.id.text);
-            tv.setText("결과값이 없습니다.");
+            var tv:TextView = convertView.findViewById(R.id.text)
+            tv.text = "결과값이 없습니다."
 
             return convertView
         } else if (convertView == null) {
@@ -41,18 +41,18 @@ class CustomGalleryFolderArrayAdapter(context: Context, textViewResourceId: Int,
 
         convertView!!.tag = position
 
-        var bucketName = Utils.getString(o, "bucketName")
+        val bucketName = Utils.getString(o, "bucketName")
 
-        (convertView.findViewById(R.id.bucketName) as TextView).setText(Utils.getString(o, "bucketName"))
+        (convertView.findViewById(R.id.bucketName) as TextView).text = Utils.getString(o, "bucketName")
 
         var total = Utils.getInt(o,"total")
-        var image = Utils.getString(o,"image")
+        val image = Utils.getString(o,"image")
         // total
         if (total == -1) {
             val selection = Images.Media.BUCKET_DISPLAY_NAME + " = '" + bucketName + "'"
             val totalProj = arrayOf(Images.Media._ID)
 
-            val resolver = context!!.contentResolver
+            val resolver = context.contentResolver
             var cursor: Cursor? = null
             try {
                 cursor = Images.Media.query(resolver, Images.Media.EXTERNAL_CONTENT_URI, totalProj, selection, null)
@@ -60,13 +60,15 @@ class CustomGalleryFolderArrayAdapter(context: Context, textViewResourceId: Int,
                     total = cursor.count
                     o.put("total", total)
                 }
+            } catch (e:Exception) {
+                o.put("total", 0)
             } finally {
                 if (cursor != null && !cursor.isClosed) {
                     cursor.close()
                 }
             }
         }
-        (convertView.findViewById(R.id.total) as TextView).setText(total.toString())
+        (convertView.findViewById(R.id.total) as TextView).text = total.toString()
 
         val iv = convertView.findViewById(R.id.img) as ImageView
 
@@ -78,7 +80,7 @@ class CustomGalleryFolderArrayAdapter(context: Context, textViewResourceId: Int,
             val proj = arrayOf(Images.Media._ID, Images.Media.DATA, Images.Media.DISPLAY_NAME, Images.Media.ORIENTATION)
             val idx = IntArray(proj.size)
 
-            val resolver = context!!.contentResolver
+            val resolver = context.contentResolver
             var cursor: Cursor? = null
             try {
                 cursor = Images.Media.query(resolver, Images.Media.EXTERNAL_CONTENT_URI, proj, selection, Images.Media.DATE_ADDED + " DESC limit 1")

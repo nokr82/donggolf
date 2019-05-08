@@ -486,6 +486,8 @@ open class FreeFragment : Fragment() {
         if (reloadReciver != null) {
             context!!.unregisterReceiver(reloadReciver)
         }
+
+        progressDialog = null
     }
 
     override fun onResume() {
@@ -543,4 +545,6 @@ open class FreeFragment : Fragment() {
             }
         })
     }
+
+
 }

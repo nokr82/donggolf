@@ -136,9 +136,9 @@ class AreaMyRangeActivity : RootActivity() {
         gridGV.adapter = GridAdapter
         gridGV.setOnItemClickListener { parent, view, position, id ->
             val item = gugunList.get(position)
-            var type = item.getJSONObject("Regions")
-            var region_id:String = Utils.getString(type,"id")
-            var name:String = Utils.getString(type,"name")
+            val type = item.getJSONObject("Regions")
+            val region_id:String = Utils.getString(type,"id")
+            val name:String = Utils.getString(type,"name")
             var sido:String = Utils.getString(type,"sido")
             var sel = item.getBoolean("isSelectedOp")
 

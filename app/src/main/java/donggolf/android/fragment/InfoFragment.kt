@@ -168,8 +168,7 @@ class InfoFragment : Fragment() {
             val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             loadPermissions(perms, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE)
         } else {
-            val galleryIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
         }
     }
@@ -177,8 +176,7 @@ class InfoFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(myContext, perms[0]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity as Activity, perms, requestCode)
         } else {
-            val galleryIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
         }
     }
@@ -365,9 +363,9 @@ class InfoFragment : Fragment() {
                     member_info()
                 }
                 GALLERY -> {
-                    if (data != null) {
-                        val contentURI = data.data
-                        //Log.d("uri", contentURI.toString())
+                    if (data != null && data.data != null) {
+                        // val contentURI = data.data
+                        // Log.d("uri", contentURI.toString())
 
                         try {
                             val selectedImageUri = data.data
