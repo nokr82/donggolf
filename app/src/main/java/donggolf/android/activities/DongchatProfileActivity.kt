@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -21,6 +22,7 @@ import cz.msebera.android.httpclient.Header
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
+import donggolf.android.actions.RegionAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
@@ -45,6 +47,9 @@ class DongchatProfileActivity : RootActivity() {
     var Image_path = ArrayList<String>()
     var backgroundPath = ""
     var profilePath = ""
+
+
+    var r_names = ArrayList<String>()
 
     private lateinit var backgroundAdapter: FullScreenImageAdapter
 
@@ -358,7 +363,53 @@ class DongchatProfileActivity : RootActivity() {
             startActivity(intent)
         }
 
+
     }
+
+    fun get_region(region_id:String){
+        val params = RequestParams()
+        params.put("region_id", region_id)
+
+
+        RegionAction.get_region(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    val result = response!!.getString("result")
+                    Log.d("레전드",response.toString())
+                    if (result == "ok") {
+                        val region = response.getJSONObject("region")
+                        val resgions = region.getJSONObject("Regions")
+                        var r_name = Utils.getString(resgions,"name")
+                        var region_name = Utils.getString(resgions,"region_name")
+                        var region_t=""
+                        if (r_name != null && r_name != "") {
+                            if (region_name.contains("시")){
+                                region_t += region_name+">"+r_name
+                            }else{
+                                region_t += r_name
+                            }
+                        }
+                        r_names.add(region_t)
+
+                        regionTV.text = r_names.joinToString(",")
+
+                        Log.d("레전드",r_names.toString())
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                // println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
+                // println(errorResponse)
+            }
+        })
+    }
+
     fun detail_chatting(type:String){
         val params = RequestParams()
         params.put("room_id", room_id)
@@ -371,12 +422,24 @@ class DongchatProfileActivity : RootActivity() {
                     progressDialog!!.dismiss()
                 }
                 val result = response!!.getString("result")
+                Log.d("지역",response.toString())
                 if (result == "ok") {
                     if (Image_path != null){
                         Image_path.clear()
                     }
 
                     val members = response!!.getJSONArray("chatmember")
+                    val chatroom = response!!.getJSONObject("chatroom")
+                    val regions = Utils.getString(chatroom, "regions")
+                    var regions_ids = regions.split(",")
+
+                    r_names.clear()
+                    for (i in 0 until regions_ids.size) {
+                        get_region(regions_ids[i])
+                    }
+
+                    Log.d("레기온",regions_ids.toString())
+
                     if (members != null && members.length() > 0) {
                         if (chatMemberids != null) {
                             chatMemberids.clear()
@@ -395,6 +458,8 @@ class DongchatProfileActivity : RootActivity() {
                             val intro = Utils.getString(chatroom, "intro")
                             val background = Utils.getString(chatroom, "background")
                             val block_code = Utils.getString(chatroom, "block_code")
+
+
                             if (block_code != null && block_code != "") {
                                 lockIV.visibility = View.VISIBLE
                             }
@@ -471,6 +536,9 @@ class DongchatProfileActivity : RootActivity() {
 
                     }
 //                    backgroundAdapter.notifyDataSetChanged()
+
+
+
                 }
             }
 
@@ -493,6 +561,7 @@ class DongchatProfileActivity : RootActivity() {
             }
 
             override fun onFinish() {
+
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }

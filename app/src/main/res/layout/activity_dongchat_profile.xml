@@ -133,6 +133,15 @@
                         android:src="@drawable/btn_change_name" />
                 </LinearLayout>
             </LinearLayout>
+            <TextView
+                android:layout_marginTop="15dp"
+                android:visibility="visible"
+                android:id="@+id/regionTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:text=""/>
 
             <LinearLayout
                 android:layout_marginTop="15dp"
