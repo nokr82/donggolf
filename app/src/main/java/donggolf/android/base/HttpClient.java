@@ -42,7 +42,7 @@ public class HttpClient {
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-        // System.out.println("POST : " + Config.url + url + "?" + params);
+         System.out.println("POST : " + Config.url + url + "?" + params);
 
         client.setTimeout(60 * 1000);
 
