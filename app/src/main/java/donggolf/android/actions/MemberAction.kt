@@ -87,6 +87,15 @@ object MemberAction {
     fun membercnt(params: RequestParams, handler: JsonHttpResponseHandler) {
         HttpClient.post("/member/membercnt.json", params, handler)
     }
+    //우리동네
+    fun my_membercnt(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/my_membercnt.json", params, handler)
+    }
+
+    // 지역설정
+    fun area_style(params: RequestParams, handler: JsonHttpResponseHandler) {
+        HttpClient.post("/member/area_style.json", params, handler)
+    }
 
 
     // 내 알림 목록

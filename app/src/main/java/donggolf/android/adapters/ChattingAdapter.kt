@@ -76,7 +76,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         item.userimageIV.setOnClickListener {
             val type = Utils.getString(chatting,"type")
-            println("--------typ[e====== $type")
+            //println("--------typ[e====== $type")
             if (type == "i"){
                 val img = Utils.getString(chatting,"img")
                 val imglist:ArrayList<String> = ArrayList<String>()
@@ -92,7 +92,7 @@ open class ChattingAdapter(context: Context, view:Int, data:ArrayList<JSONObject
 
         item.myimageIV.setOnClickListener {
             val type = Utils.getString(chatting,"type")
-            println("--------typ[e====== $type")
+            //println("--------typ[e====== $type")
             if (type == "i"){
                 val img = Utils.getString(chatting,"img")
                 val imglist:ArrayList<String> = ArrayList<String>()

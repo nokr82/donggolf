@@ -29,7 +29,7 @@
         android:textStyle="bold"
         android:textColor="#EF5C34"
         android:textSize="13dp"
-        android:text="닉네임일곱글자"
+        android:text=""
         android:id="@+id/friend_name"/>
     <ImageView
         android:layout_width="30dp"

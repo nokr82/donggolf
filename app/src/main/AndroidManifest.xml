@@ -7,14 +7,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <uses-feature
-        android:name="android.hardware.Camera"
-        android:required="true" />
 
     <application
         android:usesCleartextTraffic="true"
@@ -133,6 +127,9 @@
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.MarketManageActivity"
+            android:theme="@style/NoTitleDialog" />
+        <activity
+            android:name=".activities.WebPictureDetailActivity"
             android:theme="@style/NoTitleDialog" />
         <activity
             android:name=".activities.GoodsDetailActivity"
@@ -267,6 +264,27 @@
             android:name=".activities.NoticeManageActivity"
             android:theme="@style/NoTitleDialog"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.EventsActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.EventDetailActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.EventMembersActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activities.NewAddGoodsActivity"
+            android:theme="@style/NoTitleDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name=".activities.DlgEventActivity"
+            android:theme="@style/full_screen_dialog1"/>
+
     </application>
 
 </manifest>

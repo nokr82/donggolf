@@ -6,16 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
-import cz.msebera.android.httpclient.Header
-import donggolf.android.R
-import donggolf.android.actions.MemberAction
-import donggolf.android.base.PrefUtils
-import donggolf.android.base.RootActivity
-import kotlinx.android.synthetic.main.activity_view_album.*
-import org.json.JSONException
-import org.json.JSONObject
 import android.view.View
 import android.widget.AdapterView
 import android.widget.BaseAdapter
@@ -23,10 +13,20 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
+import cz.msebera.android.httpclient.Header
+import donggolf.android.R
+import donggolf.android.actions.MemberAction
 import donggolf.android.adapters.ViewAlbumAdapter
+import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
+import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
+import kotlinx.android.synthetic.main.activity_view_album.*
 import kotlinx.android.synthetic.main.dlg_ans_profile_del.view.*
-import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.util.*
 
@@ -205,11 +205,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -235,12 +235,13 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                if (errorResponse != null)
-                    println(errorResponse.getString("message"))
+                if (errorResponse != null) {
+                    // println(errorResponse.getString("message"))
+                }
             }
         })
     }
@@ -256,7 +257,7 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             val MemberImg = item.getJSONObject("MemberImg")
             val image_id = Utils.getString(MemberImg,"id")
             selectedImageList.add(image_id)
-            println("---------$image_id")
+            // println("---------$image_id")
         }
 
         val params = RequestParams()
@@ -267,8 +268,8 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
 
-                    println(response)
-                    println(selImgViewPositions)
+                    // println(response)
+                    // println(selImgViewPositions)
                     /*for (i in 0 until selImgViewPositions.size) {
                         //eachViewAdapter.removeItem(selImgViewPositions[i])
                         albumList.removeAt(selImgViewPositions[i])
@@ -289,11 +290,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
@@ -329,11 +330,11 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -380,52 +381,66 @@ class ViewAlbumActivity : RootActivity() , AdapterView.OnItemClickListener{
 
         val strPo = position.toString()
 
-        if (p_type !=1){
-            if (selected.contains(strPo)) {
-                selected.remove(strPo)
+        if (login_id != tmp_member_id ){
+            var member_img =   albumList[position].getJSONObject("MemberImg")
+            var src = Utils.getString(member_img,"image_uri")
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
-                }
+            //Log.d("알라",  albumList[position].toString())
 
-            } else {
-                if (selected.size > 9) {
-                    Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                selected.add(strPo)
-
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
-                }
-            }
+            val intent = Intent(context, WebPictureDetailActivity::class.java)
+            intent.putExtra("src", Config.url+src)
+            context.startActivity(intent)
         }else{
-            if (selected.contains(strPo)) {
-                selected.remove(strPo)
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
+            if (p_type !=1){
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
+                    if (selected.size > 9) {
+                        Toast.makeText(context, "사진은 10개까지 등록가능합니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    selected.add(strPo)
+
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
+            }else{
+                if (selected.contains(strPo)) {
+                    selected.remove(strPo)
 
-            } else {
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
+
+                } else {
 
 
-                selected.add(strPo)
+                    selected.add(strPo)
 
-                val adapter = selectGV.getAdapter()
-                if (adapter != null) {
-                    val f = adapter as ViewAlbumAdapter
-                    (f as BaseAdapter).notifyDataSetChanged()
+                    val adapter = selectGV.getAdapter()
+                    if (adapter != null) {
+                        val f = adapter as ViewAlbumAdapter
+                        (f as BaseAdapter).notifyDataSetChanged()
+                    }
                 }
             }
         }
+
+
 
     }
 }

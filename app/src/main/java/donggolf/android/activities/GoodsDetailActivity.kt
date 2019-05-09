@@ -3,22 +3,19 @@ package donggolf.android.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.CommentAction
-import donggolf.android.actions.CommentAction.write_comments
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.GoodsComAdapter
@@ -32,7 +29,7 @@ import kotlinx.android.synthetic.main.dlg_simple_radio_option.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 class GoodsDetailActivity : RootActivity() {
 
@@ -50,6 +47,7 @@ class GoodsDetailActivity : RootActivity() {
     var REPORT_OK = 113
 
     var product_id = 0
+    var market_member_id = 0
     var seller_phone = ""
     var seller_id = 0
     var tmp_prod_status = ""
@@ -257,6 +255,8 @@ class GoodsDetailActivity : RootActivity() {
         }
 
         contact_sellerLL.setOnClickListener {
+            var myPhoneNum = PrefUtils.getStringPreference(context, "userPhone")
+
 
             if (seller_id == PrefUtils.getIntPreference(context,"member_id")) {
                 Toast.makeText(context,"자신의 게시물에는 전송하실 수 없습니다.",Toast.LENGTH_SHORT).show()
@@ -264,39 +264,10 @@ class GoodsDetailActivity : RootActivity() {
 
                 var status = sale_statusTV.text.toString()
                 if (status == "판매중") {
-                    val permissionlistener = object : PermissionListener {
-                        override fun onPermissionGranted() {
-                            var myPhoneNum = PrefUtils.getStringPreference(context, "userPhone")
-
-                            val text = "[동네골프] $brand > $product_type 판매 게시글보고 연락드립니다."
-//                    try{
-//                        SmsManager.getDefault().sendTextMessage(phone,null, text, null, null)
-//                        Toast.makeText(context,"문자 전송 완료",Toast.LENGTH_SHORT).show()
-//                    }catch (e:Exception){
-//                        e.printStackTrace()
-//                    }
-
-                            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + seller_phone))
-                            intent.putExtra("sms_body", text)
-                            startActivity(intent)
-
-                        }
-
-                        override fun onPermissionDenied(deniedPermissions: List<String>) {
-                        }
-
-                    }
-
-                    TedPermission.with(this)
-                            .setPermissionListener(permissionlistener)
-                            .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있습니다.")
-                            .setPermissions(
-                                    android.Manifest.permission.READ_PHONE_STATE,
-                                    android.Manifest.permission.SEND_SMS,
-                                    android.Manifest.permission.RECEIVE_SMS
-                            )
-                            .check();
-
+                    val text = "[동네골프] $brand > $product_type 판매 게시글보고 연락드립니다."
+                    var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + seller_phone))
+                    intent.putExtra("sms_body", text)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(context,"비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -346,7 +317,7 @@ class GoodsDetailActivity : RootActivity() {
 
                     MarketAction.delete_market_comment(params, object :JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            println(response)
+                            //println(response)
 
                             val result = response!!.getString("result")
                             if (result == "ok"){
@@ -360,11 +331,11 @@ class GoodsDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            //println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            //println(responseString)
                         }
                     })
                 }
@@ -413,7 +384,7 @@ class GoodsDetailActivity : RootActivity() {
                     MarketAction.market_block_commenter(params, object : JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                             try {
-                                println(response)
+                                //println(response)
                                 //차단 성공하면 표시하고 토스트
                                 val result = response!!.getString("result")
                                 if (result == "ok") {
@@ -440,11 +411,11 @@ class GoodsDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
 
@@ -461,27 +432,35 @@ class GoodsDetailActivity : RootActivity() {
                 return@setOnItemClickListener
             }
             var data = commentList.get(i)
-            Log.d("데이데이",data.toString())
-            val marketcomment = data.getJSONObject("MarketComment")
+            //Log.d("데이데이",data.toString())
+            val contentcomment = data.getJSONObject("MarketComment")
 
-            val comments_id = Utils.getInt(marketcomment, "id")
+            val comments_id = Utils.getInt(contentcomment, "id")
 
-            p_comments_id = Utils.getInt(marketcomment,"p_comments_id")
-            op_comments_id = Utils.getInt(marketcomment,"op_comments_id")
-            var user_nick =  Utils.getString(marketcomment,"nick")
-            if (p_comments_id!=-1){
-                op_comments_id = p_comments_id
+            p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
+            op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
+            var user_nick =  Utils.getString(contentcomment,"nick")
+            if (op_comments_id != -1){
+                op_comments_id = comments_id
+                p_comments_id = -1
+                commentET.requestFocus()
+                Utils.showKeyboard(context)
+                commentET.hint = user_nick+ "님의 댓글에 대대댓글"
+            }else if (p_comments_id!=-1){
+                op_comments_id = comments_id
+                p_comments_id = -1
                 commentET.requestFocus()
                 Utils.showKeyboard(context)
                 commentET.hint = user_nick+ "님의 댓글에 대댓글"
-            }else if (comments_id != -1) {
+            } else if (comments_id != -1) {
                 p_comments_id = comments_id
                 commentET.requestFocus()
                 Utils.showKeyboard(context)
-                commentET.hint = user_nick+ "님의 댓글에 답글"
+                commentET.hint = user_nick + "님의 댓글에 답글"
             }
 
         }
+
 
     }
 
@@ -563,7 +542,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.delete_market_item(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     var message = response.getString("message")
@@ -585,11 +564,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
@@ -613,6 +592,7 @@ class GoodsDetailActivity : RootActivity() {
             var intent = Intent(this, ReportActivity::class.java)
             intent.putExtra("member_id", member_id)
             intent.putExtra("market_id",product_id)
+            intent.putExtra("market_member_id",market_member_id)
             startActivityForResult(intent,REPORT_OK)
         }
 
@@ -624,7 +604,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.get_product_detail(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     if (_Images != null){
@@ -632,6 +612,7 @@ class GoodsDetailActivity : RootActivity() {
                     }
                     val product = response.getJSONObject("product")
                     val market = product.getJSONObject("Market")
+                    market_member_id = Utils.getInt(market,"member_id")
                     var seller_cnt = Utils.getString(market,"seller_cnt")
                     sellercountTV.setText("("+seller_cnt+")")
                     seller_id2 = Utils.getString(market,"member_id")
@@ -659,9 +640,10 @@ class GoodsDetailActivity : RootActivity() {
                     tmp_prod_status = Utils.getString(market,"status")
 
 
+                    var created =  Utils.getString(market,"created")
                     sale_statusTV.text = tmp_prod_status
                     prd_titleTV.text = Utils.getString(market,"title")
-                    writtenDateTV.text = Utils.getString(market,"created")
+                    writtenDateTV.text = Utils.fullDateTime(created)
                     descriptionTV.text = Utils.getString(market,"description")
                     if (tmp_prod_status.equals("판매완료")){
                         prd_priceTV.text ="********"
@@ -681,6 +663,12 @@ class GoodsDetailActivity : RootActivity() {
 
                     val seller = response.getJSONObject("seller")
                     val member = seller.getJSONObject("Member")
+                    val sex =  Utils.getString(member,"sex")
+                    if (sex == "1"){
+                        nickTV.setTextColor(Color.parseColor("#EF5C34"))
+                    }else{
+                        nickTV.setTextColor(Color.parseColor("#000000"))
+                    }
                     nickTV.text = Utils.getString(member,"nick")
                     seller_id = Utils.getInt(member,"id")
 
@@ -720,11 +708,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -736,7 +724,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     sale_statusTV.text = tmp_prod_status
@@ -745,11 +733,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -766,7 +754,7 @@ class GoodsDetailActivity : RootActivity() {
         MarketAction.add_market_looker(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                println("result ----- $result")
+                // println("result ----- $result")
                 if (result == "ok" || result == "yes") {
                     val Looker = response.getJSONArray("Looker")
                     main_item_view_count.setText(Looker.length().toString())
@@ -789,7 +777,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
@@ -803,11 +791,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
@@ -819,12 +807,10 @@ class GoodsDetailActivity : RootActivity() {
         params.put("market_id", product_id)
         params.put("nick", PrefUtils.getStringPreference(context,"nickname"))
         params.put("comment", comment)
-        params.put("parent", commentParent)
-        params.put("type", commentType)
         params.put("p_comments_id", p_comments_id)
         params.put("op_comments_id", op_comments_id)
 
-        MarketAction.add_market_comment(params, object : JsonHttpResponseHandler() {
+        CommentAction.add_market_comment(params, object : JsonHttpResponseHandler() {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 

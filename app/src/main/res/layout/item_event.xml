@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemLL"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:text="동네골프 이용자가 얼른 많아지길~~"/>
+
+        <TextView
+            android:id="@+id/contentsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="#707070"
+            android:textSize="14dp"
+            android:text="dkwlr qodnsms lqwkddlfk dkdldjs emfkdlqj tmzlfrhk voelddmf gkqfEo gosemvhs aah rlsmdfdmf어쩌구 저ㅓㄱㅗ"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <donggolf.android.base.ElapsedTimeTextView
+                android:id="@+id/deadlineTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="추첨 : 23일전"
+                android:textColor="#EF5C34"
+                android:textSize="16dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/stateTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:textSize="16dp"
+                android:text="참여하기"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageIV"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop" />
+
+</LinearLayout>

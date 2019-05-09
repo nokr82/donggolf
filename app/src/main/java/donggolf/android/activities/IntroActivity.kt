@@ -1,34 +1,27 @@
 package donggolf.android.activities
 
-import android.app.Activity
-import android.app.ActivityManager
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.v4.app.NotificationCompat
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.NationalAction
-import donggolf.android.base.FirebaseFirestoreUtils
+import donggolf.android.actions.VersionAction
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_login.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
-import java.util.Arrays.asList
-import kotlin.collections.HashMap
-import java.util.Map.Entry;
 
 
 class IntroActivity : RootActivity() {
@@ -68,11 +61,26 @@ class IntroActivity : RootActivity() {
         val buldle = intent.extras
         if (buldle != null) {
             try {
-                market_id = buldle.getString("market_id")
-                chatting_member_id = buldle.getString("chatting_member_id")
-                content_id = buldle.getString("content_id")
-                friend_id = buldle.getString("friend_id")
-                room_id = buldle.getString("room_id")
+                if(buldle.getString("market_id") != null) {
+                    market_id = buldle.getString("market_id")
+                }
+
+                if(buldle.getString("chatting_member_id") != null) {
+                    chatting_member_id = buldle.getString("chatting_member_id")
+                }
+
+                if(buldle.getString("content_id") != null) {
+                    content_id = buldle.getString("content_id")
+                }
+
+                if(buldle.getString("friend_id") != null) {
+                    friend_id = buldle.getString("friend_id")
+                }
+
+                if(buldle.getString("room_id") != null) {
+                    room_id = buldle.getString("room_id")
+                }
+
                 is_push = buldle.getBoolean("FROM_PUSH")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -91,7 +99,11 @@ class IntroActivity : RootActivity() {
                 } catch (e: InterruptedException) {
                     // do nothing
                 } finally {
-                    stopIntro()
+                    // stopIntro()
+                    runOnUiThread {
+                        version()
+                    }
+
                 }
             }
         }
@@ -157,6 +169,19 @@ class IntroActivity : RootActivity() {
 
                         val member = response.getJSONObject("member")
 
+                        val admin_del_yn = Utils.getString(member,"admin_del_yn")
+                        val admin_day_del_yn = Utils.getString(member,"admin_day_del_yn")
+                        val admin_day = Utils.getString(member,"admin_day")
+                        val del_day = response.getString("del_day")
+                        if (admin_del_yn == "Y"){
+                            alert("동네골프 접근이 영구차단되었습니다.")
+                            return
+                        }else if (admin_day_del_yn == "Y"){
+                            alert("동네골프 접근이 "+admin_day+"부터 "+del_day+"까지 차단되었습니다.")
+                            return
+                        }
+
+
                         val isActive = Utils.getString(member,"status")
 
                         if (isActive == "a") {
@@ -170,6 +195,18 @@ class IntroActivity : RootActivity() {
                             PrefUtils.setPreference(context, "auto", true)
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone", Utils.getString(member,"phone"))
+                            PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
+                            var region = ""
+                            if (Utils.getString(member, "region1")!=""){
+                                region += Utils.getString(member, "region1")
+                            }
+                            if (Utils.getString(member, "region2")!=""){
+                                region  += ","+Utils.getString(member, "region2")
+                            }
+                            if (Utils.getString(member, "region3")!=""){
+                                region +=  ","+Utils.getString(member, "region3")
+                            }
+                            PrefUtils.setPreference(context,"region_id",region)
 
                             var intent = Intent(context, MainActivity::class.java)
                             intent.putExtra("is_push", is_push)
@@ -213,5 +250,129 @@ class IntroActivity : RootActivity() {
 
     }
 
+
+    private fun version() {
+        VersionAction.version(object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                try {
+                    val version = response!!.getJSONObject("version")
+                    if (!version.isNull("id")) {
+                        val serverVersion = version.getString("version")
+                        val type = version.getInt("type")
+                        if(type == 1) {
+                            versionCheck(serverVersion)
+                        } else {
+                            stopIntro()
+                        }
+                    } else {
+                        stopIntro()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
+                super.onSuccess(statusCode, headers, response)
+            }
+
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, responseString: String?) {}
+
+            private fun error() {}
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
+                throwable.printStackTrace()
+                error()
+
+                // System.out.println(responseString);
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONObject?) {
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
+                throwable.printStackTrace()
+                error()
+            }
+
+            override fun onStart() {}
+
+            override fun onFinish() {}
+        })
+    }
+
+
+    private fun versionCheck(serverVersion:String) {
+
+        var nowVersion = "1.0.0"
+
+        try {
+            val i = context.packageManager.getPackageInfo(context.packageName, 0)
+            nowVersion = i.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+
+        val n = nowVersion.split("\\.".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+        val s = serverVersion.split("\\.".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+
+        var n1 = 1
+        var n2 = 0
+        var n3 = 0
+
+        if (n.size > 0) {
+            n1 = Integer.parseInt(n[0])
+        }
+
+        if (n.size > 1) {
+            n2 = Integer.parseInt(n[1])
+        }
+
+        if (n.size > 2) {
+            n3 = Integer.parseInt(n[2])
+        }
+
+        var s1 = 1
+        var s2 = 0
+        var s3 = 0
+
+        if (s.size > 0) {
+            s1 = Integer.parseInt(s[0])
+        }
+
+        if (s.size > 1) {
+            s2 = Integer.parseInt(s[1])
+        }
+
+        if (s.size > 2) {
+            s3 = Integer.parseInt(s[2])
+        }
+
+        var newVersionExist = false
+
+        if (s1 > n1) {
+            newVersionExist = true
+        } else if (s1 >= n1 && s2 > n2) {
+            newVersionExist = true
+        } else if (s1 >= n1 && s2 >= n2 && s3 > n3) {
+            newVersionExist = true
+        }
+
+        if (newVersionExist) {
+            Utils.alert(context, "새로운 버전이 있습니다.\n업데이트 후 사용하세요.") {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("market://details?id=$packageName")
+                startActivity(intent)
+
+                finish()
+            }
+        } else {
+            stopIntro()
+        }
+
+    }
 
 }

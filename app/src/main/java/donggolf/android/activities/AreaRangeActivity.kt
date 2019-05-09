@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -19,7 +20,7 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_area_range.*
-import kotlinx.android.synthetic.main.item_area.view.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -65,7 +66,17 @@ class AreaRangeActivity : RootActivity() {
         intent = getIntent()
         type = intent.getStringExtra("region_type")//content_filter
 
-        getBigCity()
+        titleTV.text = "동네탐방하기"
+
+        accTV.visibility = View.GONE
+
+        myTV.visibility = View.VISIBLE
+
+        myTV.setOnClickListener {
+            intent.putExtra("region_id", "no")
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
 
         adapter = AreaRangeAdapter(context,R.layout.item_dlg_market_sel_op,bigcitylist)
         arealistLV.adapter = adapter
@@ -74,6 +85,7 @@ class AreaRangeActivity : RootActivity() {
             var type = item.getJSONObject("Regions")
             var id  = Utils.getString(type,"id")
             var name:String = Utils.getString(type,"name")
+            myTV.visibility = View.GONE
 
             if (areacount == 0){
                 sidotype = Utils.getString(type,"name")
@@ -82,15 +94,9 @@ class AreaRangeActivity : RootActivity() {
             }
 
             if (Utils.getString(type,"name") == "세종특별자치시") {
-//                region_id = Utils.getString(type,"id")
-//                goguntype = name
-//                Toast.makeText(context, "지역하나를 더 선택해주세요.", Toast.LENGTH_SHORT).show()
-//                areacount++
-
                 intent.putExtra("sidotype", sidotype)
                 intent.putExtra("goguntype", sidotype)
                 intent.putExtra("region_id", id)
-                PrefUtils.setPreference(context, "region_id", region_id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -98,12 +104,9 @@ class AreaRangeActivity : RootActivity() {
             } else if (Utils.getString(type,"name") == "전국"){
                 var intent = Intent();
                 intent.putExtra("sidotype", sidotype)
-//                intent.putExtra("sidotype2", sidotype)
                 intent.putExtra("goguntype", sidotype)
-//                intent.putExtra("goguntype2", sidotype)
                 intent.putExtra("region_id", id)
-                PrefUtils.setPreference(context, "region_id", region_id)
-//                intent.putExtra("region_id2", id)
+                PrefUtils.setPreference(context, "region_id", id)
                 intent.action = "SET_REGION"
                 sendBroadcast(intent)
                 setResult(Activity.RESULT_OK, intent)
@@ -168,44 +171,8 @@ class AreaRangeActivity : RootActivity() {
         }
 
         finishLL.setOnClickListener {
-        /*    if(arealistLV.visibility == View.VISIBLE){
-                //여기에 db 데이터 업데이트
-                val params = RequestParams()
-                params.put("member_id",PrefUtils.getIntPreference(context,"member_id"))
-                params.put("type", "region")
-                params.put("region1", userRG1)
-                params.put("region2", userRG2)
-                params.put("region3", userRG3)
-
-                MemberAction.update_info(params, object : JsonHttpResponseHandler(){
-                    override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                        try {
-                            val result = response!!.getString("result")
-                            println("AreaRangeActivity save changed data :: $response")
-                            if (result == "ok") {
-                                Toast.makeText(context, "활동지역 정보를 성공적으로 변경했습니다.", Toast.LENGTH_SHORT).show()
-                                setResult(RESULT_OK,intent)
-                                finish()
-                            }
-                        } catch (e : JSONException) {
-                            e.printStackTrace()
-                        }
-
-                    }
-
-                    override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                        Toast.makeText(context, "지역 변경 실패", Toast.LENGTH_SHORT).show()
-                    }
-                })
-
-            }
-
-            if(gridGV.visibility == View.VISIBLE){
-                arealistLV.visibility = View.VISIBLE
-                gridGV.visibility = View.GONE
-            }*/
-
             if (gridGV.visibility == View.VISIBLE){
+                myTV.visibility = View.VISIBLE
                 arealistLV.visibility = View.VISIBLE
                 gridGV.visibility = View.GONE
             } else {
@@ -214,89 +181,12 @@ class AreaRangeActivity : RootActivity() {
 
         }
 
+
+        getBigCity()
+
+        my_member_cnt()
     }
 
-    fun tempMyActRegion() {
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        tmpRegionLL.removeAllViews()
-
-                        val region1 = Utils.getString(member,"region1")
-                        if (!region1.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region1
-                            userRG1 = region1
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG1 = ""
-                                actArea--
-                                println("userRG1 : $userRG1, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region2 = Utils.getString(member,"region2")
-                        if (!region2.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region2
-                            userRG2 = region2
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG2 = ""
-                                actArea--
-                                println("userRG2 : $userRG2, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        val region3 = Utils.getString(member,"region3")
-                        if (!region3.isEmpty()) {
-                            val regionView = View.inflate(context, R.layout.item_area,null)
-                            regionView.regionNameTV.text = region3
-                            userRG3 = region3
-                            actArea++
-
-                            regionView.regionDelIV.setOnClickListener {
-                                userRG3 = ""
-                                actArea--
-                                println("userRG3 : $userRG3, actArea : $actArea")
-                                areaCnt.text = "지역 범위 설정 ($actArea/3)"
-                                tmpRegionLL.removeView(regionView)
-                            }
-
-                            tmpRegionLL.addView(regionView)
-                        }
-
-                        areaCnt.text = "지역 범위 설정 ($actArea/3)"
-
-                    } else {
-
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-    }
 
 
     fun getBigCity(){
@@ -307,7 +197,7 @@ class AreaRangeActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val datalist = response!!.getJSONArray("sido")
-
+                Log.d("리스트",response.toString())
                 if (datalist.length() > 0 && datalist != null){
                     for (i in 0 until datalist.length()){
                         bigcitylist.add(datalist.get(i) as JSONObject)
@@ -338,6 +228,7 @@ class AreaRangeActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var datalist = response!!.getJSONArray("gugun")
 
+                Log.d("리스트2",response.toString())
 //                tmpSV.visibility = View.VISIBLE
 
                 if (datalist.length() > 0 && datalist != null){
@@ -354,6 +245,99 @@ class AreaRangeActivity : RootActivity() {
             }
         })
     }
+    //지역별멤버수
+    fun my_member_cnt() {
+        val params = RequestParams()
+        params.put("member_id", PrefUtils.getIntPreference(context,"member_id"))
 
+        MemberAction.my_membercnt(params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+                try {
+                    Log.d("지역멤버",response.toString())
+                    val result = response!!.getString("result")
+
+
+
+
+                    if (result == "ok") {
+
+
+                        val region1 = response.getJSONObject("region1")
+                        val region2 = response.getJSONObject("region2")
+                        val region3 = response.getJSONObject("region3")
+
+                        var r_name1 = Utils.getString(region1,"name")
+                        var r_name2 = Utils.getString(region2,"name")
+                        var r_name3 = Utils.getString(region3,"name")
+
+                        var region_s = ""
+                        if (Utils.getString(region1, "id")!=""){
+                            region_s += Utils.getString(region1, "id")
+                        }
+                        if (Utils.getString(region2, "id")!=""){
+                            region_s += ","+ Utils.getString(region2, "id")
+                        }
+                        if (Utils.getString(region3, "id")!=""){
+                            region_s += ","+ Utils.getString(region3, "id")
+                        }
+                        PrefUtils.setPreference(context,"region_id",region_s)
+
+                        var region1_name = Utils.getString(region1,"region_name")
+                        var region2_name = Utils.getString(region2,"region_name")
+                        var region3_name = Utils.getString(region3,"region_name")
+                        var region = ""
+
+                        if (r_name1 != null && r_name1 != "") {
+                            if (region1_name.contains("시")){
+                                region += region1_name+">"+r_name1
+                            }else{
+                                region += r_name1
+                            }
+                        }
+
+                        if (r_name2 != null && r_name2 != "") {
+                            if (region2_name.contains("시")){
+                                region += ","+region2_name+">"+r_name2
+                            }else{
+                                region +=","+ r_name2
+                            }
+                        }
+
+                        if (r_name3 != null && r_name3 != "") {
+                            if (region3_name.contains("시")){
+                                region += ","+region3_name+">"+r_name3
+                            }else{
+                                region +=","+ r_name3
+                            }
+                        }
+
+                        if (r_name1 == "전국") {
+                            region = "전국"
+                        }
+
+                        var membercnt = response!!.getString("membercnt")
+                        if(region.isEmpty()) {
+                            myTV.text = "우리동네(미설정)"
+                        } else {
+                            myTV.text = "우리동네"+"("+membercnt+")"+"   "+region
+                        }
+
+                    }
+
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+//                println(responseString)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
+//                println(errorResponse)
+            }
+        })
+    }
 
 }

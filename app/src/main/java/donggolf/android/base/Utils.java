@@ -94,6 +94,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import donggolf.android.R;
+import donggolf.android.activities.EventDetailActivity;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public class Utils {
     private static Bitmap noImageBitmap = null;
@@ -168,6 +171,152 @@ public class Utils {
 
         return reg_dt;
     }
+
+
+    public static String since2(String reg_dt) {
+        if (reg_dt == null || reg_dt.trim().length() == 0) {
+            return "";
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
+        try {
+            Date d1 = formatter.parse(reg_dt);
+            Date d2 = new Date();
+
+            long diff = d2.getTime() - d1.getTime();
+
+            // System.out.println("d1.getTime() : " + d1.getTime() +
+            // ", d2.getTime() : " + d2.getTime());
+
+            long oneMin = 60 * 1000;
+            long oneHour = 60 * oneMin;
+            long oneDay = 24 * oneHour;
+            long threeDays = 3 * oneDay;
+            long oneYear = oneDay * 365;
+
+
+            // 3분 이내일 경우 "방금 전"
+            if (diff < oneMin * 3) {
+                return "방금 전";
+            }
+
+            // 3분에서 59분일 경우 "*분 전"
+            if(diff < oneHour) {
+                return Math.round(diff / oneMin) + "분 전";
+            }
+
+            // 1시간 후 부터는 분 단위 무시하고 시간 단위만 표시
+            if(diff >= oneHour && diff <= oneHour * 3) {
+                return Math.round(diff / oneHour) + "시간 전";
+            }
+
+            // 3시간 초과인 경우 10월 1일 오후 3시 30분
+            if (diff < oneYear) {
+                formatter = new SimpleDateFormat("M월 d일 HH:mm", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            // 1년 이상이면 년월일만 표시
+            if (diff >= oneYear) {
+                formatter = new SimpleDateFormat("yyyy년 MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            Calendar cal1 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal1.setTime(d1);
+
+            Calendar cal2 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal2.setTime(d2);
+            cal2.add(Calendar.DAY_OF_MONTH, -1);
+
+            if (cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH) || diff > oneDay) {
+                formatter = new SimpleDateFormat("MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            formatter = new SimpleDateFormat("HH시 mm분", java.util.Locale.KOREA);
+            return formatter.format(d1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return reg_dt;
+    }
+
+    public static String since3(String reg_dt) {
+        if (reg_dt == null || reg_dt.trim().length() == 0) {
+            return "";
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
+        try {
+            Date d1 = formatter.parse(reg_dt);
+            Date d2 = new Date();
+
+            long diff = d2.getTime() - d1.getTime();
+
+            // System.out.println("d1.getTime() : " + d1.getTime() +
+            // ", d2.getTime() : " + d2.getTime());
+
+            long oneMin = 60 * 1000;
+            long oneHour = 60 * oneMin;
+            long oneDay = 24 * oneHour;
+            long weekday = 7 * oneDay;
+            long month = 4 * weekday;
+            long oneYear = oneDay * 365;
+
+
+            // 3분 이내일 경우 "방금 전"
+            if (diff < oneMin * 3) {
+                return "방금 전";
+            }
+
+            // 3분에서 59분일 경우 "*분 전"
+            if(diff < oneHour) {
+                return Math.round(diff / oneMin) + "분 전";
+            }
+
+            // 1시간 후 부터는 분 단위 무시하고 시간 단위만 표시
+            if(diff >= oneHour && diff <= oneHour * 24) {
+                return Math.round(diff / oneHour) + "시간 전";
+            }
+            if(diff >= oneDay && diff <= oneDay * 7) {
+                return Math.round(diff / oneDay) + "일전";
+            }
+            if(diff >= weekday && diff <= weekday * 4) {
+                return Math.round(diff / weekday) + "주전";
+            }
+            if(diff >= month && diff <= month * 12) {
+                return Math.round(diff / month) + "달전";
+            }
+            // 1년 이상이면 년월일만 표시
+            if (diff >= oneYear) {
+                formatter = new SimpleDateFormat("yyyy년 MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            Calendar cal1 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal1.setTime(d1);
+
+            Calendar cal2 = Calendar.getInstance(java.util.Locale.KOREA);
+            cal2.setTime(d2);
+            cal2.add(Calendar.DAY_OF_MONTH, -1);
+
+            if (cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH) || diff > oneDay) {
+                formatter = new SimpleDateFormat("MM월 dd일", java.util.Locale.KOREA);
+                return formatter.format(d1);
+            }
+
+            formatter = new SimpleDateFormat("HH시 mm분", java.util.Locale.KOREA);
+            return formatter.format(d1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return reg_dt;
+    }
+
+
 
     /**
      * EXIF정보를 회전각도로 변환하는 메서드
@@ -327,7 +476,7 @@ public class Utils {
                     exif = new ExifInterface(photoPath);
                     int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                     orientation = Utils.exifOrientationToDegrees(exifOrientation);
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
 
@@ -772,22 +921,32 @@ public class Utils {
         alert.show();
     }
 
-    public static void alert(Context context, String msg, final AlertListener alertListener) {
-        if (alertListener != null && alertListener.before()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage(msg).setCancelable(false).setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
+    public static void alert(Context context, String msg, Function0<Unit> function) {
+        Utils.alert(context, msg, "확인", "취소", function);
+    }
 
-                    if (alertListener != null) {
-                        alertListener.after();
-                    }
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
+    public static void alert(Context context, String msg, String okBtnText, Function0<Unit> function) {
+        Utils.alert(context, msg, okBtnText, "취소", function);
+    }
+
+    public static void alert(Context context, String msg, String okBtnText, String noBtnText, final Function0<Unit> function) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(msg).setCancelable(false);
+        builder.setPositiveButton(okBtnText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                function.invoke();
+            }
+        });
+        builder.setNegativeButton(noBtnText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public static String getipAddress() {
@@ -1094,8 +1253,8 @@ public class Utils {
             .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).build();
     public static DisplayImageOptions UILoptionsProfile = new DisplayImageOptions.Builder()
         // .displayer(new RoundedBitmapDisplayer(2))
-             .showImageOnLoading(R.drawable.noimage)
-            .showImageForEmptyUri(R.drawable.noimage)
+             .showImageOnLoading(R.drawable.icon_profile)
+            .showImageForEmptyUri(R.drawable.icon_profile)
 //             .showImageOnFail(R.mipmap.box_picture)
             // .delayBeforeLoading(100)
             //        .cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).build();
@@ -1112,7 +1271,7 @@ public class Utils {
 
     public static String fullDateTime(String created) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.KOREA);
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월 dd일 EEE요일 a h시 mm분", java.util.Locale.KOREA);
+        SimpleDateFormat sdf2 = new SimpleDateFormat("MM월 dd일 h시 mm분", java.util.Locale.KOREA);
         try {
             Date d = sdf1.parse(created);
             return sdf2.format(d);
@@ -1861,12 +2020,18 @@ public class Utils {
     }
 
 
+
+
+
     public static int getInt(String str) {
         if(str != null && str != "" && str.length() < 1) {
             return Integer.parseInt(str);
         }
         return -1;
     }
+
+
+
 
     public static Bitmap retriveVideoFrameFromVideo(String videoPath)
             throws Throwable {
@@ -1895,4 +2060,53 @@ public class Utils {
         return bitmap;
     }
 
+
+
+
+    public static String dateString2(Context context, int timer) {
+        // Set up touch listener for non-text box views to hide keyboard.
+
+        if (timer > 0) {
+            int h = timer / 60 / 60;
+            int m = timer / 60 % 60;
+            int s = timer % 60;
+
+            String txt_d = "0";
+            String txt_h = "";
+            String txt_m = "";
+            String txt_s = "";
+
+            if (h < 10) {
+                txt_h = "" + h;
+            } else if (h > 24) {
+                txt_d = "" + h / 24;
+                txt_h = "" + h % 24;
+            } else {
+                txt_h = "" + h;
+            }
+
+            if (m < 10) {
+                txt_m = "0" + m;
+            } else {
+                txt_m = "" + m;
+            }
+
+            if (s < 10) {
+                txt_s = "0" + s;
+            } else {
+                txt_s = "" + s;
+            }
+
+            if (!"0".equals(txt_d)) {
+                return  txt_d + "일 " + txt_h + "시간";
+            } else if (!"0".equals(txt_h)) {
+                return  txt_h + "시간";
+            } else {
+                return  txt_m + "분";
+            }
+
+        }
+
+        return "";
+    }
 }

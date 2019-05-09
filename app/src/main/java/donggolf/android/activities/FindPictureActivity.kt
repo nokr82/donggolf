@@ -1,17 +1,14 @@
 package donggolf.android.activities
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import donggolf.android.R
+import donggolf.android.adapters.CustomGalleryFolderArrayAdapter
 import donggolf.android.adapters.CustomVideoFolderArrayAdapter
-import donggolf.android.adapters.FindPictureAdapter
 import donggolf.android.adapters.ImageAdapter
 import donggolf.android.adapters.VideoAdapter
 import donggolf.android.base.RootActivity
@@ -60,7 +57,7 @@ class FindPictureActivity : RootActivity() {
         var intent = getIntent()
 //        time = intent.getLongExtra("time", 0L)
 
-        println("startactivirtytime:::::${System.currentTimeMillis()}")
+//        println("startactivirtytime:::::${System.currentTimeMillis()}")
 
 //        videoSize()
 //        photoSize()
@@ -115,7 +112,7 @@ class FindPictureActivity : RootActivity() {
                 }
 
                 c.close()
-                println("videodata${videodata}")
+                // println("videodata${videodata}")
                 videoadapter = CustomVideoFolderArrayAdapter(context, R.layout.item_custom_gallery_folder, videodata)
                 findpictre_listview.setAdapter(videoadapter)
 
@@ -201,7 +198,7 @@ class FindPictureActivity : RootActivity() {
             cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
 //            cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, null);
 
-            println(" cursor : " + cursor.count)
+            // println(" cursor : " + cursor.count)
 
             if (cursor != null && cursor.moveToFirst()) {
 
@@ -306,7 +303,7 @@ class FindPictureActivity : RootActivity() {
                     intent.putExtra("images", item)
                     intent.putExtra("displayname", name)
 
-                    Log.d("yjs", "findpicture : " + item)
+                    //Log.d("yjs", "findpicture : " + item)
 
                     setResult(RESULT_OK, intent)
                     finish()
@@ -323,8 +320,8 @@ class FindPictureActivity : RootActivity() {
                     intent.putExtra("displayname", name)
                     intent.putExtra("ids", ids)
 
-                    Log.d("yjs", "findpicture : " + item)
-                    Log.d("yjs", "video_ids : " + ids)
+                    //Log.d("yjs", "findpicture : " + item)
+                    //Log.d("yjs", "video_ids : " + ids)
 
                     setResult(RESULT_OK, intent)
                     finish()

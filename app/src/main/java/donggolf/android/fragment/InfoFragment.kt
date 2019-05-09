@@ -1,71 +1,47 @@
 package donggolf.android.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.*
-import android.database.Cursor
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.internal.InternalTokenResult
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache
-import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
-import com.nostra13.universalimageloader.core.assist.ImageScaleType
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.squareup.okhttp.internal.Util
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
-import donggolf.android.actions.ContentAction
 import donggolf.android.actions.MemberAction
-import donggolf.android.actions.ProfileAction
 import donggolf.android.activities.*
-import donggolf.android.adapters.ImageAdapter
-import donggolf.android.base.*
-import donggolf.android.base.FirebaseFirestoreUtils.Companion.db
-import donggolf.android.models.Content
-import donggolf.android.models.Photo
-import donggolf.android.models.Users
-import kotlinx.android.synthetic.main.activity_add_post.*
-import kotlinx.android.synthetic.main.activity_findid.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_mod_status_msg.*
+import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile_manage.*
-import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.lang.Exception
 
 class InfoFragment : Fragment() {
     lateinit var myContext: Context
     private var progressDialog: ProgressDialog? = null
 
-
+    private val REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1
     val SELECT_STATUS = 105
     val MODIFY_NAME = 106
     val MODIFY_TAG = 107
@@ -102,10 +78,10 @@ class InfoFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        var filter1 = IntentFilter("REGION_CHANGE")
+        val filter1 = IntentFilter("REGION_CHANGE")
         myContext.registerReceiver(reloadReciver, filter1)
 
-        var filter2 = IntentFilter("DELETE_IMG")
+        val filter2 = IntentFilter("DELETE_IMG")
         myContext.registerReceiver(reloadReciver, filter2)
 
 
@@ -114,14 +90,14 @@ class InfoFragment : Fragment() {
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
         mychatFL.setOnClickListener {
-            var intent = Intent()
+            val intent = Intent()
             intent.action = "MY_CHATTING"
             myContext!!.sendBroadcast(intent)
         }
 
         //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
-            var intent = Intent(activity, OtherManageActivity::class.java)
+            val intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }
 
@@ -130,38 +106,38 @@ class InfoFragment : Fragment() {
         }
 
         imgProfile.setOnClickListener {
-            var intent = Intent(activity, ViewProfileListActivity::class.java)
+            val intent = Intent(activity, ViewProfileListActivity::class.java)
             intent.putExtra("viewAlbumUser", PrefUtils.getIntPreference(context, "member_id"))
             startActivity(intent)
         }
 
         messageTV.setOnClickListener {
-            var intent = Intent(activity, ModStatusMsgActivity::class.java)
+            val intent = Intent(activity, ModStatusMsgActivity::class.java)
             startActivityForResult(intent, SELECT_STATUS)
         }
 
         btnNameModi.setOnClickListener {
-            var intent = Intent(activity, ProfileNameModifActivity::class.java)
+            val intent = Intent(activity, ProfileNameModifActivity::class.java)
             startActivityForResult(intent, MODIFY_NAME)
         }
 
         tv_CONSEQUENCES.setOnClickListener {
-            var itt = Intent(activity, OtherManageActivity::class.java)
+            val itt = Intent(activity, OtherManageActivity::class.java)
             startActivity(itt)
         }
 
         prfhashtagLL.setOnClickListener {
-            var intent = Intent(activity, ProfileTagChangeActivity::class.java)
+            val intent = Intent(activity, ProfileTagChangeActivity::class.java)
             startActivityForResult(intent, MODIFY_TAG)
         }
 
         myNeighbor.setOnClickListener {
-            var intent = Intent(activity, MutualActivity::class.java)
+            val intent = Intent(activity, MutualActivity::class.java)
             startActivity(intent)
         }
 
-        setRegion.setOnClickListener {
-            var intent = Intent(activity, AreaMyRangeActivity::class.java)
+        setRegionLL.setOnClickListener {
+            val intent = Intent(activity, AreaMyRangeActivity::class.java)
             intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
@@ -179,7 +155,7 @@ class InfoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("테스트","etet")
+        //Log.d("테스트","etet")
         member_info()
     }
 
@@ -188,12 +164,22 @@ class InfoFragment : Fragment() {
     }
 
     private fun choosePhotoFromGallary() {
-        val galleryIntent = Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-        startActivityForResult(galleryIntent, GALLERY)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            loadPermissions(perms, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE)
+        } else {
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent, GALLERY)
+        }
     }
-
+    private fun loadPermissions(perms: Array<String>, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(myContext, perms[0]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity as Activity, perms, requestCode)
+        } else {
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent, GALLERY)
+        }
+    }
     fun member_info() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
@@ -206,6 +192,8 @@ class InfoFragment : Fragment() {
                 }
 
                 val result = response!!.getString("result")
+                Log.d("결과마이",response.toString())
+
                 if (result == "ok") {
                     val member = response.getJSONObject("Member")
 
@@ -219,20 +207,49 @@ class InfoFragment : Fragment() {
                     textDate.text = Utils.getString(member, "created").substringBefore(" ")
                     txUserName.text = Utils.getString(member, "nick")
 
+                    PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
+
                     //지역
+
+                    val region1 = response.getJSONObject("region1")
+                    val region2 = response.getJSONObject("region2")
+                    val region3 = response.getJSONObject("region3")
+
+                    var r_name1 = Utils.getString(region1,"name")
+                    var r_name2 = Utils.getString(region2,"name")
+                    var r_name3 = Utils.getString(region3,"name")
+
+                    var region1_name = Utils.getString(region1,"region_name")
+                    var region2_name = Utils.getString(region2,"region_name")
+                    var region3_name = Utils.getString(region3,"region_name")
+
                     var region = ""
 
-                    if (Utils.getString(member, "region1") != null && Utils.getString(member, "region1") != "") {
-                        region += Utils.getString(member, "region1")
-                    }
-                    if (Utils.getString(member, "region2") != null && Utils.getString(member, "region2") != "") {
-                        region += "," + Utils.getString(member, "region2")
-                    }
-                    if (Utils.getString(member, "region3") != null && Utils.getString(member, "region3") != "") {
-                        region += "," + Utils.getString(member, "region3")
+                    if (r_name1 != null && r_name1 != "") {
+                        if (region1_name.contains("시")){
+                            region += region1_name+">"+r_name1
+                        }else{
+                            region += r_name1
+                        }
                     }
 
-                    if (Utils.getString(member, "region1") == "전국") {
+                    if (r_name2 != null && r_name2 != "") {
+                        if (region2_name.contains("시")){
+                            region += ","+region2_name+">"+r_name2
+                        }else{
+                            region +=","+ r_name2
+                        }
+                    }
+
+                    if (r_name3 != null && r_name3 != "") {
+                        if (region3_name.contains("시")){
+                            region += ","+region3_name+">"+r_name3
+                        }else{
+                            region +=","+ r_name3
+                        }
+                    }
+
+                    if (r_name1 == "전국") {
                         region = "전국"
                     }
 
@@ -240,6 +257,23 @@ class InfoFragment : Fragment() {
                                region = region.substring(0, region.length-2)
                            }*/
                     txUserRegion.text = region
+
+                    val region1_id = region1.getInt("id")
+                    val region2_id = region2.getInt("id")
+                    val region3_id = region3.getInt("id")
+
+                    var region_ids = arrayListOf<Int>()
+                    if(region1_id > 0) {
+                        region_ids.add(region1_id)
+                    }
+                    if(region2_id > 0) {
+                        region_ids.add(region2_id)
+                    }
+                    if(region3_id > 0) {
+                        region_ids.add(region3_id)
+                    }
+
+                    PrefUtils.setPreference(context,"region_id", region_ids.joinToString(","))
 
                     //상메
                     var statusMessage = Utils.getString(member, "status_msg")
@@ -329,9 +363,9 @@ class InfoFragment : Fragment() {
                     member_info()
                 }
                 GALLERY -> {
-                    if (data != null) {
-                        val contentURI = data.data
-                        Log.d("uri", contentURI.toString())
+                    if (data != null && data.data != null) {
+                        // val contentURI = data.data
+                        // Log.d("uri", contentURI.toString())
 
                         try {
                             val selectedImageUri = data.data
@@ -362,12 +396,12 @@ class InfoFragment : Fragment() {
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                                    println(responseString)
+                                    //println(responseString)
                                 }
 
                                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                                    if (errorResponse != null)
-                                        println(errorResponse.getString("message"))
+//                                    if (errorResponse != null)
+                                        //println(errorResponse.getString("message"))
                                 }
                             })
 
@@ -384,118 +418,6 @@ class InfoFragment : Fragment() {
 
     }
 
-
-
-    fun getTempUserInformation(type: String) {
-
-        var sttsMsg = ""
-        var newNick = ""
-        var newRegion = ArrayList<String>()
-        var newRegionStr = ""
-
-        val params = RequestParams()
-        params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-
-        MemberAction.get_member_info(params, object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                try {
-                    val result = response!!.getString("result")
-                    println("response : $response")
-                    if (result == "ok") {
-                        val member = response.getJSONObject("Member")
-                        val memberTags = response.getJSONArray("MemberTags")
-                        //val memberImgs = response.getJSONArray("MemberImgs")
-                        sttsMsg = Utils.getString(member, "status_msg")
-                        newNick = Utils.getString(member, "nick")
-                        newRegion.clear()
-                        var tmprg = Utils.getString(member, "region1")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg1 = tmprg
-                        }
-                        tmprg = Utils.getString(member, "region2")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg2 = tmprg
-                        }
-                        tmprg = Utils.getString(member, "region3")
-                        if (tmprg != null) {
-                            newRegion.add(tmprg)
-                            //rg3 = tmprg
-                        }
-                        for (i in 0 until newRegion.size) {
-                            newRegionStr += newRegion[i] + ","
-                        }
-                        println("newRegionStr $newRegionStr")
-
-
-                        when (type) {
-                            "status_msg" -> {
-                                infoStatusMsg.text = sttsMsg
-                            }
-                            "nick" -> {
-                                txUserName.text = newNick
-                            }
-                            "region" -> {
-                                txUserRegion.text = newRegionStr.substring(0, newRegionStr.length - 1)
-
-                            }
-                            "tag" -> {
-                                var taglist = ""
-                                for (i in 0..memberTags.length() - 1) {
-                                    val data = memberTags[i] as JSONObject
-                                    taglist += "#" + Utils.getString(data, "tag")
-                                    println(taglist)
-                                }
-                                hashtagTV.text = taglist
-                            }
-                            "image" -> {
-                                /*if (memberImgs.length() > 0) {
-                                    val imgOb = memberImgs[0] as JSONObject
-                                    val imguri = Utils.getString(imgOb, "image_uri")
-                                    *//*val imgpath = Utils.getString(imgOb, "imgpath")
-                                newImg = imgpath + imguri*//*
-                                    newImg = imguri
-                                    val imgUri = Uri.parse(newImg)
-
-                                    imgProfile.setImageURI(imgUri)
-                                    imgProfile.background = ShapeDrawable(OvalShape())
-                                }*/
-                                val images = response.getJSONArray("MemberImgs")
-                                val json = images[0] as JSONObject
-                                val img_uri = Utils.getString(json, "image_uri")
-                                //var image = Config.url + image_uri
-                                val image = Config.url + img_uri
-
-                                val uri = Uri.parse(image)
-                                val inputStream = myContext!!.contentResolver.openInputStream(uri)
-                                val btm = BitmapFactory.decodeStream(inputStream)
-                                val resized = Utils.resizeBitmap(btm, 100)
-                                imgProfile.setImageBitmap(resized)
-
-                                //이미지 동그랗게
-//                                imgProfile.background = ShapeDrawable(OvalShape())
-//                                imgProfile.scaleType = ImageView.ScaleType.CENTER_CROP
-                            }
-                        }
-
-                    }
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-
-            }
-        })
-
-    }
 
     fun doSomethingWithContext(context: Context) {
         // TODO: Actually do something with the context

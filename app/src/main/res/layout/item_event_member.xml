@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:padding="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/item_profileImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/icon_profiles"/>
+
+    <TextView
+        android:id="@+id/item_nickNameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:textSize="13dp"
+        android:textColor="#EF5C34"
+        android:textStyle="bold"
+        android:maxLength="7"
+        android:text=""/>
+
+    <ImageView
+        android:id="@+id/item_relationIV"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/icon_first" />
+
+    <TextView
+        android:id="@+id/numberTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="15dp"
+        android:gravity="right"
+        android:textSize="13dp"
+        android:text="이벤트 참여번호 4504"/>
+
+    <TextView
+        android:id="@+id/gradeTV"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="15dp"
+        android:gravity="right"
+        android:textSize="13dp"
+        android:text=""
+        android:visibility="invisible"/>
+
+</LinearLayout>

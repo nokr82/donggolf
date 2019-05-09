@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="100dp"
+    android:orientation="horizontal" android:layout_width="120dp"
     android:layout_height="30dp" android:gravity="left"
     android:layout_margin="5dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:gravity="center"
         android:id="@+id/titleTagTV"
-        android:textSize="13dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginRight="3dp"
-        android:text="대구광역시"/>
+        android:gravity="center"
+        android:text="12345678910"
+        android:textSize="13dp" />
+
     <LinearLayout
         android:id="@+id/removeLL"
         android:layout_width="match_parent"
@@ -24,5 +25,4 @@
             android:src="@drawable/btn_del_tag_word"
             android:id="@+id/removeIV"/>
     </LinearLayout>
-
 </LinearLayout>

@@ -24,10 +24,11 @@
                 android:background="@drawable/btn_back" />
 
             <TextView
+                android:id="@+id/titleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="활동지역 범위설정"
+                android:text="우리동네 설정"
                 android:textSize="15dp"
                 android:textColor="#000000" />
 
@@ -87,11 +88,26 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <TextView
+        android:id="@+id/myTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="우리동네"
+        android:visibility="gone"
+        android:textSize="13dp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/line_0" />
     <ListView
         android:scrollbars="none"
         android:id="@+id/arealistLV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
     </ListView>
 
     <GridView

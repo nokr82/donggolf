@@ -458,11 +458,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
 
@@ -577,7 +577,6 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                     } else {
                         for (i in 0 until list.length()) {
 
-                            println("-------list.size : ${list.length()} adddddddddddddddddddddddddddddd")
                             val data = list.get(i) as JSONObject
 
                             if (insertCheckData(data.getJSONObject("Chatting"))) {
@@ -585,8 +584,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                                 chattingList.get(i).put("text_size",text_size)
                             }
 
-//                            chatLV.setSelection(adapter.count - 1)
+                            chatLV.post {
+                                chatLV.setSelection(adapter.count - 1)
+                            }
+
                         }
+                    }
+
+                    if (list.length() > 0) {
+                        adapter.notifyDataSetChanged()
                     }
 
                     if (chattingList.size > 0) {
@@ -595,17 +601,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
                         last_id = Utils.getInt(chatting, "id")
                     }
 
-                    (adapter as BaseAdapter).notifyDataSetChanged()
-
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
 
@@ -641,15 +645,15 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
 
         val first_data = chattingList[0]
         val first_chat = first_data.getJSONObject("Chatting")
-        val first_id = Utils.getInt(first_chat, "id")
+        val read_first_id = Utils.getInt(first_chat, "id")
 
         val last_data = chattingList[chattingList.size - 1]
         val last_chat = last_data.getJSONObject("Chatting")
-        val last_id = Utils.getInt(last_chat, "id")
+        val read_last_id = Utils.getInt(last_chat, "id")
 
         val params = RequestParams()
-        params.put("first_id", first_id)
-        params.put("last_id", last_id)
+        params.put("first_id", read_first_id)
+        params.put("last_id", read_last_id)
         params.put("room_id", room_id)
 
         ChattingAction.chatting_read_count(params, object : JsonHttpResponseHandler(){
@@ -685,11 +689,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
 
@@ -755,11 +759,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1003,11 +1007,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1026,11 +1030,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1050,11 +1054,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1085,11 +1089,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1109,11 +1113,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1125,12 +1129,12 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         params.put("mate_id",chat_member_id)
         params.put("block_yn","Y")
 
-        println("-----set_block 가쟈~~")
+        // println("-----set_block 가쟈~~")
 
         ChattingAction.set_block(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                println("-----result : $result")
+                // println("-----result : $result")
                 if (result == "block") {
                     Toast.makeText(context,"이미 차단한 대화방 입니다.",Toast.LENGTH_SHORT).show()
                 } else if (result == "ok"){
@@ -1144,13 +1148,13 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
-                println("----------------1")
+                // println(responseString)
+                // println("----------------1")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
-                println("----------------2")
+                // println(errorResponse)
+                // println("----------------2")
             }
         })
     }
@@ -1168,11 +1172,11 @@ class ChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

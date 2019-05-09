@@ -1,33 +1,21 @@
 package donggolf.android.adapters
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
-import android.media.MediaMetadataRetriever
-import android.media.ThumbnailUtils
-import android.net.Uri
-import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
+import donggolf.android.R
 import donggolf.android.base.Config
 import donggolf.android.base.Utils
 import donggolf.android.models.Text
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.collections.ArrayList
-import android.support.v4.os.HandlerCompat.postDelayed
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
-import com.kakao.auth.StringSet.file
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
-import com.kakao.kakaostory.StringSet.image
-import donggolf.android.R
-import donggolf.android.base.DownloadFileAsyncTask
 
 
 open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data){
@@ -63,11 +51,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var json = data.get(position)
         Log.d("이미지",json.toString())
         var Content = json.getJSONObject("Content")
-        val member_id = Utils.getString(Content,"member_id")
         val title = Utils.getString(Content,"title")
-        var text = Utils.getString(Content,"text")
-        val content_id = Utils.getString(Content,"id")
-        val favorite_cnt = Utils.getString(Content,"favorite_cnt")
         val look_cnt = Utils.getString(Content,"look_cnt")
         val like_cnt = Utils.getString(Content,"like_cnt")
         val cmt_cnt = Utils.getString(Content,"cmt_cnt")
@@ -77,8 +61,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         var profile = Utils.getString(member,"profile_img")
         var created = Utils.getString(Content,"created")
         var uri = Utils.getString(Content,"image_uri")
-        var video = Utils.getString(Content,"video")
-        val since = Utils.since(created)
+        val since = Utils.since3(created)
 
         if (sex == "0"){
             item.main_item_nickname.setTextColor(Color.parseColor("#000000"))
@@ -93,7 +76,7 @@ open class MainAdapter(context: Context, view:Int, data:ArrayList<JSONObject>) :
         item.main_item_nickname.text = nick.toString()
         item.main_item_comment_count.text = cmt_cnt.toString()
         item.main_item_lately.text = since.toString()
-        val type =Utils.getInt(Content,"type")
+        val type = Utils.getInt(Content,"type")
 
         var image = Config.url + uri
 

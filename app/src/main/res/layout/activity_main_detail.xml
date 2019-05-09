@@ -6,576 +6,569 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.MainDetailActivity">
-
-
     <RelativeLayout
-        android:id="@+id/goneRL"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp">
-
-                    <LinearLayout
-                        android:id="@+id/finishLL"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="15dp">
-
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/btn_close" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="30dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/titleTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="7dp"
-                            android:textColor="#000000"
-                            android:textSize="14dp" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/dateTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="7dp"
-                                android:text="xxxx년 xx월 xx일 오후 xx:xx"
-                                android:textColor="#CDCDCD"
-                                android:textSize="10dp" />
-
-                            <ImageView
-                                android:layout_width="13dp"
-                                android:layout_height="10dp"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="7dp"
-                                android:background="@drawable/icon_view" />
-
-                            <TextView
-                                android:id="@+id/viewTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="2dp"
-                                android:text="9999"
-                                android:textColor="#CDCDCD"
-                                android:textSize="10dp" />
-
-                            <ImageView
-                                android:layout_width="12dp"
-                                android:layout_height="10dp"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="7dp"
-                                android:background="@drawable/icon_comment" />
-
-                            <TextView
-                                android:id="@+id/cmtcountTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="2dp"
-                                android:text="9999"
-                                android:textColor="#CDCDCD"
-                                android:textSize="10dp" />
-
-                            <ImageView
-                                android:layout_width="11dp"
-                                android:layout_height="10dp"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="7dp"
-                                android:background="@drawable/icon_like" />
-
-                            <TextView
-                                android:id="@+id/heartcountTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="2dp"
-                                android:text="9999"
-                                android:textColor="#CDCDCD"
-                                android:textSize="10dp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/line_0" />
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <LinearLayout
-                                android:id="@+id/plusBT"
-                                android:layout_width="wrap_content"
-                                android:layout_height="45dp"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginRight="12dp">
-
-                                <ImageView
-                                    android:layout_width="18dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/btn_menu" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <de.hdodenhof.circleimageview.CircleImageView
-                                    android:id="@+id/profileIV"
-                                    android:layout_width="33dp"
-                                    android:layout_height="33dp"
-                                    android:layout_margin="7dp"
-                                    android:background="@drawable/icon_profile" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center_vertical">
-
-                                        <TextView
-                                            android:id="@+id/nickNameTV"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:maxLength="7"
-                                            android:textColor="#EF5C34"
-                                            android:textSize="13dp" />
-
-                                        <ImageView
-                                            android:id="@+id/freindIV"
-                                            android:layout_width="23dp"
-                                            android:layout_height="13dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginLeft="5dp"
-                                            android:layout_marginTop="1dp"
-                                            android:background="@drawable/icon_first" />
-                                    </LinearLayout>
-
-                                    <TextView
-                                        android:id="@+id/statusmsgTV"
-                                        android:layout_width="300dp"
-                                        android:layout_height="wrap_content"
-                                        android:textColor="#AFAFAF"
-                                        android:textSize="8.67dp" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </RelativeLayout>
-
-
-                        <TextView
-                            android:visibility="gone"
-                            android:id="@+id/textTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="7dp"
-                            android:textColor="#000000"
-                            android:textSize="13dp" />
-                        <WebView
-                            android:id="@+id/contentWV"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            tools:ignore="WebViewLayout">
-                        </WebView>
-                        <donggolf.android.base.RationalRelativeLayout
-                            android:visibility="gone"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginLeft="7dp"
-                            android:layout_marginRight="7dp"
-                            app:ratio="1020:574">
-                        <!--<WebView-->
-                            <!--android:id="@+id/contentWV"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="match_parent">-->
-                        <!--</WebView>-->
-                        </donggolf.android.base.RationalRelativeLayout>
-                        <donggolf.android.base.RationalRelativeLayout
-                            android:id="@+id/imageRL"
-                            android:visibility="gone"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginLeft="7dp"
-                            android:layout_marginRight="7dp"
-                            app:ratio="1020:574">
-
-                            <android.support.v4.view.ViewPager
-                                android:id="@+id/pagerVP"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_alignParentStart="true"
-                                android:layout_alignParentTop="true"
-                                android:visibility="gone" />
-
-                            <VideoView
-                                android:id="@+id/videoVV"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_alignParentLeft="true"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerInParent="true"
-                                android:visibility="gone" />
-
-
-                            <TextView
-                                android:id="@+id/leftIV"
-                                android:layout_width="30dp"
-                                android:layout_height="50dp"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:gravity="center"
-                                android:text="〈"
-                                android:textColor="#000000"
-                                android:textSize="30dp"
-                                android:textStyle="bold"
-                                android:visibility="gone" />
-
-                            <TextView
-                                android:id="@+id/rightIV"
-                                android:layout_width="30dp"
-                                android:layout_height="50dp"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true"
-                                android:gravity="center"
-                                android:text="〉"
-                                android:textColor="#000000"
-                                android:textSize="30dp"
-                                android:textStyle="bold"
-                                android:visibility="gone" />
-
-                            <TextView
-                                android:id="@+id/videoviewTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:text="동영상 보기"
-                                android:textColor="#ffffff"
-                                android:textStyle="bold"
-                                android:visibility="gone" />
-
-                            <LinearLayout
-                                android:id="@+id/circleLL"
-                                android:layout_width="match_parent"
-                                android:layout_height="15dp"
-                                android:layout_alignParentBottom="true"
-                                android:layout_marginBottom="7dp"
-                                android:gravity="center"
-                                android:orientation="horizontal" />
-
-
-                        </donggolf.android.base.RationalRelativeLayout>
-
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/relativ_RL"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="70dp"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginRight="30dp"
-                        android:visibility="gone">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/addfavoriteTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:background="@drawable/boarder_707070_background_ffffff"
-                                android:gravity="center"
-                                android:text="글 보관하기" />
-
-                            <TextView
-                                android:id="@+id/reportTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:background="@drawable/boarder_707070_background_ffffff"
-                                android:gravity="center"
-                                android:text="신고하기" />
-
-                            <TextView
-                                android:id="@+id/addFriendTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:background="@drawable/boarder_707070_background_ffffff"
-                                android:gravity="center"
-                                android:text="친구신청" />
-
-                            <TextView
-                                android:id="@+id/modifyTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:background="@drawable/boarder_707070_background_ffffff"
-                                android:gravity="center"
-                                android:text="수정" />
-
-                            <TextView
-                                android:id="@+id/deleteTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:background="@drawable/boarder_707070_background_ffffff"
-                                android:gravity="center"
-                                android:text="삭제" />
-                        </LinearLayout>
-
-
-                    </RelativeLayout>
-                </RelativeLayout>
-
-
-                <TextView
-                    android:id="@+id/hashtagTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="13dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="34.5dp"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/likeLL"
-                        android:layout_width="34.5dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:id="@+id/likeIV"
-                            android:layout_width="18dp"
-                            android:layout_height="17dp"
-                            android:layout_gravity="center_vertical"
-                            android:background="@drawable/icon_like" />
-
-                    </LinearLayout>
-
-
-                    <TextView
-                        android:id="@+id/likecountTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="9999명이 좋아합니다."
-                        android:textSize="13dp" />
-
-                    <LinearLayout
-                        android:id="@+id/likeMembersLL"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
-                        android:orientation="horizontal">
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/likesMoreLL"
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="10dp"
-                            android:background="@drawable/btn_show_more" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!--<ListView
-                    android:id="@+id/commentListLV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"/>-->
-                <donggolf.android.base.ExpandableHeightListView
-                    android:id="@+id/commentListLV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp" />
-
-            </LinearLayout>
-
-        </ScrollView>
+        android:layout_height="50dp">
+
+        <LinearLayout
+            android:id="@+id/finishLL"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_close" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="#ffffff"
+            android:layout_marginRight="30dp"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/titleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:textColor="#000000"
+                android:textSize="14dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/dateTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:text="xxxx년 xx월 xx일 오후 xx:xx"
+                    android:textColor="#CDCDCD"
+                    android:textSize="10dp" />
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="7dp"
+                    android:background="@drawable/icon_view" />
+
+                <TextView
+                    android:id="@+id/viewTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:text="9999"
+                    android:textColor="#CDCDCD"
+                    android:textSize="10dp" />
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="7dp"
+                    android:background="@drawable/icon_comment" />
+
+                <TextView
+                    android:id="@+id/cmtcountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:text="9999"
+                    android:textColor="#CDCDCD"
+                    android:textSize="10dp" />
+
+                <ImageView
+                    android:layout_width="11dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="7dp"
+                    android:background="@drawable/icon_like" />
+
+                <TextView
+                    android:id="@+id/heartcountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:text="9999"
+                    android:textColor="#CDCDCD"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/line_0" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/line_0" />
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/plusBT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="45dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="12dp">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@drawable/btn_menu" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/profileIV"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_margin="7dp"
+                                android:background="@drawable/icon_profile" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical">
+
+                                    <TextView
+                                        android:id="@+id/nickNameTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:maxLength="7"
+                                        android:textColor="#EF5C34"
+                                        android:textSize="13dp" />
+
+                                    <ImageView
+                                        android:id="@+id/freindIV"
+                                        android:layout_width="23dp"
+                                        android:layout_height="13dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginLeft="5dp"
+                                        android:layout_marginTop="1dp"
+                                        android:background="@drawable/icon_first" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/statusmsgTV"
+                                    android:layout_width="300dp"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="#AFAFAF"
+                                    android:textSize="12dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/textTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp"
+                        android:textColor="#000000"
+                        android:textSize="13dp" />
+                    <WebView
+                        android:layout_margin="10dp"
+                        android:id="@+id/contentWV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="WebViewLayout">
+                    </WebView>
+                    <donggolf.android.base.RationalRelativeLayout
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginRight="7dp"
+                        app:ratio="1020:574">
+                        <!--<WebView-->
+                        <!--android:id="@+id/contentWV"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent">-->
+                        <!--</WebView>-->
+                    </donggolf.android.base.RationalRelativeLayout>
+                    <donggolf.android.base.RationalRelativeLayout
+                        android:id="@+id/imageRL"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginRight="7dp"
+                        app:ratio="1020:574">
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/pagerVP"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:visibility="gone" />
+
+                        <VideoView
+                            android:id="@+id/videoVV"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:visibility="gone" />
+
+
+                        <TextView
+                            android:id="@+id/leftIV"
+                            android:layout_width="30dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="〈"
+                            android:textColor="#000000"
+                            android:textSize="30dp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/rightIV"
+                            android:layout_width="30dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="〉"
+                            android:textColor="#000000"
+                            android:textSize="30dp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/videoviewTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:text="동영상 보기"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <LinearLayout
+                            android:id="@+id/circleLL"
+                            android:layout_width="match_parent"
+                            android:layout_height="15dp"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="7dp"
+                            android:gravity="center"
+                            android:orientation="horizontal" />
+
+
+                    </donggolf.android.base.RationalRelativeLayout>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relativ_RL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="70dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="30dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/addfavoriteTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:gravity="center"
+                            android:text="글 보관하기" />
+
+                        <TextView
+                            android:id="@+id/reportTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:gravity="center"
+                            android:text="신고하기" />
+
+                        <TextView
+                            android:id="@+id/addFriendTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:gravity="center"
+                            android:text="친구신청" />
+
+                        <TextView
+                            android:id="@+id/modifyTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:gravity="center"
+                            android:text="수정" />
+
+                        <TextView
+                            android:id="@+id/deleteTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/boarder_707070_background_ffffff"
+                            android:gravity="center"
+                            android:text="삭제" />
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/hashtagTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textSize="13dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="34.5dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/main_detail_gofindpicture"
+                    android:id="@+id/likeLL"
+                    android:layout_width="34.5dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/likeIV"
+                        android:layout_width="18dp"
+                        android:layout_height="17dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/icon_like" />
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/likecountTV"
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text=""
+                    android:textSize="13dp" />
+
+                <LinearLayout
+                    android:id="@+id/likeMembersLL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/likesMoreLL"
+                    android:layout_width="50dp"
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:layout_margin="10dp"
-                        android:layout_weight="3.2"
-                        android:background="@drawable/btn_add_photo" />
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/commentLL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:visibility="gone">
-
-                    <RelativeLayout
-                        android:layout_width="45dp"
-                        android:layout_height="match_parent">
-
-                        <ImageView
-                            android:id="@+id/addedImgIV"
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:layout_margin="1dp"
-                            android:scaleType="centerCrop" />
-
-                        <ImageView
-                            android:id="@+id/delIV"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_alignParentRight="true"
-                            android:background="@mipmap/btn_del_picture" />
-
-                        <ImageView
-                            android:id="@+id/del2IV"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentRight="true"
-                            android:background="@drawable/btn_del_picture"
-                            android:paddingLeft="7dp"
-                            android:paddingBottom="7dp"
-                            android:visibility="gone" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cmtLL"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/cmtET"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:hint="댓글을 남겨주세요"
-                        android:background="@null"
-                        android:paddingLeft="5dp"
-                        android:textSize="13dp" />
-
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/btn_show_more" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/cmtTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="댓글이 차단된 상태입니다"
-                    android:textSize="13dp"
-                    android:visibility="gone" />
-
-                <View
-                    android:layout_width="0.5dp"
-                    android:layout_height="match_parent"
-                    android:background="#cdcdcd" />
-
-                <TextView
-                    android:id="@+id/detail_add_commentTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:text="등록"
-                    android:textColor="#0EDA2F"
-
-                    android:textSize="13dp"
-                    android:visibility="visible" />
             </LinearLayout>
 
-            <!--댓글입력란 끝-->
+            <!--<ListView
+                android:id="@+id/commentListLV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"/>-->
+            <donggolf.android.base.ExpandableHeightListView
+                android:id="@+id/commentListLV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line_0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:gravity="center"
+                android:id="@+id/main_detail_gofindpicture"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:layout_weight="3.2"
+                    android:background="@drawable/btn_add_photo" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/commentLL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/addedImgIV"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/delIV"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/btn_del_picture" />
+
+                    <ImageView
+                        android:id="@+id/del2IV"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/btn_del_picture"
+                        android:paddingLeft="7dp"
+                        android:paddingBottom="7dp"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:id="@+id/cmtLL"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/cmtET"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="댓글을 남겨주세요"
+                    android:paddingLeft="5dp"
+                    android:textSize="16dp" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/cmtTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="댓글이 차단된 상태입니다"
+                android:textSize="13dp"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="#cdcdcd" />
+
+            <TextView
+                android:id="@+id/detail_add_commentTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="등록"
+                android:textColor="#0EDA2F"
+                android:textSize="14dp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <!--댓글입력란 끝-->
+
+    </LinearLayout>
 
 </LinearLayout>

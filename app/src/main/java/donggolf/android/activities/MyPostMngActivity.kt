@@ -52,7 +52,7 @@ class MyPostMngActivity : RootActivity() {
 
         if (intent.getStringExtra("founder") != null) {
             member_id = intent.getStringExtra("founder").toInt()
-            println("-----------member_id$member_id")
+            //println("-----------member_id$member_id")
             type = intent.getStringExtra("type")
             nick = intent.getStringExtra("nick")
             titleTV.setText(nick)
@@ -109,7 +109,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("댓글단 글 보기 :: $response")
+                        //println("댓글단 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -131,16 +131,17 @@ class MyPostMngActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                    println("DataLoad failed. Because of")
-                    println(errorResponse)
+                    //println("DataLoad failed. Because of")
+                    //println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    //println(responseString)
                 }
 
             })
         }
+
         myCommentLV.setOnItemClickListener { parent, view, position, id ->
             val data = myCommentPostList.get(position)
             val content = data.getJSONObject("Content")
@@ -164,7 +165,7 @@ class MyPostMngActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                     try {
-                        println("내 보관 글 보기 :: $response")
+                        //println("내 보관 글 보기 :: $response")
                         val result = response!!.getString("result")
                         if ("ok" == result) {
 
@@ -188,12 +189,13 @@ class MyPostMngActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                    println("DataLoad failed. Because of")
-                    println(errorResponse)
+                    //println("DataLoad failed. Because of")
+                    //println(errorResponse)
                 }
 
             })
         }
+
         myStorePostLV.setOnItemClickListener { parent, view, position, id ->
             val data = myStoredPostList.get(position)
             val content = data.getJSONObject("Content")
@@ -240,11 +242,11 @@ class MyPostMngActivity : RootActivity() {
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                        println(responseString)
+                        //println(responseString)
                     }
 
                     override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                        println(errorResponse)
+                        //println(errorResponse)
                     }
                 })
             }
@@ -269,13 +271,13 @@ class MyPostMngActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
 
                 try {
-                    println("내 글 보기 :: $response")
+                    //println("내 글 보기 :: $response")
                     val result = response!!.getString("result")
                     if ("ok" == result) {
 
                         val data = response!!.getJSONArray("contents")
                         myPostList.clear()
-                        Log.d("데이타",data.toString())
+                        //Log.d("데이타",data.toString())
                         for (i in 0 until data.length()) {
                             myPostList.add(data[i] as JSONObject)
                             myPostList[i].put("willDel", false)
@@ -297,8 +299,8 @@ class MyPostMngActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONArray?) {
-                println("DataLoad failed. Because of")
-                println(errorResponse)
+                //println("DataLoad failed. Because of")
+                //println(errorResponse)
             }
 
         })

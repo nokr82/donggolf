@@ -11,96 +11,111 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp">
+
         <ImageView
             android:id="@+id/btn_cancelAddDongchat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_cancel"/>
+            android:src="@drawable/btn_cancel" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
+            android:text="동네 채팅방 만들기"
             android:textSize="15dp"
-            android:textStyle="bold"
-            android:text="동네 채팅방 만들기"/>
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/cntTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="1/5"
-            android:textStyle="bold"
             android:textSize="15dp"
-            android:gravity="right"/>
+            android:textStyle="bold" />
     </LinearLayout>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/line_0"/>
+        android:background="@drawable/line_0" />
 
     <ScrollView
-        android:scrollbars="none"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:text="지역"/>
+                    android:text="지역"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <RelativeLayout
                     android:id="@+id/region1TV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:layout_marginRight="10dp">
+                    android:layout_weight="0.5">
+
                     <TextView
                         android:id="@+id/leftregionTV"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
+                        android:layout_height="35dp"
                         android:layout_weight="1"
-                        android:textSize="14dp"
+                        android:background="@drawable/box_region"
+                        android:gravity="center_vertical"
                         android:paddingLeft="10dp"
-                        android:text="경기도"
-                        android:background="@drawable/box_region"/>
+                        android:text=""
+                        android:textSize="14dp" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
-                        android:src="@drawable/icon_drop_list"/>
+                        android:src="@drawable/icon_drop_list" />
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/region2TV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2">
+
                     <TextView
                         android:id="@+id/rightregionTV"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
+                        android:layout_height="35dp"
                         android:layout_weight="1"
-                        android:textSize="14dp"
+                        android:background="@drawable/box_region"
+                        android:gravity="center_vertical"
                         android:paddingLeft="10dp"
-                        android:text="부천시"
-                        android:background="@drawable/box_region"/>
+                        android:text=""
+                        android:textSize="14dp" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
-                        android:src="@drawable/icon_drop_list"/>
+                        android:src="@drawable/icon_drop_list" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -108,66 +123,76 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
-                    android:textStyle="bold"
-                    android:textSize="13dp"
-                    android:text="방제"/>
+                    android:text="방제"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <EditText
                     android:id="@+id/titleET"
                     android:layout_width="match_parent"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
-                    android:maxLines="1"
-                    android:maxLength="22"
                     android:background="@drawable/box_region"
-                    android:paddingLeft="10dp"
+                    android:gravity="center_vertical"
                     android:hint="채팅방 제목을 입력해주세요"
-                    android:textSize="14dp"/>
+                    android:maxLength="22"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:textSize="14dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
-                    android:textStyle="bold"
-                    android:textSize="13dp"
-                    android:text="인원"/>
+                    android:text="인원"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <RelativeLayout
                     android:id="@+id/moreRL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <EditText
-                        android:hint="최대인원수는 80명 입니다."
                         android:id="@+id/peoplecountET"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/box_region"
+                        android:gravity="center_vertical"
+                        android:hint="최대인원수는 80명 입니다."
                         android:inputType="number"
                         android:maxLength="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/box_region"
                         android:paddingLeft="10dp"
-                        android:textSize="14dp"
                         android:text=""
-                        android:gravity="center_vertical"/>
+                        android:textSize="14dp" />
+
                     <LinearLayout
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="25dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
                         android:gravity="center"
-                        android:layout_marginRight="10dp">
+                        android:visibility="gone">
+
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/icon_drop_list"/>
+                            android:src="@drawable/icon_drop_list" />
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
@@ -176,56 +201,64 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="top"
                     android:layout_weight="6"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:text="소개" />
+                    android:text="소개"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <EditText
                     android:id="@+id/contentET"
                     android:layout_width="match_parent"
                     android:layout_height="170dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:textSize="14dp"
                     android:background="@drawable/box_large"
-                    android:lines="10"/>
+                    android:lines="10"
+                    android:padding="10dp"
+                    android:textSize="14dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textStyle="bold"
-                    android:textSize="13dp"
                     android:gravity="center"
-                    android:text="채팅방 설정"/>
+                    android:text="채팅방 설정"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:gravity="center_vertical">
+
                     <RadioGroup
                         android:id="@+id/radio_gender"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
+
                         <RadioButton
                             android:id="@+id/visibleRB"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:textSize="12dp"
-                            android:text="공개"
                             android:buttonTint="#0EDA2F"
                             android:checked="true"
-                            android:defaultFocusHighlightEnabled="true"/>
+                            android:defaultFocusHighlightEnabled="true"
+                            android:text="공개"
+                            android:textSize="14dp" />
 
                         <RadioButton
                             android:id="@+id/invisibleRB"
@@ -233,55 +266,63 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="25dp"
-                            android:textSize="12dp"
+                            android:buttonTint="#0EDA2F"
                             android:text="비공개"
-                            android:buttonTint="#0EDA2F" />
+                            android:textSize="14dp" />
                     </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/line_1"/>
+                android:background="@drawable/line_1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp">
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="13dp"
-                        android:text="프로필 사진"/>
+                        android:text="프로필 사진"
+                        android:textColor="#000000"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
+
                     <RelativeLayout
                         android:id="@+id/profileRL"
                         android:layout_width="105dp"
                         android:layout_height="105dp">
+
                         <ImageView
                             android:id="@+id/profileIV"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:background="@drawable/btn_add_picture"
-                            android:scaleType="centerCrop"/>
+                            android:scaleType="centerCrop" />
+
                         <ImageView
                             android:id="@+id/basicIV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/icon_camera"
-                            android:layout_centerInParent="true"/>
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/icon_camera" />
+
                         <ImageView
                             android:id="@+id/profiledtIV"
-                            android:visibility="gone"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentRight="true"
-                            android:src="@drawable/btn_del_tag_word"/>
+                            android:src="@drawable/btn_del_tag_word"
+                            android:visibility="gone" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -291,67 +332,82 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="13dp"
-                        android:text="대문/배경 사진"/>
+                        android:text="대문/배경 사진"
+                        android:textColor="#000000"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
+
                     <RelativeLayout
                         android:id="@+id/backgroundRV"
                         android:layout_width="105dp"
                         android:layout_height="105dp">
+
                         <ImageView
                             android:id="@+id/backgroundIV"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:background="@drawable/btn_add_picture"
-                            android:scaleType="centerCrop"/>
+                            android:scaleType="centerCrop" />
+
                         <ImageView
                             android:id="@+id/backbasicIV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/icon_camera"
-                            android:layout_centerInParent="true"/>
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/icon_camera" />
+
                         <ImageView
                             android:id="@+id/backgrounddtIV"
-                            android:visibility="gone"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_alignParentRight="true"
-                            android:src="@drawable/btn_del_tag_word"/>
+                            android:src="@drawable/btn_del_tag_word"
+                            android:visibility="gone" />
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/line_1"/>
+                android:background="@drawable/line_1" />
+
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="15dp">
+
                 <LinearLayout
                     android:id="@+id/gotermLL"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="18"
                     android:gravity="center_vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
-                    android:text="동네골프 운영정책[보기]"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="동네골프 운영정책[보기]"
+                        android:textColor="#000000"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
                 </LinearLayout>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="13dp"
-                    android:text="동의"/>
+                    android:text="동의"
+                    android:textColor="#000000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <CheckBox
                     android:id="@+id/agreeCB"
                     android:layout_width="wrap_content"
@@ -360,24 +416,25 @@
                     android:layout_marginRight="30dp"
                     android:buttonTint="#0EDA2F" />
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/line_1"/>
+                android:background="@drawable/line_1" />
 
             <TextView
                 android:id="@+id/adddongchatTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:background="@drawable/btn_login_selector"
                 android:gravity="center"
-                android:layout_gravity="center"
                 android:text="만들기"
-                android:textSize="20dp"
                 android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:background="@drawable/btn_login_selector"/>
+                android:textSize="20dp"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 

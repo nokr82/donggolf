@@ -86,6 +86,7 @@ class AddGoodsActivity : RootActivity() {
     var prod_regoin = ""
     var trade_type = ""//거래 방법
     var deliv_way = ""
+    var product_id = -1
 
     var modified_product_id = 0
     var todayCount = 0
@@ -108,8 +109,6 @@ class AddGoodsActivity : RootActivity() {
         images_path = ArrayList()
         images = ArrayList()
         images_url = ArrayList()
-
-
 
         categoryAdapter = GoodsCategoryAdapter(context, R.layout.item_dlg_market_sel_op, categoryData)
         productTypeAdapter = ProductTypeAdaapter(context, R.layout.item_dlg_market_sel_op, productData)
@@ -145,7 +144,7 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
-
+            productData.removeAt(0)
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
                 for (i in 0 until productData.size){
                     productData[position].put("isSelectedOp", false)
@@ -155,12 +154,18 @@ class AddGoodsActivity : RootActivity() {
                 var json = productTypeAdapter.getItem(position)
                 var type = json.getJSONObject("ProductType")
                 val title = Utils.getString(type, "title")
+                if (title=="종류전체"){
+                    product_id = -1
+                }else{
+                    product_id = Utils.getInt(type,"id")
+                }
                 producttypeTV.text = title
                 tendencyTV.text = "선택"
                 prod_type = title
                 productData[position].put("isSelectedOp", true)
                 productTypeAdapter.notifyDataSetChanged()
                 //println("title ------ $title")
+                getCategory()
                 alert.dismiss()
             }
 
@@ -170,6 +175,7 @@ class AddGoodsActivity : RootActivity() {
         }
 
         brandLL.setOnClickListener {
+
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
@@ -206,6 +212,7 @@ class AddGoodsActivity : RootActivity() {
         }
 
         configRV.setOnClickListener {
+
             val builder = android.app.AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dlg_market_select_option, null)
             builder.setView(dialogView)
@@ -216,42 +223,23 @@ class AddGoodsActivity : RootActivity() {
             dialogView.dlg_exitIV.visibility = View.VISIBLE
             dialogView.dlg_titleTV.visibility = View.VISIBLE
             val product = producttypeTV.text.toString()
-            if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-                dialogView.dlg_marketLV.adapter = pdtCategoryAdapter
-             } else {
-                dialogView.dlg_marketLV.adapter = productCategoryAdatper
-            }
+            dialogView.dlg_marketLV.adapter = productCategoryAdatper
 
             dialogView.dlg_exitIV.setOnClickListener {
                 alert.dismiss()
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-
-                    for (i in 0 until pdtCategoryData.size){
-                        pdtCategoryData[position].put("isSelectedOp", false)
-                    }
-                    var json = pdtCategoryAdapter.getItem(position)
-                    var type = json.getJSONObject("PdtCategory")
-                    val title = Utils.getString(type, "title")
-                    tendencyTV.text = title
-                    prod_form = title
-                    pdtCategoryData[position].put("isSelectedOp", true)
-                    pdtCategoryAdapter.notifyDataSetChanged()
-                } else {
-                    for (i in 0 until productCategoryData.size){
-                        productCategoryData[position].put("isSelectedOp", false)
-                    }
-
-                    var json = productCategoryAdatper.getItem(position)
-                    var type = json.getJSONObject("ProductCategory")
-                    val title = Utils.getString(type, "title")
-                    tendencyTV.text = title
-                    prod_form = title
-                    productCategoryData[position].put("isSelectedOp", true)
-                    productCategoryAdatper.notifyDataSetChanged()
+                for (i in 0 until productCategoryData.size){
+                    productCategoryData[position].put("isSelectedOp", false)
                 }
+                var json = productCategoryAdatper.getItem(position)
+                var type = json.getJSONObject("ProductCategory")
+                val title = Utils.getString(type, "title")
+                tendencyTV.text = title
+                prod_form = title
+                productCategoryData[position].put("isSelectedOp", true)
+                productCategoryAdatper.notifyDataSetChanged()
 
                 alert.dismiss()
             }
@@ -457,11 +445,11 @@ class AddGoodsActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    // println(responseString)
                 }
             })
         }
@@ -502,7 +490,7 @@ class AddGoodsActivity : RootActivity() {
 
                 SELECT_PICTURE -> {
 
-                    println("onActivityResult로 돌아와서")
+                    // println("onActivityResult로 돌아와서")
 
                     var item = data?.getStringArrayExtra("images")//photoPath
                     //var name = data?.getStringArrayExtra("displayname")
@@ -511,7 +499,7 @@ class AddGoodsActivity : RootActivity() {
                         val str = item[i]
 
                         images_path!!.add(str)
-                        println(str)
+                        // println(str)
 
                         var add_file = Utils.getImage(context.contentResolver, str)
 
@@ -678,7 +666,7 @@ class AddGoodsActivity : RootActivity() {
 //                options.inSampleSize = hs
 //            }
 //        }
-        println("------imagespath ---- $str")
+        // println("------imagespath ---- $str")
 //        images_path.add(str)
         var add_file = Utils.getImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
@@ -830,6 +818,7 @@ class AddGoodsActivity : RootActivity() {
     fun getCategory() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
+        params.put("product_id", product_id)
 
         if (categoryData != null) {
             categoryData.clear()
@@ -875,8 +864,13 @@ class AddGoodsActivity : RootActivity() {
 
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
-                            categoryData.add(category.get(i) as JSONObject)
-                            categoryData[i].put("isSelectedOp", false)
+                            var json = category.get(i)as JSONObject
+                            Log.d("자이",json.toString())
+                            var type = json.getJSONObject("GoodsCategory")
+                            val title = Utils.getString(type, "title")
+                            if (title != "브랜드전체"){
+                                categoryData.add(json)
+                            }
                         }
                     }
 
@@ -886,6 +880,7 @@ class AddGoodsActivity : RootActivity() {
                             productCategoryData.get(i).put("isSelectedOp", false)
                         }
                     }
+
 
                     if (pdtcategory.length() > 0 && pdtcategory != null) {
                         for (i in 0 until pdtcategory.length()) {
@@ -991,32 +986,19 @@ class AddGoodsActivity : RootActivity() {
             params.put("description", Utils.getString(descriptionET))
             params.put("nick", PrefUtils.getStringPreference(context, "nickname"))
 
-            //이미지
-//        var seq = 0
-//        if (addPicturesLL != null){
-//            for (i in 0 until addPicturesLL!!.childCount) {
-//                val v = addPicturesLL?.getChildAt(i)
-//                val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
-//                if (imageIV is ImageView) {
-//                    val bitmap = imageIV.drawable as BitmapDrawable
-//                    params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArray(bitmap.bitmap)))
-//                    seq++
-//                }
-//            }
-//        }
-
-
-            if (images_path != null) {
-                if (images_path!!.size != 0) {
-                    for (i in 0..images_path!!.size - 1) {
-
-                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-
-                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
-
+            var seq = 0
+            if (addPicturesLL != null){
+                for (i in 0 until addPicturesLL!!.childCount) {
+                    val v = addPicturesLL?.getChildAt(i)
+                    val imageIV = v?.findViewById<ImageView>(R.id.addedImgIV)
+                    if (imageIV is ImageView) {
+                        val bitmap = imageIV.drawable as BitmapDrawable
+                        params.put("files[$seq]", ByteArrayInputStream(Utils.getByteArrayFromImageView(imageIV)))
+                        seq++
                     }
                 }
             }
+
 
             //println(params)
 
@@ -1037,11 +1019,11 @@ class AddGoodsActivity : RootActivity() {
                     if (progressDialog != null) {
                         progressDialog!!.dismiss()
                     }
-                    println(responseString)
+                    // println(responseString)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
                 override fun onStart() {
                     // show dialog
@@ -1110,19 +1092,6 @@ class AddGoodsActivity : RootActivity() {
             }
         }
 
-        /*if (images_path != null) {
-            if (images_path!!.size != 0) {
-                for (i in 0 until images_path!!.size) {
-                    *//*if (images_path!!.get(i).substring(2, 6) == "data") {
-                        continue
-                    } else {*//*
-                        var bt: Bitmap = Utils.getImage(context.contentResolver, images_path!!.get(i))
-
-                        params.put("files[$i]", ByteArrayInputStream(Utils.getByteArray(bt)))
-                    //}
-                }
-            }
-        }*/
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -1142,11 +1111,11 @@ class AddGoodsActivity : RootActivity() {
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
             override fun onStart() {
                 // show dialog

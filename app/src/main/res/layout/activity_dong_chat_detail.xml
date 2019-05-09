@@ -164,13 +164,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_alignParentBottom="true">
-
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@drawable/line_0" />
                     <LinearLayout
                         android:id="@+id/llLL"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true">
                         <LinearLayout
+                            android:gravity="bottom"
                             android:id="@+id/gofindpictureLL"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
@@ -221,11 +225,15 @@
                         <EditText
                             android:id="@+id/contentET"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:maxHeight="100dp"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:gravity="center"
-                            android:textSize="13dp"
+                            android:gravity="left"
+                            android:textSize="16dp"
+                            android:paddingLeft="6dp"
                             android:hint="입력"/>
 
                         <TextView
@@ -235,8 +243,9 @@
                             android:text="등록"
                             android:textColor="#0ED92F"
                             android:paddingLeft="10dp"
+                            android:layout_marginBottom="10dp"
                             android:paddingRight="10dp"
-                            android:gravity="center"/>
+                            android:gravity="bottom"/>
 
                     </LinearLayout>
                 </LinearLayout>

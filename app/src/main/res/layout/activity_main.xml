@@ -13,7 +13,8 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/areaLL"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent">
             <ImageView
                 android:layout_width="19dp"
@@ -25,14 +26,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="경기 / 인천"
+                android:text=""
                 android:textSize="13dp"
                 android:textColor="#000000"/>
         </LinearLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:id="@+id/friendsLL">
             <ImageView
                 android:layout_width="25dp"
@@ -45,31 +47,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="9999명"
+                android:text="명"
                 android:textSize="13dp"
                 android:layout_marginLeft="5dp"
                 android:textColor="#000000"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/eventLL">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="☆이벤트"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"/>
+        </LinearLayout>
+        <LinearLayout
+            android:gravity="right"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:padding="5dp"
+                android:id="@+id/addpostLL"
+                android:gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
+                <ImageView
+                    android:id="@+id/btn_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/btn_write" />
+            </LinearLayout>
+        </LinearLayout>
 
-            <ImageView
-                android:id="@+id/marketIV"
-                android:layout_width="50dp"
-                android:layout_height="25dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/btn_market" />
-        </RelativeLayout>
 
     </LinearLayout>
 <!-- 탭 -->
     <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="55dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -143,28 +171,65 @@
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/infoRL"
+            android:id="@+id/infoRL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4">
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4">
+                <ImageView
+                    android:id="@+id/infoBT"
+                    android:layout_width="27dp"
+                    android:layout_height="32dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/btn_mypage_off"/>
+                <ImageView
+                    android:id="@+id/infoIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/img_line_1"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+
+            <LinearLayout
+                android:gravity="center"
+                android:id="@+id/marketIV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4">
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:layout_centerInParent="true"
+                        android:gravity="bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="12dp"
+                            android:text="골프창고"/>
                     <ImageView
-                        android:id="@+id/infoBT"
-                        android:layout_width="27dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/btn_mypage_off"/>
+                        android:layout_marginRight="10dp"
+                        android:background="@mipmap/btn_market" />
+                    </LinearLayout>
                     <ImageView
-                        android:id="@+id/infoIV"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@drawable/img_line_1"
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

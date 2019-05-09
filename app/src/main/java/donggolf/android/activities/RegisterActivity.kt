@@ -3,18 +3,21 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
-import donggolf.android.R
 import donggolf.android.actions.MemberAction
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_register.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.regex.Pattern
+
 
 class RegisterActivity : RootActivity() {
 
@@ -28,7 +31,7 @@ class RegisterActivity : RootActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        setContentView(donggolf.android.R.layout.activity_register)
 
         context = this
 
@@ -48,14 +51,14 @@ class RegisterActivity : RootActivity() {
         checkAll()
 
         maleLL.setOnClickListener {
-            maleIV.setImageResource(R.drawable.btn_radio_on)
-            femaleIV.setImageResource(R.drawable.btn_radio_off)
+            maleIV.setImageResource(donggolf.android.R.drawable.btn_radio_on)
+            femaleIV.setImageResource(donggolf.android.R.drawable.btn_radio_off)
             gender = 0
         }
 
         femaleLL.setOnClickListener {
-            maleIV.setImageResource(R.drawable.btn_radio_off)
-            femaleIV.setImageResource(R.drawable.btn_radio_on)
+            maleIV.setImageResource(donggolf.android.R.drawable.btn_radio_off)
+            femaleIV.setImageResource(donggolf.android.R.drawable.btn_radio_on)
             gender = 1
         }
 
@@ -163,7 +166,7 @@ class RegisterActivity : RootActivity() {
                             emailET.setText("")
                             Utils.alert(context, "중복된 이메일입니다.")
                         }else{
-//                            finish()
+
                         }
                     } catch (e : JSONException) {
                         e.printStackTrace()
@@ -186,6 +189,7 @@ class RegisterActivity : RootActivity() {
             return
         }
 
+
         // 비밀번호 체크
         val passwordre = Utils.getString(repasswordET)
         if (passwordre.isEmpty()) {
@@ -193,15 +197,16 @@ class RegisterActivity : RootActivity() {
             return
         }
 
+
         // 비밀번호 글자수 체크
-        if (password.length < 2 || password.length > 7) {
-            Utils.alert(context, "글자 수가 2 ~ 7 글자 인지 확인해주세요.")
+        if (password.length < 8 || password.length > 12) {
+            Utils.alert(context, "글자 수가 8 ~ 12 글자 인지 확인해주세요.")
             return
         }
 
         // 비밀번호 글자수 체크
-        if (passwordre.length < 2 || passwordre.length > 7) {
-            Utils.alert(context, "글자 수가 2 ~ 7 글자 인지 확인해주세요.")
+        if (passwordre.length < 8 || passwordre.length > 12) {
+            Utils.alert(context, "글자 수가 8 ~ 12글자 인지 확인해주세요.")
             return
         }
 
@@ -210,6 +215,15 @@ class RegisterActivity : RootActivity() {
             Utils.alert(context, "비밀번호가 다릅니다.")
             return
         }
+        if (Utils.containsAlpha(password) && Utils.containsNumber(password) && password.count() > 8 && password.count() < 12) {
+
+        } else {
+            Utils.alert(context, "비밀번호는 영문숫자포함 \n8 ~ 12자이내로 입력해주세요.")
+            return
+        }
+
+
+
 
         // 핸드폰 체크
         val phone = Utils.getString(phoneET)
@@ -252,9 +266,24 @@ class RegisterActivity : RootActivity() {
                 val message  = Utils.getString(response,"message")
                 val result = response!!.getString("result")
                 if (result == "ok"){
+                    Log.d("가입",response.toString())
+                    val member = response.getJSONObject("member")
+
+                    val Member = member.getJSONObject("Member")
+                    val member_id = Utils.getInt(Member,"id")
+                    PrefUtils.setPreference(context, "member_id", member_id)
+                    PrefUtils.setPreference(context,"nickname", Utils.getString(Member,"nick"))
+                    PrefUtils.setPreference(context,"isActiveAccount","a")
+                    PrefUtils.setPreference(context,"userPhone",Utils.getString(Member,"phone"))
+                    startActivity(Intent(context, MainActivity::class.java))
                     finish()
+
                 } else if (result == "overlap"){
                     Toast.makeText(context, "동일한 핸드폰 번호가 있습니다.", Toast.LENGTH_SHORT).show()
+                    return
+                }else if (result == "overnick"){
+                    Toast.makeText(context, "동일한 닉네임이 있습니다.", Toast.LENGTH_SHORT).show()
+                    nickNameET.setText("")
                     return
                 }
             }

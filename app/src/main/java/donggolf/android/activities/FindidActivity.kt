@@ -126,7 +126,7 @@ class FindidActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     val result = response!!.getString("result")
                     if (result == "ok") {
-                        println(response)
+                        //println(response)
                         val member = response.getJSONObject("member")
                         var email = Utils.getString(member, "email")
                         //println("찾은 ID :: $member_id")
@@ -145,7 +145,7 @@ class FindidActivity : RootActivity() {
                                     phoneET.setText("")
                                     phoneET.hint = "코드 입력"
                                     val result = response!!.getString("result")
-                                    println(response)
+                                    //println(response)
                                     if (result == "ok") {
                                         //codeType 변경, getCode 세팅
                                         codeType = 1
@@ -175,11 +175,11 @@ class FindidActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    //println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    //println(responseString)
                 }
             })
         }
@@ -219,11 +219,11 @@ class FindidActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
         })

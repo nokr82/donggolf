@@ -3,24 +3,17 @@ package donggolf.android.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
-import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
-import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.actions.ChattingAction
-import donggolf.android.actions.MateAction
 import donggolf.android.adapters.ChatMemberAdapter
-import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import donggolf.android.models.MutualFriendData
 import kotlinx.android.synthetic.main.activity_chat_member.*
-import org.json.JSONException
 import org.json.JSONObject
 
 class ChatMemberActivity : RootActivity() {
@@ -36,6 +29,7 @@ class ChatMemberActivity : RootActivity() {
     var founder = ""
     var division = ""
     var founder_id = ""
+    var member_id = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +43,7 @@ class ChatMemberActivity : RootActivity() {
         founder = intent.getStringExtra("founder")
         division = intent.getStringExtra("division")
         founder_id = intent.getStringExtra("founder_id")
-
+        member_id = PrefUtils.getIntPreference(context,"member_id")
 
         chatMemberAdapter = ChatMemberAdapter(context, R.layout.item_chat_member_list, chatMemberList)
         joinMemberLV.adapter = chatMemberAdapter
@@ -124,6 +118,7 @@ class ChatMemberActivity : RootActivity() {
     fun detail_chatting(){
         val params = RequestParams()
         params.put("room_id", room_id)
+        params.put("member_id", member_id)
 
         ChattingAction.detail_chatting(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
@@ -154,11 +149,11 @@ class ChatMemberActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

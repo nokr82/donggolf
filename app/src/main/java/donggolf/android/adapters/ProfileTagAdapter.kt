@@ -40,7 +40,7 @@ open class ProfileTagAdapter(context: Context, view:Int, data:ArrayList<String>)
         var tmp = data.get(position)
 
         item.titleTagTV.text = "#"+ tmp
-        println("ProfileTagAdapter()=====$tmp")
+        //println("ProfileTagAdapter()=====$tmp")
 
         /*item.removeIV.setOnClickListener {
             removeItem(position)

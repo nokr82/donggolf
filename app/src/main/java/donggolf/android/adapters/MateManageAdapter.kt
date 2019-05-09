@@ -148,7 +148,7 @@ class MateManageAdapter(context: Context, view:Int, data: ArrayList<JSONObject>,
         item.accLL.setOnClickListener {
             val acceptItt = Intent(context, FriendReqSelectCategoryActivity::class.java)
             acceptItt.putExtra("mates_id",member_id.toInt())
-            Log.d("2아뒤",member_id.toString())
+            //Log.d("2아뒤",member_id.toString())
             context.startActivity(acceptItt)
         }
 

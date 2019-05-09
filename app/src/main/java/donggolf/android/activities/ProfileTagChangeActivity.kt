@@ -50,7 +50,7 @@ class ProfileTagChangeActivity : RootActivity() {
             Utils.hideKeyboard(context!!)
             if (intent.getStringExtra("type") != null){
                 val type = intent.getStringExtra("type")
-                println("type $type")
+                //println("type $type")
                 if (type == "post"){
                     if (adapterData.size > 0 ){
                         intent.putExtra("data",adapterData)
@@ -229,7 +229,7 @@ class ProfileTagChangeActivity : RootActivity() {
         params.put("member_id", PrefUtils.getIntPreference(context,"member_id")) //where절에 들어갈 조건
 //            params.put("update", adapterData)//추가할거
         if (adapterData != null){
-            Log.d("작성",adapterData.toString())
+            //Log.d("작성",adapterData.toString())
             if (adapterData!!.size != 0){
                 for (i in 0..adapterData!!.size - 1){
 
@@ -258,7 +258,7 @@ class ProfileTagChangeActivity : RootActivity() {
         Utils.hideKeyboard(context!!)
         if (intent.getStringExtra("type") != null){
             val type = intent.getStringExtra("type")
-            println("type $type")
+            //println("type $type")
             if (type == "post"){
                 if (adapterData.size > 0 ){
                     intent.putExtra("data",adapterData)

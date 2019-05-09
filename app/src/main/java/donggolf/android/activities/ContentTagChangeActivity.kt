@@ -58,7 +58,7 @@ class ContentTagChangeActivity : RootActivity() {
             Utils.hideKeyboard(context!!)
             if (intent.getStringExtra("type") != null){
                 val type = intent.getStringExtra("type")
-                println("type $type")
+                // println("type $type")
                 if (type == "post"){
                     if (adapterData.size > 0 ){
                         intent.putExtra("data",adapterData)
@@ -159,7 +159,7 @@ class ContentTagChangeActivity : RootActivity() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                     try {
                         val result = response!!.getString("result")
-                        Log.d("태그",response.toString())
+                        //Log.d("태그",response.toString())
 
                         if (result == "ok") {
 
@@ -196,7 +196,7 @@ class ContentTagChangeActivity : RootActivity() {
         Utils.hideKeyboard(context!!)
         if (intent.getStringExtra("type") != null){
             val type = intent.getStringExtra("type")
-            println("type $type")
+            // println("type $type")
             if (type == "post"){
                 if (adapterData.size > 0 ){
                     intent.putExtra("data",adapterData)

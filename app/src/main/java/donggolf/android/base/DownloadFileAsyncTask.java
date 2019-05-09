@@ -36,7 +36,7 @@ public class DownloadFileAsyncTask extends AsyncTask<String, String, Uri> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        System.out.println("Starting download");
+        //System.out.println("Starting download");
 
         progressDialog = new ProgressDialog(context, R.style.CustomProgressBar);
         progressDialog.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large);
@@ -55,7 +55,7 @@ public class DownloadFileAsyncTask extends AsyncTask<String, String, Uri> {
         try {
             String root = Environment.getExternalStorageDirectory().toString();
 
-            System.out.println("Downloading");
+            //System.out.println("Downloading");
 
             URL url = new URL(f_url[0]);
 
@@ -113,7 +113,7 @@ public class DownloadFileAsyncTask extends AsyncTask<String, String, Uri> {
      * **/
     @Override
     protected void onPostExecute(Uri file_url) {
-        System.out.println("Downloaded");
+        //System.out.println("Downloaded");
 
         if(this.progressDialog != null) {
             progressDialog.dismiss();

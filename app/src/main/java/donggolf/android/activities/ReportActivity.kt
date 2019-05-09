@@ -23,6 +23,7 @@ class ReportActivity : RootActivity() {
 
     var member_id = 0
     var market_id = 0
+    var market_member_id = 0
     var reportListData:ArrayList<JSONObject> = ArrayList<JSONObject>()
     lateinit var reportAdapter: ReportAdapter
 
@@ -37,6 +38,7 @@ class ReportActivity : RootActivity() {
         if (intent.getIntExtra("member_id",0) != null){
             member_id = intent.getIntExtra("member_id",0)
             market_id = intent.getIntExtra("market_id",0)
+            market_member_id =  intent.getIntExtra("market_member_id",0)
         }
 
 
@@ -79,7 +81,7 @@ class ReportActivity : RootActivity() {
 
         MarketAction.get_market_report(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val member = response!!.getJSONObject("member")
@@ -99,24 +101,17 @@ class ReportActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
 
     fun add_report(){
-//        val title = titleTV.text.toString()
         val content = contentTV.text.toString()
-
-//        if (title.isEmpty()) {
-//            Utils.alert(context, "제목을 입력해주세요.")
-//            return
-//        }
-
         if (content.isEmpty()) {
             Utils.alert(context, "내용을 입력해주세요.")
             return
@@ -124,10 +119,9 @@ class ReportActivity : RootActivity() {
 
         val params = RequestParams()
         params.put("market_id", market_id)
-        params.put("report_member_id",PrefUtils.getIntPreference(context, "member_id"))
-        params.put("title",title)
+        params.put("member_id",market_member_id)
         params.put("content",content)
-
+        params.put("type",2)
         MarketAction.add_report(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 var intent = Intent()
@@ -136,11 +130,11 @@ class ReportActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
 

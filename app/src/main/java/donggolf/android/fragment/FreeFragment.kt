@@ -1,13 +1,12 @@
 package donggolf.android.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Bundle
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.util.Log
@@ -23,16 +22,14 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.ContentAction
 import donggolf.android.actions.PostAction
-import donggolf.android.activities.*
+import donggolf.android.activities.AddPostActivity
+import donggolf.android.activities.MainActivity
+import donggolf.android.activities.MainDetailActivity
 import donggolf.android.adapters.MainAdapter
 import donggolf.android.adapters.MainEditAdapter
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.item_custom_gallery_folder.*
-import kotlinx.android.synthetic.main.main_edit_listview_item.view.*
-import org.json.JSONException
 import org.json.JSONObject
 
 open class FreeFragment : Fragment() {
@@ -79,6 +76,7 @@ open class FreeFragment : Fragment() {
             if (intent != null) {
 
                 adapterData.clear()
+                page = 1
                 mainData("")
             }
         }
@@ -98,12 +96,13 @@ open class FreeFragment : Fragment() {
             if (intent != null) {
 
                 adapterData.clear()
+                page = 1
 
                 ContentAction.list(user, Pair("createAt", Query.Direction.DESCENDING), 0) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
                     if (success && data != null) {
                         data.forEach {
-                            println(it)
+                            //println(it)
 
                             if (it != null) {
 //                                adapterData.add(it)
@@ -124,12 +123,13 @@ open class FreeFragment : Fragment() {
             if (intent != null) {
 
                 adapterData.clear()
+                page = 1
 
                 ContentAction.list(user, Pair("createAt", null), 0) { success: Boolean, data: ArrayList<Map<String, Any>?>?, exception: Exception? ->
 
                     if (success && data != null) {
                         data.forEach {
-                            println(it)
+                            //println(it)
 
                             if (it != null) {
 //                                adapterData.add(it)
@@ -153,8 +153,6 @@ open class FreeFragment : Fragment() {
         if (null != ctx) {
             doSomethingWithContext(ctx!!)
         }
-
-        mainData("")
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -313,7 +311,7 @@ open class FreeFragment : Fragment() {
             val item = editadapterData.get(position)
             val SearchList = item.getJSONObject("SearchList")
             val content = Utils.getString(SearchList, "content")
-            println("----content$content")
+            //println("----content$content")
             main_edit_search.setText(content)
 //            resetList(content)
             mainData(content)
@@ -321,7 +319,7 @@ open class FreeFragment : Fragment() {
             Utils.hideKeyboard(context)
         }
 
-        mainData("")
+        // mainData("")
         getSearchList()
 
     }
@@ -351,20 +349,14 @@ open class FreeFragment : Fragment() {
 
     fun mainData(keyWord: String) {
         val params = RequestParams()
-        var sidotype = PrefUtils.getStringPreference(ctx, "sidotype")
-        var goguntype = PrefUtils.getStringPreference(ctx, "goguntype")
-        var goguntype2 = PrefUtils.getStringPreference(ctx, "goguntype2")
-        var region_id = PrefUtils.getStringPreference(ctx, "region_id")
-        var region_id2 = PrefUtils.getStringPreference(ctx, "region_id2")
+        // var region_id = PrefUtils.getStringPreference(ctx, "region_id")
+        val region_id = PrefUtils.getStringPreference(ctx, "main_region_id", "0")
 
+        Log.d("아뒤",region_id.toString())
         params.put("member_id", member_id)
-        params.put("goguntype", goguntype)
-        params.put("sidotype", sidotype)
         params.put("region_id", region_id)
         params.put("searchKeyword", keyWord)
-        if (region_id2 != "") {
-            params.put("region_id2", region_id2)
-        }
+
         params.put("page", page)
 
         PostAction.load_post(params, object : JsonHttpResponseHandler() {
@@ -494,6 +486,8 @@ open class FreeFragment : Fragment() {
         if (reloadReciver != null) {
             context!!.unregisterReceiver(reloadReciver)
         }
+
+        progressDialog = null
     }
 
     override fun onResume() {
@@ -514,9 +508,9 @@ open class FreeFragment : Fragment() {
 
             when (requestCode) {
                 RESET_DATA -> {
-                    Log.d("리절트", "야스")
+                    //Log.d("리절트", "야스")
                     if (data != null) {
-                        Log.d("리절트", "야스")
+                        //Log.d("리절트", "야스")
                         page = 1
                         mainData("")
                     }
@@ -551,4 +545,6 @@ open class FreeFragment : Fragment() {
             }
         })
     }
+
+
 }

@@ -1,6 +1,8 @@
 package donggolf.android.adapters
 
 import android.content.Context
+import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -10,6 +12,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
 import donggolf.android.models.MutualFriendData
 import org.json.JSONObject
@@ -41,17 +44,34 @@ class ChatMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObject
 
         var json= data.get(position)
 
+        Log.d("결과값",json.toString())
         var room = json.getJSONObject("Chatroom")
-        val founder = Utils.getString(room,"member_id")
+        val founder = Utils.getInt(room,"member_id")
 
         var member = json.getJSONObject("Member")
         var nick:String = Utils.getString(member,"nick")
-        var member_id = Utils.getString(member,"id")
-
+        var member_id = Utils.getInt(member,"id")
+        val chatmember = json.getJSONObject("Chatmember")
+        val freind = Utils.getString(chatmember, "freind")
         var image = Config.url + Utils.getString(member, "profile_img")
         ImageLoader.getInstance().displayImage(image, item.item_profileImg, Utils.UILoptionsUserProfile)
-
         item.item_nickNameTV.setText(nick)
+        var gender = Utils.getString(chatmember, "sex")
+        if (gender == "0") {
+            item.item_nickNameTV.setTextColor(Color.parseColor("#000000"))
+        }
+        if (member_id == PrefUtils.getIntPreference(context, "member_id")) {
+            item.item_relationIV.visibility = View.GONE
+        } else {
+            item.item_relationIV.visibility = View.VISIBLE
+            if(freind == "0") {
+//                item.item_relationIV.setImageResource(R.drawable.icon_second)
+                item.item_relationIV.visibility = View.GONE
+            } else {
+                item.item_relationIV.setImageResource(R.drawable.icon_first)
+            }
+        }
+
 
         if (founder == member_id){
 //            item.item_authorizationTV.setText("개설자")

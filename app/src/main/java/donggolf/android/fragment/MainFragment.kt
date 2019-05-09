@@ -91,7 +91,7 @@ open class MainFragment : Fragment() {
                     override fun onComplete(task: Task<QuerySnapshot>) {
                         if (task.isSuccessful) {
                             for (document in task.result!!) {
-                                Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
+                                //Log.d(MainActivity.TAG, document.getId() + " => " + document.getData())
                             }
                         } else {
                             Log.w(MainActivity.TAG, "Error getting documents.", task.exception)
@@ -103,7 +103,7 @@ open class MainFragment : Fragment() {
 
             if(success && data != null) {
                 data.forEach {
-                    println(it)
+                    //println(it)
 
                     if (it != null) {
 //                        adapterData.add(it)

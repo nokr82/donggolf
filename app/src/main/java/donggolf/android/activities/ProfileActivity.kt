@@ -5,10 +5,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.*
+import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.kakao.kakaostory.StringSet.writer
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -23,10 +23,9 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.activity_profile.view.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 class ProfileActivity : RootActivity() {
 
@@ -129,7 +128,7 @@ class ProfileActivity : RootActivity() {
                 } else {
                    chk_chat()
                 }
-            } else if (profileTV == "차단취소"){
+            } else if (profileTV == "차단해제"){
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(nick + "님을 차단취소 하시겠습니까 ?").setCancelable(false)
                         .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
@@ -148,7 +147,7 @@ class ProfileActivity : RootActivity() {
                 val alert = builder.create()
                 alert.show()
             }else if (profileTV == "신청불가"){
-                Toast.makeText(context,"신청거절 상태입니다.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,"당분간 친구신청을 받을수 없습니다.",Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -198,7 +197,7 @@ class ProfileActivity : RootActivity() {
                         profile_opTV.setText("채팅")
 
                         val member = response.getJSONObject("Member")
-
+                        var sex = Utils.getString(member,"sex")
                         val friendCount = response.getString("friendCount")
                         val contentCount = response.getString("contentCount")
                         val chatCount = response.getString("chatCount")
@@ -210,29 +209,66 @@ class ProfileActivity : RootActivity() {
 
                         }
 
+                        if (sex == "1"){
+                            txUserName.setTextColor(Color.parseColor("#EF5C34"))
+                        }else{
+                            txUserName.setTextColor(Color.parseColor("#000000"))
+                        }
+
                         txPostCnt.setText(contentCount)
                         friendCountTV.setText(friendCount)
 
                         textDate.text = Utils.getString(member,"created").substringBefore(" ")
                         txUserName.text = Utils.getString(member,"nick")
 
-                        //지역
+                        // 지역
+                        val region1 = response.getJSONObject("region1")
+                        val region2 = response.getJSONObject("region2")
+                        val region3 = response.getJSONObject("region3")
+
+                        var r_name1 = Utils.getString(region1,"name")
+                        var r_name2 = Utils.getString(region2,"name")
+                        var r_name3 = Utils.getString(region3,"name")
+
+                        var region1_name = Utils.getString(region1,"region_name")
+                        var region2_name = Utils.getString(region2,"region_name")
+                        var region3_name = Utils.getString(region3,"region_name")
+
                         var region = ""
 
-                        if (Utils.getString(member,"region1") != null) {
-                            region += Utils.getString(member,"region1") + ","
+                        if (r_name1 != null && r_name1 != "") {
+                            if (region1_name.contains("시")){
+                                region += region1_name+">"+r_name1
+                            }else{
+                                region += r_name1
+                            }
                         }
-                        if (Utils.getString(member,"region2") != null) {
-                            region += Utils.getString(member,"region2") + ","
+
+                        if (r_name2 != null && r_name2 != "") {
+                            if (region2_name.contains("시")){
+                                region += ","+region2_name+">"+r_name2
+                            }else{
+                                region +=","+ r_name2
+                            }
                         }
-                        if (Utils.getString(member,"region3") != null) {
-                            region += Utils.getString(member,"region3")
+
+                        if (r_name3 != null && r_name3 != "") {
+                            if (region3_name.contains("시")){
+                                region += ","+region3_name+">"+r_name3
+                            }else{
+                                region +=","+ r_name3
+                            }
+                        }
+
+                        if (r_name1 == "전국") {
+                            region = "전국"
                         }
 
                         /*       if (region.substring(region.length-1) == ","){
                                    region = region.substring(0, region.length-2)
                                }*/
                         txUserRegion.text = region
+
 
                         //상메
                         var statusMessage = Utils.getString(member,"status_msg")
@@ -293,6 +329,9 @@ class ProfileActivity : RootActivity() {
 
                         val status = Utils.getString(member,"status")
                         val user_status = Utils.getString(member,"user_status")
+
+
+
                         if (status == "b"){
                             profile_opIV.setImageResource(R.drawable.btn_block)
                             profile_opTV.text = "차단해제"
@@ -304,6 +343,12 @@ class ProfileActivity : RootActivity() {
                             profile_opIV.setImageResource(R.drawable.btn_block)
                             profile_opTV.text = "신청불가"
                         }
+
+                        if (user_status=="b"){
+                            profile_opIV.setImageResource(R.drawable.btn_add_friend_cancel)
+                            profile_opTV.text = "신청불가"
+                        }
+
 
                         if (PrefUtils.getIntPreference(context,"member_id") == member_id.toInt()){
                             knowTogether.visibility = View.GONE
@@ -320,7 +365,7 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
+                //println(errorResponse.toString())
             }
         })
 
@@ -371,7 +416,7 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject) {
-                println(errorResponse.toString())
+                //println(errorResponse.toString())
             }
         })
 
@@ -412,11 +457,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
 
@@ -438,11 +483,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("reject action error : $errorResponse")
+                //println("reject action error : $errorResponse")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("reject error : $responseString")
+                //println("reject error : $responseString")
             }
         })
     }
@@ -455,7 +500,7 @@ class ProfileActivity : RootActivity() {
 
         MateAction.block_cancle(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     member_info(member_id)
@@ -463,11 +508,11 @@ class ProfileActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }
@@ -480,12 +525,12 @@ class ProfileActivity : RootActivity() {
             when (requestCode) {
                 RESET -> {
 
-                    println("---------------reset 타기")
+                    //println("---------------reset 타기")
                     if (data!!.getStringExtra("reset") != null) {
                         var intent = Intent()
                         intent.action = "RESET_CHATTING"
                         sendBroadcast(intent)
-                        println("-------------reset_chatting")
+                        //println("-------------reset_chatting")
                     }
                 }
 

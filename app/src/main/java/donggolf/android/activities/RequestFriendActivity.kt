@@ -131,7 +131,7 @@ class RequestFriendActivity : RootActivity() {
                 mateList.add(mateRequestList.get(i).getInt("mate_id"))
             }
             matesRequestAdapter.notifyDataSetChanged()
-            println(mateList)
+            //println(mateList)
 
         }
 
@@ -165,11 +165,11 @@ class RequestFriendActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println("reject action error : $errorResponse")
+                    //println("reject action error : $errorResponse")
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println("reject error : $responseString")
+                    //println("reject error : $responseString")
                 }
             })
         }
@@ -188,7 +188,7 @@ class RequestFriendActivity : RootActivity() {
 
             MateAction.blockMember(params, object : JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                    println(response)
+                    //println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         getFriendList("b", 0)
@@ -196,11 +196,11 @@ class RequestFriendActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    //println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    //println(responseString)
                 }
             })
         }
@@ -237,7 +237,7 @@ class RequestFriendActivity : RootActivity() {
         MateAction.get_mates_list(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    //println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         mateRequestList.clear()
@@ -267,11 +267,11 @@ class RequestFriendActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
         })
     }
@@ -366,11 +366,11 @@ class RequestFriendActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("reject action error : $errorResponse")
+                //println("reject action error : $errorResponse")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("reject error : $responseString")
+                //println("reject error : $responseString")
             }
         })
     }
@@ -391,11 +391,11 @@ class RequestFriendActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println("reject action error : $errorResponse")
+                //println("reject action error : $errorResponse")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println("reject error : $responseString")
+                //println("reject error : $responseString")
             }
         })
     }
@@ -408,7 +408,7 @@ class RequestFriendActivity : RootActivity() {
 
         MateAction.block_cancle(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok") {
                     Toast.makeText(context,"차단이 해제되었습니다.",Toast.LENGTH_SHORT).show()
@@ -417,11 +417,11 @@ class RequestFriendActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }
@@ -434,7 +434,7 @@ class RequestFriendActivity : RootActivity() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
                     val result = response!!.getString("result")
-                    println("response : $response")
+                    //println("response : $response")
                     if (result == "ok") {
                         val member = response.getJSONObject("Member")
                         recive_mate = Utils.getString(member, "recive_mate")
@@ -453,7 +453,7 @@ class RequestFriendActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {

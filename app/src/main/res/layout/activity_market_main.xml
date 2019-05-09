@@ -24,17 +24,56 @@
                     android:background="@drawable/btn_back" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
+
+                <LinearLayout
+                    android:layout_marginLeft="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:gravity="bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="12dp"
+                        android:text="골프창고"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginRight="10dp"
+                        android:background="@mipmap/btn_market" />
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/img_line_1"
+                    android:layout_alignParentBottom="true"/>
+
+
+            <LinearLayout
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="50dp"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:layout_alignStart="@+id/finishLL"
-                android:layout_alignLeft="@+id/finishLL"
-                android:layout_marginStart="0dp"
-                android:layout_marginLeft="0dp"
-                android:gravity="center"
-                android:text="중고장터"
-                android:textColor="#000000"
-                android:textSize="15dp" />
+                android:gravity="center">
+                <LinearLayout
+                    android:gravity="center"
+                    android:id="@+id/addgoodsTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="21dp"
+                        android:layout_height="21dp"
+                        android:background="@mipmap/btn_posting"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
             <ImageView
                 android:id="@+id/market_mngIV"
                 android:layout_width="20dp"
@@ -48,6 +87,9 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="40dp">
 
@@ -56,12 +98,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent">
             <TextView
-                android:id="@+id/entireClassificationTV"
+                android:id="@+id/entireTypeTV"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="분류 전체"/>
+                android:text="종류 전체"/>
+
             <TextView
                 android:id="@+id/entireBrandTV"
                 android:layout_weight="1"
@@ -70,39 +113,16 @@
                 android:gravity="center"
                 android:text="브랜드 전체"/>
             <TextView
-                android:id="@+id/entireTypeTV"
+                android:id="@+id/entireClassificationTV"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="종류 전체"/>
+                android:text="분류 전체"/>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="right">
-            <LinearLayout
-                android:id="@+id/addgoodsTV"
-                android:layout_marginTop="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:background="@mipmap/btn_posting"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="상품등록"
-                    android:textSize="11dp"/>
-            </LinearLayout>
-        </LinearLayout>
+
 
     </LinearLayout>
     <ImageView
@@ -111,6 +131,7 @@
         android:src="@mipmap/line_1"/>
 
     <GridView
+        android:layout_marginTop="5dp"
         android:id="@+id/maingridGV"
         android:scrollbars="none"
         android:layout_width="match_parent"

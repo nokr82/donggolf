@@ -17,8 +17,10 @@ import donggolf.android.R
 import kotlinx.android.synthetic.main.activity_main_detail.*
 import android.view.View
 import android.view.View.OnTouchListener
+import android.webkit.JavascriptInterface
 import android.widget.MediaController
 import android.widget.Toast
+import com.kakao.kakaostory.StringSet.text
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -42,7 +44,6 @@ class MainDetailActivity : RootActivity() {
 
     private lateinit var context: Context
     private  var commentList = ArrayList<JSONObject>()
-    private var commentBlockList = ArrayList<JSONObject>()
 
     private  lateinit var  commentAdapter : MainDeatilAdapter
 
@@ -52,16 +53,11 @@ class MainDetailActivity : RootActivity() {
     var adPosition = 0
 
     var PICTURE_DETAIL = 1
-    var editComments  = false
-    var detailowner: String? = ""
 
     var pressStartTime: Long?  = 0
-    var pressedX: Float? = 0F
-    var pressedY: Float? = 0F
     var stayedWithinClickDistance: Boolean? = false
 
     val MAX_CLICK_DURATION = 1000
-    val MAX_CLICK_DISTANCE = 15
 
     //lateinit var activity: MainDetailActivity
 
@@ -170,8 +166,6 @@ class MainDetailActivity : RootActivity() {
 
         //댓글 리스트뷰 롱클릭
         commentListLV.setOnItemLongClickListener { parent, view, position, id ->
-
-
             var commenter = commentList[position].getInt("cmt_wrt_id")
 
             val builder = AlertDialog.Builder(this)
@@ -181,8 +175,6 @@ class MainDetailActivity : RootActivity() {
 
             dialogView.dlg_comment_delTV.visibility = View.GONE
             dialogView.dlg_comment_blockTV.visibility = View.GONE
-
-
             //댓삭
             if (commenter == login_id){
                 dialogView.dlg_comment_delTV.visibility = View.VISIBLE
@@ -199,7 +191,7 @@ class MainDetailActivity : RootActivity() {
 
                     CommentAction.delete_content_comment(params, object :JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            println(response)
+                            // println(response)
 
                             val result = response!!.getString("result")
                             if (result == "ok"){
@@ -213,11 +205,11 @@ class MainDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
                 }
@@ -270,7 +262,7 @@ class MainDetailActivity : RootActivity() {
                     CommentAction.content_commenter_ben(params, object : JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                             try {
-                                println(response)
+                                // println(response)
                                 //차단 성공하면 표시하고 토스트
                                 val result = response!!.getString("result")
                                 if (result == "ok") {
@@ -287,11 +279,11 @@ class MainDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
 
@@ -330,24 +322,37 @@ class MainDetailActivity : RootActivity() {
                 return@setOnItemClickListener
             }
             var data = commentList.get(i)
-            Log.d("데이데이",data.toString())
+            //Log.d("데이데이",data.toString())
             val contentcomment = data.getJSONObject("ContentComment")
 
             val comments_id = Utils.getInt(contentcomment, "id")
-
             p_comments_id = Utils.getInt(contentcomment,"p_comments_id")
             op_comments_id = Utils.getInt(contentcomment,"op_comments_id")
             var user_nick =  Utils.getString(contentcomment,"nick")
-            if (p_comments_id!=-1){
-                op_comments_id = p_comments_id
-                cmtET.requestFocus()
-                Utils.showKeyboard(context)
+            var chk = Utils.getBoolen(data, "isSelectedOp")
+           if (op_comments_id != -1){
+               op_comments_id = comments_id
+               p_comments_id = -1
+               cmtET.hint = user_nick+ "님의 댓글에 대대댓글"
+           }else if (p_comments_id!=-1){
+                op_comments_id = comments_id
+                p_comments_id = -1
                 cmtET.hint = user_nick+ "님의 댓글에 대댓글"
-            }else if (comments_id != -1) {
+            } else if (comments_id != -1) {
                 p_comments_id = comments_id
+                cmtET.hint = user_nick + "님의 댓글에 답글"
+            }
+            if (chk){
+                op_comments_id = -1
+                p_comments_id = -1
+                cmtET.hint = "댓글을 남겨주세요"
+                commentList[i].put("isSelectedOp",false)
+                commentAdapter.notifyDataSetChanged()
+            }else{
                 cmtET.requestFocus()
                 Utils.showKeyboard(context)
-                cmtET.hint = user_nick+ "님의 댓글에 답글"
+                commentList[i].put("isSelectedOp",true)
+                commentAdapter.notifyDataSetChanged()
             }
 
         }
@@ -658,6 +663,8 @@ class MainDetailActivity : RootActivity() {
             comment_path = null
         }
 
+        contentWV.addJavascriptInterface(ImageClick(context), "ImageClick")
+
         if (intent.getStringExtra("id") != null){
             val id = intent.getStringExtra("id")
             getPost(id)
@@ -670,10 +677,16 @@ class MainDetailActivity : RootActivity() {
 
     }
 
-    //이미지 자세히 보기 액티비티
-    fun MoveFindPictureActivity(){
-        startActivity(Intent(this,FindPictureActivity::class.java))
+    class ImageClick(context: Context) {
+        var context = context
+        @JavascriptInterface
+        fun imageClick(src : String){
+            val intent = Intent(context, WebPictureDetailActivity::class.java)
+            intent.putExtra("src", src)
+            context.startActivity(intent)
+        }
     }
+
 
     fun modify(){
         if (intent.getStringExtra("id") != null) {
@@ -699,7 +712,7 @@ class MainDetailActivity : RootActivity() {
                         params.put("content_id",id)
                         params.put("deleted","Y")
 
-                        println("------content_id =-====== $id")
+                        // println("------content_id =-====== $id")
 
                         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
@@ -793,12 +806,6 @@ class MainDetailActivity : RootActivity() {
     }
 
 
-    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val dx = x1 - x2
-        val dy = y1 - y2
-        val distanceInPx = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-        return pxToDp(distanceInPx)
-    }
 
     private fun pxToDp(px: Float): Float {
         return px / resources.displayMetrics.density
@@ -827,8 +834,6 @@ class MainDetailActivity : RootActivity() {
                             val text = Utils.getString(data,"text")
                             val member_id = Utils.getString(data,"member_id")
                             writer = member_id
-                            val door_image = Utils.getString(data,"door_image")
-                            val deleted = Utils.getString(data,"deleted")
                             val Looker = response.getJSONArray("Looker")
                             val Like = response.getJSONArray("Like")
                             val Comments = response.getJSONArray("Comments")
@@ -838,7 +843,7 @@ class MainDetailActivity : RootActivity() {
 
                             freind = Utils.getString(data,"freind")
                             val mate_cnt = Utils.getString(data,"mate_cnt")
-                            Log.d("친구",freind)
+                            //Log.d("친구",freind)
                             if (freind == "0"){
                                 if (mate_cnt.toInt() > 0){
                                     freindIV.setBackgroundResource(R.drawable.icon_second)
@@ -861,8 +866,8 @@ class MainDetailActivity : RootActivity() {
                             val tags = response.getJSONArray("tags")
                             val imageDatas = response.getJSONArray("ContentImgs")
 
-                            Log.d("이미지",imageDatas.toString())
-                            println("------detail imagedatas.size ${imageDatas.length()}")
+                            //Log.d("이미지",imageDatas.toString())
+                            // println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
@@ -881,7 +886,7 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
-                                println("-------------visible")
+                                // println("-------------visible")
                                 imageRL.visibility = View.VISIBLE
                                 pagerVP.visibility = View.VISIBLE
                                 var imagePaths: ArrayList<String> = ArrayList<String>()
@@ -919,7 +924,7 @@ class MainDetailActivity : RootActivity() {
 
                                 for (i in 0 until imagePaths.size){
                                     val image = Config.url + imagePaths.get(i)
-                                    Log.d("이미지2",image)
+                                    //Log.d("이미지2",image)
                                     adverImagePaths.add(image)
                                 }
                                 adverAdapter.notifyDataSetChanged()
@@ -931,7 +936,8 @@ class MainDetailActivity : RootActivity() {
                                     } 
                                 }
 
-                            } else {
+                            }
+                            else {
                                 imageRL.visibility = View.GONE
                             }
 
@@ -1094,25 +1100,25 @@ class MainDetailActivity : RootActivity() {
 
         CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
                     commentList.clear()
                     for (i in 0 until comments.length()){
                         commentList.add(comments[i] as JSONObject)
-                        //commentList.get(i).put("changedBlockYN", "N")
+                        commentList[i].put("isSelectedOp",false)
                     }
                     commentAdapter.notifyDataSetChanged()
                 }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }

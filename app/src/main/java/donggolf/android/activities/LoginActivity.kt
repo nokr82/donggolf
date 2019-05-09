@@ -143,7 +143,7 @@ class LoginActivity : RootActivity() {
 
                 try {
                     val result = response!!.getString("result")
-                    println("LoginActivity :: ${response.toString()}")
+                    // println("LoginActivity :: ${response.toString()}")
                     if (result == "ok") {
                         //Utils.alert(context,"로그인 성공")
                         if (progressDialog != null) {
@@ -151,9 +151,20 @@ class LoginActivity : RootActivity() {
                         }
                         val member = response.getJSONObject("member")
 
+                        val admin_del_yn = Utils.getString(member,"admin_del_yn")
+                        val admin_day_del_yn = Utils.getString(member,"admin_day_del_yn")
+                        val admin_day = Utils.getString(member,"admin_day")
+                        val del_day = response.getString("del_day")
+                        if (admin_del_yn == "Y"){
+                            alert("동네골프 접근이 영구차단되었습니다.")
+                            return
+                        }else if (admin_day_del_yn == "Y"){
+                            alert("동네골프 접근이 "+admin_day+"부터 "+del_day+"까지 차단되었습니다.")
+                            return
+                        }
                         val member_id = Utils.getInt(member, "id")
 
-                        println("member_id -------$member_id")
+                        // println("member_id -------$member_id")
                         PrefUtils.setPreference(context, "member_id", member_id)
                         PrefUtils.setPreference(context,"nickname", Utils.getString(member,"nick"))
 
@@ -171,7 +182,18 @@ class LoginActivity : RootActivity() {
                                 PrefUtils.setPreference(context, "auto", false)
                                 //PrefUtils.setPreference(context, "auto", false)
                             }
-
+                            var region = ""
+                            if (Utils.getString(member, "region1")!=""){
+                                region += Utils.getString(member, "region1")
+                            }
+                            if (Utils.getString(member, "region2")!=""){
+                                region  += ","+Utils.getString(member, "region2")
+                            }
+                            if (Utils.getString(member, "region3")!=""){
+                                region +=  ","+Utils.getString(member, "region3")
+                            }
+                            PrefUtils.setPreference(context,"region_id",region)
+                            PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
                             PrefUtils.setPreference(context,"isActiveAccount","a")
                             PrefUtils.setPreference(context,"userPhone",Utils.getString(member,"phone"))
 
@@ -239,7 +261,7 @@ class LoginActivity : RootActivity() {
     }
 
     fun moveregister() {
-        println("moveRegister()")
+        // println("moveRegister()")
         startActivity(Intent(this, RegisterActivity::class.java))
     }
 
@@ -256,59 +278,16 @@ class LoginActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
 
-/*
-    companion object {
-        fun setLoginData(context: Context, user: FirebaseUser?) {
-            println("loginActivity user : $user")
 
-            val uid = user?.uid
-            val email = user?.email
-
-            PrefUtils.setPreference(context, "uid", uid)
-            PrefUtils.setPreference(context, "email", email)
-        }
-
-        fun setInfoData(context: Context, info: Map<String, Any>?) {
-
-            println("loginActivity info : $info")
-
-            val sex = Utils.getString(info, "sex")
-            val phone = Utils.getString(info, "phone")
-            val nick = Utils.getString(info, "nick")
-
-
-            PrefUtils.setPreference(context, "sex", sex)
-            PrefUtils.setPreference(context, "phone", phone)
-            PrefUtils.setPreference(context, "nick", nick)
-
-        }
-    }*/
-
-    fun getKeyHash(context: Context) : String? {
-        try {
-            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-
-        } catch (e: NoSuchAlgorithmException) {
-
-        }
-
-        return null
-    }
 
     override fun onDestroy() {
         super.onDestroy()

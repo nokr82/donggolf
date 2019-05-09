@@ -77,7 +77,7 @@
                             android:layout_marginRight="10dp"
                             android:textStyle="bold"
                             android:textSize="13dp"
-                            android:text="kido92@naver.com"
+                            android:text=""
                             android:id="@+id/ans_user_email"/>
                         <ImageView
                             android:id="@+id/goToEmailMod"
@@ -134,7 +134,7 @@
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textSize="13dp"
-                    android:text="010-2534-5553"
+                    android:text=""
                     android:id="@+id/mobNumTV"/>
             </LinearLayout>
             <TextView

@@ -64,7 +64,7 @@ class MateListAdapter(context: Context, view:Int, data: ArrayList<JSONObject>) :
         }
 
         item.mates_checkboxRL.setOnClickListener {
-            println("체크박스 클릭됨")
+            //println("체크박스 클릭됨")
 
             check = !check
 

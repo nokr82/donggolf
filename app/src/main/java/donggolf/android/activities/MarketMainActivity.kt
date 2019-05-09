@@ -15,12 +15,10 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MarketAction
-import donggolf.android.actions.MemberAction.get_region_member
 import donggolf.android.adapters.*
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
-import kotlinx.android.synthetic.main.activity_friend_search.*
 import kotlinx.android.synthetic.main.activity_market_main.*
 import kotlinx.android.synthetic.main.dlg_market_select_option.view.*
 import org.json.JSONObject
@@ -52,6 +50,9 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     var totalPage = 1
     var todayCount = 0
     var monthCount = 0
+    var product_id = -1
+
+
     private var userScrolled = false
     private var lastItemVisibleFlag = false
     private var totalItemCountScroll = 0
@@ -89,7 +90,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         setContentView(R.layout.activity_market_main)
 
         context = this
-
         var filter1 = IntentFilter("GOODS_ADD")
         registerReceiver(reLoadDataReceiver, filter1)
         var filter2 = IntentFilter("DELETE_OK")
@@ -102,7 +102,9 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
         }
 
         init_menu()
-        entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
+        entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
+
+
 
         //목록 가져와서 array에 추가
         productCategoryAdatper = ProductCategoryAdapter(context, R.layout.item_dlg_market_sel_op, formData)
@@ -147,6 +149,9 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //분류전체(form)
         entireClassificationTV.setOnClickListener {
+
+
+
             init_menu()
             entireClassificationTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -170,21 +175,6 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             dialogView.dlg_marketLV.setOnItemClickListener { parent, view, position, id ->
-
-                if (product == "골프백" || product == "골프화" || product == "의류" || product == "모자" || product == "볼" || product == "기타용품" ){
-                    var json = genderAdatper.getItem(position)
-                    var type2 = json.getJSONObject("PdtCategory")
-                    var title = Utils.getString(type2, "title")
-                    entireClassificationTV.setText(title)
-                    if (title.equals("분류전체")){
-                        title = ""
-                    }
-                    type = "form"
-                    form = title
-                    getSecondHandMarketItems(type,1)
-                    genderAdatper.notifyDataSetChanged()
-
-                } else {
                     var json = productCategoryAdatper.getItem(position)
                     var type2 = json.getJSONObject("ProductCategory")
                     var title = Utils.getString(type2, "title")
@@ -197,10 +187,8 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 //                formData[position].put("isSelectedOp", true)
                     getSecondHandMarketItems(type,1)
 
-
-
                     productCategoryAdatper.notifyDataSetChanged()
-                }
+
 
 
                 alert.dismiss()
@@ -215,6 +203,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //브랜드전체(brand)
         entireBrandTV.setOnClickListener {
+
             init_menu()
             entireBrandTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -258,6 +247,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         //종류전체(type)
         entireTypeTV.setOnClickListener {
+
             init_menu()
             entireTypeTV.setTextColor(Color.parseColor("#0EDA2F"))
 
@@ -279,7 +269,12 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                 var json = productTypeAdapter.getItem(position)
                 var type2 = json.getJSONObject("ProductType")
                 var title = Utils.getString(type2, "title")
-                Log.d("타이틀",title)
+                if (title=="종류전체"){
+                    product_id = -1
+                }else{
+                    product_id = Utils.getInt(type2,"id")
+                }
+                //Log.d("타이틀",title)
                 entireTypeTV.text = title
                 if (title.equals("종류전체")){
                     title = ""
@@ -290,6 +285,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
                 productTypeAdapter.notifyDataSetChanged()
                 getSecondHandMarketItems(type,1)
+                getCategory()
                 alert.dismiss()
                 entireClassificationTV.setText("분류 전체")
             }
@@ -314,7 +310,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     fun getCategory() {
         val params = RequestParams()
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
-
+        params.put("product_id", product_id)
         if (brandData != null) {
             brandData.clear()
         }
@@ -336,6 +332,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+                    Log.d("마켓목록",response.toString())
                     val category = response.getJSONArray("category")
                     val productType = response.getJSONArray("producttype")
                     val productForm = response.getJSONArray("productcategory")
@@ -347,13 +344,12 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
                             productData.get(i).put("isSelectedOp", false)
                         }
                     }
-
-
                     if (category.length() > 0 && category != null) {
                         for (i in 0 until category.length()) {
                             brandData.add(category.get(i) as JSONObject)
                             brandData[i].put("isSelectedOp", false)
                         }
+
                     }
 
                     if (productForm.length() > 0 && productForm != null) {
@@ -382,7 +378,7 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
     override fun onResume() {
         super.onResume()
         getSecondHandMarketItems(type,1)
-        Log.d("로그",type+page.toString())
+        //Log.d("로그",type+page.toString())
     }
 
     //마켓 목록뽑기
@@ -398,12 +394,12 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
 
         MarketAction.get_market_product(params,object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                //println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val marketItems = response.getJSONArray("marketItems")
 
-                    Log.d("마켓목록",marketItems.toString())
+                    //Log.d("마켓목록",marketItems.toString())
                     this@MarketMainActivity.page = response.getInt("page")
                     totalPage = response.getInt("totalPage")
                     todayCount = response.getInt("todayCount")
@@ -422,11 +418,11 @@ class MarketMainActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                //println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                //println(responseString)
             }
         })
     }

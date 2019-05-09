@@ -44,7 +44,7 @@ class CustomVideoFolderArrayAdapter(context: Context, textViewResourceId: Int, d
         (convertView.findViewById(R.id.bucketName) as TextView).setText(Utils.getString(o, "bucketName"))
 
         var total = Utils.getInt(o,"total")
-        Log.d("토탈",total.toString())
+        //Log.d("토탈",total.toString())
         var image = Utils.getString(o,"image")
         // total
         if (total == -1) {

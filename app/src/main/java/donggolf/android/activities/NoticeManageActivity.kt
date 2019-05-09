@@ -106,14 +106,14 @@ class NoticeManageActivity : RootActivity() {
         ChattingAction.get_announcement(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         val room = response.getJSONObject("chatroom")
                         val chatroom = room.getJSONObject("Chatroom")
                         val founder_id = Utils.getString(chatroom,"member_id")
 
-                        println("-------founder_id $founder_id")
+                        // println("-------founder_id $founder_id")
 
                         if (PrefUtils.getIntPreference(context,"member_id") == founder_id.toInt()){
                             noticeLL.visibility = View.GONE
@@ -174,11 +174,11 @@ class NoticeManageActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -203,7 +203,7 @@ class NoticeManageActivity : RootActivity() {
         ChattingAction.set_notice(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    println(response)
+                    // println(response)
                     val result = response!!.getString("result")
                     if (result == "ok") {
                         var intent = Intent()
@@ -217,11 +217,11 @@ class NoticeManageActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

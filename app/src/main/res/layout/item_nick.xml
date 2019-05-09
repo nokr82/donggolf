@@ -6,7 +6,7 @@
         android:id="@+id/nickTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임일곱글자"
+        android:text=""
         android:textSize="12dp"
         android:textColor="#EF5C34"
         android:textStyle="bold"
