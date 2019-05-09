@@ -20,8 +20,6 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_area_range.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_area.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -73,8 +71,6 @@ class AreaRangeActivity : RootActivity() {
         accTV.visibility = View.GONE
 
         myTV.visibility = View.VISIBLE
-
-        getBigCity()
 
         myTV.setOnClickListener {
             intent.putExtra("region_id", "no")
@@ -184,6 +180,10 @@ class AreaRangeActivity : RootActivity() {
             }
 
         }
+
+
+        getBigCity()
+
         my_member_cnt()
     }
 
@@ -289,7 +289,7 @@ class AreaRangeActivity : RootActivity() {
 
                         if (r_name1 != null && r_name1 != "") {
                             if (region1_name.contains("시")){
-                                region += region1_name+"<"+r_name1
+                                region += region1_name+">"+r_name1
                             }else{
                                 region += r_name1
                             }
@@ -297,7 +297,7 @@ class AreaRangeActivity : RootActivity() {
 
                         if (r_name2 != null && r_name2 != "") {
                             if (region2_name.contains("시")){
-                                region += ","+region2_name+"<"+r_name2
+                                region += ","+region2_name+">"+r_name2
                             }else{
                                 region +=","+ r_name2
                             }
@@ -305,7 +305,7 @@ class AreaRangeActivity : RootActivity() {
 
                         if (r_name3 != null && r_name3 != "") {
                             if (region3_name.contains("시")){
-                                region += ","+region3_name+"<"+r_name3
+                                region += ","+region3_name+">"+r_name3
                             }else{
                                 region +=","+ r_name3
                             }
@@ -316,7 +316,12 @@ class AreaRangeActivity : RootActivity() {
                         }
 
                         var membercnt = response!!.getString("membercnt")
-                        myTV.text = "우리동네"+"("+membercnt+")"+"   "+region
+                        if(region.isEmpty()) {
+                            myTV.text = "우리동네(미설정)"
+                        } else {
+                            myTV.text = "우리동네"+"("+membercnt+")"+"   "+region
+                        }
+
                     }
 
 

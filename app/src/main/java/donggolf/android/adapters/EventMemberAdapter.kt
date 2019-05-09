@@ -2,7 +2,6 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -15,9 +14,7 @@ import donggolf.android.activities.EventMembersActivity
 import donggolf.android.base.Config
 import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
-import donggolf.android.models.MutualFriendData
 import org.json.JSONObject
-import kotlin.collections.ArrayList
 
 class EventMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObject>, activity: EventMembersActivity) : ArrayAdapter<JSONObject>(context,view, data) {
 
@@ -77,20 +74,18 @@ class EventMemberAdapter(context: Context, view : Int, data: ArrayList<JSONObjec
             }
         }
 
-        item.numberTV.text = "추첨번호 " + Utils.getString(eventMember, "number1") + Utils.getString(eventMember, "number2")
+        item.numberTV.text = "이벤트 참여번호 " + Utils.getString(eventMember, "number1") + Utils.getString(eventMember, "number2")
 
         if (activity.finish == "Y") {
             item.gradeTV.visibility = View.VISIBLE
 
             val grade = Utils.getInt(eventMember, "grade")
 
-            item.gradeTV.text = "${grade}등"
-
             if (activity.limit >= grade || activity.member_id == member_id) {
-                item.gradeTV.visibility = View.VISIBLE
-            } else {
-                item.gradeTV.visibility = View.GONE
+                item.gradeTV.text = "${grade}등"
             }
+
+            item.gradeTV.visibility = View.VISIBLE
 
         } else {
             item.gradeTV.visibility = View.GONE

@@ -62,9 +62,9 @@ class AreaMyRangeActivity : RootActivity() {
 
         accTV.setOnClickListener {
             if (actArea == 0){
-                userRG1 = "0"
-                userRG2 = "0"
-                userRG3 = "0"
+                userRG1 = ""
+                userRG2 = ""
+                userRG3 = ""
                 update_info()
                 Toast.makeText(context, "전국으로 변경 되었습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -120,9 +120,9 @@ class AreaMyRangeActivity : RootActivity() {
                     tmpSV.visibility = View.VISIBLE
                 }
             } else if (name == "전국"){
-                userRG1 = "0"
-                userRG2 = "0"
-                userRG3 = "0"
+                userRG1 = ""
+                userRG2 = ""
+                userRG3 = ""
                 update_info()
             } else {
                 getGugun(parent_id)
@@ -136,14 +136,14 @@ class AreaMyRangeActivity : RootActivity() {
         gridGV.adapter = GridAdapter
         gridGV.setOnItemClickListener { parent, view, position, id ->
             val item = gugunList.get(position)
-            var type = item.getJSONObject("Regions")
-            var region_id:String = Utils.getString(type,"id")
-            var name:String = Utils.getString(type,"name")
+            val type = item.getJSONObject("Regions")
+            val region_id:String = Utils.getString(type,"id")
+            val name:String = Utils.getString(type,"name")
             var sido:String = Utils.getString(type,"sido")
             var sel = item.getBoolean("isSelectedOp")
 
-            var index = areaCnt.text.toString().toInt()
-            var nowIndex = index + 1
+            // var index = areaCnt.text.toString().toInt()
+            // var nowIndex = index + 1
             var taglist:ArrayList<String> = ArrayList()
             val regionView = View.inflate(context, R.layout.item_area,null)
             regionView.regionDelIV.setOnClickListener {
@@ -158,8 +158,15 @@ class AreaMyRangeActivity : RootActivity() {
                 tmpRegionLL.removeView(regionView)
                 gugunList[position].put("isSelectedOp",false)
                 GridAdapter.notifyDataSetChanged()
+
             }
             if (!sel){
+                if (tmpRegionLL.childCount == 3) {
+                    Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    areaCnt.text = "3"
+                    return@setOnItemClickListener
+                }
+
                 if (sido.contains("시")){
                     actArea++
                     regionView.regionNameTV.text = sido+">"+name
@@ -177,18 +184,12 @@ class AreaMyRangeActivity : RootActivity() {
                         3 -> userRG3 =  region_id
                     }
                 }
-                if (nowIndex == 4){
-                    Toast.makeText(context, "3개이상 등록하실 수 없습니다.", Toast.LENGTH_SHORT).show()
-                    areaCnt.text = "3"
-                    return@setOnItemClickListener
-//                update_info()
-                } else {
-                    taglist.add(name)
-                    tmpRegionLL.addView(regionView)
-                    areaCnt.text = "${actArea.toString()}"
-                }
 
-                areaCnt.setText(nowIndex.toString())
+                taglist.add(name)
+                tmpRegionLL.addView(regionView)
+                areaCnt.text = "${actArea.toString()}"
+
+                // areaCnt.setText(nowIndex.toString())
                 gugunList[position].put("isSelectedOp",true)
                 GridAdapter.notifyDataSetChanged()
             }else{
@@ -221,11 +222,6 @@ class AreaMyRangeActivity : RootActivity() {
                 GridAdapter.notifyDataSetChanged()
 
             }
-
-
-
-
-
         }
 
         finishLL.setOnClickListener {

@@ -3,16 +3,18 @@ package donggolf.android.fragment
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
-import android.os.Bundle
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.os.Handler
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.ListView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -212,7 +214,7 @@ class ChatFragment : android.support.v4.app.Fragment() {
 
         var isMyChat = true
 
-        getmychat(1)
+        // getmychat(1)
 
         var filter1 = IntentFilter("RESET_CHATTING")
         ctx!!.registerReceiver(resetChattingReciver, filter1)
@@ -704,6 +706,10 @@ class ChatFragment : android.support.v4.app.Fragment() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
                 if (result == "ok") {
+
+                    if (activity == null || activity!!.isDestroyed || activity!!.isFinishing || response == null) {
+                        return
+                    }
 
                     todayCount = response!!.getInt("todayCount")
                     val mychat_count = response!!.getInt("mychat_count")

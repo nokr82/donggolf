@@ -2,22 +2,17 @@ package donggolf.android.adapters
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
-import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
 import donggolf.android.base.Config
 import donggolf.android.base.ElapsedTimeTextView
-import donggolf.android.base.PrefUtils
 import donggolf.android.base.Utils
-import donggolf.android.models.MutualFriendData
 import org.json.JSONObject
-import kotlin.collections.ArrayList
 
 class EventAdapter(context: Context, view : Int, data: ArrayList<JSONObject>) : ArrayAdapter<JSONObject>(context,view, data) {
 
@@ -71,10 +66,15 @@ class EventAdapter(context: Context, view : Int, data: ArrayList<JSONObject>) : 
         val title = Utils.getString(event, "title")
         val contents = Utils.getString(event, "contents")
 
-        if (Utils.getString(json, "participation_yn") == "Y") {
-            item.stateTV.text = "추첨번호 : " + Utils.getString(json, "number")
+        if (finish == "Y") {
+            item.stateTV.visibility = View.GONE
         } else {
-            item.stateTV.text = "참여하기"
+            item.stateTV.visibility = View.VISIBLE
+            if (Utils.getString(json, "participation_yn") == "Y") {
+                item.stateTV.text = "참여번호 : " + Utils.getString(json, "number")
+            } else {
+                item.stateTV.text = "참여하기"
+            }
         }
 
         item.titleTV.text = title

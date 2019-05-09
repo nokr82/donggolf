@@ -4,11 +4,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -28,9 +29,10 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.MemberAction
 import donggolf.android.activities.*
-import donggolf.android.base.*
+import donggolf.android.base.Config
+import donggolf.android.base.PrefUtils
+import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile_manage.*
-import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -76,10 +78,10 @@ class InfoFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        var filter1 = IntentFilter("REGION_CHANGE")
+        val filter1 = IntentFilter("REGION_CHANGE")
         myContext.registerReceiver(reloadReciver, filter1)
 
-        var filter2 = IntentFilter("DELETE_IMG")
+        val filter2 = IntentFilter("DELETE_IMG")
         myContext.registerReceiver(reloadReciver, filter2)
 
 
@@ -88,14 +90,14 @@ class InfoFragment : Fragment() {
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(myContext))
 
         mychatFL.setOnClickListener {
-            var intent = Intent()
+            val intent = Intent()
             intent.action = "MY_CHATTING"
             myContext!!.sendBroadcast(intent)
         }
 
         //메뉴버튼
         tv_CONSEQUENCES.setOnClickListener {
-            var intent = Intent(activity, OtherManageActivity::class.java)
+            val intent = Intent(activity, OtherManageActivity::class.java)
             startActivity(intent)
         }
 
@@ -104,38 +106,38 @@ class InfoFragment : Fragment() {
         }
 
         imgProfile.setOnClickListener {
-            var intent = Intent(activity, ViewProfileListActivity::class.java)
+            val intent = Intent(activity, ViewProfileListActivity::class.java)
             intent.putExtra("viewAlbumUser", PrefUtils.getIntPreference(context, "member_id"))
             startActivity(intent)
         }
 
         messageTV.setOnClickListener {
-            var intent = Intent(activity, ModStatusMsgActivity::class.java)
+            val intent = Intent(activity, ModStatusMsgActivity::class.java)
             startActivityForResult(intent, SELECT_STATUS)
         }
 
         btnNameModi.setOnClickListener {
-            var intent = Intent(activity, ProfileNameModifActivity::class.java)
+            val intent = Intent(activity, ProfileNameModifActivity::class.java)
             startActivityForResult(intent, MODIFY_NAME)
         }
 
         tv_CONSEQUENCES.setOnClickListener {
-            var itt = Intent(activity, OtherManageActivity::class.java)
+            val itt = Intent(activity, OtherManageActivity::class.java)
             startActivity(itt)
         }
 
         prfhashtagLL.setOnClickListener {
-            var intent = Intent(activity, ProfileTagChangeActivity::class.java)
+            val intent = Intent(activity, ProfileTagChangeActivity::class.java)
             startActivityForResult(intent, MODIFY_TAG)
         }
 
         myNeighbor.setOnClickListener {
-            var intent = Intent(activity, MutualActivity::class.java)
+            val intent = Intent(activity, MutualActivity::class.java)
             startActivity(intent)
         }
 
-        setRegion.setOnClickListener {
-            var intent = Intent(activity, AreaMyRangeActivity::class.java)
+        setRegionLL.setOnClickListener {
+            val intent = Intent(activity, AreaMyRangeActivity::class.java)
             intent.putExtra("region_type", "my_profile")
             startActivityForResult(intent, REGION_CHANGE)
         }
@@ -166,8 +168,7 @@ class InfoFragment : Fragment() {
             val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             loadPermissions(perms, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE)
         } else {
-            val galleryIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
         }
     }
@@ -175,8 +176,7 @@ class InfoFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(myContext, perms[0]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity as Activity, perms, requestCode)
         } else {
-            val galleryIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY)
         }
     }
@@ -197,6 +197,20 @@ class InfoFragment : Fragment() {
                 if (result == "ok") {
                     val member = response.getJSONObject("Member")
 
+                    val friendCount = response.getString("friendCount")
+                    val contentCount = response.getString("contentCount")
+                    val chatCount = response.getInt("chatCount")
+                    chatcountTV.setText(chatCount.toString())
+                    postcountTV.setText(contentCount)
+                    friendCountTV.setText(friendCount)
+
+                    textDate.text = Utils.getString(member, "created").substringBefore(" ")
+                    txUserName.text = Utils.getString(member, "nick")
+
+                    PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
+
+                    //지역
+
                     val region1 = response.getJSONObject("region1")
                     val region2 = response.getJSONObject("region2")
                     val region3 = response.getJSONObject("region3")
@@ -209,24 +223,11 @@ class InfoFragment : Fragment() {
                     var region2_name = Utils.getString(region2,"region_name")
                     var region3_name = Utils.getString(region3,"region_name")
 
-
-                    val friendCount = response.getString("friendCount")
-                    val contentCount = response.getString("contentCount")
-                    val chatCount = response.getInt("chatCount")
-                    chatcountTV.setText(chatCount.toString())
-                    postcountTV.setText(contentCount)
-                    friendCountTV.setText(friendCount)
-
-                    textDate.text = Utils.getString(member, "created").substringBefore(" ")
-                    txUserName.text = Utils.getString(member, "nick")
-
-                    PrefUtils.setPreference(context,"region",Utils.getString(member, "region1"))
-                    //지역
                     var region = ""
 
                     if (r_name1 != null && r_name1 != "") {
                         if (region1_name.contains("시")){
-                            region += region1_name+"<"+r_name1
+                            region += region1_name+">"+r_name1
                         }else{
                             region += r_name1
                         }
@@ -234,7 +235,7 @@ class InfoFragment : Fragment() {
 
                     if (r_name2 != null && r_name2 != "") {
                         if (region2_name.contains("시")){
-                            region += ","+region2_name+"<"+r_name2
+                            region += ","+region2_name+">"+r_name2
                         }else{
                             region +=","+ r_name2
                         }
@@ -242,7 +243,7 @@ class InfoFragment : Fragment() {
 
                     if (r_name3 != null && r_name3 != "") {
                         if (region3_name.contains("시")){
-                            region += ","+region3_name+"<"+r_name3
+                            region += ","+region3_name+">"+r_name3
                         }else{
                             region +=","+ r_name3
                         }
@@ -256,6 +257,23 @@ class InfoFragment : Fragment() {
                                region = region.substring(0, region.length-2)
                            }*/
                     txUserRegion.text = region
+
+                    val region1_id = region1.getInt("id")
+                    val region2_id = region2.getInt("id")
+                    val region3_id = region3.getInt("id")
+
+                    var region_ids = arrayListOf<Int>()
+                    if(region1_id > 0) {
+                        region_ids.add(region1_id)
+                    }
+                    if(region2_id > 0) {
+                        region_ids.add(region2_id)
+                    }
+                    if(region3_id > 0) {
+                        region_ids.add(region3_id)
+                    }
+
+                    PrefUtils.setPreference(context,"region_id", region_ids.joinToString(","))
 
                     //상메
                     var statusMessage = Utils.getString(member, "status_msg")
@@ -345,9 +363,9 @@ class InfoFragment : Fragment() {
                     member_info()
                 }
                 GALLERY -> {
-                    if (data != null) {
-                        val contentURI = data.data
-                        //Log.d("uri", contentURI.toString())
+                    if (data != null && data.data != null) {
+                        // val contentURI = data.data
+                        // Log.d("uri", contentURI.toString())
 
                         try {
                             val selectedImageUri = data.data

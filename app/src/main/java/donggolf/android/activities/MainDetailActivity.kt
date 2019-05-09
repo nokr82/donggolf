@@ -191,7 +191,7 @@ class MainDetailActivity : RootActivity() {
 
                     CommentAction.delete_content_comment(params, object :JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                            println(response)
+                            // println(response)
 
                             val result = response!!.getString("result")
                             if (result == "ok"){
@@ -205,11 +205,11 @@ class MainDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
                 }
@@ -262,7 +262,7 @@ class MainDetailActivity : RootActivity() {
                     CommentAction.content_commenter_ben(params, object : JsonHttpResponseHandler(){
                         override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                             try {
-                                println(response)
+                                // println(response)
                                 //차단 성공하면 표시하고 토스트
                                 val result = response!!.getString("result")
                                 if (result == "ok") {
@@ -279,11 +279,11 @@ class MainDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
 
@@ -712,7 +712,7 @@ class MainDetailActivity : RootActivity() {
                         params.put("content_id",id)
                         params.put("deleted","Y")
 
-                        println("------content_id =-====== $id")
+                        // println("------content_id =-====== $id")
 
                         PostAction.update_post(params,object : JsonHttpResponseHandler(){
 
@@ -867,7 +867,7 @@ class MainDetailActivity : RootActivity() {
                             val imageDatas = response.getJSONArray("ContentImgs")
 
                             //Log.d("이미지",imageDatas.toString())
-                            println("------detail imagedatas.size ${imageDatas.length()}")
+                            // println("------detail imagedatas.size ${imageDatas.length()}")
 
                             if (tags != null && tags.length() > 0 ){
                                 var hashtags: String = ""
@@ -886,7 +886,7 @@ class MainDetailActivity : RootActivity() {
                             }
 
                             if (imageDatas != null && imageDatas.length() > 0){
-                                println("-------------visible")
+                                // println("-------------visible")
                                 imageRL.visibility = View.VISIBLE
                                 pagerVP.visibility = View.VISIBLE
                                 var imagePaths: ArrayList<String> = ArrayList<String>()
@@ -1100,7 +1100,7 @@ class MainDetailActivity : RootActivity() {
 
         CommentAction.get_content_comment_list(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
@@ -1114,11 +1114,11 @@ class MainDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }

@@ -113,7 +113,7 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             val item = chattingList.get(position) as JSONObject
             val chatting = item.getJSONObject("Chatting")
             val type = Utils.getString(chatting, "type")
-            println("--------typ[e====== $type")
+            // println("--------typ[e====== $type")
             if (type == "i") {
                 val img = Utils.getString(chatting, "img")
                 val imglist: java.util.ArrayList<String> = java.util.ArrayList<String>()
@@ -466,11 +466,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
 
@@ -636,11 +636,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -652,12 +652,12 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
         val params = RequestParams()
         params.put("room_id", room_id)
 
-        println("----------------room_id : $room_id")
+        // println("----------------room_id : $room_id")
         params.put("member_id", PrefUtils.getIntPreference(context, "member_id"))
         if (mate_id.size > 0) {
             for (i in 0..mate_id!!.size - 1) {
                 params.put("mate_ids[" + i + "]", mate_id.get(i))
-                println("_------mate_ids : $mate_id")
+                // println("_------mate_ids : $mate_id")
             }
         }
         params.put("nick", PrefUtils.getStringPreference(dialogContext, "nickname"))
@@ -701,11 +701,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -829,11 +829,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
 
@@ -985,11 +985,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1009,11 +1009,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1033,11 +1033,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1065,11 +1065,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1095,11 +1095,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1257,11 +1257,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -1314,11 +1314,11 @@ class DongChatDetailActivity : RootActivity(), AbsListView.OnScrollListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

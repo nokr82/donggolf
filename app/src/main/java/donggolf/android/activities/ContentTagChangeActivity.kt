@@ -58,7 +58,7 @@ class ContentTagChangeActivity : RootActivity() {
             Utils.hideKeyboard(context!!)
             if (intent.getStringExtra("type") != null){
                 val type = intent.getStringExtra("type")
-                println("type $type")
+                // println("type $type")
                 if (type == "post"){
                     if (adapterData.size > 0 ){
                         intent.putExtra("data",adapterData)
@@ -196,7 +196,7 @@ class ContentTagChangeActivity : RootActivity() {
         Utils.hideKeyboard(context!!)
         if (intent.getStringExtra("type") != null){
             val type = intent.getStringExtra("type")
-            println("type $type")
+            // println("type $type")
             if (type == "post"){
                 if (adapterData.size > 0 ){
                     intent.putExtra("data",adapterData)

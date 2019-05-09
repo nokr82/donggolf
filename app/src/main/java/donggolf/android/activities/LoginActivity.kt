@@ -143,7 +143,7 @@ class LoginActivity : RootActivity() {
 
                 try {
                     val result = response!!.getString("result")
-                    println("LoginActivity :: ${response.toString()}")
+                    // println("LoginActivity :: ${response.toString()}")
                     if (result == "ok") {
                         //Utils.alert(context,"로그인 성공")
                         if (progressDialog != null) {
@@ -164,7 +164,7 @@ class LoginActivity : RootActivity() {
                         }
                         val member_id = Utils.getInt(member, "id")
 
-                        println("member_id -------$member_id")
+                        // println("member_id -------$member_id")
                         PrefUtils.setPreference(context, "member_id", member_id)
                         PrefUtils.setPreference(context,"nickname", Utils.getString(member,"nick"))
 
@@ -261,7 +261,7 @@ class LoginActivity : RootActivity() {
     }
 
     fun moveregister() {
-        println("moveRegister()")
+        // println("moveRegister()")
         startActivity(Intent(this, RegisterActivity::class.java))
     }
 
@@ -278,11 +278,11 @@ class LoginActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }

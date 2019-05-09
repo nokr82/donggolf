@@ -1,12 +1,12 @@
 package donggolf.android.base
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.widget.TextView
-import kotlin.concurrent.schedule
-import android.os.Looper
-import android.os.Handler
 import java.util.*
+import kotlin.concurrent.schedule
 
 
 class ElapsedTimeTextView(context: Context?, attrs: AttributeSet?) : TextView(context, attrs) {
@@ -20,7 +20,7 @@ class ElapsedTimeTextView(context: Context?, attrs: AttributeSet?) : TextView(co
 
                 val handler = Handler(Looper.getMainLooper())
                 handler.post(Runnable {
-                    dest_date_time = dest_date_time - 1
+                    dest_date_time -= 1
 
                     text = "추첨 : " + Utils.dateString2(context, dest_date_time) + "전"
                 })

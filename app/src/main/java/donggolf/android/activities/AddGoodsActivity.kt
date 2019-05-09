@@ -445,11 +445,11 @@ class AddGoodsActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    // println(responseString)
                 }
             })
         }
@@ -490,7 +490,7 @@ class AddGoodsActivity : RootActivity() {
 
                 SELECT_PICTURE -> {
 
-                    println("onActivityResult로 돌아와서")
+                    // println("onActivityResult로 돌아와서")
 
                     var item = data?.getStringArrayExtra("images")//photoPath
                     //var name = data?.getStringArrayExtra("displayname")
@@ -499,7 +499,7 @@ class AddGoodsActivity : RootActivity() {
                         val str = item[i]
 
                         images_path!!.add(str)
-                        println(str)
+                        // println(str)
 
                         var add_file = Utils.getImage(context.contentResolver, str)
 
@@ -666,7 +666,7 @@ class AddGoodsActivity : RootActivity() {
 //                options.inSampleSize = hs
 //            }
 //        }
-        println("------imagespath ---- $str")
+        // println("------imagespath ---- $str")
 //        images_path.add(str)
         var add_file = Utils.getImage(context.contentResolver, str)
         val bitmap = BitmapFactory.decodeFile(str)
@@ -1019,11 +1019,11 @@ class AddGoodsActivity : RootActivity() {
                     if (progressDialog != null) {
                         progressDialog!!.dismiss()
                     }
-                    println(responseString)
+                    // println(responseString)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
                 override fun onStart() {
                     // show dialog
@@ -1111,11 +1111,11 @@ class AddGoodsActivity : RootActivity() {
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
             override fun onStart() {
                 // show dialog

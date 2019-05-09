@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import android.os.*
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.kakao.kakaostory.StringSet.writer
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -24,10 +23,9 @@ import donggolf.android.base.PrefUtils
 import donggolf.android.base.RootActivity
 import donggolf.android.base.Utils
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.activity_profile.view.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 class ProfileActivity : RootActivity() {
 
@@ -223,23 +221,54 @@ class ProfileActivity : RootActivity() {
                         textDate.text = Utils.getString(member,"created").substringBefore(" ")
                         txUserName.text = Utils.getString(member,"nick")
 
-                        //지역
+                        // 지역
+                        val region1 = response.getJSONObject("region1")
+                        val region2 = response.getJSONObject("region2")
+                        val region3 = response.getJSONObject("region3")
+
+                        var r_name1 = Utils.getString(region1,"name")
+                        var r_name2 = Utils.getString(region2,"name")
+                        var r_name3 = Utils.getString(region3,"name")
+
+                        var region1_name = Utils.getString(region1,"region_name")
+                        var region2_name = Utils.getString(region2,"region_name")
+                        var region3_name = Utils.getString(region3,"region_name")
+
                         var region = ""
 
-                        if (Utils.getString(member,"region1") != null) {
-                            region += Utils.getString(member,"region1") + ","
+                        if (r_name1 != null && r_name1 != "") {
+                            if (region1_name.contains("시")){
+                                region += region1_name+">"+r_name1
+                            }else{
+                                region += r_name1
+                            }
                         }
-                        if (Utils.getString(member,"region2") != null) {
-                            region += Utils.getString(member,"region2") + ","
+
+                        if (r_name2 != null && r_name2 != "") {
+                            if (region2_name.contains("시")){
+                                region += ","+region2_name+">"+r_name2
+                            }else{
+                                region +=","+ r_name2
+                            }
                         }
-                        if (Utils.getString(member,"region3") != null) {
-                            region += Utils.getString(member,"region3")
+
+                        if (r_name3 != null && r_name3 != "") {
+                            if (region3_name.contains("시")){
+                                region += ","+region3_name+">"+r_name3
+                            }else{
+                                region +=","+ r_name3
+                            }
+                        }
+
+                        if (r_name1 == "전국") {
+                            region = "전국"
                         }
 
                         /*       if (region.substring(region.length-1) == ","){
                                    region = region.substring(0, region.length-2)
                                }*/
                         txUserRegion.text = region
+
 
                         //상메
                         var statusMessage = Utils.getString(member,"status_msg")

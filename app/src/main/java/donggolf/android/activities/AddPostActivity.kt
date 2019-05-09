@@ -11,9 +11,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
-import android.util.Log
 import android.view.View
 import android.widget.*
+import com.github.irshulx.EditorListener
 import com.google.firebase.auth.FirebaseAuth
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -26,12 +26,14 @@ import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.PostAction
 import donggolf.android.base.*
-import donggolf.android.editor.EditorListener
-import donggolf.android.models.*
+import donggolf.android.models.ImagesPath
+import donggolf.android.models.TmpContent
 import kotlinx.android.synthetic.main.activity_add_post.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 var html = ""
@@ -40,7 +42,7 @@ var html = ""
 class AddPostActivity : RootActivity() {
 
     private lateinit var mAuth: FirebaseAuth
-    private var editorImageLayout = com.github.irshulx.R.layout.tmpl_image_view
+    private var editorImageLayout = R.layout.tmpl_image_view
     private lateinit var context: Context
     private val SELECT_PICTURE: Int = 101
     private val SELECT_VIDEO: Int = 102
@@ -112,7 +114,7 @@ class AddPostActivity : RootActivity() {
             override fun onUpload(image: Bitmap, uuid: String) {
                 up_load_image(uuid, image)
 
-                println("uuid::::::::::::::::::::::::::::::::::${uuid}")
+                // println("uuid::::::::::::::::::::::::::::::::::${uuid}")
 
             }
         }
@@ -135,7 +137,7 @@ class AddPostActivity : RootActivity() {
 
         if (intent.getStringArrayListExtra("image_uri") != null) {
             selectedImageViewList = intent.getStringArrayListExtra("image_uri")
-            println("images---------selectimage$selectedImageViewList")
+            // println("images---------selectimage$selectedImageViewList")
             if (selectedImageViewList.size > 0) {
                 for (i in 0 until selectedImageViewList.size) {
                     reset2(selectedImageViewList.get(i), i)
@@ -252,7 +254,7 @@ class AddPostActivity : RootActivity() {
                             if (images_path != null && images_path!!.size > 0) {
                                 for (i in 0 until images_path!!.size) {
                                     val imagesPath = ImagesPath(0, member_id.toString(), images_path!!.get(i), 1)
-                                    println("imagesPath ${imagesPath.path}")
+                                    // println("imagesPath ${imagesPath.path}")
                                     dbManager.insertimagespath(imagesPath)
                                 }
                             }
@@ -260,7 +262,7 @@ class AddPostActivity : RootActivity() {
                             if (videoPaths != null && videoPaths.size > 0) {
                                 for (i in 0 until videoPaths.size) {
                                     val videoPath = ImagesPath(0, member_id.toString(), videoPaths.get(i), 2)
-                                    println("videoPath ${videoPath.path}")
+                                    // println("videoPath ${videoPath.path}")
                                     dbManager.insertimagespath(videoPath)
                                 }
                             }
@@ -268,7 +270,7 @@ class AddPostActivity : RootActivity() {
                             if (hashtag != null && hashtag.size > 0) {
                                 for (i in 0 until hashtag.size) {
                                     val hastag = ImagesPath(0, member_id.toString(), hashtag.get(i), 3)
-                                    println("hastag ${hastag.path}")
+                                    // println("hastag ${hastag.path}")
                                     dbManager.insertimagespath(hastag)
                                 }
                             }
@@ -562,26 +564,26 @@ class AddPostActivity : RootActivity() {
         params.put("cht_yn", cht_yn)
         params.put("cmt_yn", cmt_yn)
 
-        if (PrefUtils.getStringPreference(context, "region_id") != null) {
-            var region_id = PrefUtils.getStringPreference(context, "region_id")
+        val region_id = PrefUtils.getStringPreference(context, "region_id")
+        if (region_id != null && region_id.isNotEmpty()) {
             params.put("region", region_id)
         } else {
-            var region_id = 0
+            val region_id = 0
             params.put("region", region_id)
         }
 
         if (PrefUtils.getStringPreference(context, "region_id2") != null) {
-            var region_id = PrefUtils.getStringPreference(context, "region_id2")
+            val region_id = PrefUtils.getStringPreference(context, "region_id2")
             params.put("region2", region_id)
         } else {
-            var region_id = 1
+            val region_id = 1
             params.put("region2", region_id)
         }
         //Log.d("태그", hashtag.toString())
 
         if (hashtag != null) {
             for (i in 0..hashtag.size - 1) {
-                params.put("tag[" + i + "]", hashtag.get(i))
+                params.put("tag[$i]", hashtag.get(i))
             }
         }
 
@@ -600,18 +602,18 @@ class AddPostActivity : RootActivity() {
 
                     if (album_video) {
                         val curThumb = MediaStore.Video.Thumbnails.getThumbnail(context.contentResolver, videoIds[i].toLong(), MediaStore.Video.Thumbnails.MINI_KIND, options)
-                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
+                        params.put("video_thumbnail[$i]", ByteArrayInputStream(Utils.getByteArray(curThumb)))
                     } else {
                         val bitmap = Utils.retriveVideoFrameFromVideo(videoPaths[i])
-                        params.put("video_thumbnail[" + i + "]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
+                        params.put("video_thumbnail[$i]", ByteArrayInputStream(Utils.getByteArray(bitmap)))
                     }
 
                     val file = File(videoPaths.get(i))
-                    println("----------videoPath ${videoPaths.get(i)}")
-                    println("file ---- ${file.length()}")
+                    // println("----------videoPath ${videoPaths.get(i)}")
+                    // println("file ---- ${file.length()}")
 
-                    var bytes = file.readBytes()
-                    println("bytes ---- $bytes")
+                    val bytes = file.readBytes()
+                    // println("bytes ---- $bytes")
 
 
                     var n: Int
@@ -668,7 +670,7 @@ class AddPostActivity : RootActivity() {
         intent.putExtra("image", "image")
         startActivityForResult(intent, SELECT_PICTURE);
 
-        println("SELECT_PICTURE:::::::::::::::::::::::::${time}")
+        // println("SELECT_PICTURE:::::::::::::::::::::::::${time}")
 
     }
 
@@ -683,7 +685,7 @@ class AddPostActivity : RootActivity() {
 
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
 
-                print("response:::::::::::::${response}")
+                // print("response:::::::::::::${response}")
 
                 var result = response!!.getString("result")
 
@@ -696,7 +698,7 @@ class AddPostActivity : RootActivity() {
                     editor.onImageUploadComplete(Config.url + image_uri, path)
 //                    editor.render(html)
 
-                    println("html::::::::::::::::::::::::::${html}")
+                    // println("html::::::::::::::::::::::::::${html}")
                     //Log.d("image_uri",image_uri)
                 }
             }
@@ -853,7 +855,7 @@ class AddPostActivity : RootActivity() {
 //                options.inSampleSize = hs
 //            }
 //        }
-        println("------imagespath ---- $str")
+        // println("------imagespath ---- $str")
 
 
         images_path.add(str)
@@ -969,14 +971,14 @@ class AddPostActivity : RootActivity() {
                                         var path = Config.url + Utils.getString(contentFile, "image_uri")
 
                                         reset2(path, id)
-                                        println("getimage------$path")
+                                        // println("getimage------$path")
                                         imagePaths.add(path)
 //                                        modi_path!!.add(Utils.getString(contentFile, "image"))
                                         modi_path!!.add(Utils.getString(contentFile, "image"))
                                     } else {
                                         val path = Utils.getString(contentFile, "video_uri")
                                         val image = Utils.getString(contentFile, "image")
-                                        println("path ----- $path")
+                                        // println("path ----- $path")
                                         removeIV.visibility = View.VISIBLE
                                         videoVV.visibility = View.VISIBLE
                                         videoLL.visibility = View.VISIBLE
@@ -1137,7 +1139,7 @@ class AddPostActivity : RootActivity() {
 
                     var intent = Intent();
 
-                    println("path ----- ${videoPaths.get(0)}")
+                    // println("path ----- ${videoPaths.get(0)}")
                     videoVV.visibility = View.VISIBLE
                     videoLL.visibility = View.VISIBLE
                     removeIV.visibility = View.VISIBLE
@@ -1155,7 +1157,7 @@ class AddPostActivity : RootActivity() {
                     if (data?.getStringArrayListExtra("data") != null) {
                         hashtag = data?.getStringArrayListExtra("data") as ArrayList<String>
 
-                        println("tmpcontent : $hashtag")
+                        // println("tmpcontent : $hashtag")
                         var tag = ""
                         if (hashtag.size > 0) {
                             for (i in 0 until hashtag.size) {
@@ -1223,7 +1225,7 @@ class AddPostActivity : RootActivity() {
     }
 
     fun clickMethod2(v: View) {
-        println("------------click2")
+        // println("------------click2")
         val builder = AlertDialog.Builder(context)
         builder.setMessage("삭제하시겠습니까 ? ").setCancelable(false)
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, id ->
@@ -1339,7 +1341,7 @@ class AddPostActivity : RootActivity() {
                         if (images_path != null && images_path!!.size > 0) {
                             for (i in 0 until images_path!!.size) {
                                 val imagesPath = ImagesPath(0, member_id.toString(), images_path!!.get(i), 1)
-                                println("imagesPath ${imagesPath.path}")
+                                // println("imagesPath ${imagesPath.path}")
                                 dbManager.insertimagespath(imagesPath)
                             }
                         }
@@ -1347,7 +1349,7 @@ class AddPostActivity : RootActivity() {
                         if (videoPaths != null && videoPaths.size > 0) {
                             for (i in 0 until videoPaths.size) {
                                 val videoPath = ImagesPath(0, member_id.toString(), videoPaths.get(i), 2)
-                                println("videoPath ${videoPath.path}")
+                                // println("videoPath ${videoPath.path}")
                                 dbManager.insertimagespath(videoPath)
                             }
                         }
@@ -1355,7 +1357,7 @@ class AddPostActivity : RootActivity() {
                         if (hashtag != null && hashtag.size > 0) {
                             for (i in 0 until hashtag.size) {
                                 val hastag = ImagesPath(0, member_id.toString(), hashtag.get(i), 3)
-                                println("hastag ${hastag.path}")
+                                // println("hastag ${hastag.path}")
                                 dbManager.insertimagespath(hastag)
                             }
                         }
@@ -1363,7 +1365,7 @@ class AddPostActivity : RootActivity() {
                         if (videoIds != null && videoIds.size > 0) {
                             for (i in 0 until videoIds.size) {
                                 val video_ids = ImagesPath(0, member_id.toString(), videoIds[i].toString(), 4)
-                                println("videoIds ${video_ids.path}")
+                                // println("videoIds ${video_ids.path}")
                                 dbManager.insertimagespath(video_ids)
                             }
                         }

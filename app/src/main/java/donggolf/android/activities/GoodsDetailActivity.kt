@@ -7,19 +7,15 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import com.nostra13.universalimageloader.core.ImageLoader
 import cz.msebera.android.httpclient.Header
 import donggolf.android.R
 import donggolf.android.actions.CommentAction
-import donggolf.android.actions.CommentAction.write_comments
 import donggolf.android.actions.MarketAction
 import donggolf.android.adapters.FullScreenImageAdapter
 import donggolf.android.adapters.GoodsComAdapter
@@ -33,7 +29,7 @@ import kotlinx.android.synthetic.main.dlg_simple_radio_option.view.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 
 class GoodsDetailActivity : RootActivity() {
 
@@ -415,11 +411,11 @@ class GoodsDetailActivity : RootActivity() {
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                            println(errorResponse)
+                            // println(errorResponse)
                         }
 
                         override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                            println(responseString)
+                            // println(responseString)
                         }
                     })
 
@@ -546,7 +542,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.delete_market_item(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     var message = response.getString("message")
@@ -568,11 +564,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }
@@ -608,7 +604,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.get_product_detail(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     if (_Images != null){
@@ -712,11 +708,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -728,7 +724,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.modify_item_info(params, object : JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     sale_statusTV.text = tmp_prod_status
@@ -737,11 +733,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
         })
     }
@@ -758,7 +754,7 @@ class GoodsDetailActivity : RootActivity() {
         MarketAction.add_market_looker(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 val result = response!!.getString("result")
-                println("result ----- $result")
+                // println("result ----- $result")
                 if (result == "ok" || result == "yes") {
                     val Looker = response.getJSONArray("Looker")
                     main_item_view_count.setText(Looker.length().toString())
@@ -781,7 +777,7 @@ class GoodsDetailActivity : RootActivity() {
 
         MarketAction.get_market_comment(params,object :JsonHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
-                println(response)
+                // println(response)
                 val result = response!!.getString("result")
                 if (result == "ok"){
                     val comments = response.getJSONArray("comments")
@@ -795,11 +791,11 @@ class GoodsDetailActivity : RootActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                println(responseString)
+                // println(responseString)
             }
         })
     }

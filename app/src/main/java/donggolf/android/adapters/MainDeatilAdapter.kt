@@ -3,10 +3,12 @@ package donggolf.android.adapters
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import de.hdodenhof.circleimageview.CircleImageView
 import donggolf.android.R
@@ -72,29 +74,25 @@ open class MainDeatilAdapter(context: Context, view: Int, data: ArrayList<JSONOb
 //        item.main_detail_comment_dateTV.text = created
         item.main_detail_comment_typeIV.visibility = View.GONE
         val today = Utils.todayStr()
-        if (created != null && created.length > 0){
-            var split = created.split(" ")
+        if (created != null && created.isNotEmpty()){
+            val split = created.split(" ")
 
-            if (split != null && split.size > 0) {
+            if (split.isNotEmpty()) {
 
-                if (split.get(0) == today){
-                    var timesplit = split.get(1).split(":")
-                    if (timesplit.get(0).toInt() >= 12){
-                    }
-                    var time =  timesplit.get(0) + ":" + timesplit.get(1)
-                    item.main_detail_comment_dateTV.setText(time)
+                if (split.first() == today){
+                    val timesplit = split[1].split(":")
+                    val time =  timesplit.first() + ":" + timesplit[1]
+                    item.main_detail_comment_dateTV.text = time
 
                 } else {
                     val since = Utils.since2(created)
-                    item.main_detail_comment_dateTV.setText(since)
+                    item.main_detail_comment_dateTV.text = since
                 }
             }
         }
 
         var p_comments_id = Utils.getInt(comment, "p_comments_id")
         var op_comments_id = Utils.getInt(comment, "op_comments_id")
-
-
 
         if (p_comments_id != -1) {
             if (op_comments_id != -1) {

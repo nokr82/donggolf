@@ -74,7 +74,7 @@ class FindVideoActivity() : RootActivity(), AdapterView.OnItemClickListener {
 //            cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, proj, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC")
-                println(" cursor : " + cursor.count)
+                // println(" cursor : " + cursor.count)
             } else {
                 cursor = MediaStore.Video.query(resolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null)
             }

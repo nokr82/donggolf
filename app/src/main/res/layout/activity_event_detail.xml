@@ -7,252 +7,205 @@
     android:orientation="vertical"
     tools:context=".activities.MainDetailActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="15dp"
+            android:background="@mipmap/logo_png"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="7dp">
+
+            <TextView
+                android:id="@+id/titleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/dateTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="xxxx년 xx월 xx일 오후 xx:xx"
+                android:textColor="#CDCDCD"
+                android:textSize="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/finishLL"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_close" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/line_0" />
+
+    <WebView
+        android:id="@+id/webWV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:ignore="WebViewLayout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="2"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="50dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/titleTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="7dp"
-                        android:textColor="#000000"
-                        android:textSize="14dp" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/dateTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="7dp"
-                            android:text="xxxx년 xx월 xx일 오후 xx:xx"
-                            android:textColor="#CDCDCD"
-                            android:textSize="10dp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/finishLL"
-                    android:layout_width="50dp"
+                <TextView
+                    android:id="@+id/num1TV"
+                    android:layout_width="35dp"
                     android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center">
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:background="@drawable/btn_circle"/>
 
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/btn_close" />
+                <TextView
+                    android:id="@+id/num2TV"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:background="@drawable/btn_circle"/>
 
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/num3TV"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:background="@drawable/btn_circle"/>
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/num4TV"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:background="@drawable/btn_circle"/>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/line_0" />
+            </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/numberTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:gravity="center"
+                    android:text="참여하기"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/background_border_radius5_000000"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/leftTimeTV"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:text="추첨 : 3일전"/>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+            </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/membersLL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginRight="15dp">
 
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="33dp"
-                                android:layout_height="33dp"
-                                android:layout_margin="7dp"
-                                android:background="@mipmap/logo_png"
-                                android:scaleType="centerCrop"/>
+                <TextView
+                    android:id="@+id/membersTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:textSize="13dp"
+                    android:text="0명 참여자 보기"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="동네골프이벤트"
-                                android:textStyle="bold"
-                                android:maxLength="7"
-                                android:textColor="#000000"
-                                android:textSize="13dp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_depth_menu"/>
 
-                        </LinearLayout>
+            </LinearLayout>
 
-                    </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/resultLL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginRight="15dp">
 
-                    <WebView
-                        android:id="@+id/webWV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:ignore="WebViewLayout">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:textSize="13dp"
+                    android:text="추첨 결과 보기"/>
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_depth_menu"/>
 
-
-                    </WebView>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="35dp"
-                            android:layout_weight="2"
-                            android:layout_marginRight="15dp"
-                            android:layout_marginLeft="15dp">
-
-                            <TextView
-                                android:id="@+id/num1TV"
-                                android:layout_width="35dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginRight="10dp"
-                                android:gravity="center"
-                                android:background="@drawable/btn_circle"/>
-
-                            <TextView
-                                android:id="@+id/num2TV"
-                                android:layout_width="35dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginRight="10dp"
-                                android:gravity="center"
-                                android:background="@drawable/btn_circle"/>
-
-                            <TextView
-                                android:id="@+id/num3TV"
-                                android:layout_width="35dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginRight="10dp"
-                                android:gravity="center"
-                                android:background="@drawable/btn_circle"/>
-
-                            <TextView
-                                android:id="@+id/num4TV"
-                                android:layout_width="35dp"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@drawable/btn_circle"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/membersLL"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/membersTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="5dp"
-                                android:textSize="13dp"
-                                android:text="0명 참여자 보기"/>
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@mipmap/icon_depth_menu"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/resultLL"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="5dp"
-                                android:textSize="13dp"
-                                android:text="추첨 결과 보기"/>
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@mipmap/icon_depth_menu"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp">
-
-                        <TextView
-                            android:id="@+id/numberTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
-                            android:gravity="center"
-                            android:text="참여하기"
-                            android:layout_marginRight="20dp"
-                            android:background="@drawable/background_border_radius5_000000"/>
-
-                        <donggolf.android.base.ElapsedTimeTextView
-                            android:id="@+id/leftTimeTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="추첨 : 3일전"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

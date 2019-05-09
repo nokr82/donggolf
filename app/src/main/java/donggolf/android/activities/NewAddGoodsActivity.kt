@@ -447,11 +447,11 @@ class NewAddGoodsActivity : RootActivity() {
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
-                    println(responseString)
+                    // println(responseString)
                 }
             })
         }
@@ -777,11 +777,11 @@ class NewAddGoodsActivity : RootActivity() {
                     if (progressDialog != null) {
                         progressDialog!!.dismiss()
                     }
-                    println(responseString)
+                    // println(responseString)
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                    println(errorResponse)
+                    // println(errorResponse)
                 }
                 override fun onStart() {
                     // show dialog
@@ -868,11 +868,11 @@ class NewAddGoodsActivity : RootActivity() {
                 if (progressDialog != null) {
                     progressDialog!!.dismiss()
                 }
-                println(responseString)
+                // println(responseString)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, throwable: Throwable?, errorResponse: JSONObject?) {
-                println(errorResponse)
+                // println(errorResponse)
             }
             override fun onStart() {
                 // show dialog

@@ -15,8 +15,6 @@ import android.support.v4.view.ViewPager
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.iid.FirebaseInstanceId
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -62,13 +60,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     var friend_id = -1
     var room_id = -1
     var AREA_OK = 101
-    var sidotype = "전국"
-    var sidotype2 = "전국"
-    var goguntype = "전국"
-    var goguntype2 = "전국"
+    // var sidotype = "전국"
+    // var sidotype2 = "전국"
+    // var goguntype = "전국"
+    // var goguntype2 = "전국"
     var membercnt = ""
-    var region_id = "0"
-    var region_id2 = ""
+    // var region_id = "0"
+    // var region_id2 = ""
 
     internal var reloadReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
@@ -111,13 +109,13 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
 
         this.context = this
 
-        var filter1 = IntentFilter("REGION_CHANGE")
+        val filter1 = IntentFilter("REGION_CHANGE")
         registerReceiver(reloadReciver, filter1)
 
-        var filter2 = IntentFilter("MY_CHATTING")
+        val filter2 = IntentFilter("MY_CHATTING")
         registerReceiver(mychattingReciver, filter2)
 
-        var filter3 = IntentFilter("LOAD_CHATTING")
+        val filter3 = IntentFilter("LOAD_CHATTING")
         registerReceiver(chattingLoadReceiver, filter3)
 
 
@@ -133,7 +131,23 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 Toast.makeText(context, "비회원은 이용하실 수 없습니다..", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            var intent = Intent(context, AddPostActivity::class.java);
+
+            var canPost = false
+            val region_id = PrefUtils.getStringPreference(context, "region_id")
+            val region_ids = region_id.split(",")
+            for (rid in region_ids) {
+                if(rid.isNotEmpty() && rid.toInt() > 0) {
+                    canPost = true
+                    break
+                }
+            }
+
+            if(!canPost) {
+                Utils.alert(context, "글을 쓰시려면 우리동네 설정을 하셔야 합니다.")
+                return@setOnClickListener
+            }
+
+            val intent = Intent(context, AddPostActivity::class.java);
             intent.putExtra("category", 1)
             startActivity(intent)
         }
@@ -143,14 +157,10 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             handlePush()
         }
 
-        if (PrefUtils.getStringPreference(context, "sidotype") != null) {
-            sidotype = PrefUtils.getStringPreference(context, "sidotype")
-            goguntype = PrefUtils.getStringPreference(context, "goguntype")
-            region_id = PrefUtils.getStringPreference(context, "region_id")
-        } else {
-            PrefUtils.setPreference(context, "sidotype", sidotype)
-            PrefUtils.setPreference(context, "goguntype", goguntype)
-            PrefUtils.setPreference(context, "region_id", region_id)
+        if (PrefUtils.getStringPreference(context, "sidotype") == null) {
+            PrefUtils.setPreference(context, "sidotype", "전국")
+            PrefUtils.setPreference(context, "goguntype", "전국")
+            PrefUtils.setPreference(context, "region_id", "0")
         }
 
         pagerAdapter = PagerAdapter(getSupportFragmentManager())
@@ -227,7 +237,7 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
                 return@setOnClickListener
             }
 //            setButtonImage()
-            var intent = Intent(context, AlarmActivity::class.java)
+            val intent = Intent(context, AlarmActivity::class.java)
             startActivity(intent)
         }
 
@@ -252,18 +262,18 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         }
 
         friendsLL.setOnClickListener {
-            var intent = Intent(context, FriendSearchActivity::class.java)
+            val intent = Intent(context, FriendSearchActivity::class.java)
             intent.putExtra("membercnt", membercnt)
             intent.putExtra("title", Utils.getString(areaTV))
             startActivity(intent)
         }
 
         eventLL.setOnClickListener {
-            var intent = Intent(context, EventsActivity::class.java)
+            val intent = Intent(context, EventsActivity::class.java)
             startActivity(intent)
         }
 
-        my_member_cnt()
+        member_cnt()
         updateToken()
 
     }
@@ -277,13 +287,12 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
         MemberAction.my_membercnt(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
                 try {
-                    Log.d("지역멤버",response.toString())
                     val result = response!!.getString("result")
 
                     if (result == "ok") {
-                        membercnt = response!!.getString("membercnt")
+                        membercnt = response.getString("membercnt")
                         areaTV.text = "우리동네"
-                        areaCntTV.text = membercnt + " 명"
+                        areaCntTV.text = "$membercnt 명"
                     }
 
 
@@ -303,28 +312,32 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
     }
     //지역별멤버수
     fun member_cnt() {
+
+        val main_region_id = PrefUtils.getStringPreference(context, "main_region_id")
+
         val params = RequestParams()
-        params.put("region_id", region_id)
+        params.put("region_id", main_region_id)
 
         MemberAction.membercnt(params, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONObject?) {
+
                 try {
                     Log.d("지역멤버",response.toString())
                     val result = response!!.getString("result")
 
                     if (result == "ok") {
                         membercnt = response!!.getString("membercnt")
-                        var region = response!!.getJSONObject("region")
-                        var region_name = Utils.getString(region,"region_name")
-                        var name =  Utils.getString(region,"name")
+                        val region = response!!.getJSONObject("region")
+                        val region_name = Utils.getString(region,"region_name")
+                        val name =  Utils.getString(region,"name")
                         if (name =="전국"){
-                            areaTV.text = name
+                            areaTV.text = "전체인원"
                         }else if( name =="세종특별시"){
                             areaTV.text = name
                         }else{
                             areaTV.text = region_name+" "+name
                         }
-                        areaCntTV.text = membercnt + " 명"
+                        areaCntTV.text = "$membercnt 명"
                     }
 
 
@@ -361,17 +374,19 @@ class MainActivity : FragmentActivity() {//fragment 를 쓰려면 fragmentActivi
             when (requestCode) {
                 AREA_OK -> {
                     if (data != null) {
-                        region_id = data!!.getStringExtra("region_id")
+                        val region_id = data.getStringExtra("region_id")
+
                         if (region_id=="no"){
-                            my_member_cnt()
-                        }else{
-                            member_cnt()
-                            var intent = Intent()
-                            intent.action = "MSG_NEXT"
-                            context.sendBroadcast(intent)
+                            PrefUtils.setPreference(context, "main_region_id", PrefUtils.getStringPreference(context, "region_id"))
+                        } else {
+                            PrefUtils.setPreference(context, "main_region_id", region_id)
+
                         }
 
-
+                        member_cnt()
+                        val intent = Intent()
+                        intent.action = "MSG_NEXT"
+                        context.sendBroadcast(intent)
 
                     }
 
